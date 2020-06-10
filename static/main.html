@@ -3,18 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    {% if page.KeyWord =='' %}
-    <title>首页</title>
-    {% else %}
-    <title>{{.page.KeyWord}}</title>
-    {% endif%}
-
-    <link href="/js/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/js/bootstrap-3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="/css/main.css" rel="stylesheet">
-    <script src="/js/jquery-3.4.1.min.js"></script>
-    <script src="/js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script src="/js/main.js" charset="UTF-8"></script>
+    <title>{{.title}}</title>
+    <link href="static/js/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/js/bootstrap-3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="static/css/main.css" rel="stylesheet">
+    <script src="static/js/jquery-3.4.1.min.js"></script>
+    <script src="static/js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="static/js/main.js" charset="UTF-8"></script>
 
     <style>
         .row {
