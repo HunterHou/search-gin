@@ -54,10 +54,10 @@ func init() {
 
 func main() {
 	app := gin.Default()
-	app.StaticFS("/static", http.Dir("/static"))
-	app.LoadHTMLFiles("static/main.html")
+	app.StaticFS("/static", http.Dir("static"))
+	app.LoadHTMLFiles("static/index.html")
 	app.GET("/index", func(context *gin.Context) {
-		context.HTML(http.StatusOK, "main.html", gin.H{"title": "kess"})
+		context.HTML(http.StatusOK, "index.html", gin.H{"title": "kess"})
 	})
 	utils.ExecCmdStart("http://127.0.0.1:8000/index")
 	app.Run(":8000")
