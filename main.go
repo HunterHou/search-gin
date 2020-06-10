@@ -1,11 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
-)
-import (
+
 	"./utils"
+	"github.com/gin-gonic/gin"
 )
 
 var curDir string
@@ -55,9 +54,9 @@ func init() {
 
 func main() {
 	app := gin.Default()
-	app.LoadHTMLGlob("static/*")
+	app.LoadHTMLFiles("static/main.html")
 	app.GET("/index", func(context *gin.Context) {
-		context.HTML(http.StatusOK, "hello", "main.html")
+		context.HTML(http.StatusOK, "main.html", gin.H{"page.KeyWord": "kess"})
 	})
 	utils.ExecCmdStart("http://127.0.0.1:8000/index")
 	app.Run(":8000")
