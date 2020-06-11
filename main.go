@@ -1,10 +1,12 @@
 package main
 
 import (
-	"net/http"
-
+	"./cons"
+	"./router"
+	"./service"
 	"./utils"
-	"github.com/gin-gonic/gin"
+	"path/filepath"
+	"strings"
 )
 
 var curDir string
@@ -15,7 +17,7 @@ var staticDir string
 // 2 无窗口  go build -o app/app.exe -ldflags "-H=windowsgui"
 
 func init() {
-	/*curDir, _ := filepath.Abs(".")
+	curDir, _ := filepath.Abs(".")
 	if !strings.HasSuffix(curDir, "src") {
 		curDir += "/src"
 	}
@@ -40,25 +42,21 @@ func init() {
 	}
 
 	cons.SetBaseDir(dirs)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.VideoTypes)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Docs)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Images)
-	staticDir = curDir + "/static"
-	cons.Play = utils.ImageToString(staticDir + "/image/play.jpg")
-	cons.Open = utils.ImageToString(staticDir + "/image/open.jpg")
-	cons.Change = utils.ImageToString(staticDir + "/image/change.jpg")
-	cons.Replay = utils.ImageToString(staticDir + "/image/replay.jpg")
-	cons.Close = utils.ImageToString(staticDir + "/image/close.jpg")
-	cons.Stop = utils.ImageToString(staticDir + "/image/stop.jpg")*/
+	/*
+		cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.VideoTypes)
+		cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Docs)
+		cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Images)
+		staticDir = curDir + "/static"
+		cons.Play = utils.ImageToString(staticDir + "/image/play.jpg")
+		cons.Open = utils.ImageToString(staticDir + "/image/open.jpg")
+		cons.Change = utils.ImageToString(staticDir + "/image/change.jpg")
+		cons.Replay = utils.ImageToString(staticDir + "/image/replay.jpg")
+		cons.Close = utils.ImageToString(staticDir + "/image/close.jpg")
+		cons.Stop = utils.ImageToString(staticDir + "/image/stop.jpg")*/
 }
 
 func main() {
-	app := gin.Default()
-	app.StaticFS("/static", http.Dir("static"))
-	app.LoadHTMLFiles("static/index.html")
-	app.GET("/index", func(context *gin.Context) {
-		context.HTML(http.StatusOK, "index.html", gin.H{"title": "kess"})
-	})
+	app := router.BuildRouter()
 	utils.ExecCmdStart("http://127.0.0.1:8000/index")
 	app.Run(":8000")
 
