@@ -16,23 +16,14 @@
 </head>
 <body>
 <div id="reactApp"></div>
-
 </body>
+<script type="text/babel" src="static/js/index.js"></script>
 <script type="text/babel">
-    fetch("/index").then(function (response) {
-        if (response.status == 200){
-            console.log(response)
-        }else{
-            alert("请求失败")
-        }
-
-    }).then(function (response) {
-        console.log(response)
-    })
-    ReactDOM.render(
-        <div>11111</div>,
+    ReactDOM.render(<ListItem/>,
         document.getElementById('reactApp')
     )
+
+
 </script>
 
 </html>

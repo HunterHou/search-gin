@@ -1,7 +1,24 @@
-class Welcome extends React.Component {
-    render() {
-      return <h1>Hello, {this.props.name}</h1>;
-    }
-  }
+class ListItem extends React.Component {
 
-  export default Welcome
+    render() {
+        let dataList = [];
+        let cnt = 0
+        fetch("/index").then(function (response) {
+            if (response.status == 200) {
+                return response.json();
+            }
+        }).then(function (json) {
+            cnt = json["Cnt"]
+            const {data: dataListTwo = []} = json
+            dataList = dataListTwo
+        })
+        return (
+            <div>
+                <h1>Hello, world!</h1>
+                <h2>现在是 {cnt}.</h2>
+            </div>
+        );
+    }
+}
+
+export default ListItem
