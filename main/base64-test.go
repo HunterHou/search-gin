@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	path := "E:\\Close.Jpg"
+	path := "d:\\111.amr"
 	fmt.Println(utils.ImageToString(path))
 }
