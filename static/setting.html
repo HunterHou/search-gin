@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>设置</title>
-    <link href="/js/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/js/bootstrap-3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="/css/main.css" rel="stylesheet">
-    <script src="/js/jquery-3.4.1.min.js"></script>
-    <script src="/js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script src="/js/setting.js" charset="UTF-8"></script>
-    <script src="/js/select2/select2.min.js"></script>
-    <script src="js/main.js"></script>
-    <link href="/js/select2/select2.min.css" rel="stylesheet">
+    <link href="static/js/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/js/bootstrap-3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="static/css/main.css" rel="stylesheet">
+    <script src="static/js/jquery-3.4.1.min.js"></script>
+    <script src="static/js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="static/js/setting.js" charset="UTF-8"></script>
+    <script src="static/js/select2/select2.min.js"></script>
+    <script src="static/js/main.js"></script>
+    <link href="static/js/select2/select2.min.css" rel="stylesheet">
 
     <script>
         function removeThis(eid) {
@@ -54,20 +54,20 @@
         <label for="inputEmail3" class="col-sm-3 control-label">根URL</label>
         <div class="col-sm-5">
             <input type="text" class="form-control" id="BaseUrl" name="BaseUrl" placeholder="http://"
-                   value="{{BaseUrl}}">
+                   value="{{.BaseUrl}}}">
         </div>
     </div>
     <div class="form-group">
         <label for="inputPassword3" class="col-sm-3 control-label">目录</label>
 
         <div class="col-sm-5" id="baseDiv">
-            {% for index,dirpath in BaseDir %}
+            {{ each dirpath in BaseDir }}
             <div class="input-group">
-                <input type="text" class="form-control {{index}}" name="BaseDir" placeholder="D:\\" value="{{dirpath}}">
-                <a class="glyphicon glyphicon-remove input-group-addon {{index}}" style="background: #ffffff;border: 0;"
-                   onclick="removeThis('{{index}}');"></a>
+                <input type="text" class="form-control {{.dirpath}}" name="BaseDir" placeholder="D:\\" value="{{.dirpath}}">
+                <a class="glyphicon glyphicon-remove input-group-addon {{.index}}" style="background: #ffffff;border: 0;"
+                   onclick="removeThis('{{.dirpath}}');"></a>
             </div>
-            {% endfor %}
+            {{ endfor }}
         </div>
         <input type="file" id="file" onchange="chooseFile();">
     </div>
@@ -78,13 +78,13 @@
 
 
             {% for image in Images %}
-            <input type="hidden" value="{{image}}" class="imageValues">
+            <input type="hidden" value="{{.image}}" class="imageValues">
             {% endfor %}
 
             <select class="ImagesSelect" name="Images" multiple="multiple">
                 {% for type in Types %}
                 <div class="input-group">
-                    <option value="{{type}}">{{type}}</option>
+                    <option value="{{.type}}">{{.type}}</option>
                 </div>
                 {% endfor %}
             </select>
@@ -94,12 +94,12 @@
         <label for="inputPassword3" class="col-sm-3 control-label">视频类型</label>
         <div class="col-sm-5">
             {% for video in VideoTypes %}
-            <input type="hidden" value="{{video}}" class="VideoTypesValues">
+            <input type="hidden" value="{{.video}}" class="VideoTypesValues">
             {% endfor %}
             <select class="VideoTypesSelect" name="VideoTypes" multiple="multiple">
                 {% for type in Types %}
                 <div class="input-group">
-                    <option value="{{type}}">{{type}}</option>
+                    <option value="{{.type}}">{{.type}}</option>
                 </div>
                 {% endfor %}
             </select>
@@ -109,12 +109,12 @@
         <label for="inputPassword3" class="col-sm-3 control-label">文档类型</label>
         <div class="col-sm-5">
             {% for doc in Docs %}
-            <input type="hidden" value="{{doc}}" class="DocsValues">
+            <input type="hidden" value="{{.doc}}" class="DocsValues">
             {% endfor %}
             <select class="DocsSelect" name="Docs" multiple="multiple">
                 {% for type in Types %}
                 <div class="input-group">
-                    <option value="{{type}}">{{type}}</option>
+                    <option value="{{.type}}">{{.type}}</option>
                 </div>
                 {% endfor %}
             </select>
