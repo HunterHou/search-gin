@@ -1,11 +1,12 @@
 package main
 
 import (
+	"path/filepath"
+
 	"./cons"
 	"./router"
 	"./service"
 	"./utils"
-	"path/filepath"
 )
 
 var curDir string
