@@ -5,7 +5,7 @@ import { connect } from 'dva';
 
 const FileList = ({dispatch,files})=>{
 
-    onDelete=(id)=>{
+    function onDelete(id){
         dispatch({
             type:"files/delete",
             payload:id
@@ -24,7 +24,7 @@ const FileList = ({dispatch,files})=>{
             )
         }}
     ];
-   
+
     console.log(files)
     return (
         <Table dataSource={files} columns={columns}/>
