@@ -9,16 +9,14 @@ var menuhtml = '<div>'
     + '<el-input placeholder="请输入内容" v-model="searchWords" >' +
     '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
     '  </el-input>'
-    + '<el-input placeholder="頁碼" v-model="pageSize" ></el-input>' +
-    +'<el-input placeholder="頁容" v-model="pageNo" ></el-input>' +
     +'<div>'
     + '<span v-if="errorMsg">{{errorMsg}}</span>'
     + '<el-pagination' +
     '  :page-sizes="[30, 60, 90, 200]" :page-size="pageSize"' +
     '  @size-change="handleSizeChange"' +
     '  @current-change="handleCurrentChange"' +
-    '  :pager-count="pagerCount"' +
-    '  layout="total,prev, pager, next"' +
+    // '  :pager-count=pagerCount' +
+    '  layout="total,prev, pager, next, sizes"' +
     '  :total="totalCnt">' +
     '</el-pagination>'
     + '<ul  class="infinite-list" style="overflow:auto">'
