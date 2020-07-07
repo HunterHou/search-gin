@@ -17,5 +17,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/movieList", controller.GetMovies)
 	router.GET("/refresh", controller.GetFresh)
 	router.GET("/actressList", controller.GetActess)
+
+	router.GET("/image", controller.GetActess)
 	return router
 }

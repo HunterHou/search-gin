@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+func GetImage(c *gin.Context) {
+
+}
+
 func GetMovies(c *gin.Context) {
 	if len(datasource.FileList) == 0 {
 		service := service.FileService{}
