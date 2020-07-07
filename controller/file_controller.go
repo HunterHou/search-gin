@@ -20,16 +20,26 @@ func GetMovies(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-//func (fc FileController) GetActess() utils.Page {
-//	if len(datasource.FileList) == 0 {
-//		fc.Service.ScanAll()
-//	}
-//	list := datasource.ActressLib
-//	result := utils.NewPage()
-//	result.CurCnt = len(list)
-//	result.Data = list
-//	return result
-//}
+func GetFresh(c *gin.Context) {
+	service := service.FileService{}
+	service.ScanAll()
+	datasource.SortMovieForce()
+	result := utils.Success()
+	c.JSON(http.StatusOK, result)
+}
+
+func GetActess(c *gin.Context) {
+	if len(datasource.FileList) == 0 {
+		service := service.FileService{}
+		service.ScanAll()
+	}
+	list := datasource.ActressLib
+	result := utils.NewPage()
+	result.CurCnt = len(list)
+	result.Data = list
+	c.JSON(http.StatusOK, result)
+}
+
 //func (fc FileController) GetSupplier() utils.Page {
 //	if len(datasource.SupplierLib) == 0 {
 //		fc.Service.ScanAll()
@@ -73,12 +83,7 @@ func GetMovies(c *gin.Context) {
 //
 //}
 //
-//func (fc FileController) GetFresh() {
-//	fc.Service.ScanAll()
-//	datasource.SortMovieForce()
-//	result := utils.Success()
-//	fc.Ctx.JSON(result)
-//}
+
 //func (fc FileController) PostDelete() {
 //	id := fc.Ctx.PostValue("id")
 //	fc.Service.Delete(id)
