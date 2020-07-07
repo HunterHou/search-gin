@@ -18,9 +18,14 @@ var menu = {
     },
     mounted: function () {
         document.title = "目录"
-        this.datas = dataLib
+        this.queryList()
     },
     methods: {
+        queryList(){
+            this.$http.get("/movielist").then((res)=>{
+                this.datas = res.Data
+            })
+        },
         open(filename) {
             var self = this
             console.log(filename)

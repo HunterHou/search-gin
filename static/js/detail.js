@@ -6,8 +6,6 @@ var detailHtml = '<div>'
     + '<el-button style="float: right; right:0px;" @click="nextPage" class="floatButton" icon="el-icon-right"></el-button>'
     + '<br>'
     + '<p v-html="context"></p>'
-    // + '<el-button style="float: left; " @click="lastPage" class="floatButton" icon="el-icon-back">上一页</el-button>'
-    // + '<el-button style="float: right; " @click="nextPage" class="floatButton" icon="el-icon-right">下一页</el-button>'
     + '</div></div>'
 var detail = {
     template: detailHtml,
@@ -20,15 +18,7 @@ var detail = {
     mounted: function () {
         var self = this
         var filename = self.$route.params.id
-        var data = { "Code": FindOne, "Message": filename }
-        astilectron.sendMessage(JSON.stringify(data), function (message) {
-            console.log("send callback: " + message.Code)
-            curData = message.Data
-            document.title = curData.Title
-            self.title = curData.Title
-            self.context = curData.Context
 
-        });
     },
     methods: {
         load(filename) {
@@ -60,14 +50,7 @@ var detail = {
             var filename = dataLib[index]
             console.log(filename)
             var data = { "Code": FindOne, "Message": filename }
-            astilectron.sendMessage(JSON.stringify(data), function (message) {
-                console.log("send callback: " + message.Code)
-                curData = message.Data
-                document.title = curData.Title
-                self.title = curData.Title
-                self.context = curData.Context
 
-            });
         }
     }
 }

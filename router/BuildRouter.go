@@ -14,6 +14,6 @@ func BuildRouter() *gin.Engine {
 	//router.LoadHTMLGlob("templates/*")
 	router.GET("/", controller.Index)
 	// router.GET("/setting", controller.Setting)
-	router.GET("/index", controller.GetMovies)
+	router.GET("/movielist", controller.GetMovies)
 	return router
 }
