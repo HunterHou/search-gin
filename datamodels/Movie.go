@@ -30,6 +30,7 @@ type Movie struct {
 	Series   string
 	Director string
 	Title    string
+	PngBase  string
 }
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time) Movie {
@@ -50,6 +51,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		SizeStr:  utils.GetSizeStr(size),
 		CTime:    "",
 		MTime:    modTime.Format("2006-01-02 15:04:05"),
+		PngBase:  "",
 	}
 	return result
 }
@@ -68,7 +70,8 @@ func (f Movie) PngBase64() string {
 	if !utils.ExistsFiles(path) {
 		path = f.Path
 	}
-	return utils.ImageToString(path)
+	return "data:image/png;base64," + utils.ImageToString(path)
+
 }
 
 func (f Movie) GetPng() string {

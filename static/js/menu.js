@@ -7,7 +7,7 @@ var menuhtml = '<div><h1>目录</h1>'
     + '<div class="demo-image__preview">'
     + '    <el-image'
     + '        style="width: 100px; height: 100px"'
-    + '    :src="item.Path"'
+    + '    :src="item.PngBase"'
     + '   :preview-src-list="imageList">'
     + ' </el-image>'
     + '</div>'
@@ -40,7 +40,7 @@ var menu = {
                     this.dataList = res.data.Data
                     if (this.dataList && this.dataList.length>0){
                         this.dataList.map((item=>{
-                            this.imageList.push(item.GetPng)
+                            this.imageList.push(item.PngBase)
                         }))
                     }
                     console.log(this.dataList)
