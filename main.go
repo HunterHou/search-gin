@@ -40,15 +40,15 @@ func init() {
 
 	cons.SetBaseDir(dirs)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.VideoTypes)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Docs)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Images)
+	//cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Docs)
+	//cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Images)
 	staticDir = curDir + "/static"
-	cons.Play = utils.ImageToString(staticDir + "/image/play.jpg")
-	cons.Open = utils.ImageToString(staticDir + "/image/open.jpg")
-	cons.Change = utils.ImageToString(staticDir + "/image/change.jpg")
-	cons.Replay = utils.ImageToString(staticDir + "/image/replay.jpg")
-	cons.Close = utils.ImageToString(staticDir + "/image/close.jpg")
-	cons.Stop = utils.ImageToString(staticDir + "/image/stop.jpg")
+	cons.Play = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/play.jpg")
+	cons.Open = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/open.jpg")
+	cons.Change = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/change.jpg")
+	cons.Replay = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/replay.jpg")
+	cons.Close = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/close.jpg")
+	cons.Stop = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/stop.jpg")
 }
 
 func main() {

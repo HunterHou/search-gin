@@ -11,13 +11,19 @@ func BuildRouter() *gin.Engine {
 	router := gin.Default()
 	router.StaticFS("/static", http.Dir("static"))
 	router.LoadHTMLFiles("static/index.html")
-	//router.LoadHTMLGlob("templates/*")
+
 	router.GET("/", controller.Index)
-	// router.GET("/setting", controller.Setting)
-	router.GET("/movieList", controller.GetMovies)
+	router.POST("/movieList", controller.PostMovies)
 	router.GET("/refresh", controller.GetFresh)
 	router.GET("/actressList", controller.GetActess)
 
+	router.GET("/play/:id", controller.GetPlay)
+	router.GET("/delete/:id", controller.GetDelete)
+	router.GET("/openFolder/:id", controller.GetOpenFoler)
+
 	router.GET("/image", controller.GetActess)
+
+	router.GET("/buttoms", controller.GetButtom)
+	router.GET("/refreshIndex", controller.GetRefresIndex)
 	return router
 }

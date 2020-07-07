@@ -1,29 +1,43 @@
 package controller
 
 import (
+	"../cons"
 	"../datasource"
 	"../service"
 	"../utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func GetImage(c *gin.Context) {
 
 }
 
-func GetMovies(c *gin.Context) {
+func PostMovies(c *gin.Context) {
+	keywords := c.PostForm("keywords")
+	pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "30"))
+	sortType := c.DefaultPostForm("sortType", "code")
+	sortField := c.DefaultPostForm("sortField", "desc")
+	service := service.FileService{}
+	result := utils.NewPage()
 	if len(datasource.FileList) == 0 {
-		service := service.FileService{}
 		service.ScanAll()
+		datasource.SortMovies(sortField, sortType, true)
 	}
-	list := datasource.FileList
+	datasource.SortMovies(sortField, sortType, false)
+	list := service.SearchByKeyWord(datasource.FileList, keywords)
+	result.TotalCnt = len(list)
+	list = service.GetPage(list, pageNo, pageSize)
 	for i := range list {
 		list[i].SetPngBase64()
+		list[i].SetImageBase64()
 	}
-	result := utils.NewPage()
+
 	result.CurCnt = len(list)
 	result.Data = list
+
 	c.JSON(http.StatusOK, result)
 }
 
@@ -46,6 +60,49 @@ func GetActess(c *gin.Context) {
 	result.Data = list
 	c.JSON(http.StatusOK, result)
 }
+func GetButtom(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"Play":   cons.Play,
+		"Change": cons.Change,
+		"Open":   cons.Open,
+		"Replay": cons.Replay,
+		"Close":  cons.Close,
+		"Stop":   cons.Stop,
+	})
+}
+func GetPlay(c *gin.Context) {
+	id := c.Param("id")
+	service := service.FileService{}
+	file := service.FindOne(id)
+	utils.ExecCmdStart(file.Path)
+	res := utils.NewSuccess()
+	c.JSON(http.StatusOK, res)
+}
+
+func GetOpenFoler(c *gin.Context) {
+	id := c.Param("id")
+	service := service.FileService{}
+	file := service.FindOne(id)
+	utils.ExecCmdExplorer(file.DirPath)
+	res := utils.NewSuccess()
+	c.JSON(http.StatusOK, res)
+}
+
+func GetDelete(c *gin.Context) {
+	id := c.Param("id")
+	service := service.FileService{}
+	service.Delete(id)
+	res := utils.NewSuccess()
+	c.JSON(http.StatusOK, res)
+}
+
+func GetRefresIndex(c *gin.Context) {
+	service := service.FileService{}
+	service.ScanAll()
+	datasource.SortMovieForce()
+	res := utils.NewSuccess()
+	c.JSON(http.StatusOK, res)
+}
 
 //func (fc FileController) GetSupplier() utils.Page {
 //	if len(datasource.SupplierLib) == 0 {
@@ -58,14 +115,7 @@ func GetActess(c *gin.Context) {
 //	return result
 //}
 //
-//func (fc FileController) GetPlay() {
-//	id := fc.Ctx.URLParam("id")
-//	file := fc.Service.FindOne(id)
-//	utils.ExecCmdStart(file.Path)
-//	//files, err := ioutil.ReadFile(file.Path)
-//	//if err!=nil {
-//	//	fmt.Println(err)
-//	//}
+
 //
 //	// fc.Ctx.ContentType("video/mp4")
 //	// f,_:=os.Open(file.Path)
@@ -91,12 +141,6 @@ func GetActess(c *gin.Context) {
 //}
 //
 
-//func (fc FileController) PostDelete() {
-//	id := fc.Ctx.PostValue("id")
-//	fc.Service.Delete(id)
-//	result := utils.Success()
-//	fc.Ctx.JSON(result)
-//}
 //func (fc FileController) PostRemovedir() {
 //	id := fc.Ctx.PostValue("id")
 //	delete(cons.BaseDir, id)
