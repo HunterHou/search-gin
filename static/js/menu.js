@@ -2,7 +2,7 @@ var menuhtml = '<div><h1>目录</h1>'
     + '<div>'
     + '<span v-if="errorMsg">{{errorMsg}}</span>'
     + '<ul  class="infinite-list" style="overflow:auto">'
-    + '<li class="infinite-list-item" v-for="(item,index) in dataList" :key="item.Id">'
+    + '<li v-bind:class="listStyle" class="infinite-list-item" v-for="(item,index) in dataList" :key="item.Id">'
     + '<el-link @click="open(item.Path)">{{ item.Name }}</el-link> '
     + '<div class="demo-image__preview">'
     + '    <el-image'
@@ -23,6 +23,9 @@ var menu = {
     template: menuhtml,
     data: function () {
         return {
+            listStyle:{
+
+            },
             imageList:[],
             dataList: "",
             dataCnt: 0,

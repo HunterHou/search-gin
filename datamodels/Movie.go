@@ -70,7 +70,20 @@ func (f Movie) PngBase64() string {
 	if !utils.ExistsFiles(path) {
 		path = f.Path
 	}
-	return "data:image/png;base64," + utils.ImageToString(path)
+	res := "data:image/png;base64," + utils.ImageToString(path)
+	return res
+
+}
+func (f *Movie) SetPngBase64() {
+	path := f.Png
+	if !utils.ExistsFiles(path) {
+		path = f.Jpg
+	}
+	if !utils.ExistsFiles(path) {
+		path = f.Path
+	}
+	res := "data:image/png;base64," + utils.ImageToString(path)
+	f.PngBase = res
 
 }
 

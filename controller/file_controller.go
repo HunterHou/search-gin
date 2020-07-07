@@ -14,8 +14,8 @@ func GetMovies(c *gin.Context) {
 		service.ScanAll()
 	}
 	list := datasource.FileList
-	for _, movie := range list {
-		movie.PngBase = movie.PngBase64()
+	for i := range list {
+		list[i].SetPngBase64()
 	}
 	result := utils.NewPage()
 	result.CurCnt = len(list)
