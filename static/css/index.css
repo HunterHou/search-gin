@@ -1,0 +1,12 @@
+.list-item {
+    width: 240px;
+    height: 400px;
+    float: left;
+    margin-right: 25px;
+    list-style: none;
+}
+
+.img-list-item {
+    width: 200px;
+    height: 300px;
+}
