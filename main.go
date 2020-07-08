@@ -37,6 +37,10 @@ func init() {
 	if len(Images) > 0 {
 		cons.Docs = Docs
 	}
+	Types := dict.GetProperty("Types")
+	if len(Types) > 0 {
+		cons.Types = Types
+	}
 
 	cons.SetBaseDir(dirs)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.VideoTypes)

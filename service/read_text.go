@@ -26,6 +26,9 @@ func FlushDictionart(path string) {
 	for _, doc := range cons.Docs {
 		dict.PutProperty("Docs", doc)
 	}
+	for _, typ := range cons.Types {
+		dict.PutProperty("Types", typ)
+	}
 	WriteDictionary(path, dict)
 
 }
