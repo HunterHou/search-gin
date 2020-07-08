@@ -34,6 +34,25 @@ let settingHtml = '<div>'
     + '    </el-option>'
     + '  </el-select>'
     + '  </el-form-item>'
+    +'<el-tag' +
+    '  :key="tag"' +
+    '  v-for="tag in dynamicTags"' +
+    '  closable' +
+    '  :disable-transitions="false"' +
+    '  @close="handleClose(tag)">' +
+    '  {{tag}}' +
+    '</el-tag>' +
+    '<el-input' +
+    '  class="input-new-tag"' +
+    '  v-if="inputVisible"' +
+    '  v-model="inputValue"' +
+    '  ref="saveTagInput"' +
+    '  size="small"' +
+    '  @keyup.enter.native="handleInputConfirm"' +
+    '  @blur="handleInputConfirm"' +
+    '>' +
+    '</el-input>' +
+    '<el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>'
     + '<el-form-item>'
     + '    <el-button type="primary" align-text="center" @click="submitForm(\'form\')">提交</el-button>'
     + '  </el-form-item>'
