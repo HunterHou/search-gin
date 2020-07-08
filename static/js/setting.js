@@ -34,25 +34,27 @@ let settingHtml = '<div>'
     + '    </el-option>'
     + '  </el-select>'
     + '  </el-form-item>'
-    +'<el-tag' +
-    '  :key="tag"' +
-    '  v-for="tag in dynamicTags"' +
-    '  closable' +
-    '  :disable-transitions="false"' +
-    '  @close="handleClose(tag)">' +
-    '  {{tag}}' +
-    '</el-tag>' +
-    '<el-input' +
-    '  class="input-new-tag"' +
-    '  v-if="inputVisible"' +
-    '  v-model="inputValue"' +
-    '  ref="saveTagInput"' +
-    '  size="small"' +
-    '  @keyup.enter.native="handleInputConfirm"' +
-    '  @blur="handleInputConfirm"' +
-    '>' +
-    '</el-input>' +
-    '<el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>'
+    + '<el-form-item label="文件类型">'
+    + '<el-tag'
+    + '  :key="tag"'
+    + '  v-for="tag in form.Types"'
+    + '  closable'
+    + '  :disable-transitions="false"'
+    + '  @close="handleClose(tag)">'
+    + '  {{tag}}'
+    + '</el-tag>'
+    + '<el-input'
+    + '  class="input-new-tag"'
+    + '  v-if="inputVisible"'
+    + '  v-model="inputValue"'
+    + '  ref="saveTagInput"'
+    + '  size="small"'
+    + '  @keyup.enter.native="handleInputConfirm"'
+    + '  @blur="handleInputConfirm"'
+    + '>'
+    + '</el-input>'
+    +'<el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>'
+    + '</el-form-item>'
     + '<el-form-item>'
     + '    <el-button type="primary" align-text="center" @click="submitForm(\'form\')">提交</el-button>'
     + '  </el-form-item>'
@@ -69,6 +71,8 @@ let setting = {
     },
     data: function () {
         return {
+            inputVisible: false,
+            inputValue: '',
             form: {
                 BaseUrl: "",
                 Images: [],
@@ -81,17 +85,35 @@ let setting = {
     },
     methods: {
         submitForm() {
+            console.log(this.form.Types)
+        },
+        handleClose(tag) {
+            this.form.Types.splice(this.form.Types.indexOf(tag), 1);
+        },
 
+        showInput() {
+            this.inputVisible = true;
+            this.$nextTick(_ => {
+                this.$refs.saveTagInput.$refs.input.focus();
+            });
+        },
+        handleInputConfirm() {
+            let inputValue = this.inputValue;
+            if (inputValue) {
+                this.form.Types.push(inputValue);
+            }
+            this.inputVisible = false;
+            this.inputValue = '';
         },
         loadData() {
             axios.get("/settingInfo").then((res) => {
-                if (res.status == 200){
-                    this.form.BaseUrl =res.data.BaseUrl
-                    this.form.Images =res.data.Images
-                    this.form.Docs =res.data.Docs
-                    this.form.VideoTypes =res.data.VideoTypes
-                    this.form.Types =res.data.Types
-                    this.form.BaseDir =res.data.BaseDir
+                if (res.status == 200) {
+                    this.form.BaseUrl = res.data.BaseUrl
+                    this.form.Images = res.data.Images
+                    this.form.Docs = res.data.Docs
+                    this.form.VideoTypes = res.data.VideoTypes
+                    this.form.Types = res.data.Types
+                    this.form.BaseDir = res.data.BaseDir
                 }
             })
         }
