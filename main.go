@@ -43,9 +43,6 @@ func init() {
 	}
 
 	cons.SetBaseDir(dirs)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.VideoTypes)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Docs)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Images)
 	staticDir = curDir + "/static"
 	cons.Play = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/play.jpg")
 	cons.Open = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/open.jpg")

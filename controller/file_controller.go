@@ -5,6 +5,7 @@ import (
 	"../datasource"
 	"../service"
 	"../utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -83,6 +84,7 @@ func GetOpenFoler(c *gin.Context) {
 	id := c.Param("id")
 	service := service.FileService{}
 	file := service.FindOne(id)
+	fmt.Println(file.DirPath)
 	utils.ExecCmdExplorer(file.DirPath)
 	res := utils.NewSuccess()
 	c.JSON(http.StatusOK, res)
@@ -94,6 +96,18 @@ func GetDelete(c *gin.Context) {
 	service.Delete(id)
 	res := utils.NewSuccess()
 	c.JSON(http.StatusOK, res)
+}
+func GetSync(c *gin.Context) {
+	id := c.Param("id")
+	service := service.FileService{}
+	curFile := service.FindOne(id)
+	result, newFile := service.RequestToFile(curFile)
+	if result.Code != 200 {
+		c.JSON(http.StatusOK, result)
+		return
+	}
+	result = service.MoveCut(curFile, newFile)
+	c.JSON(http.StatusOK, result)
 }
 
 func GetRefresIndex(c *gin.Context) {
@@ -166,14 +180,7 @@ func GetRefresIndex(c *gin.Context) {
 //
 //func (fc FileController) PostSync() {
 //	id := fc.Ctx.PostValue("id")
-//	curFile := fc.Service.FindOne(id)
-//	result, newFile := fc.Service.RequestToFile(curFile)
-//	if result.Code != 200 {
-//		fc.Ctx.JSON(result)
-//		return
-//	}
-//	result = fc.Service.MoveCut(curFile, newFile)
-//	fc.Ctx.JSON(result)
+
 //
 //}
 //func (fc FileController) PostMknfo() {

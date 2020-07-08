@@ -19,6 +19,7 @@ func BuildRouter() *gin.Engine {
 
 	router.GET("/play/:id", controller.GetPlay)
 	router.GET("/delete/:id", controller.GetDelete)
+	router.GET("/sync/:id", controller.GetSync)
 	router.GET("/openFolder/:id", controller.GetOpenFoler)
 
 	router.GET("/image", controller.GetActess)
