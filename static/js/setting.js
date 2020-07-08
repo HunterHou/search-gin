@@ -1,0 +1,82 @@
+let settingHtml = '<div>'
+    + '<h1 align="center">设置</h1>'
+    + ' <el-form label-width="100px" ref="form" :model="form">'
+    + ' <el-form-item label="URL">'
+    + '    <el-input v-model="form.BaseUrl"></el-input>'
+    + '  </el-form-item>'
+    + ' <el-form-item label="图片类型">'
+    + '    <el-select v-model="form.Images" multiple placeholder="请选择" style="width: 100%">'
+    + '    <el-option\n'
+    + '      v-for="item in form.Types"'
+    + '      :key="item"'
+    + '      :label="item"'
+    + '      :value="item">'
+    + '    </el-option>'
+    + '  </el-select>'
+    + '  </el-form-item>'
+    + ' <el-form-item label="文档类型">'
+    + '    <el-select v-model="form.Docs" multiple placeholder="请选择" style="width: 100%">'
+    + '    <el-option\n'
+    + '      v-for="item in form.Types"'
+    + '      :key="item"'
+    + '      :label="item"'
+    + '      :value="item">'
+    + '    </el-option>'
+    + '  </el-select>'
+    + '  </el-form-item>'
+    + ' <el-form-item label="视频类型">'
+    + '    <el-select v-model="form.VideoTypes" multiple placeholder="请选择" style="width: 100%">'
+    + '    <el-option\n'
+    + '      v-for="item in form.Types"'
+    + '      :key="item"'
+    + '      :label="item"'
+    + '      :value="item">'
+    + '    </el-option>'
+    + '  </el-select>'
+    + '  </el-form-item>'
+    + '<el-form-item>'
+    + '    <el-button type="primary" align-text="center" @click="submitForm(\'form\')">提交</el-button>'
+    + '  </el-form-item>'
+    + '</el-form>'
+    + '</div>'
+
+let setting = {
+    template: settingHtml,
+    components: {
+        "input-vue": inputVue,
+    },
+    mounted: function () {
+        this.loadData();
+    },
+    data: function () {
+        return {
+            form: {
+                BaseUrl: "",
+                Images: [],
+                Docs: [],
+                VideoTypes: [],
+                Types: [],
+                BaseDir: [],
+            }
+        }
+    },
+    methods: {
+        submitForm() {
+
+        },
+        loadData() {
+            axios.get("/settingInfo").then((res) => {
+                if (res.status == 200){
+                    this.form.BaseUrl =res.data.BaseUrl
+                    this.form.Images =res.data.Images
+                    this.form.Docs =res.data.Docs
+                    this.form.VideoTypes =res.data.VideoTypes
+                    this.form.Types =res.data.Types
+                    this.form.BaseDir =res.data.BaseDir
+                }
+            })
+        }
+    }
+}
+
+

@@ -1,4 +1,4 @@
-var menuhtml = '<div>'
+let menuhtml = '<div>'
     +'    <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">更新索引</el-button>'
     + '<el-radio-group v-model="sortField">\n' +
     '      <el-radio-button label="code" >名称</el-radio-button>\n' +
@@ -7,7 +7,7 @@ var menuhtml = '<div>'
     '    </el-radio-group>'
     + '<el-switch v-model="sortType" active-text="倒序"  active-value="desc"  inactive-text="正序"  inactive-value="asc"> </el-switch>'
     + '<el-input placeholder="请输入内容" v-model="searchWords" >' +
-    '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()" v-loading.fullscreen.lock="fullscreenLoading">Go!</el-button>' +
+    '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
     '  </el-input>'
     +'<div v-loading="loading"\n' +
     '    element-loading-text="拼命加载中"\n' +
@@ -42,7 +42,7 @@ var menuhtml = '<div>'
     + '</div>'
     + '</div>'
 
-var menu = {
+let menu = {
 
     template: menuhtml,
     data: function () {

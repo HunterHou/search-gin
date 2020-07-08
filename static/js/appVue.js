@@ -1,5 +1,5 @@
 //根组件 vue app
-var app = new Vue({
+let app = new Vue({
   el: "#appVue",
   router: router,
   components: {

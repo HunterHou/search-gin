@@ -3,33 +3,33 @@ package controller
 import (
 	"../cons"
 	"../service"
-	"github.com/kataras/iris"
+	"../utils"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-type SettingController struct {
-	Ctx     iris.Context
-	Service service.FileService
+func GetSettingInfo(c *gin.Context) {
+	data := gin.H{
+		"BaseUrl":    cons.BaseUrl,
+		"Images":     cons.Images,
+		"Docs":       cons.Docs,
+		"VideoTypes": cons.VideoTypes,
+		"Types":      cons.Types,
+		"BaseDir":    cons.BaseDir,
+	}
+
+	c.JSON(http.StatusOK, data)
 }
+func PostSetting(c *gin.Context) {
 
-func (fc SettingController) GetSetting() {
-
-	fc.Ctx.ViewData("BaseUrl", cons.BaseUrl)
-	fc.Ctx.ViewData("Images", cons.Images)
-	fc.Ctx.ViewData("Docs", cons.Docs)
-	fc.Ctx.ViewData("VideoTypes", cons.VideoTypes)
-	fc.Ctx.ViewData("Types", cons.Types)
-	fc.Ctx.ViewData("BaseDir", cons.BaseDir)
-	fc.Ctx.View("setting.html")
-}
-
-func (fc SettingController) PostSettingsave() {
-
-	cons.BaseUrl = fc.Ctx.PostValue("BaseUrl")
-	dirs := fc.Ctx.PostValues("BaseDir")
-	cons.Images = fc.Ctx.PostValues("Images")
-	cons.VideoTypes = fc.Ctx.PostValues("VideoTypes")
-	cons.Docs = fc.Ctx.PostValues("Docs")
+	cons.BaseUrl = c.PostForm("BaseUrl")
+	dirs := c.PostFormArray("BaseDir")
+	cons.Images = c.PostFormArray("Images")
+	cons.VideoTypes = c.PostFormArray("VideoTypes")
+	cons.Docs = c.PostFormArray("Docs")
 	cons.SetBaseDir(dirs)
 	service.FlushDictionart(cons.DirFile)
-	fc.Ctx.Redirect("/setting")
+
+	res := utils.NewSuccess()
+	c.JSON(http.StatusOK, res)
 }

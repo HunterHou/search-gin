@@ -1,4 +1,4 @@
-var detailHtml = '<div>'
+let detailHtml = '<div>'
     + '<el-page-header @back="goBack"  title="返回" v-bind:content="title"></el-page-header>'
     + '<div v-if="title">'
     + '<h1>{{title}}</h1>'
@@ -7,7 +7,7 @@ var detailHtml = '<div>'
     + '<br>'
     + '<p v-html="context"></p>'
     + '</div></div>'
-var detail = {
+let detail = {
     template: detailHtml,
     data: function () {
         return {
