@@ -37,11 +37,11 @@ let settingHtml = '<div>'
     + '<el-form-item label="文件类型">'
     + '<el-tag'
     + '  :key="tag"'
-    + '  v-for="tag in form.Types"'
+    + '  v-for="tag,index in form.Types"'
     + '  closable'
     + '  :disable-transitions="false"'
     + '  @close="handleClose(tag)">'
-    + '  {{tag}}'
+    + '  {{index+1}} : {{tag}}'
     + '</el-tag>'
     + '<el-input'
     + '  class="input-new-tag"'
@@ -59,11 +59,11 @@ let settingHtml = '<div>'
     + '<el-form-item label="文件路徑">'
     + '<el-tag'
     + '  :key="tag"'
-    + '  v-for="tag in form.BaseDir"'
+    + '  v-for="tag,index in form.BaseDir"'
     + '  closable'
     + '  :disable-transitions="false"'
     + '  @close="handleCloseFile(tag)">'
-    + '  {{tag}}'
+    + '  {{index+1}} : {{tag}}'
     + '</el-tag>'
     + '<el-input'
     + '  class="input-new-tag"'
@@ -151,7 +151,7 @@ let setting = {
             this.inputValue = '';
         },
         handleCloseFile(tag) {
-            this.form.BaseUrl.splice(this.form.BaseUrl.indexOf(tag), 1);
+            this.form.BaseDir.splice(this.form.BaseUrl.indexOf(tag), 1);
         },
 
         showInputFile() {
@@ -163,7 +163,7 @@ let setting = {
         handleInputConfirmFile() {
             let inputValueFile = this.inputValueFile;
             if (inputValueFile) {
-                this.BaseUrl.Types.push(inputValueFile);
+                this.form.BaseDir.push(inputValueFile);
             }
             this.inputVisibleFile = false;
             this.inputValueFile = '';
