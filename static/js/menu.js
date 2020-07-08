@@ -1,15 +1,17 @@
 var menuhtml = '<div>'
     +'    <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">更新索引</el-button>'
     + '<el-radio-group v-model="sortField">\n' +
-    '      <el-radio-button label="code" >番號</el-radio-button>\n' +
-    '      <el-radio-button label="mtime" >時間</el-radio-button>\n' +
+    '      <el-radio-button label="code" >名称</el-radio-button>\n' +
+    '      <el-radio-button label="mtime" >时间</el-radio-button>\n' +
     '      <el-radio-button label="size" >大小</el-radio-button>\n' +
     '    </el-radio-group>'
     + '<el-switch v-model="sortType" active-text="倒序"  active-value="desc"  inactive-text="正序"  inactive-value="asc"> </el-switch>'
     + '<el-input placeholder="请输入内容" v-model="searchWords" >' +
-    '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
+    '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()" v-loading.fullscreen.lock="fullscreenLoading">Go!</el-button>' +
     '  </el-input>'
-    +'<div>'
+    +'<div v-loading="loading"\n' +
+    '    element-loading-text="拼命加载中"\n' +
+    '    element-loading-spinner="el-icon-loading" style="min-height: 800px">'
     + '<span v-if="errorMsg">{{errorMsg}}</span>'
     + '<el-pagination' +
     '  :page-sizes="[30, 60, 90, 200]" :page-size="pageSize"' +
@@ -19,7 +21,7 @@ var menuhtml = '<div>'
     '  layout="total,prev, pager, next, sizes"' +
     '  :total="totalCnt">' +
     '</el-pagination>'
-    + '<ul  class="infinite-list" style="overflow:auto">'
+    + '<ul  class="infinite-list" style="overflow:auto"  >'
     + '<li v-bind:class="listStyle" class="infinite-list-item list-item" v-for="(item,index) in dataList" :key="item.Id">'
     + '<div class="demo-image__preview block">'
     + '    <el-image class="block"'
@@ -69,6 +71,7 @@ var menu = {
             pageNo: 1,
             pageSize: 30,
             totalCnt: 0,
+            loading: false,
         }
     },
     mounted: function () {
@@ -108,13 +111,28 @@ var menu = {
         infoThis(id) {
             console.log("info", id)
         },
-        deleteThis(id) {
-            axios.get("/delete/" + id).then((res) => {
-                if (res.status === 200) {
-                    this.alertSuccess(res.data.Message)
-                }
+        deleteThis() {
+            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                axios.get("/delete/" + id).then((res) => {
+                    if (res.status === 200) {
+                        this.alertSuccess(res.data.Message)
+                    }
 
-            })
+                })
+                // this.$message({
+                //     type: 'success',
+                //     message: '删除成功!'
+                // });
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });
+            });
         },
         refreshIndex() {
             axios.get("/refreshIndex").then((res) => {
@@ -150,6 +168,7 @@ var menu = {
             data.append("keywords", this.searchWords)
             data.append("sortType", this.sortType)
             data.append("sortField", this.sortField)
+            this.loading = true;
             axios.post("/movieList", data).then((res) => {
                 if (res.status === 200) {
                     this.dataList = res.data.Data
@@ -159,6 +178,7 @@ var menu = {
                             this.imageList.push(item.ImageBase)
                         }))
                     }
+                    this.loading = false;
                 }
 
             })
