@@ -25,5 +25,7 @@ func BuildRouter() *gin.Engine {
 
 	router.GET("/buttoms", controller.GetButtom)
 	router.GET("/refreshIndex", controller.GetRefresIndex)
+	router.GET("/settingInfo", controller.GetSettingInfo)
+	router.POST("/setting", controller.PostSetting)
 	return router
 }

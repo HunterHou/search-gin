@@ -103,6 +103,27 @@ func GetRefresIndex(c *gin.Context) {
 	res := utils.NewSuccess()
 	c.JSON(http.StatusOK, res)
 }
+func GetSettingInfo(c *gin.Context) {
+	service := service.FileService{}
+	service.ScanAll()
+	datasource.SortMovieForce()
+	res := utils.NewSuccess()
+	//fc.Ctx.ViewData("BaseUrl", cons.BaseUrl)
+	//fc.Ctx.ViewData("Images", cons.Images)
+	//fc.Ctx.ViewData("Docs", cons.Docs)
+	//fc.Ctx.ViewData("VideoTypes", cons.VideoTypes)
+	//fc.Ctx.ViewData("Types", cons.Types)
+	//fc.Ctx.ViewData("BaseDir", cons.BaseDir)
+	//fc.Ctx.View("setting.html")
+	c.JSON(http.StatusOK, res)
+}
+func PostSetting(c *gin.Context) {
+	service := service.FileService{}
+	service.ScanAll()
+	datasource.SortMovieForce()
+	res := utils.NewSuccess()
+	c.JSON(http.StatusOK, res)
+}
 
 //func (fc FileController) GetSupplier() utils.Page {
 //	if len(datasource.SupplierLib) == 0 {
