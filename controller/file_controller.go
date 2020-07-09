@@ -12,7 +12,10 @@ import (
 )
 
 func GetImage(c *gin.Context) {
-
+	path := c.Param("path")
+	service := service.FileService{}
+	file := service.FindOne(path)
+	c.File(file.Png)
 }
 
 func PostMovies(c *gin.Context) {
@@ -32,8 +35,9 @@ func PostMovies(c *gin.Context) {
 	result.TotalCnt = len(list)
 	list = service.GetPage(list, pageNo, pageSize)
 	for i := range list {
-		list[i].SetPngBase64()
-		list[i].SetImageBase64()
+		//	//list[i].SetPngBase64()
+		//	//list[i].SetImageBase64()
+		list[i].Png = "http://127.0.0.1:8888/image/" + list[i].Id
 	}
 
 	result.CurCnt = len(list)
@@ -75,6 +79,7 @@ func GetPlay(c *gin.Context) {
 	id := c.Param("id")
 	service := service.FileService{}
 	file := service.FindOne(id)
+	//c.File(file.Path)
 	utils.ExecCmdStart(file.Path)
 	res := utils.NewSuccess()
 	c.JSON(http.StatusOK, res)
