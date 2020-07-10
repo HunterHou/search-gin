@@ -38,3 +38,11 @@ func SetBaseDir(dirs []string) {
 		BaseDir[string(index)] = name
 	}
 }
+
+func GetBaseDir() []string {
+	var dirs []string
+	for _, name := range BaseDir {
+		dirs = append(dirs, name)
+	}
+	return dirs
+}

@@ -37,11 +37,11 @@ let settingHtml = '<div>'
     + '<el-form-item label="文件类型">'
     + '<el-tag'
     + '  :key="tag"'
-    + '  v-for="tag in form.Types"'
+    + '  v-for="tag,index in form.Types"'
     + '  closable'
     + '  :disable-transitions="false"'
     + '  @close="handleClose(tag)">'
-    + '  {{tag}}'
+    + '  {{index+1}} : {{tag}}'
     + '</el-tag>'
     + '<el-input'
     + '  class="input-new-tag"'
@@ -55,6 +55,29 @@ let settingHtml = '<div>'
     + '</el-input>'
     +'<el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>'
     + '</el-form-item>'
+
+    + '<el-form-item label="文件路徑">'
+    + '<el-tag'
+    + '  :key="tag"'
+    + '  v-for="tag,index in form.BaseDir"'
+    + '  closable'
+    + '  :disable-transitions="false"'
+    + '  @close="handleCloseFile(tag)">'
+    + '  {{index+1}} : {{tag}}'
+    + '</el-tag>'
+    + '<el-input'
+    + '  class="input-new-tag"'
+    + '  v-if="inputVisibleFile"'
+    + '  v-model="inputValueFile"'
+    + '  ref="saveTagInputFile"'
+    + '  size="small"'
+    + '  @keyup.enter.native="handleInputConfirmFile"'
+    + '  @blur="handleInputConfirmFile"'
+    + '>'
+    + '</el-input>'
+    +'<el-button v-else class="button-new-tag" size="small" @click="showInputFile">+ New Tag</el-button>'
+    + '</el-form-item>'
+
     + '<el-form-item>'
     + '    <el-button type="primary" align-text="center" @click="submitForm(\'form\')">提交</el-button>'
     + '  </el-form-item>'
@@ -73,6 +96,10 @@ let setting = {
         return {
             inputVisible: false,
             inputValue: '',
+
+            inputVisibleFile: false,
+            inputValueFile: '',
+
             form: {
                 BaseUrl: "",
                 Images: [],
@@ -85,15 +112,24 @@ let setting = {
     },
     methods: {
         submitForm() {
-            let updateParam = new FormData();
-            updateParam.append("","")
-            axios.post("/setting",updateParam).then((res)=>{
-                if (res.status===200){
+            let data = new FormData()
+            data.append("BaseUrl", this.form.BaseUrl)
+            data.append("Images", this.form.Images)
+            data.append("Docs", this.form.Docs)
+            data.append("VideoTypes", this.form.VideoTypes)
+            data.append("Types", this.form.Types)
+            data.append("BaseDir", this.form.BaseDir)
+            this.loading = true;
+            axios.post("/setting", data).then((res) => {
+                if (res.status === 200) {
                     this.$message({
                         message: res.data.Message,
                         type: 'success'
                     });
+                    this.loadData();
+                    this.loading = false;
                 }
+
             })
         },
         handleClose(tag) {
@@ -113,6 +149,24 @@ let setting = {
             }
             this.inputVisible = false;
             this.inputValue = '';
+        },
+        handleCloseFile(tag) {
+            this.form.BaseDir.splice(this.form.BaseUrl.indexOf(tag), 1);
+        },
+
+        showInputFile() {
+            this.inputVisibleFile = true;
+            this.$nextTick(_ => {
+                this.$refs.saveTagInputFile.$refs.input.focus();
+            });
+        },
+        handleInputConfirmFile() {
+            let inputValueFile = this.inputValueFile;
+            if (inputValueFile) {
+                this.form.BaseDir.push(inputValueFile);
+            }
+            this.inputVisibleFile = false;
+            this.inputValueFile = '';
         },
         loadData() {
             axios.get("/settingInfo").then((res) => {

@@ -12,7 +12,7 @@ func ExecCmdStart(path string) {
 }
 
 func ExecCmdExplorer(path string) {
-	ExecCmd(path, "explorer")
+	ExecCmd(path, "start")
 }
 
 func ExecCmd(path string, cmdType string) {

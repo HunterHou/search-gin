@@ -19,9 +19,10 @@ func BuildRouter() *gin.Engine {
 
 	router.GET("/play/:id", controller.GetPlay)
 	router.GET("/delete/:id", controller.GetDelete)
+	router.GET("/sync/:id", controller.GetSync)
 	router.GET("/openFolder/:id", controller.GetOpenFoler)
 
-	router.GET("/image", controller.GetActess)
+	router.GET("/image/:path", controller.GetImage)
 
 	router.GET("/buttoms", controller.GetButtom)
 	router.GET("/refreshIndex", controller.GetRefresIndex)

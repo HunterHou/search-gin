@@ -4,18 +4,22 @@ import (
 	"../cons"
 	"../service"
 	"../utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 func GetSettingInfo(c *gin.Context) {
+	fmt.Println(cons.BaseDir)
+	dirs := cons.GetBaseDir()
 	data := gin.H{
 		"BaseUrl":    cons.BaseUrl,
 		"Images":     cons.Images,
 		"Docs":       cons.Docs,
 		"VideoTypes": cons.VideoTypes,
 		"Types":      cons.Types,
-		"BaseDir":    cons.BaseDir,
+		"BaseDir":    dirs,
 	}
 
 	c.JSON(http.StatusOK, data)
@@ -23,10 +27,12 @@ func GetSettingInfo(c *gin.Context) {
 func PostSetting(c *gin.Context) {
 
 	cons.BaseUrl = c.PostForm("BaseUrl")
-	dirs := c.PostFormArray("BaseDir")
-	cons.Images = c.PostFormArray("Images")
-	cons.VideoTypes = c.PostFormArray("VideoTypes")
-	cons.Docs = c.PostFormArray("Docs")
+	dirs := strings.Split(c.PostForm("BaseDir"), ",")
+
+	cons.Images = strings.Split(c.PostForm("Images"), ",")
+	cons.Types = strings.Split(c.PostForm("Types"), ",")
+	cons.VideoTypes = strings.Split(c.PostForm("VideoTypes"), ",")
+	cons.Docs = strings.Split(c.PostForm("Docs"), ",")
 	cons.SetBaseDir(dirs)
 	service.FlushDictionart(cons.DirFile)
 
