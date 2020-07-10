@@ -85,7 +85,16 @@ let setting = {
     },
     methods: {
         submitForm() {
-            console.log(this.form.Types)
+            let updateParam = new FormData();
+            updateParam.append("","")
+            axios.post("/setting",updateParam).then((res)=>{
+                if (res.status===200){
+                    this.$message({
+                        message: res.data.Message,
+                        type: 'success'
+                    });
+                }
+            })
         },
         handleClose(tag) {
             this.form.Types.splice(this.form.Types.indexOf(tag), 1);
