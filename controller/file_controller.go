@@ -15,7 +15,11 @@ func GetPng(c *gin.Context) {
 	path := c.Param("path")
 	service := service.FileService{}
 	file := service.FindOne(path)
-	c.File(file.Png)
+	if utils.ExistsFiles(file.Png) {
+		c.File(file.Png)
+	} else {
+		c.File(file.Jpg)
+	}
 }
 func GetJpg(c *gin.Context) {
 	path := c.Param("path")
@@ -72,12 +76,13 @@ func GetActess(c *gin.Context) {
 }
 func GetButtom(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"Play":   cons.Play,
-		"Change": cons.Change,
-		"Open":   cons.Open,
-		"Replay": cons.Replay,
-		"Close":  cons.Close,
-		"Stop":   cons.Stop,
+		"Play":    cons.Play,
+		"Change":  cons.Change,
+		"Open":    cons.Open,
+		"Replay":  cons.Replay,
+		"Close":   cons.Close,
+		"Stop":    cons.Stop,
+		"baseUrl": cons.BaseUrl,
 	})
 }
 func GetPlay(c *gin.Context) {

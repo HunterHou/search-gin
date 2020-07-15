@@ -19,37 +19,72 @@ let menuhtml = '<div>'
     '  :page-sizes="[30, 60, 90, 200]" :page-size="pageSize"' +
     '  @size-change="handleSizeChange"' +
     '  @current-change="handleCurrentChange"' +
-    // '  :pager-count=pagerCount' +
     '  layout="total,prev, pager, next, sizes"' +
     '  :total="totalCnt">' +
     '</el-pagination>'
     + '<ul  class="infinite-list" style="overflow:auto"  >'
     + '<li v-bind:class="listStyle" class="infinite-list-item list-item" v-for="(item,index) in dataList" :key="item.Id">'
-    + '<div class="demo-image__preview block">'
-    + '    <el-image class="block"'
-    + '        '
-    // + '    :src="item.PngBase"'
-    + '    :src="item.Png"'
-    + '   :preview-src-list="item.imageList">'
-    + ' </el-image>'
-    + '</div>'
+    + '<el-image style="width: 100\%; height: 85%" :src="item.Png" :fit="fit" @click="openWin(item.Id)" lazy></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="PlayCons" :fit="fit" @click="playThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="ChangeCons" :fit="fit" @click="thisActress(item.Actress)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="OpenCons" :fit="fit" @click="openThisFolder(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="ReplayCons" :fit="fit" @click="syncThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="CloseCons" :fit="fit" @click="infoThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="StopCons" :fit="fit"@click="deleteThis(item.Id)"></el-image>'
-    + '<el-link @click="open(item.Id)">{{ item.Name }}【{{item.SizeStr }}】</el-link> '
+    + '<br/><span>{{ item.Name }}【{{item.SizeStr }}】</span> '
     + '</li>'
     + '</ul>'
     + '</div>'
+    + '<el-dialog  :title="file.Name" :visible.sync="dialogVisible">'
+    + '<div style="margin-left: 0px">'
+    + ' <el-row :gutter="24"> '
+    + '     <img @click="open(file.Id)" :src="file.Jpg" style="width: 100%"/>'
+    + '</el-row>'
+    + ' <el-row :gutter="20"> '
+    + '     <el-col :span="4" >'
+    + '         <span>番号:</span>'
+    + '     </el-col>'
+    + '     <el-col :span="16">'
+    + '         <a href="javascript:viod(0);" @click="openLick(file.Code)" ><span>{{ file.Code }}</span></a>'
+    + '     </el-col>'
+    + '</el-row>'
+    + ' <el-row :gutter="20"> '
+    + '     <el-col :span="4" >'
+    + '         <span>优优:</span>'
+    + '     </el-col>'
+    + '     <el-col :span="16">'
+    + '         <a href="javascript:viod(0);" @click="openSearch(file.Actress)" > <span>{{ file.Actress }}</span></a>'
+    + '     </el-col>'
+    + '</el-row>'
+    + ' <el-row :gutter="20"> '
+    + '     <el-col :span="4" >'
+    + '         <span>时间:</span>'
+    + '     </el-col>'
+    + '     <el-col :span="16">'
+    + '         <span>{{ file.MTime }}</span>'
+    + '     </el-col>'
+    + '</el-row>'
+    + ' <el-row :gutter="20"> '
+    + '     <el-col :span="4" >'
+    + '         <span>大小:</span>'
+    + '     </el-col>'
+    + '     <el-col :span="16">'
+    + '         <span>{{ file.SizeStr }}</span>'
+    + '     </el-col>'
+    + '</el-row>'
+    + '</div>'
+    + '</el-dialog>'
     + '</div>'
 
 let menu = {
 
     template: menuhtml,
+
     data: function () {
         return {
+            file: "",
+            baseUrl: "",
+            dialogVisible: false,
             sortField: "mtime",
             sortType: "desc",
             listStyle: {
@@ -80,7 +115,7 @@ let menu = {
     mounted: function () {
         document.title = "目录"
         const no = this.$route.params.no
-        this.pageNo=no?no:1
+        this.pageNo = no ? no : 1
         this.queryButtom()
         this.queryList()
 
@@ -161,6 +196,7 @@ let menu = {
                     this.ReplayCons = consMap.Replay
                     this.CloseCons = consMap.Close
                     this.StopCons = consMap.Stop
+                    this.baseUrl = consMap.baseUrl
                     console.log(this.consMap)
 
                 }
@@ -195,9 +231,26 @@ let menu = {
         open(filename) {
             var self = this
             console.log(filename)
-            self.$router.push("/context/" + filename+"/"+this.pageNo)
+            self.$router.push("/context/" + filename + "/" + this.pageNo)
 
 
+        },
+        openLick(code) {
+            const url = this.baseUrl + code
+            window.open(url, '_blank');
+        },
+        openSearch(actress) {
+            const url = this.baseUrl +"search/"+ actress
+            window.open(url, '_blank');
+        },
+
+        openWin(id) {
+            axios.get("/info/" + id).then((res) => {
+                if (res.status === 200) {
+                    this.file = res.data
+                    this.dialogVisible = true
+                }
+            })
         },
         handleSizeChange(val) {
             this.pageSize = val
