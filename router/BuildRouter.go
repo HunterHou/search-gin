@@ -18,11 +18,16 @@ func BuildRouter() *gin.Engine {
 	router.GET("/actressList", controller.GetActess)
 
 	router.GET("/play/:id", controller.GetPlay)
+	router.GET("/info/:id", controller.GetInfo)
 	router.GET("/delete/:id", controller.GetDelete)
 	router.GET("/sync/:id", controller.GetSync)
 	router.GET("/openFolder/:id", controller.GetOpenFoler)
 
-	router.GET("/image/:path", controller.GetImage)
+	router.GET("/infoNext/:id", controller.GetNextInfo)
+	router.GET("/infoLast/:id", controller.GetLastInfo)
+
+	router.GET("/png/:path", controller.GetPng)
+	router.GET("/jpg/:path", controller.GetJpg)
 
 	router.GET("/buttoms", controller.GetButtom)
 	router.GET("/refreshIndex", controller.GetRefresIndex)

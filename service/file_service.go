@@ -212,6 +212,22 @@ func (fs FileService) FindOne(Id string) datamodels.Movie {
 	curFile := datasource.FileLib[Id]
 	return curFile
 }
+func (fs FileService) FindNext(Id string, offset int) datamodels.Movie {
+	if len(datasource.FileList) == 0 {
+		fs.ScanAll()
+	}
+	length := len(datasource.FileList)
+	for i := 0; i < length; i++ { //looping from 0 to the length of the array
+		if datasource.FileList[i].Id == Id {
+			if i+offset < 0 || i+offset > length {
+				return datasource.FileList[i]
+			}
+			return datasource.FileList[i+offset]
+		}
+	}
+	curFile := datasource.FileLib[Id]
+	return curFile
+}
 
 func (fs FileService) SortAct(lib []datamodels.Actress) {
 	sort.Slice(lib, func(i, j int) bool {

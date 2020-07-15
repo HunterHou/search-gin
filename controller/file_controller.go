@@ -11,11 +11,17 @@ import (
 	"strconv"
 )
 
-func GetImage(c *gin.Context) {
+func GetPng(c *gin.Context) {
 	path := c.Param("path")
 	service := service.FileService{}
 	file := service.FindOne(path)
 	c.File(file.Png)
+}
+func GetJpg(c *gin.Context) {
+	path := c.Param("path")
+	service := service.FileService{}
+	file := service.FindOne(path)
+	c.File(file.Jpg)
 }
 
 func PostMovies(c *gin.Context) {
@@ -35,9 +41,8 @@ func PostMovies(c *gin.Context) {
 	result.TotalCnt = len(list)
 	list = service.GetPage(list, pageNo, pageSize)
 	for i := range list {
-		//	//list[i].SetPngBase64()
-		//	//list[i].SetImageBase64()
-		list[i].Png = "http://127.0.0.1:8888/image/" + list[i].Id
+		list[i].Png = "http://127.0.0.1:8888/png/" + list[i].Id
+		list[i].Jpg = "http://127.0.0.1:8888/jpg/" + list[i].Id
 	}
 
 	result.CurCnt = len(list)
@@ -83,6 +88,27 @@ func GetPlay(c *gin.Context) {
 	utils.ExecCmdStart(file.Path)
 	res := utils.NewSuccess()
 	c.JSON(http.StatusOK, res)
+}
+func GetInfo(c *gin.Context) {
+	id := c.Param("id")
+	service := service.FileService{}
+	file := service.FindOne(id)
+	file.Jpg = "http://127.0.0.1:8888/jpg/" + file.Id
+	c.JSON(http.StatusOK, file)
+}
+func GetLastInfo(c *gin.Context) {
+	id := c.Param("id")
+	service := service.FileService{}
+	file := service.FindNext(id, -1)
+	file.Jpg = "http://127.0.0.1:8888/jpg/" + file.Id
+	c.JSON(http.StatusOK, file)
+}
+func GetNextInfo(c *gin.Context) {
+	id := c.Param("id")
+	service := service.FileService{}
+	file := service.FindNext(id, 1)
+	file.Jpg = "http://127.0.0.1:8888/jpg/" + file.Id
+	c.JSON(http.StatusOK, file)
 }
 
 func GetOpenFoler(c *gin.Context) {

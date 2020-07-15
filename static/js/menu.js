@@ -1,15 +1,17 @@
 let menuhtml = '<div>'
-    +'    <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">更新索引</el-button>'
-    + '<el-radio-group v-model="sortField">\n' +
+    + '  <el-row>  '
+    + '<el-col :span="2"> <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">更新索引</el-button></el-col>'
+    + '<el-col :span="6"><el-radio-group v-model="sortField">\n' +
     '      <el-radio-button label="code" >名称</el-radio-button>\n' +
     '      <el-radio-button label="mtime" >时间</el-radio-button>\n' +
     '      <el-radio-button label="size" >大小</el-radio-button>\n' +
     '    </el-radio-group>'
-    + '<el-switch v-model="sortType" active-text="倒序"  active-value="desc"  inactive-text="正序"  inactive-value="asc"> </el-switch>'
-    + '<el-input placeholder="请输入内容" v-model="searchWords" >' +
+    + '<el-switch v-model="sortType" active-text="倒序"  active-value="desc"  inactive-text="正序"  inactive-value="asc"> </el-switch></el-col>'
+    + '<el-col :span="8"><el-input placeholder="请输入内容" v-model="searchWords" >' +
     '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
-    '  </el-input>'
-    +'<div v-loading="loading"\n' +
+    '  </el-input></el-col>'
+    + '</el-row>'
+    + '<div v-loading="loading"\n' +
     '    element-loading-text="拼命加载中"\n' +
     '    element-loading-spinner="el-icon-loading" style="min-height: 800px">'
     + '<span v-if="errorMsg">{{errorMsg}}</span>'
@@ -28,7 +30,7 @@ let menuhtml = '<div>'
     + '        '
     // + '    :src="item.PngBase"'
     + '    :src="item.Png"'
-    + '   :preview-src-list="imageList">'
+    + '   :preview-src-list="item.imageList">'
     + ' </el-image>'
     + '</div>'
     + '<el-image style="width: 35px; height: 35px" :src="PlayCons" :fit="fit" @click="playThis(item.Id)"></el-image>'
@@ -37,7 +39,7 @@ let menuhtml = '<div>'
     + '<el-image style="width: 35px; height: 35px" :src="ReplayCons" :fit="fit" @click="syncThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="CloseCons" :fit="fit" @click="infoThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="StopCons" :fit="fit"@click="deleteThis(item.Id)"></el-image>'
-    + '<el-link @click="open(item.Path)">{{ item.Name }}</el-link> '
+    + '<el-link @click="open(item.Id)">{{ item.Name }}【{{item.SizeStr }}】</el-link> '
     + '</li>'
     + '</ul>'
     + '</div>'
@@ -77,8 +79,11 @@ let menu = {
     },
     mounted: function () {
         document.title = "目录"
+        const no = this.$route.params.no
+        this.pageNo=no?no:1
         this.queryButtom()
         this.queryList()
+
     },
     methods: {
 
@@ -129,10 +134,6 @@ let menu = {
                     }
 
                 })
-                // this.$message({
-                //     type: 'success',
-                //     message: '删除成功!'
-                // });
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -167,7 +168,7 @@ let menu = {
             })
         },
         queryList() {
-            this.dataList=[]
+            this.dataList = []
             let data = new FormData()
             data.append("pageNo", this.pageNo)
             data.append("pageSize", this.pageSize)
@@ -181,7 +182,9 @@ let menu = {
                     this.totalCnt = res.data.TotalCnt
                     if (this.dataList && this.dataList.length > 0) {
                         this.dataList.map((item => {
-                            this.imageList.push(item.ImageBase)
+                            let image = []
+                            image.push(item.Jpg)
+                            item.imageList = image
                         }))
                     }
                     this.loading = false;
@@ -192,16 +195,16 @@ let menu = {
         open(filename) {
             var self = this
             console.log(filename)
-            self.$router.push("/context/" + filename)
+            self.$router.push("/context/" + filename+"/"+this.pageNo)
 
 
         },
         handleSizeChange(val) {
-            this.pageSize= val
+            this.pageSize = val
             this.queryList()
         },
         handleCurrentChange(val) {
-            this.pageNo=val
+            this.pageNo = val
             this.queryList()
         },
         alertSuccess(msg) {
