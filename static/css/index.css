@@ -4,12 +4,12 @@
     float: left;
     margin-right: 15px;
     list-style: none;
-    margin-bottom: 50px;
+    margin-bottom: 0px;
 }
 
 .img-list-item {
     width: 200px;
-    height: 350px;
+    height: 320px;
 }
 .block{
     width: 200px;

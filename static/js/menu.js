@@ -24,7 +24,7 @@ let menuhtml = '<div>'
     '</el-pagination>'
     + '<ul  class="infinite-list" style="overflow:auto"  >'
     + '<li v-bind:class="listStyle" class="infinite-list-item list-item" v-for="(item,index) in dataList" :key="item.Id">'
-    + '<div @click="openWin(item.Id)"  style="width: 100\%; height: 85%" ><el-image style="width: 100\%; height: 85%" :src="item.Png" :fit="fit" lazy></el-image></div>'
+    + '<div @click="openWin(item.Id)"  style="width: 100\%; height: 85%" ><el-image style="width: 100\%; height: 100%" :src="item.Png" :fit="fit" lazy></el-image></div>'
     + '<el-image style="width: 35px; height: 35px" :src="PlayCons" :fit="fit" @click="playThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="ChangeCons" :fit="fit" @click="thisActress(item.Actress)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="OpenCons" :fit="fit" @click="openThisFolder(item.Id)"></el-image>'
@@ -240,7 +240,7 @@ let menu = {
             window.open(url, '_blank');
         },
         openSearch(actress) {
-            const url = this.baseUrl +"search/"+ actress
+            const url = this.baseUrl + "search/" + actress
             window.open(url, '_blank');
         },
 
