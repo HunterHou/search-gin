@@ -26,7 +26,11 @@ func ImageToPng(src string) error {
 	fin2, _ := os.Open(src)
 	defer fin.Close()
 	defer fin2.Close()
-	fout, _ := os.Create(des)
+	fout, createErr := os.Create(des)
+	if createErr != nil {
+		fmt.Println("err:", createErr)
+		return createErr
+	}
 	defer fout.Close()
 	config, _, _ := image.DecodeConfig(fin2)
 	srcImage, fm, err := image.Decode(fin)

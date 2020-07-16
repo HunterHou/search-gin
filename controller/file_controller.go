@@ -31,6 +31,9 @@ func GetJpg(c *gin.Context) {
 func PostMovies(c *gin.Context) {
 	keywords := c.PostForm("keywords")
 	pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
+	if pageNo < 1 {
+		pageNo = 1
+	}
 	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "30"))
 	sortType := c.DefaultPostForm("sortType", "code")
 	sortField := c.DefaultPostForm("sortField", "desc")
@@ -43,12 +46,14 @@ func PostMovies(c *gin.Context) {
 	datasource.SortMovies(sortField, sortType, false)
 	list := service.SearchByKeyWord(datasource.FileList, keywords)
 	result.TotalCnt = len(list)
+	result.PageSize = pageSize
+	result.SetResultCnt(result.TotalCnt, pageNo)
 	list = service.GetPage(list, pageNo, pageSize)
+
 	for i := range list {
 		list[i].Png = "http://127.0.0.1:8888/png/" + list[i].Id
 		list[i].Jpg = "http://127.0.0.1:8888/jpg/" + list[i].Id
 	}
-
 	result.CurCnt = len(list)
 	result.Data = list
 

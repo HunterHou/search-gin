@@ -1,37 +1,40 @@
 let menuhtml = '<div>'
-    + '  <el-row>  '
+    +'<el-button style="position: fixed;top: 650px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
+    +'<el-button style="position: fixed;top: 650px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
+    + '  <el-row> '
     + '<el-col :span="2"> <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">更新索引</el-button></el-col>'
-    + '<el-col :span="6"><el-radio-group v-model="sortField">\n' +
-    '      <el-radio-button label="code" >名称</el-radio-button>\n' +
-    '      <el-radio-button label="mtime" >时间</el-radio-button>\n' +
-    '      <el-radio-button label="size" >大小</el-radio-button>\n' +
+    + '<el-col :span="6"><el-radio-group v-model="sortField">' +
+    '      <el-radio-button label="code" >名称</el-radio-button>' +
+    '      <el-radio-button label="mtime" >时间</el-radio-button>' +
+    '      <el-radio-button label="size" >大小</el-radio-button>' +
     '    </el-radio-group>'
     + '<el-switch v-model="sortType" active-text="倒序"  active-value="desc"  inactive-text="正序"  inactive-value="asc"> </el-switch></el-col>'
     + '<el-col :span="8"><el-input placeholder="请输入内容" v-model="searchWords" >' +
     '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
     '  </el-input></el-col>'
     + '</el-row>'
-    + '<div v-loading="loading"\n' +
-    '    element-loading-text="拼命加载中"\n' +
+    + '<div v-loading="loading"' +
+    '    element-loading-text="拼命加载中"' +
     '    element-loading-spinner="el-icon-loading" style="min-height: 800px">'
     + '<span v-if="errorMsg">{{errorMsg}}</span>'
-    + '<el-pagination' +
+    + '<el-pagination class="pageTool" ' +
     '  :page-sizes="[30, 60, 90, 200]" :page-size="pageSize"' +
     '  @size-change="handleSizeChange"' +
+    ' :current-page="pageNo"'+
     '  @current-change="handleCurrentChange"' +
     '  layout="total,prev, pager, next, sizes"' +
     '  :total="totalCnt">' +
     '</el-pagination>'
     + '<ul  class="infinite-list" style="overflow:auto"  >'
     + '<li v-bind:class="listStyle" class="infinite-list-item list-item" v-for="(item,index) in dataList" :key="item.Id">'
-    + '<div @click="openWin(item.Id)"  style="width: 100\%; height: 85%" ><el-image style="width: 100\%; height: 100%" :src="item.Png" :fit="fit" lazy></el-image></div>'
+    + '<div @click="openWin(item.Id)" class="img-list-item"  ><el-image style="width: 100\%; height: 100%" :src="item.Png" :fit="fit" lazy></el-image></div>'
     + '<el-image style="width: 35px; height: 35px" :src="PlayCons" :fit="fit" @click="playThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="ChangeCons" :fit="fit" @click="thisActress(item.Actress)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="OpenCons" :fit="fit" @click="openThisFolder(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="ReplayCons" :fit="fit" @click="syncThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="CloseCons" :fit="fit" @click="infoThis(item.Id)"></el-image>'
     + '<el-image style="width: 35px; height: 35px" :src="StopCons" :fit="fit"@click="deleteThis(item.Id)"></el-image>'
-    + '<br/><span>{{ item.Name }}【{{item.SizeStr }}】</span> '
+    + '<br/><span>【{{item.SizeStr }}】 {{ item.Name }}</span> '
     + '</li>'
     + '</ul>'
     + '</div>'
@@ -89,11 +92,10 @@ let menu = {
             sortType: "desc",
             listStyle: {
                 'width': "240px",
-                'height': '400px',
+                'height': '380px',
                 'float': 'left',
                 'margin-right': '25px',
             },
-            imageList: [],
             dataList: "",
             dataCnt: 0,
             errorMsg: "",
@@ -109,19 +111,30 @@ let menu = {
             pageNo: 1,
             pageSize: 30,
             totalCnt: 0,
+            totalPage:0,
             loading: false,
         }
     },
     mounted: function () {
         document.title = "目录"
         const no = this.$route.params.no
-        this.pageNo = no ? no : 1
+        this.pageNo = no ? parseInt(no) : 1
         this.queryButtom()
         this.queryList()
 
     },
     methods: {
 
+        pageLoading(i){
+            this.pageNo=parseInt(this.pageNo)+parseInt(i)
+            if(this.pageNo<1){
+                this.pageNo=1
+            }
+            if (this.pageNo>this.totalPage){
+                this.pageNo=this.totalPage
+            }
+            this.queryList(true)
+        },
         playThis(id) {
 
             axios.get("/play/" + id).then((res) => {
@@ -203,7 +216,7 @@ let menu = {
 
             })
         },
-        queryList() {
+        queryList(concat) {
             this.dataList = []
             let data = new FormData()
             data.append("pageNo", this.pageNo)
@@ -214,14 +227,17 @@ let menu = {
             this.loading = true;
             axios.post("/movieList", data).then((res) => {
                 if (res.status === 200) {
-                    this.dataList = res.data.Data
+                   var  resData =res.data.Data
                     this.totalCnt = res.data.TotalCnt
-                    if (this.dataList && this.dataList.length > 0) {
-                        this.dataList.map((item => {
-                            let image = []
-                            image.push(item.Jpg)
-                            item.imageList = image
-                        }))
+                    this.totalPage=res.data.TotalPage
+                    if (resData && resData.length > 0) {
+                        if (!concat){
+                            this.dataList = resData
+                        }else{
+                            resData.map(item=>{
+                                this.dataList.push(item)
+                            })
+                        }
                     }
                     this.loading = false;
                 }

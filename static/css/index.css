@@ -1,17 +1,24 @@
 .list-item {
     width: 240px;
-    height: 400px;
+    height: 500px;
     float: left;
     margin-right: 15px;
     list-style: none;
-    margin-bottom: 0px;
+    margin-bottom: 5px;
 }
 
 .img-list-item {
-    width: 200px;
+    width: 220px;
     height: 320px;
 }
 .block{
     width: 200px;
     height: 300px;
+}
+
+.pageTool{
+    position: fixed;
+    bottom: 1px;
+    overflow: auto;
+    z-index: 999;
 }
