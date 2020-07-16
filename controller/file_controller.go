@@ -44,7 +44,7 @@ func PostMovies(c *gin.Context) {
 		datasource.SortMovies(sortField, sortType, true)
 	}
 	datasource.SortMovies(sortField, sortType, false)
-	list, size := service.SearchByKeyWord(datasource.FileList, keywords)
+	list, size := service.SearchByKeyWord(datasource.FileList, datasource.FileSize, keywords)
 	result.TotalCnt = len(list)
 	result.PageSize = pageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
