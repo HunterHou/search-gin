@@ -309,10 +309,10 @@ func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
 	return result
 }
 
-func (fs FileService) SearchByKeyWord(files []datamodels.Movie, keyWord string) []datamodels.Movie {
+func (fs FileService) SearchByKeyWord(files []datamodels.Movie, keyWord string) ([]datamodels.Movie, int64) {
 
 	if keyWord == "" {
-		return files
+		return files, 0
 	}
 
 	var result []datamodels.Movie
@@ -330,7 +330,7 @@ func (fs FileService) SearchByKeyWord(files []datamodels.Movie, keyWord string) 
 		}
 	}
 
-	return result
+	return result, size
 }
 
 func (fs FileService) GetPage(files []datamodels.Movie, pageNo int, pageSize int) []datamodels.Movie {

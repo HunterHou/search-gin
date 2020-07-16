@@ -1,6 +1,6 @@
 let menuhtml = '<div>'
-    +'<el-button style="position: fixed;top: 650px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
-    +'<el-button style="position: fixed;top: 650px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
+    +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
+    +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
     + '  <el-row> '
     + '<el-col :span="2"> <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">更新索引</el-button></el-col>'
     + '<el-col :span="6"><el-radio-group v-model="sortField">' +
