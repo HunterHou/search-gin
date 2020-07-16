@@ -56,6 +56,7 @@ func PostMovies(c *gin.Context) {
 		list[i].Png = "http://127.0.0.1:8888/png/" + list[i].Id
 		list[i].Jpg = "http://127.0.0.1:8888/jpg/" + list[i].Id
 	}
+	result.CurSize = utils.GetSizeStr(service.DataSize(list))
 	result.CurCnt = len(list)
 	result.Data = list
 

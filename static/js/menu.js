@@ -9,10 +9,10 @@ let menuhtml = '<div>'
     '      <el-radio-button label="size" >大小</el-radio-button>' +
     '    </el-radio-group>'
     + '<el-switch v-model="sortType" active-text="倒序"  active-value="desc"  inactive-text="正序"  inactive-value="asc"> </el-switch></el-col>'
-    + '<el-col :span="8"><el-input placeholder="请输入内容" v-model="searchWords" >' +
+    + '<el-col :span="6"><el-input placeholder="请输入内容" v-model="searchWords" >' +
     '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
     '  </el-input></el-col>'
-    + '</el-row>'
+    + '<el-col :span="4" :offset="1"><span>  扫描：{{totalSize}} 搜索：{{resultSize}}</span></el-col></el-row>'
     + '<div v-loading="loading"' +
     '    element-loading-text="拼命加载中"' +
     '    element-loading-spinner="el-icon-loading" style="min-height: 800px">'
@@ -113,6 +113,8 @@ let menu = {
             totalCnt: 0,
             totalPage:0,
             loading: false,
+            totalSize:0,
+            resultSize:0,
         }
     },
     mounted: function () {
@@ -230,6 +232,8 @@ let menu = {
                    var  resData =res.data.Data
                     this.totalCnt = res.data.TotalCnt
                     this.totalPage=res.data.TotalPage
+                    this.totalSize =res.data.TotalSize
+                    this.resultSize =res.data.ResultSize
                     if (resData && resData.length > 0) {
                         if (!concat){
                             this.dataList = resData
