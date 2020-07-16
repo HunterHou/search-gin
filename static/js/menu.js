@@ -2,23 +2,24 @@ let menuhtml = '<div>'
     +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
     +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
     + '  <el-row> '
-    + '<el-col :span="2"> <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">更新索引</el-button></el-col>'
-    + '<el-col :span="6"><el-radio-group v-model="sortField">' +
+    + '<el-col :span="2"> <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">重建索引</el-button></el-col>'
+    + '<el-col :span="4"><el-radio-group v-model="sortField">' +
     '      <el-radio-button label="code" >名称</el-radio-button>' +
     '      <el-radio-button label="mtime" >时间</el-radio-button>' +
     '      <el-radio-button label="size" >大小</el-radio-button>' +
-    '    </el-radio-group>'
-    + '<el-switch v-model="sortType" active-text="倒序"  active-value="desc"  inactive-text="正序"  inactive-value="asc"> </el-switch></el-col>'
-    + '<el-col :span="6"><el-input placeholder="请输入内容" v-model="searchWords" >' +
+    '    </el-radio-group></el-col>'
+    + '<el-col :span="2"><el-switch v-model="sortType" active-text="倒"  active-value="desc"  inactive-text="正"  inactive-value="asc"> </el-switch></el-col>'
+    + '<el-col :span="8"><el-input placeholder="请输入内容" v-model="searchWords" clearable >' +
     '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
     '  </el-input></el-col>'
-    + '<el-col :span="4" :offset="1"><span>  扫描：{{totalSize}} 搜索：{{resultSize}}</span></el-col></el-row>'
+    + '</el-row>'
+    +'<el-row><el-col :span="24" :offset="1"><span>  扫描库：{{totalSize}}   搜索：{{resultSize}}   当前：{{curSize}}</span></el-col></el-row>'
     + '<div v-loading="loading"' +
     '    element-loading-text="拼命加载中"' +
     '    element-loading-spinner="el-icon-loading" style="min-height: 800px">'
     + '<span v-if="errorMsg">{{errorMsg}}</span>'
     + '<el-pagination class="pageTool" ' +
-    '  :page-sizes="[30, 60, 90, 200]" :page-size="pageSize"' +
+    '  :page-sizes="[14,30, 60, 90, 200]" :page-size="pageSize"' +
     '  @size-change="handleSizeChange"' +
     ' :current-page="pageNo"'+
     '  @current-change="handleCurrentChange"' +
@@ -115,6 +116,7 @@ let menu = {
             loading: false,
             totalSize:0,
             resultSize:0,
+            curSize:0,
         }
     },
     mounted: function () {
@@ -234,6 +236,7 @@ let menu = {
                     this.totalPage=res.data.TotalPage
                     this.totalSize =res.data.TotalSize
                     this.resultSize =res.data.ResultSize
+                    this.curSize  =res.data.CurSize
                     if (resData && resData.length > 0) {
                         if (!concat){
                             this.dataList = resData
