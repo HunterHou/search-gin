@@ -26,12 +26,19 @@ let app = new Vue({
       // console.log(key, keyPath)
       if (key == "/home") {
         this.headTitle = "首页"
+        this.activeIndex ="/home"
       }
       if (key == "/menu") {
         this.headTitle = "目录"
+        this.activeIndex ="/menu"
       }
       if (key == "/context") {
         this.headTitle = "详情"
+        this.activeIndex ="/context"
+      }
+      if (key == "/setting") {
+        this.headTitle = "設置"
+        this.activeIndex ="/setting"
       }
       document.title = this.headTitle
     },

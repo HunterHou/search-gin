@@ -1,8 +1,9 @@
 
 let homeHtml = '<div>'
-    + ' <el-form label-width="100px">'
-    + ' <input-vue></input-vue>'
-    + '</el-form>'
+    +'<h1>歡迎登錄</h1>'
+    // + ' <el-form label-width="100px">'
+    // + ' <input-vue></input-vue>'
+    // + '</el-form>'
     + '</div>'
 
 let homeVue = {
