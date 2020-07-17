@@ -1,15 +1,12 @@
 let menuhtml = '<div>'
-    +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
-    +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
-    + '  <el-row> '
-    + '<el-col :span="2"> <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">重建索引</el-button></el-col>'
-    + '<el-col :span="4"><el-radio-group v-model="sortField">' +
-    '      <el-radio-button label="code" >名称</el-radio-button>' +
-    '      <el-radio-button label="mtime" >时间</el-radio-button>' +
-    '      <el-radio-button label="size" >大小</el-radio-button>' +
-    '    </el-radio-group></el-col>'
-    + '<el-col :span="2"><el-switch v-model="sortType" active-text="倒"  active-value="desc"  inactive-text="正"  inactive-value="asc"> </el-switch></el-col>'
-    + '<el-col :span="8"><el-input placeholder="请输入内容" v-model="searchWords" clearable >' +
+    +'    <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">更新索引</el-button>'
+    + '<el-radio-group v-model="sortField">\n' +
+    '      <el-radio-button label="code" >名称</el-radio-button>\n' +
+    '      <el-radio-button label="mtime" >时间</el-radio-button>\n' +
+    '      <el-radio-button label="size" >大小</el-radio-button>\n' +
+    '    </el-radio-group>'
+    + '<el-switch v-model="sortType" active-text="倒序"  active-value="desc"  inactive-text="正序"  inactive-value="asc"> </el-switch>'
+    + '<el-input placeholder="请输入内容" v-model="searchWords" >' +
     '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
     '  </el-input></el-col>'
     + '</el-row>'
@@ -83,7 +80,6 @@ let menuhtml = '<div>'
 let menu = {
 
     template: menuhtml,
-
     data: function () {
         return {
             file: "",

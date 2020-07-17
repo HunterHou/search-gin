@@ -6,3 +6,4 @@ app.exe
 .vscode/settings.json
 client/node_modules/
 node_modules/
+/app/
