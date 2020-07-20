@@ -37,6 +37,9 @@ func PostMovies(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "30"))
 	sortType := c.DefaultPostForm("sortType", "code")
 	sortField := c.DefaultPostForm("sortField", "desc")
+	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
+
+
 	service := service.FileService{}
 	result := utils.NewPage()
 	if len(datasource.FileList) == 0 {
@@ -44,7 +47,12 @@ func PostMovies(c *gin.Context) {
 		datasource.SortMovies(sortField, sortType, true)
 	}
 	datasource.SortMovies(sortField, sortType, false)
-	list, size := service.SearchByKeyWord(datasource.FileList, datasource.FileSize, keywords)
+	dataSource := datasource.FileList
+	if onlyRepeat == "true" {
+		keywords = ""
+		dataSource = service.OnlyRepeat(dataSource)
+	}
+	list, size := service.SearchByKeyWord(dataSource, datasource.FileSize, keywords)
 	result.TotalCnt = len(list)
 	result.PageSize = pageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
