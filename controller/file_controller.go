@@ -61,8 +61,8 @@ func PostMovies(c *gin.Context) {
 	list = service.GetPage(list, pageNo, pageSize)
 
 	for i := range list {
-		list[i].Png = "http://127.0.0.1:8888/png/" + list[i].Id
-		list[i].Jpg = "http://127.0.0.1:8888/jpg/" + list[i].Id
+		list[i].Png = "/png/" + list[i].Id
+		list[i].Jpg = "/jpg/" + list[i].Id
 	}
 	result.CurSize = utils.GetSizeStr(service.DataSize(list))
 	result.CurCnt = len(list)
@@ -121,14 +121,14 @@ func GetLastInfo(c *gin.Context) {
 	id := c.Param("id")
 	service := service.FileService{}
 	file := service.FindNext(id, -1)
-	file.Jpg = "http://127.0.0.1:8888/jpg/" + file.Id
+	file.Jpg = "/jpg/" + file.Id
 	c.JSON(http.StatusOK, file)
 }
 func GetNextInfo(c *gin.Context) {
 	id := c.Param("id")
 	service := service.FileService{}
 	file := service.FindNext(id, 1)
-	file.Jpg = "http://127.0.0.1:8888/jpg/" + file.Id
+	file.Jpg = "/jpg/" + file.Id
 	c.JSON(http.StatusOK, file)
 }
 

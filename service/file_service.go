@@ -369,6 +369,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
 		size = size + curFile.Size
+		curFile.Id=string(i)
 		filemap[curFile.Id] = curFile
 		curActress, ok := actessmap[curFile.Actress]
 		if ok {

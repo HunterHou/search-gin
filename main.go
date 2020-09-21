@@ -54,7 +54,7 @@ func init() {
 
 func main() {
 	app := router.BuildRouter()
-	utils.ExecCmdStart("http://127.0.0.1:8888/")
-	app.Run(":8888")
+	utils.ExecCmdStart("http://127.0.0.1:80/")
+	app.Run(":80")
 
 }
