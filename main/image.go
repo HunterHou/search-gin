@@ -6,9 +6,11 @@ import (
 	_ "image/jpeg"
 	"image/png"
 	"os"
+	"testing"
 )
 
-func main() {
+// TestScan2 ..
+func TestScan2(test testing.T) {
 	src := "d:\\5.jpg"
 	des := "d:\\111.png"
 	fmt.Println("src: %s des:%s", src, des)

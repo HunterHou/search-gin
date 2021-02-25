@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"net"
+	"testing"
 )
 
-func main() {
+// TestScan5 ..
+func TestScan5(test testing.T) {
 
 	addresses, err := net.InterfaceAddrs()
 	if err != nil {

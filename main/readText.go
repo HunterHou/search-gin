@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"search-gin/datasource"
 	"search-gin/service"
+	"testing"
 )
 
-func main() {
+// TestScan4 ..
+func TestScan4(test testing.T) {
 	service.ReadDictionary("D:\\code\\search-iris\\src\\dirList.ini")
 	for index, name := range datasource.DictLib.LibMap {
 		if len(name) <= 1 {
@@ -19,4 +21,5 @@ func main() {
 		}
 
 	}
+	test.Log("over")
 }

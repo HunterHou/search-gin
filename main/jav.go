@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"net/http"
 	"strings"
+	"testing"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
-func main() {
+// TestScan3 ..
+func TestScan3(test testing.T) {
 	url := "https://www.cdnbus.in/ATID-389"
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Add("User-Agent", "Mozilla/6.0")

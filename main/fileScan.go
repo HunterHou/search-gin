@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
+	"testing"
 
 	"search-gin/cons"
 	"search-gin/service"
 	"search-gin/utils"
 )
 
-func main() {
+// TestScan ..
+func TestScan(test testing.T) {
 
 	var baseDir = "f:\\"
 	var videoTypes = []string{cons.AVI, cons.MKV, cons.WMV, cons.MP4}
