@@ -151,7 +151,7 @@ let setting = {
             this.inputValue = '';
         },
         handleCloseFile(tag) {
-            this.form.BaseDir.splice(this.form.BaseUrl.indexOf(tag), 1);
+            this.form.BaseDir.splice(this.form.BaseDir.indexOf(tag), 1);
         },
 
         showInputFile() {
