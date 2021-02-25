@@ -1,0 +1,4 @@
+Go mod代理设置
+
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
