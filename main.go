@@ -2,11 +2,10 @@ package main
 
 import (
 	"path/filepath"
-
-	"./cons"
-	"./router"
-	"./service"
-	"./utils"
+	"search-gin/cons"
+	"search-gin/router"
+	"search-gin/service"
+	"search-gin/utils"
 )
 
 var curDir string

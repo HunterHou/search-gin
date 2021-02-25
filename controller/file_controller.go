@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"../cons"
-	"../datasource"
-	"../service"
-	"../utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"search-gin/cons"
+	"search-gin/datasource"
+	"search-gin/service"
+	"search-gin/utils"
 	"strconv"
 )
 
@@ -38,7 +38,6 @@ func PostMovies(c *gin.Context) {
 	sortType := c.DefaultPostForm("sortType", "code")
 	sortField := c.DefaultPostForm("sortField", "desc")
 	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
-
 
 	service := service.FileService{}
 	result := utils.NewPage()

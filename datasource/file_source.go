@@ -3,7 +3,7 @@ package datasource
 import (
 	"sort"
 
-	"../datamodels"
+	"search-gin/datamodels"
 )
 
 var DefSortField = "mtime"

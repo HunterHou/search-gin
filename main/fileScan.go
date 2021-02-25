@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"../cons"
-	"../service"
-	"../utils"
+	"search-gin/cons"
+	"search-gin/service"
+	"search-gin/utils"
 )
 
 func main() {

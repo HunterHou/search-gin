@@ -1,10 +1,6 @@
 package service
 
 import (
-	"../cons"
-	"../datamodels"
-	"../datasource"
-	"../utils"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
@@ -12,6 +8,10 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"search-gin/cons"
+	"search-gin/datamodels"
+	"search-gin/datasource"
+	"search-gin/utils"
 	"sort"
 	"strings"
 	"sync"
@@ -369,7 +369,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
 		size = size + curFile.Size
-		curFile.Id=string(i)
+		curFile.Id = string(i)
 		filemap[curFile.Id] = curFile
 		curActress, ok := actessmap[curFile.Actress]
 		if ok {

@@ -3,8 +3,8 @@ package router
 import (
 	"net/http"
 
-	"../controller"
 	"github.com/gin-gonic/gin"
+	"search-gin/controller"
 )
 
 func BuildRouter() *gin.Engine {

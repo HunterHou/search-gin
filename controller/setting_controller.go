@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"../cons"
-	"../service"
-	"../utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"search-gin/cons"
+	"search-gin/service"
+	"search-gin/utils"
 	"strings"
 )
 

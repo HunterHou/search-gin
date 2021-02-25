@@ -1,8 +1,8 @@
 package main
 
 import (
-	"../utils"
 	"fmt"
+	"search-gin/utils"
 )
 
 func main() {

@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 import (
-	"../cons"
-	"../datamodels"
+	"search-gin/cons"
+	"search-gin/datamodels"
 )
 
 func FlushDictionart(path string) {

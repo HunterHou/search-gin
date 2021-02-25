@@ -1,9 +1,9 @@
 package main
 
 import (
-	"../datasource"
-	"../service"
 	"fmt"
+	"search-gin/datasource"
+	"search-gin/service"
 )
 
 func main() {
