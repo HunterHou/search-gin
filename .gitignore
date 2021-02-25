@@ -7,3 +7,4 @@ app.exe
 client/node_modules/
 node_modules/
 /app/
+__debug_bin
