@@ -43,17 +43,17 @@ func init() {
 
 	cons.SetBaseDir(dirs)
 	staticDir = curDir + "/static"
-	cons.Play = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/play.jpg")
-	cons.Open = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/open.jpg")
-	cons.Change = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/change.jpg")
-	cons.Replay = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/replay.jpg")
-	cons.Close = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/close.jpg")
-	cons.Stop = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/stop.jpg")
+	// cons.Play = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/play.jpg")
+	// cons.Open = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/open.jpg")
+	// cons.Change = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/change.jpg")
+	// cons.Replay = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/replay.jpg")
+	// cons.Close = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/close.jpg")
+	// cons.Stop = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/stop.jpg")
 }
 
 func main() {
 	app := router.BuildRouter()
-	utils.ExecCmdStart("http://127.0.0.1:9999/")
-	app.Run(":9999")
+	utils.ExecCmdStart("http://127.0.0.1:80/")
+	app.Run(":80")
 
 }

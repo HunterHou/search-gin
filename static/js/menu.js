@@ -40,14 +40,7 @@ let menuhtml = '<div>'
     +'<el-link icon="el-icon-refresh" :underline="false" title="同步" style="font-size:30px"  @click="syncThis(item.Id)"></el-link>'
     +'<el-link icon="el-icon-refresh-right" :underline="false" title="信息" style="font-size:30px"  @click="infoThis(item.Id)"></el-link>'
     +'<el-link icon="el-icon-delete" :underline="false" title="删除" style="font-size:30px"  @click="deleteThis(item.Id)"></el-link>'
-    // + '<el-image style="width: 30px; height: 30px" :src="PlayCons" :fit="fit" @click="playThis(item.Id)"></el-image>'
-    // +'<el-button style="width: 30px; height: 30px;text-align:center;" type="success" @click="playThis(item.Id)" round>播放</el-button>'
-    // + '<el-image style="width: 30px; height: 30px" :src="ChangeCons" :fit="fit" @click="thisActress(item.Actress)"></el-image>'
-    // + '<el-image style="width: 30px; height: 30px" :src="OpenCons" :fit="fit" @click="openThisFolder(item.Id)"></el-image>'
-    // + '<el-image style="width: 30px; height: 30px" :src="ReplayCons" :fit="fit" @click="syncThis(item.Id)"></el-image>'
-    // + '<el-image style="width: 30px; height: 30px" :src="CloseCons" :fit="fit" @click="infoThis(item.Id)"></el-image>'
-    // + '<el-image style="width: 30px; height: 30px" :src="StopCons" :fit="fit"@click="deleteThis(item.Id)"></el-image>'
-    + '<br/><span>【{{item.SizeStr }}】 {{ item.Name }}</span> '
+  + '<br/><span>【{{item.SizeStr }}】 {{ item.Name }}</span> '
     + '</li>'
     + '</ul>'
     + '</div>'
@@ -59,7 +52,6 @@ let menuhtml = '<div>'
     + ' <el-row :gutter="20"> '
     + '     <el-col :span="4" >'
     + '         <span>番号:</span>'
-    + '         <span>{{file.JpgUrl}}</span>'
     + '     </el-col>'
     + '     <el-col :span="16">'
     + '         <a href="javascript:viod(0);" @click="openLick(file.Code)" ><span>{{ file.Code }}</span></a>'
@@ -114,12 +106,6 @@ let menu = {
             dataList: "",
             dataCnt: 0,
             errorMsg: "",
-            PlayCons: "",
-            ChangeCons: "",
-            OpenCons: "",
-            ReplayCons: "",
-            CloseCons: "",
-            StopCons: "",
             fit: "fit",
             searchWords: "",
             pagerCount: 10,
@@ -225,12 +211,6 @@ let menu = {
                 if (res.status === 200) {
 
                     consMap = res.data
-                    this.PlayCons = consMap.Play
-                    this.ChangeCons = consMap.Change
-                    this.OpenCons = consMap.Open
-                    this.ReplayCons = consMap.Replay
-                    this.CloseCons = consMap.Close
-                    this.StopCons = consMap.Stop
                     this.baseUrl = consMap.baseUrl
                     console.log(this.consMap)
 
