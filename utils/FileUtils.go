@@ -52,7 +52,7 @@ func GetMovieType(fileName string) string {
 	code := ""
 	rights := strings.Split(fileName, "{{")
 	if len(rights) <= 1 {
-		return GetTitle(fileName)
+		return ""
 	}
 	for index, value := range rights {
 		if index == 0 {

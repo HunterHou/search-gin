@@ -23,8 +23,26 @@ type FileService struct {
 func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) {
 
 	//video
+	if movie.MovieType != "" {
+		originVideoType := utils.GetMovieType(movie.Path)
+		fmt.Println(movieType)
+		fmt.Println(originVideoType)
+		if originVideoType == movieType {
+			return
+		}
+		path := strings.ReplaceAll(movie.Path, originVideoType, movieType)
+		os.Rename(movie.Path, path)
+		path = strings.ReplaceAll(movie.Jpg, originVideoType, movieType)
+		os.Rename(movie.Jpg, path)
+		path = strings.ReplaceAll(movie.Png, originVideoType, movieType)
+		os.Rename(movie.Png, path)
+		path = strings.ReplaceAll(movie.Nfo, originVideoType, movieType)
+		os.Rename(movie.Nfo, path)
 
+		return
+	}
 	newMovieType := "{{" + movieType + "}}"
+	fmt.Println(movieType)
 	suffix := "." + utils.GetSuffux(movie.Path)
 	newSuffix := newMovieType + suffix
 	newName := strings.ReplaceAll(movie.Path, suffix, newSuffix)

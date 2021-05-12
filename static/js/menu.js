@@ -4,19 +4,19 @@ let menuhtml = '<div>'
     +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
     + '  <el-row> '
     + '<el-col :span="2"> <el-button type="primary" size="small" icon="el-icon-search" @click="refreshIndex()">索引</el-button></el-col>'
-    + '<el-col :span="4"><el-radio-group v-model="sortField"  size="small">' +
+    + '<el-col :span="4"><el-radio-group v-model="sortField" @change="queryList()" size="small">' +
     '      <el-radio-button label="code" >名称</el-radio-button>' +
     '      <el-radio-button label="mtime" >时间</el-radio-button>' +
     '      <el-radio-button label="size" >大小</el-radio-button>' +
     '    </el-radio-group></el-col>'
 
 
-    + '<el-col :span="2"><el-radio-group v-model="sortType"  size="small">' +
+    + '<el-col :span="2"><el-radio-group v-model="sortType" @change="queryList()"   size="small">' +
     '      <el-radio-button label="desc" >倒</el-radio-button>' +
     '      <el-radio-button label="asc" >正</el-radio-button>' +
     '    </el-radio-group></el-col>'
 
-    + '<el-col :span="4"><el-radio-group v-model="movieType"  size="small">' +
+    + '<el-col :span="4"><el-radio-group v-model="movieType" @change="queryList()" size="small">' +
     '      <el-radio-button label="" >全部</el-radio-button>' +
     '      <el-radio-button label="步兵" >步</el-radio-button>' +
     '      <el-radio-button label="骑兵" >騎</el-radio-button>' +
@@ -33,7 +33,7 @@ let menuhtml = '<div>'
     '    element-loading-spinner="el-icon-loading" style="min-height: 800px">'
     + '<span v-if="errorMsg">{{errorMsg}}</span>'
     + '<el-pagination class="pageTool" ' +
-    '  :page-sizes="[5,7,12,14,30, 60, 90, 200]" :page-size="pageSize"' +
+    '  :page-sizes="[5,7,10,12,14,30, 60, 90, 200]" :page-size="pageSize"' +
     '  @size-change="handleSizeChange"' +
     ' :current-page="pageNo"'+
     '  @current-change="handleCurrentChange"' +
@@ -51,7 +51,8 @@ let menuhtml = '<div>'
     +'<el-link icon="el-icon-user" :underline="false" title="搜" style="font-size:30px"  @click="thisActress(item.Actress)"></el-link>'
     +'<el-link icon="el-icon-folder-opened" :underline="false" title="文件夹" style="font-size:30px"  @click="openThisFolder(item.Id)"></el-link>'
     +'<el-link icon="el-icon-refresh" :underline="false" title="同步" style="font-size:30px"  @click="syncThis(item.Id)"></el-link>'
-    +'<el-link icon="el-icon-view" :underline="false" title="步兵" style="font-size:30px"  @click="setMovieType(item.Id)"></el-link>'
+    +'<el-link v-if="notBuBing(item.MovieType)" icon="el-icon-star-off"  :underline="false" title="步兵" style="font-size:30px"  @click="setMovieType(item.Id,1)"></el-link>'
+    +'<el-link v-if="notQiBing(item.MovieType)" icon="el-icon-star-on"  :underline="false" title="骑兵" style="font-size:30px"  @click="setMovieType(item.Id,2)"></el-link>'
     +'<el-link icon="el-icon-refresh-right" :underline="false" title="信息" style="font-size:30px"  @click="infoThis(item.Id)"></el-link>'
     +'<el-link icon="el-icon-delete" :underline="false" title="删除" style="font-size:30px"  @click="deleteThis(item.Id)"></el-link>'
   + '<br/><span>【{{item.SizeStr }}】 {{ item.Name }}</span> '
@@ -68,7 +69,7 @@ let menuhtml = '<div>'
     + '         <span>番号:</span>'
     + '     </el-col>'
     + '     <el-col :span="16">'
-    + '         <a href="javascript:viod(0);" @click="openLick(file.Code)" ><span>{{ file.Code }}</span></a>'
+    + '         <a href="javascript:void(0);" @click="openLick(file.Code)" ><span>{{ file.Code }}</span></a>'
     + '     </el-col>'
     + '</el-row>'
     + ' <el-row :gutter="20"> '
@@ -76,7 +77,7 @@ let menuhtml = '<div>'
     + '         <span>优优:</span>'
     + '     </el-col>'
     + '     <el-col :span="16">'
-    + '         <a href="javascript:viod(0);" @click="openSearch(file.Actress)" > <span>{{ file.Actress }}</span></a>'
+    + '         <a href="javascript:void(0);" @click="openSearch(file.Actress)" > <span>{{ file.Actress }}</span></a>'
     + '     </el-col>'
     + '</el-row>'
     + ' <el-row :gutter="20"> '
@@ -143,6 +144,18 @@ let menu = {
 
     },
     methods: {
+        notQiBing(movieType){
+            if(movieType !="骑兵"){
+                return true
+            }
+            return false;
+        },
+        notBuBing(movieType){
+            if(movieType !="步兵"){
+                return true
+            }
+            return false;
+        },
         onlyRepeatQuery(){
           if (this.onlyRepeat) {
               this.queryList()
@@ -190,8 +203,8 @@ let menu = {
 
             })
         },
-        setMovieType(id) {
-            var movieType="步兵"
+        setMovieType(id,movieType) {
+            movieType =movieType =='1'?"步兵":"骑兵"
             axios.get("/setMovieType/" + id+"/"+movieType).then((res) => {
                 if (res.status === 200) {
                     this.alertSuccess(res.data.Message)
