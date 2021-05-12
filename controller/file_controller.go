@@ -26,7 +26,11 @@ func GetJpg(c *gin.Context) {
 	path := c.Param("path")
 	service := service.FileService{}
 	file := service.FindOne(path)
-	c.File(file.Jpg)
+	if utils.ExistsFiles(file.Jpg) {
+		c.File(file.Jpg)
+	} else {
+		c.File(file.Png)
+	}
 }
 
 func PostMovies(c *gin.Context) {
@@ -117,7 +121,6 @@ func GetInfo(c *gin.Context) {
 	id := c.Param("id")
 	service := service.FileService{}
 	file := service.FindOne(id)
-	file.Jpg = "http://127.0.0.1:8888/jpg/" + file.Id
 	c.JSON(http.StatusOK, file)
 }
 func GetLastInfo(c *gin.Context) {
