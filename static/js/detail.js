@@ -5,7 +5,7 @@ let detailHtml = '<div>'
     +'<div style="margin-left: 120px">'
 
     + ' <el-row :gutter="24"> '
-    + '     <img :src="file.JpgUrl"/>'
+    + '     <el-image :src="file.JpgUrl" style="width: 85%;height: auto"/>'
     + '</el-row>'
     + ' <el-row :gutter="20"> '
     + '     <el-col :span="2" >'
