@@ -20,6 +20,50 @@ import (
 type FileService struct {
 }
 
+func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) {
+
+	//video
+
+	newMovieType := "{{" + movieType + "}}"
+	suffix := "." + utils.GetSuffux(movie.Path)
+	newSuffix := newMovieType + suffix
+	newName := strings.ReplaceAll(movie.Path, suffix, newSuffix)
+	os.Rename(movie.Path, newName)
+	//png
+	if utils.ExistsFiles(movie.Png) {
+		suffix = "." + utils.GetSuffux(movie.Png)
+		newSuffix = newMovieType + suffix
+		newName = strings.ReplaceAll(movie.Png, suffix, newSuffix)
+		os.Rename(movie.Png, newName)
+	}
+
+	//ssr
+	// if utils.ExistsFiles(movie.Png) {
+	// 	suffix = "." + utils.GetSuffux(movie.Png)
+	// newSuffix = newMovieType + suffix
+	// newName = strings.ReplaceAll(movie.Png, suffix, newSuffix)
+	// os.Rename(movie.Png, newName)
+	// }
+
+	//jpg
+	if utils.ExistsFiles(movie.Jpg) {
+		suffix = "." + utils.GetSuffux(movie.Jpg)
+		newSuffix = newMovieType + suffix
+		newName = strings.ReplaceAll(movie.Jpg, suffix, newSuffix)
+		os.Rename(movie.Jpg, newName)
+	}
+
+	//nfo
+	if utils.ExistsFiles(movie.Nfo) {
+		suffix = "." + utils.GetSuffux(movie.Nfo)
+		newSuffix = newMovieType + suffix
+		newName = strings.ReplaceAll(movie.Nfo, suffix, newSuffix)
+		os.Rename(movie.Nfo, newName)
+
+	}
+
+}
+
 func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
 	result := utils.Result{}
 	root := srcFile.DirPath
@@ -212,6 +256,7 @@ func (fs FileService) FindOne(Id string) datamodels.Movie {
 	curFile := datasource.FileLib[Id]
 	return curFile
 }
+
 func (fs FileService) FindNext(Id string, offset int) datamodels.Movie {
 	if len(datasource.FileList) == 0 {
 		fs.ScanAll()
@@ -309,22 +354,28 @@ func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
 	return result
 }
 
-func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64, keyWord string) ([]datamodels.Movie, int64) {
+func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64, keyWord string, movieType string) ([]datamodels.Movie, int64) {
 
-	if keyWord == "" || keyWord == "undefined" {
+	if (keyWord == "" || keyWord == "undefined") && movieType == "" {
 		return files, totalSize
 	}
-
+	fmt.Println("movieType:" + movieType)
 	var result []datamodels.Movie
 	var size int64
 	for _, file := range files {
-		if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(keyWord)) {
+		isMovieType := true
+		if movieType != "" {
+			if file.MovieType != movieType {
+				continue
+			}
+		}
+		if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(keyWord)) && isMovieType {
 			result = append(result, file)
 			size = size + file.Size
-		} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(keyWord)) {
+		} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(keyWord)) && isMovieType {
 			result = append(result, file)
 			size = size + file.Size
-		} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(keyWord)) {
+		} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(keyWord)) && isMovieType {
 			result = append(result, file)
 			size = size + file.Size
 		}
@@ -431,8 +482,9 @@ func Walk(baseDir string, types []string) []datamodels.Movie {
 		} else {
 			name := path.Name()
 			suffix := utils.GetSuffux(name)
+			movieType := utils.GetMovieType(name)
 			if utils.HasItem(types, suffix) {
-				file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), "")
+				file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType)
 				result = append(result, file)
 			}
 

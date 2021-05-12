@@ -18,6 +18,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/actressList", controller.GetActess)
 
 	router.GET("/play/:id", controller.GetPlay)
+	router.GET("/setMovieType/:id/:movieType", controller.SetMovieType)
 	router.GET("/info/:id", controller.GetInfo)
 	router.GET("/delete/:id", controller.GetDelete)
 	router.GET("/sync/:id", controller.GetSync)

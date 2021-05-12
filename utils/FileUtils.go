@@ -47,6 +47,26 @@ func GetSuffux(fielname string) string {
 	return suffix
 
 }
+func GetMovieType(fileName string) string {
+
+	code := ""
+	rights := strings.Split(fileName, "{{")
+	if len(rights) <= 1 {
+		return GetTitle(fileName)
+	}
+	for index, value := range rights {
+		if index == 0 {
+			continue
+		}
+		right := value
+		lefts := strings.Split(right, "}}")
+		for _, left := range lefts {
+			return left
+		}
+	}
+	return code
+
+}
 
 // 获取文件名
 func GetTitle(filename string) string {
@@ -98,13 +118,13 @@ func GetCode(fileName string) string {
 		for _, left := range lefts {
 			if strings.Contains(left, "-") || strings.Contains(left, "_") {
 				return left
-			}else{
+			} else {
 				code = left
 			}
 		}
 	}
-	if strings.Contains(code,".mp4"){
-		code=strings.ReplaceAll(code,".mp4","")
+	if strings.Contains(code, ".mp4") {
+		code = strings.ReplaceAll(code, ".mp4", "")
 	}
 	return code
 }

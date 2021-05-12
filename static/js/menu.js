@@ -3,15 +3,28 @@ let menuhtml = '<div>'
     +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
     +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
     + '  <el-row> '
-    + '<el-col :span="2"> <el-button type="primary" icon="el-icon-search" @click="refreshIndex()">重建索引</el-button></el-col>'
-    + '<el-col :span="4"><el-radio-group v-model="sortField">' +
+    + '<el-col :span="2"> <el-button type="primary" size="small" icon="el-icon-search" @click="refreshIndex()">索引</el-button></el-col>'
+    + '<el-col :span="4"><el-radio-group v-model="sortField"  size="small">' +
     '      <el-radio-button label="code" >名称</el-radio-button>' +
     '      <el-radio-button label="mtime" >时间</el-radio-button>' +
     '      <el-radio-button label="size" >大小</el-radio-button>' +
     '    </el-radio-group></el-col>'
-    + '<el-col :span="2"><el-switch v-model="sortType" active-text="倒"  active-value="desc"  inactive-text="正"  inactive-value="asc"> </el-switch></el-col>'
+
+
+    + '<el-col :span="2"><el-radio-group v-model="sortType"  size="small">' +
+    '      <el-radio-button label="desc" >倒</el-radio-button>' +
+    '      <el-radio-button label="asc" >正</el-radio-button>' +
+    '    </el-radio-group></el-col>'
+
+    + '<el-col :span="4"><el-radio-group v-model="movieType"  size="small">' +
+    '      <el-radio-button label="" >全部</el-radio-button>' +
+    '      <el-radio-button label="步兵" >步</el-radio-button>' +
+    '      <el-radio-button label="骑兵" >騎</el-radio-button>' +
+    '    </el-radio-group></el-col>'
+
+    // + '<el-col :span="2"><el-switch v-model="sortType" active-text="倒"  active-value="desc"  inactive-text="正"  inactive-value="asc"> </el-switch></el-col>'
     + '<el-col :span="10"><el-input placeholder="请输入内容" v-model="searchWords" clearable >' +
-    '    <el-button slot="append" type="primary" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
+    '    <el-button slot="append" type="primary" size="small" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
     '  </el-input> </el-col><el-col :span="1"><el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()">查重</el-checkbox></el-col>'
     + '</el-row>'
     +'<el-row><el-col :span="24" :offset="1"><span>  扫描库：{{totalSize}}   搜索：{{resultSize}}   当前：{{curSize}}</span></el-col></el-row>'
@@ -20,7 +33,7 @@ let menuhtml = '<div>'
     '    element-loading-spinner="el-icon-loading" style="min-height: 800px">'
     + '<span v-if="errorMsg">{{errorMsg}}</span>'
     + '<el-pagination class="pageTool" ' +
-    '  :page-sizes="[14,30, 60, 90, 200]" :page-size="pageSize"' +
+    '  :page-sizes="[5,7,12,14,30, 60, 90, 200]" :page-size="pageSize"' +
     '  @size-change="handleSizeChange"' +
     ' :current-page="pageNo"'+
     '  @current-change="handleCurrentChange"' +
@@ -35,9 +48,10 @@ let menuhtml = '<div>'
     +'</div>'
     
     +'<el-link icon="el-icon-video-play" :underline="false" title="播放" style="font-size:30px" @click="playThis(item.Id)"></el-link>'
-    +'<el-link icon="el-icon-user" :underline="false" title="搜" style="font-size:30px"  @click="thisActress(item.Id)"></el-link>'
+    +'<el-link icon="el-icon-user" :underline="false" title="搜" style="font-size:30px"  @click="thisActress(item.Actress)"></el-link>'
     +'<el-link icon="el-icon-folder-opened" :underline="false" title="文件夹" style="font-size:30px"  @click="openThisFolder(item.Id)"></el-link>'
     +'<el-link icon="el-icon-refresh" :underline="false" title="同步" style="font-size:30px"  @click="syncThis(item.Id)"></el-link>'
+    +'<el-link icon="el-icon-view" :underline="false" title="步兵" style="font-size:30px"  @click="setMovieType(item.Id)"></el-link>'
     +'<el-link icon="el-icon-refresh-right" :underline="false" title="信息" style="font-size:30px"  @click="infoThis(item.Id)"></el-link>'
     +'<el-link icon="el-icon-delete" :underline="false" title="删除" style="font-size:30px"  @click="deleteThis(item.Id)"></el-link>'
   + '<br/><span>【{{item.SizeStr }}】 {{ item.Name }}</span> '
@@ -96,6 +110,7 @@ let menu = {
             dialogVisible: false,
             sortField: "mtime",
             sortType: "desc",
+            movieType: "",
             listStyle: {
                 'width': "240px",
                 'height': '380px',
@@ -175,6 +190,15 @@ let menu = {
 
             })
         },
+        setMovieType(id) {
+            var movieType="步兵"
+            axios.get("/setMovieType/" + id+"/"+movieType).then((res) => {
+                if (res.status === 200) {
+                    this.alertSuccess(res.data.Message)
+                }
+
+            })
+        },
         infoThis(id) {
             console.log("info", id)
         },
@@ -226,6 +250,7 @@ let menu = {
             data.append("keywords", this.searchWords)
             data.append("sortType", this.sortType)
             data.append("sortField", this.sortField)
+            data.append("movieType", this.movieType)
             data.append("onlyRepeat", this.onlyRepeat)
 
             this.loading = true;

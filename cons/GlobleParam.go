@@ -11,7 +11,8 @@ import (
 var isStatic = true
 
 //初始化 扫描路径
-var Port="//:80"
+var PortNo = ":80"
+var Port = "//" + PortNo
 var BaseUrl = "https://www.cdnbus.one/"
 var DirFile = ""
 var BaseDir = map[string]string{
