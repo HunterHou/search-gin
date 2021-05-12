@@ -243,9 +243,9 @@ let menu = {
             let data = new FormData()
             data.append("pageNo", this.pageNo)
             data.append("pageSize", this.pageSize)
-            data.append("keywords", this.searchWords?"":this.searchWords)
-            data.append("sortType", this.sortType?"":this.sortType)
-            data.append("sortField", this.sortField?"":this.sortField)
+            data.append("keywords", this.searchWords)
+            data.append("sortType", this.sortType)
+            data.append("sortField", this.sortField)
             data.append("onlyRepeat", this.onlyRepeat)
 
             this.loading = true;
