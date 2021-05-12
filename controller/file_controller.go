@@ -37,7 +37,7 @@ func PostMovies(c *gin.Context) {
 	}
 	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "14"))
 	if pageSize < 1 {
-		pageSize = 1
+		pageSize = 14
 	}
 	sortType := c.DefaultPostForm("sortType", "code")
 	sortField := c.DefaultPostForm("sortField", "desc")

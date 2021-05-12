@@ -1,3 +1,4 @@
+
 let menuhtml = '<div>'
     +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
     +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
@@ -28,17 +29,17 @@ let menuhtml = '<div>'
     '</el-pagination>'
     + '<ul  class="infinite-list" style="overflow:auto"  >'
     + '<li v-bind:class="listStyle" class="infinite-list-item list-item" v-for="(item,index) in dataList" :key="item.Id">'
-    + '<div @click="openWin(item.Id)" class="img-list-item"  >'
+    + '<div v-if="item" @click="openWin(item.Id)" class="img-list-item"  >'
     +'<el-image style="width: 100%; height: 100%" :src="item.Png" :fit="fit" lazy>'
     +'</el-image>'
     +'</div>'
     
-    +'<i class="el-icon-video-play" style="font-size:30px" @click="playThis(item.Id)"></i>'
-    +'<i class="el-icon-user" style="font-size:30px"  @click="thisActress(item.Id)"></i>'
-    +'<i class="el-icon-folder-opened" style="font-size:30px"  @click="openThisFolder(item.Id)"></i>'
-    +'<i class="el-icon-refresh" style="font-size:30px"  @click="syncThis(item.Id)"></i>'
-    +'<i class="el-icon-refresh-right" style="font-size:30px"  @click="infoThis(item.Id)"></i>'
-    +'<i class="el-icon-delete" style="font-size:30px"  @click="deleteThis(item.Id)"></i>'
+    +'<el-link icon="el-icon-video-play" :underline="false" title="播放" style="font-size:30px" @click="playThis(item.Id)"></el-link>'
+    +'<el-link icon="el-icon-user" :underline="false" title="搜" style="font-size:30px"  @click="thisActress(item.Id)"></el-link>'
+    +'<el-link icon="el-icon-folder-opened" :underline="false" title="文件夹" style="font-size:30px"  @click="openThisFolder(item.Id)"></el-link>'
+    +'<el-link icon="el-icon-refresh" :underline="false" title="同步" style="font-size:30px"  @click="syncThis(item.Id)"></el-link>'
+    +'<el-link icon="el-icon-refresh-right" :underline="false" title="信息" style="font-size:30px"  @click="infoThis(item.Id)"></el-link>'
+    +'<el-link icon="el-icon-delete" :underline="false" title="删除" style="font-size:30px"  @click="deleteThis(item.Id)"></el-link>'
     // + '<el-image style="width: 30px; height: 30px" :src="PlayCons" :fit="fit" @click="playThis(item.Id)"></el-image>'
     // +'<el-button style="width: 30px; height: 30px;text-align:center;" type="success" @click="playThis(item.Id)" round>播放</el-button>'
     // + '<el-image style="width: 30px; height: 30px" :src="ChangeCons" :fit="fit" @click="thisActress(item.Actress)"></el-image>'
@@ -51,7 +52,7 @@ let menuhtml = '<div>'
     + '</ul>'
     + '</div>'
     + '<el-dialog  :title="file.Name" :visible.sync="dialogVisible">'
-    + '<div style="margin-left: 0px">'
+    + '<div v-if="file" style="margin-left: 0px">'
     + ' <el-row :gutter="24"> '
     + '     <img @click="open(file.Id)" :src="file.Jpg" style="width: 100%"/>'
     + '</el-row>'
@@ -107,7 +108,7 @@ let menu = {
                 'height': '380px',
                 'float': 'left',
                 'margin-right': '25px',
-                'overflow:auto':auto
+                'overflow':'auto'
             },
             dataList: "",
             dataCnt: 0,
@@ -241,15 +242,15 @@ let menu = {
             let data = new FormData()
             data.append("pageNo", this.pageNo)
             data.append("pageSize", this.pageSize)
-            data.append("keywords", this.searchWords)
-            data.append("sortType", this.sortType)
-            data.append("sortField", this.sortField)
+            data.append("keywords", this.searchWords?"":this.searchWords)
+            data.append("sortType", this.sortType?"":this.sortType)
+            data.append("sortField", this.sortField?"":this.sortField)
             data.append("onlyRepeat", this.onlyRepeat)
 
             this.loading = true;
             axios.post("/movieList", data).then((res) => {
                 if (res.status === 200) {
-                   var  resData =res.data.Data
+                    const  resData =res.data.Data
                     this.totalCnt = res.data.TotalCnt
                     this.totalPage=res.data.TotalPage
                     this.totalSize =res.data.TotalSize
@@ -270,8 +271,9 @@ let menu = {
 
             })
         },
+
         open(filename) {
-            var self = this
+            const self = this
             console.log(filename)
             self.$router.push("/context/" + filename + "/" + this.pageNo)
 
