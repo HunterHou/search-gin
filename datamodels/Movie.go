@@ -32,6 +32,8 @@ type Movie struct {
 	Title     string
 	PngBase   string
 	ImageBase string
+	PngUrl    string
+	JpgUrl    string
 }
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time) Movie {
@@ -54,6 +56,8 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		MTime:     modTime.Format("2006-01-02 15:04:05"),
 		PngBase:   "",
 		ImageBase: "",
+		PngUrl:    "/png/" + id,
+		JpgUrl:    "/jpg/" + id,
 	}
 	return result
 }

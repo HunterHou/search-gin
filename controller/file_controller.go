@@ -67,10 +67,6 @@ func PostMovies(c *gin.Context) {
 	result.SetResultCnt(result.TotalCnt, pageNo)
 	list = service.GetPage(list, pageNo, pageSize)
 
-	for i := range list {
-		list[i].Png = "/png/" + list[i].Id
-		list[i].Jpg = "/jpg/" + list[i].Id
-	}
 	result.CurSize = utils.GetSizeStr(service.DataSize(list))
 	result.CurCnt = len(list)
 	result.Data = list
