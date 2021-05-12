@@ -34,9 +34,10 @@ type Movie struct {
 	ImageBase string
 	PngUrl    string
 	JpgUrl    string
+	MovieType string
 }
 
-func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time) Movie {
+func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
 	id, _ := utils.DirpathForId(path)
 	result := Movie{
@@ -58,6 +59,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		ImageBase: "",
 		PngUrl:    "/png/" + id,
 		JpgUrl:    "/jpg/" + id,
+		MovieType: movieType,
 	}
 	return result
 }

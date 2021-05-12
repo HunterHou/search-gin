@@ -278,7 +278,7 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	files := Walks(baseDir, types)
 	fileMap, actressMap, supplierMap, fileSize := ArrayToMap(files)
 	var newFiles []datamodels.Movie
- 	for _, item := range fileMap {
+	for _, item := range fileMap {
 		newFiles = append(newFiles, item)
 	}
 	datasource.FileLib = fileMap
@@ -311,7 +311,7 @@ func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
 
 func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64, keyWord string) ([]datamodels.Movie, int64) {
 
-	if keyWord == "" || keyWord=="undefined"{
+	if keyWord == "" || keyWord == "undefined" {
 		return files, totalSize
 	}
 
@@ -432,7 +432,7 @@ func Walk(baseDir string, types []string) []datamodels.Movie {
 			name := path.Name()
 			suffix := utils.GetSuffux(name)
 			if utils.HasItem(types, suffix) {
-				file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime())
+				file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), "")
 				result = append(result, file)
 			}
 
