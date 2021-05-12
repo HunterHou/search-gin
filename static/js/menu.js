@@ -28,13 +28,24 @@ let menuhtml = '<div>'
     '</el-pagination>'
     + '<ul  class="infinite-list" style="overflow:auto"  >'
     + '<li v-bind:class="listStyle" class="infinite-list-item list-item" v-for="(item,index) in dataList" :key="item.Id">'
-    + '<div @click="openWin(item.Id)" class="img-list-item"  ><el-image style="width: 100\%; height: 100%" :src="item.Png" :fit="fit" lazy></el-image></div>'
-    + '<el-image style="width: 30px; height: 30px" :src="PlayCons" :fit="fit" @click="playThis(item.Id)"></el-image>'
-    + '<el-image style="width: 30px; height: 30px" :src="ChangeCons" :fit="fit" @click="thisActress(item.Actress)"></el-image>'
-    + '<el-image style="width: 30px; height: 30px" :src="OpenCons" :fit="fit" @click="openThisFolder(item.Id)"></el-image>'
-    + '<el-image style="width: 30px; height: 30px" :src="ReplayCons" :fit="fit" @click="syncThis(item.Id)"></el-image>'
-    + '<el-image style="width: 30px; height: 30px" :src="CloseCons" :fit="fit" @click="infoThis(item.Id)"></el-image>'
-    + '<el-image style="width: 30px; height: 30px" :src="StopCons" :fit="fit"@click="deleteThis(item.Id)"></el-image>'
+    + '<div @click="openWin(item.Id)" class="img-list-item"  >'
+    +'<el-image style="width: 100%; height: 100%" :src="item.Png" :fit="fit" lazy>'
+    +'</el-image>'
+    +'</div>'
+    
+    +'<i class="el-icon-video-play" style="font-size:30px" @click="playThis(item.Id)"></i>'
+    +'<i class="el-icon-user" style="font-size:30px"  @click="thisActress(item.Id)"></i>'
+    +'<i class="el-icon-folder-opened" style="font-size:30px"  @click="openThisFolder(item.Id)"></i>'
+    +'<i class="el-icon-refresh" style="font-size:30px"  @click="syncThis(item.Id)"></i>'
+    +'<i class="el-icon-refresh-right" style="font-size:30px"  @click="infoThis(item.Id)"></i>'
+    +'<i class="el-icon-delete" style="font-size:30px"  @click="deleteThis(item.Id)"></i>'
+    // + '<el-image style="width: 30px; height: 30px" :src="PlayCons" :fit="fit" @click="playThis(item.Id)"></el-image>'
+    // +'<el-button style="width: 30px; height: 30px;text-align:center;" type="success" @click="playThis(item.Id)" round>播放</el-button>'
+    // + '<el-image style="width: 30px; height: 30px" :src="ChangeCons" :fit="fit" @click="thisActress(item.Actress)"></el-image>'
+    // + '<el-image style="width: 30px; height: 30px" :src="OpenCons" :fit="fit" @click="openThisFolder(item.Id)"></el-image>'
+    // + '<el-image style="width: 30px; height: 30px" :src="ReplayCons" :fit="fit" @click="syncThis(item.Id)"></el-image>'
+    // + '<el-image style="width: 30px; height: 30px" :src="CloseCons" :fit="fit" @click="infoThis(item.Id)"></el-image>'
+    // + '<el-image style="width: 30px; height: 30px" :src="StopCons" :fit="fit"@click="deleteThis(item.Id)"></el-image>'
     + '<br/><span>【{{item.SizeStr }}】 {{ item.Name }}</span> '
     + '</li>'
     + '</ul>'
@@ -96,6 +107,7 @@ let menu = {
                 'height': '380px',
                 'float': 'left',
                 'margin-right': '25px',
+                'overflow:auto':auto
             },
             dataList: "",
             dataCnt: 0,

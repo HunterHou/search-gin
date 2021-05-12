@@ -8,7 +8,7 @@ import (
 	"search-gin/utils"
 )
 
-var curDir string
+// var curDir string
 var staticDir string
 
 // 打包命令
@@ -53,7 +53,7 @@ func init() {
 
 func main() {
 	app := router.BuildRouter()
-	utils.ExecCmdStart("http://127.0.0.1:80/")
-	app.Run(":80")
+	utils.ExecCmdStart("http://127.0.0.1:9999/")
+	app.Run(":9999")
 
 }

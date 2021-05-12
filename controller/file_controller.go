@@ -2,13 +2,14 @@ package controller
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"search-gin/cons"
 	"search-gin/datasource"
 	"search-gin/service"
 	"search-gin/utils"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetPng(c *gin.Context) {
@@ -34,7 +35,10 @@ func PostMovies(c *gin.Context) {
 	if pageNo < 1 {
 		pageNo = 1
 	}
-	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "30"))
+	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "14"))
+	if pageSize < 1 {
+		pageSize = 1
+	}
 	sortType := c.DefaultPostForm("sortType", "code")
 	sortField := c.DefaultPostForm("sortField", "desc")
 	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
