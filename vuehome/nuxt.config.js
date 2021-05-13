@@ -49,7 +49,7 @@ export default {
   axios: {
     proxyHeaders: true,
     proxy:true,  // 表示开启代理
-    prefix:'/api',// 表示给请求url加个前缀 /api
+    // prefix:'/api',// 表示给请求url加个前缀 /api
     withCredentials: true,
     headers: { 'Content-Type': 'application/json', 'crossDomain': true },
     timeout: 5000,
@@ -60,7 +60,7 @@ export default {
     '/api': {
       target: "http://localhost:8888", // 目标服务器
       pathRewrite: {
-        '^/api': '/api' ,// 把 /api 替换成 /
+        '^/api': '/api' ,// 把 /api 替换成 /api
       },
       changeOrigin: true, // 表示是否跨域
     }
