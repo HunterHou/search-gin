@@ -120,7 +120,7 @@ let setting = {
             data.append("Types", this.form.Types)
             data.append("BaseDir", this.form.BaseDir)
             this.loading = true;
-            axios.post("/setting", data).then((res) => {
+            axios.post("api/setting", data).then((res) => {
                 if (res.status === 200) {
                     this.$message({
                         message: res.data.Message,
@@ -169,7 +169,7 @@ let setting = {
             this.inputValueFile = '';
         },
         loadData() {
-            axios.get("/settingInfo").then((res) => {
+            axios.get("api/settingInfo").then((res) => {
                 if (res.status == 200) {
                     this.form.BaseUrl = res.data.BaseUrl
                     this.form.Images = res.data.Images

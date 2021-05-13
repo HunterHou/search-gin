@@ -63,7 +63,7 @@ let detail = {
     },
     methods: {
         load(id) {
-            axios.get("/info/" + id).then((res) => {
+            axios.get("api/info/" + id).then((res) => {
                 if (res.status === 200) {
                     this.file = res.data
                     this.id = this.file.Id
@@ -72,12 +72,12 @@ let detail = {
         },
         goBack() {
             var self = this
-            self.$router.push("/menu/" + this.lastPageNo)
+            self.$router.push("api/menu/" + this.lastPageNo)
             // history.back()
         },
         lastPage() {
             console.log(this.id)
-            axios.get("/infoLast/" + this.id).then((res) => {
+            axios.get("api/infoLast/" + this.id).then((res) => {
                 if (res.status === 200) {
                     this.file = res.data
                     this.id = this.file.Id
@@ -86,7 +86,7 @@ let detail = {
         },
         nextPage() {
 
-            axios.get("/infoNext/" + this.id).then((res) => {
+            axios.get("api/infoNext/" + this.id).then((res) => {
                 if (res.status === 200) {
                     this.file = res.data
                     this.id = this.file.Id

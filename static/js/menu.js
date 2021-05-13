@@ -1,10 +1,10 @@
 
 let menuhtml = '<div>'
-    +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
-    +'<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
+    + '<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;left: 20px;" round @click="pageLoading(-1)">上一页</el-button>'
+    + '<el-button style="position: fixed;top: 600px;overflow: auto; z-index: 999;right: 80px;"  round @click="pageLoading(1)">下一页</el-button> '
     + '  <el-row> '
-    + '<el-col :span="2"> <el-button type="primary" size="small" icon="el-icon-search" @click="refreshIndex()">索引</el-button></el-col>'
-    + '<el-col :span="4"><el-radio-group v-model="sortField" @change="queryList()" size="small">' +
+    + '<el-col :span="1"> <el-button type="primary" size="small" icon="el-icon-location" @click="refreshIndex()">索引</el-button></el-col>'
+    + '<el-col :span="3"><el-radio-group v-model="sortField" @change="queryList()" size="small">' +
     '      <el-radio-button label="code" >名称</el-radio-button>' +
     '      <el-radio-button label="mtime" >时间</el-radio-button>' +
     '      <el-radio-button label="size" >大小</el-radio-button>' +
@@ -16,18 +16,17 @@ let menuhtml = '<div>'
     '      <el-radio-button label="asc" >正</el-radio-button>' +
     '    </el-radio-group></el-col>'
 
-    + '<el-col :span="4"><el-radio-group v-model="movieType" @change="queryList()" size="small">' +
+    + '<el-col :span="2"><el-radio-group v-model="movieType" @change="queryList()" size="small">' +
     '      <el-radio-button label="" >全部</el-radio-button>' +
     '      <el-radio-button label="步兵" >步</el-radio-button>' +
     '      <el-radio-button label="骑兵" >騎</el-radio-button>' +
     '    </el-radio-group></el-col>'
-
-    // + '<el-col :span="2"><el-switch v-model="sortType" active-text="倒"  active-value="desc"  inactive-text="正"  inactive-value="asc"> </el-switch></el-col>'
-    + '<el-col :span="10"><el-input placeholder="请输入内容" v-model="searchWords" clearable >' +
+    + '<el-col :span="1"><el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()">查重</el-checkbox></el-col>'
+    + '<el-col :span="6"><el-input placeholder="请输入内容" v-model="searchWords" clearable >' +
     '    <el-button slot="append" type="primary" size="small" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
-    '  </el-input> </el-col><el-col :span="1"><el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()">查重</el-checkbox></el-col>'
+    '  </el-input> </el-col>'
     + '</el-row>'
-    +'<el-row><el-col :span="24" :offset="1"><span>  扫描库：{{totalSize}}   搜索：{{resultSize}}   当前：{{curSize}}</span></el-col></el-row>'
+    + '<el-row><el-col :span="24" :offset="1"><span>  扫描库：{{totalSize}}   搜索：{{resultSize}}   当前：{{curSize}}</span></el-col></el-row>'
     + '<div v-loading="loading"' +
     '    element-loading-text="拼命加载中"' +
     '    element-loading-spinner="el-icon-loading" style="min-height: 800px">'
@@ -35,7 +34,7 @@ let menuhtml = '<div>'
     + '<el-pagination class="pageTool" ' +
     '  :page-sizes="[5,7,10,12,14,30, 60, 90, 200]" :page-size="pageSize"' +
     '  @size-change="handleSizeChange"' +
-    ' :current-page="pageNo"'+
+    ' :current-page="pageNo"' +
     '  @current-change="handleCurrentChange"' +
     '  layout="total,prev, pager, next, sizes"' +
     '  :total="totalCnt">' +
@@ -43,19 +42,26 @@ let menuhtml = '<div>'
     + '<ul  class="infinite-list" style="overflow:auto"  >'
     + '<li v-bind:class="listStyle" class="infinite-list-item list-item" v-for="(item,index) in dataList" :key="item.Id">'
     + '<div v-if="item" @click="openWin(item.Id)" class="img-list-item"  >'
-    +'<el-image style="width: 100%; height: 100%" :src="item.PngUrl" :fit="fit" lazy>'
-    +'</el-image>'
-    +'</div>'
-    
-    +'<el-link icon="el-icon-video-play" :underline="false" title="播放" style="font-size:30px" @click="playThis(item.Id)"></el-link>'
-    +'<el-link icon="el-icon-user" :underline="false" title="搜" style="font-size:30px"  @click="thisActress(item.Actress)"></el-link>'
-    +'<el-link icon="el-icon-folder-opened" :underline="false" title="文件夹" style="font-size:30px"  @click="openThisFolder(item.Id)"></el-link>'
-    +'<el-link icon="el-icon-refresh" :underline="false" title="同步" style="font-size:30px"  @click="syncThis(item.Id)"></el-link>'
-    +'<el-link v-if="notBuBing(item.MovieType)" icon="el-icon-star-off"  :underline="false" title="步兵" style="font-size:30px"  @click="setMovieType(item.Id,1)"></el-link>'
-    +'<el-link v-if="notQiBing(item.MovieType)" icon="el-icon-star-on"  :underline="false" title="骑兵" style="font-size:30px"  @click="setMovieType(item.Id,2)"></el-link>'
-    +'<el-link icon="el-icon-refresh-right" :underline="false" title="信息" style="font-size:30px"  @click="infoThis(item.Id)"></el-link>'
-    +'<el-link icon="el-icon-delete" :underline="false" title="删除" style="font-size:30px"  @click="deleteThis(item.Id)"></el-link>'
-  + '<br/><span>【{{item.SizeStr }}】 {{ item.Name }}</span> '
+    + '<el-image style="width: 100%; height: 100%" :src="item.PngUrl" :fit="fit" lazy>'
+    + '</el-image>'
+    + '</div>'
+
+    + '<el-link icon="el-icon-video-play" :underline="false" title="播放" style="font-size:30px" @click="playThis(item.Id)"></el-link>'
+    + '<el-link icon="el-icon-user" :underline="false" title="搜" style="font-size:30px"  @click="thisActress(item.Actress)"></el-link>'
+    + '<el-link icon="el-icon-folder-opened" :underline="false" title="文件夹" style="font-size:30px"  @click="openThisFolder(item.Id)"></el-link>'
+    + '<el-link icon="el-icon-refresh" :underline="false" title="同步" style="font-size:30px"  @click="syncThis(item.Id)"></el-link>'
+    + '<el-link v-if="notBuBing(item.MovieType)" icon="el-icon-star-off"  :underline="false" title="步兵" style="font-size:30px"  @click="setMovieType(item.Id,1)"></el-link>'
+    + '<el-link v-if="notQiBing(item.MovieType)" icon="el-icon-star-on"  :underline="false" title="骑兵" style="font-size:30px"  @click="setMovieType(item.Id,2)"></el-link>'
+    + '<el-link icon="el-icon-refresh-right" :underline="false" title="信息" style="font-size:30px"  @click="infoThis(item.Id)"></el-link>'
+    + '<el-link icon="el-icon-delete" :underline="false" title="删除" style="font-size:30px"  @click="deleteThis(item.Id)"></el-link>'
+    //   + '<br/>'
+
+    + '<el-tooltip  placement="bottom" style="width: 60px;" effect="dark">'
+    + ' <div slot="content">{{ item.Name }}</div>'
+    + '<span>【{{item.SizeStr }}】 {{ item.Name }}</span>'
+    + ' </el-tooltip>'
+
+    //   +'<span>【{{item.SizeStr }}】 {{ item.Name }}</span> '
     + '</li>'
     + '</ul>'
     + '</div>'
@@ -107,7 +113,7 @@ let menu = {
         return {
             file: "",
             baseUrl: "",
-            onlyRepeat:false,
+            onlyRepeat: false,
             dialogVisible: false,
             sortField: "mtime",
             sortType: "desc",
@@ -117,7 +123,7 @@ let menu = {
                 'height': '380px',
                 'float': 'left',
                 'margin-right': '25px',
-                'overflow':'auto'
+                'overflow': 'auto'
             },
             dataList: "",
             dataCnt: 0,
@@ -128,11 +134,11 @@ let menu = {
             pageNo: 1,
             pageSize: 30,
             totalCnt: 0,
-            totalPage:0,
+            totalPage: 0,
             loading: false,
-            totalSize:0,
-            resultSize:0,
-            curSize:0,
+            totalSize: 0,
+            resultSize: 0,
+            curSize: 0,
         }
     },
     mounted: function () {
@@ -144,36 +150,36 @@ let menu = {
 
     },
     methods: {
-        notQiBing(movieType){
-            if(movieType !="骑兵"){
+        notQiBing(movieType) {
+            if (movieType != "骑兵") {
                 return true
             }
             return false;
         },
-        notBuBing(movieType){
-            if(movieType !="步兵"){
+        notBuBing(movieType) {
+            if (movieType != "步兵") {
                 return true
             }
             return false;
         },
-        onlyRepeatQuery(){
-          if (this.onlyRepeat) {
-              this.queryList()
-          }
-        },
-        pageLoading(i){
-            this.pageNo=parseInt(this.pageNo)+parseInt(i)
-            if(this.pageNo<1){
-                this.pageNo=1
+        onlyRepeatQuery() {
+            if (this.onlyRepeat) {
+                this.queryList()
             }
-            if (this.pageNo>this.totalPage){
-                this.pageNo=this.totalPage
+        },
+        pageLoading(i) {
+            this.pageNo = parseInt(this.pageNo) + parseInt(i)
+            if (this.pageNo < 1) {
+                this.pageNo = 1
+            }
+            if (this.pageNo > this.totalPage) {
+                this.pageNo = this.totalPage
             }
             this.queryList(true)
         },
         playThis(id) {
 
-            axios.get("/play/" + id).then((res) => {
+            axios.get("api/play/" + id).then((res) => {
                 if (res.status === 200) {
                     this.alertSuccess(res.data.Message)
                 } else {
@@ -188,7 +194,7 @@ let menu = {
             this.queryList()
         },
         openThisFolder(id) {
-            axios.get("/openFolder/" + id).then((res) => {
+            axios.get("api/openFolder/" + id).then((res) => {
                 if (res.status === 200) {
                     this.alertSuccess(res.data.Message)
                 }
@@ -196,16 +202,16 @@ let menu = {
             })
         },
         syncThis(id) {
-            axios.get("/sync/" + id).then((res) => {
+            axios.get("api/sync/" + id).then((res) => {
                 if (res.status === 200) {
                     this.alertSuccess(res.data.Message)
                 }
 
             })
         },
-        setMovieType(id,movieType) {
-            movieType =movieType =='1'?"步兵":"骑兵"
-            axios.get("/setMovieType/" + id+"/"+movieType).then((res) => {
+        setMovieType(id, movieType) {
+            movieType = movieType == '1' ? "步兵" : "骑兵"
+            axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
                 if (res.status === 200) {
                     this.alertSuccess(res.data.Message)
                 }
@@ -235,7 +241,7 @@ let menu = {
             });
         },
         refreshIndex() {
-            axios.get("/refreshIndex").then((res) => {
+            axios.get("api/refreshIndex").then((res) => {
                 if (res.status === 200) {
                     this.alertSuccess(res.data.Message)
                     this.queryList()
@@ -244,7 +250,7 @@ let menu = {
             })
         },
         queryButtom() {
-            axios.get("/buttoms").then((res) => {
+            axios.get("api/buttoms").then((res) => {
                 if (res.status === 200) {
 
                     consMap = res.data
@@ -267,24 +273,24 @@ let menu = {
             data.append("onlyRepeat", this.onlyRepeat)
 
             this.loading = true;
-            axios.post("/movieList", data).then((res) => {
+            axios.post("api/movieList", data).then((res) => {
                 if (res.status === 200) {
-                    const  resData =res.data.Data
+                    const resData = res.data.Data
                     this.totalCnt = res.data.TotalCnt
-                    this.totalPage=res.data.TotalPage
-                    this.totalSize =res.data.TotalSize
-                    this.resultSize =res.data.ResultSize
-                    this.curSize  =res.data.CurSize
+                    this.totalPage = res.data.TotalPage
+                    this.totalSize = res.data.TotalSize
+                    this.resultSize = res.data.ResultSize
+                    this.curSize = res.data.CurSize
                     if (resData && resData.length > 0) {
-                        if (!concat){
+                        if (!concat) {
                             this.dataList = resData
-                        }else{
-                            resData.map(item=>{
+                        } else {
+                            resData.map(item => {
                                 this.dataList.push(item)
                             })
                         }
                     }
-                    this.onlyRepeat=false
+                    this.onlyRepeat = false
                     this.loading = false;
                 }
 
@@ -294,7 +300,7 @@ let menu = {
         open(filename) {
             const self = this
             console.log(filename)
-            self.$router.push("/context/" + filename + "/" + this.pageNo)
+            self.$router.push("api/context/" + filename + "/" + this.pageNo)
 
 
         },
@@ -308,7 +314,7 @@ let menu = {
         },
 
         openWin(id) {
-            axios.get("/info/" + id).then((res) => {
+            axios.get("api/info/" + id).then((res) => {
                 if (res.status === 200) {
                     this.file = res.data
                     this.dialogVisible = true
