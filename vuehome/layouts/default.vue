@@ -1,21 +1,24 @@
 <template>
   <div>
-    <Header/>
-    <Nuxt />
+    <el-container>
+      <el-aside
+        background-color="#545c64"
+        text-color="#fff"
+        style="height: 100%; min-height: 800px;width: 200px;background:#545c64;"
+      >
+        <Header
+      /></el-aside>
+      <el-container style="min-width:1600px">
+        <Nuxt />
+      </el-container>
+    </el-container>
   </div>
 </template>
 
 <style>
 html {
-  font-family:
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
@@ -38,7 +41,7 @@ html {
   border: 1px solid #3b8070;
   color: #3b8070;
   text-decoration: none;
-  padding: 10px 30px;
+  /* padding: 10px 30px; */
 }
 
 .button--green:hover {
