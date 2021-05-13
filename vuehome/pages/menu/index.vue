@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+import axios from "axios";
 export default {
   data() {
     return {
@@ -15,16 +15,20 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.$nuxt.$loading.start();
-      this.fetch()
-      this.$nuxt.$loading.finish()
+      this.fetch();
+      this.$nuxt.$loading.finish();
     });
   },
   methods: {
-    fetch()  {
-      axios.get('api/buttoms').then(res => {
-        console.log(res)
+    fetch() {
+      axios.get("api/buttoms").then(res => {
+        console.log(res);
+        if (res.code == 200) {
+          this.BaseUrl = res.data.baseUrl;
+        }
+
         // store.commit('setStars', res.data)
-      })
+      });
     }
   }
 };
