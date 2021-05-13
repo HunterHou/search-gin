@@ -14,7 +14,7 @@
               <i class="el-icon-document"></i>
               <span slot="title"></span>
             </el-menu-item>
-            <el-menu-item index="/menu/1">
+            <el-menu-item index="/menu">
               <i class="el-icon-menu"></i>
               <span slot="title">目录</span>
             </el-menu-item>
@@ -27,14 +27,14 @@
             </el-menu-item>
           </el-menu>
         </el-header>
-        <el-main>
+        <!-- <el-main>
           <router-view></router-view>
         </el-main>
         <el-backtop :bottom="100" style="width: 50px; height: 50px;">
           <div class="up">
             UP
           </div>
-        </el-backtop>
+        </el-backtop> -->
       </el-container>
     </el-container>
   </div>
