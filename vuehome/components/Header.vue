@@ -8,7 +8,6 @@
             :default-active="'/home'"
             class="el-menu-demo"
             mode="horizontal"
-            @select="handleSelect"
           >
             <el-menu-item index="/home">
               <i class="el-icon-document"></i>

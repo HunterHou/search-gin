@@ -8,10 +8,8 @@ import (
 //环境引用
 // true 静态文件
 // false 打包二进制文佳 (要求打包html目录)
-var isStatic = true
-
 //初始化 扫描路径
-var PortNo = ":80"
+var PortNo = ":8888"
 var Port = "//" + PortNo
 var BaseUrl = "https://www.cdnbus.one/"
 var DirFile = ""

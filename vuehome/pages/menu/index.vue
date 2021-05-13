@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     fetch()  {
-      return axios.get('/buttoms').then(res => {
+      axios.post('/api/buttoms').then(res => {
         console.log(res)
         // store.commit('setStars', res.data)
       })

@@ -13,5 +13,8 @@
     "element-ui": "^2.15.1",
     "nuxt": "^2.15.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@nuxtjs/axios": "^5.13.1",
+    "@nuxtjs/proxy": "^2.1.0"
+  }
 }

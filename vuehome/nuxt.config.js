@@ -1,9 +1,11 @@
+
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
+
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -40,7 +42,30 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/axios', "@nuxtjs/proxy"
   ],
+
+  
+  axios: {
+    proxyHeaders: true,
+    proxy:true,  // 表示开启代理
+    prefix:'/api',// 表示给请求url加个前缀 /api
+    withCredentials: true,
+    headers: { 'Content-Type': 'application/json', 'crossDomain': true },
+    timeout: 5000,
+    
+  },
+
+  proxy:{
+    '/api': {
+      target: "http://localhost:8888", // 目标服务器
+      pathRewrite: {
+        '^/api': '/api' ,// 把 /api 替换成 /
+      },
+      changeOrigin: true, // 表示是否跨域
+    }
+  },
+
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

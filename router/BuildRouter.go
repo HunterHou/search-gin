@@ -3,8 +3,9 @@ package router
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"search-gin/controller"
+
+	"github.com/gin-gonic/gin"
 )
 
 func BuildRouter() *gin.Engine {
@@ -13,26 +14,26 @@ func BuildRouter() *gin.Engine {
 	router.LoadHTMLFiles("static/index.html")
 
 	router.GET("/", controller.Index)
-	router.POST("/movieList", controller.PostMovies)
-	router.GET("/refresh", controller.GetFresh)
-	router.GET("/actressList", controller.GetActess)
+	router.POST("api/movieList", controller.PostMovies)
+	router.GET("api/refresh", controller.GetFresh)
+	router.GET("api/actressList", controller.GetActess)
 
-	router.GET("/play/:id", controller.GetPlay)
-	router.GET("/setMovieType/:id/:movieType", controller.SetMovieType)
-	router.GET("/info/:id", controller.GetInfo)
-	router.GET("/delete/:id", controller.GetDelete)
-	router.GET("/sync/:id", controller.GetSync)
-	router.GET("/openFolder/:id", controller.GetOpenFoler)
+	router.GET("api/play/:id", controller.GetPlay)
+	router.GET("api/setMovieType/:id/:movieType", controller.SetMovieType)
+	router.GET("api/info/:id", controller.GetInfo)
+	router.GET("api/delete/:id", controller.GetDelete)
+	router.GET("api/sync/:id", controller.GetSync)
+	router.GET("api/openFolder/:id", controller.GetOpenFoler)
 
-	router.GET("/infoNext/:id", controller.GetNextInfo)
-	router.GET("/infoLast/:id", controller.GetLastInfo)
+	router.GET("api/infoNext/:id", controller.GetNextInfo)
+	router.GET("api/infoLast/:id", controller.GetLastInfo)
 
-	router.GET("/png/:path", controller.GetPng)
-	router.GET("/jpg/:path", controller.GetJpg)
+	router.GET("api/png/:path", controller.GetPng)
+	router.GET("api/jpg/:path", controller.GetJpg)
 
-	router.GET("/buttoms", controller.GetButtom)
-	router.GET("/refreshIndex", controller.GetRefresIndex)
-	router.GET("/settingInfo", controller.GetSettingInfo)
-	router.POST("/setting", controller.PostSetting)
+	router.GET("api/buttoms", controller.GetButtom)
+	router.GET("api/refreshIndex", controller.GetRefresIndex)
+	router.GET("api/settingInfo", controller.GetSettingInfo)
+	router.POST("api/setting", controller.PostSetting)
 	return router
 }
