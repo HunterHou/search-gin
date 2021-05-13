@@ -23,7 +23,7 @@ export default {
     fetch() {
       axios.get("api/buttoms").then(res => {
         console.log(res);
-        if (res.code == 200) {
+        if (res.status == 200) {
           this.BaseUrl = res.data.baseUrl;
         }
 
