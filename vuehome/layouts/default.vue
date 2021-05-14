@@ -1,14 +1,14 @@
 <template>
   <div>
-    <el-container>
+    <el-container style="margin:0">
       <el-aside
         background-color="#545c64"
         text-color="#fff"
-        style="height: 100%; min-height: 800px;width: 200px;background:#545c64;"
+        style="background:#545c64;margin-bottom:0;width: 125px;"
       >
-        <Header
-      /></el-aside>
-      <el-container style="min-width:1600px">
+        <MenuTool/>
+        </el-aside>
+      <el-container>
         <Nuxt />
       </el-container>
     </el-container>

@@ -1,8 +1,8 @@
 <template>
-  <div style="margin-top: 5px;">
-    <el-backtop :bottom="100" style="width: 50px; height: 50px">
+  <div class="container-body">
+    <!-- <el-backtop :bottom="100" style="width: 50px; height: 50px">
       <div class="up">UP</div>
-    </el-backtop>
+    </el-backtop> -->
     <el-button
       style="
         position: fixed;
@@ -89,7 +89,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="min-height: 800px; margin-top: 10px"
+      style="margin-top: 10px"
     >
 
       <ul class="infinite-list" style="overflow: auto">
@@ -117,28 +117,12 @@
                 title="播放"
                 @click="playThis(item.Id)"
               ></i>
-              <!-- <el-link
-                icon="el-icon-video-play"
-                :underline="false"
-                title="播放"
-                class="icon-style"
-                @click="playThis(item.Id)"
-              ></el-link> -->
               <i
                 :underline="false"
                 class="el-icon-user icon-style"
                 title="搜"
                 @click="thisActress(item.Actress)"
               ></i>
-
-              <!-- <el-link
-                icon="el-icon-user"
-                :underline="false"
-                title="搜"
-                class="icon-style"
-                @click="thisActress(item.Actress)"
-              ></el-link> -->
-
               <i
                 :underline="false"
                 class="el-icon-refresh icon-style"
@@ -493,6 +477,12 @@ export default {
 };
 </script>
 <style>
+.container-body{
+  margin-top: 5px;
+  min-width: 600px;
+  min-height: 600px;
+  height: 100%;
+}
 .image-tool {
   margin-top: 1px;
   margin-bottom: 1px;
