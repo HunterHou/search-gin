@@ -30,38 +30,32 @@
     <el-row>
       <el-col :span="2" :offset="1">
         <el-button
-          type="primary"
-          size="normal"
+          type="success"
+          size="small"
           icon="el-icon-location"
           @click="refreshIndex()"
           >索引</el-button
         ></el-col
       >
-      <el-col :span="4"
+      <el-col :span="8"
         ><el-radio-group v-model="sortField" @change="queryList()" size="small">
           <el-radio-button label="code">名称</el-radio-button>
           <el-radio-button label="mtime">时间</el-radio-button>
           <el-radio-button label="size">大小</el-radio-button>
         </el-radio-group>
-      </el-col>
-      <el-col :span="2"
-        ><el-radio-group v-model="sortType" @change="queryList()" size="small">
+        <el-radio-group v-model="sortType" @change="queryList()" size="small">
           <el-radio-button label="desc">倒</el-radio-button>
           <el-radio-button label="asc">正</el-radio-button>
-        </el-radio-group></el-col
-      >
-      <el-col :span="3"
-        ><el-radio-group v-model="movieType" @change="queryList()" size="small">
+        </el-radio-group>
+        <el-radio-group v-model="movieType" @change="queryList()" size="small">
           <el-radio-button label="">全部</el-radio-button>
           <el-radio-button label="步兵">步</el-radio-button>
           <el-radio-button label="骑兵">騎</el-radio-button>
-        </el-radio-group></el-col
-      >
-      <el-col :span="1"
-        ><el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()"
+        </el-radio-group>
+        <el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()"
           >查重</el-checkbox
-        ></el-col
-      >
+        >
+      </el-col>
       <el-col :span="6"
         ><el-input placeholder="请输入内容" v-model="searchWords" clearable>
           <el-button
