@@ -65,7 +65,9 @@ export default {
       changeOrigin: true, // 表示是否跨域
     }
   },
-
+  router:{
+    base:'/dist'
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
