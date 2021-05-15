@@ -18,6 +18,7 @@ var FileList []datamodels.Movie
 var FileSize int64
 
 var ActressLib = map[string]datamodels.Actress{}
+var ActressList = []datamodels.Actress{}
 var SupplierLib = map[string]datamodels.Supplier{}
 var DictLib = datamodels.NewDictionary()
 

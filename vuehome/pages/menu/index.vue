@@ -276,8 +276,10 @@ export default {
       this.$nuxt.$loading.start();
       this.fetch();
       document.title = "目录";
-      const no = this.$route.params.no;
+      const {searchWords,no} = this.$route.query
+      this.searchWords=searchWords
       this.pageNo = no ? parseInt(no) : 1;
+      console.log(this.searchWords)
       this.queryButtom();
       this.queryList();
       this.$nuxt.$loading.finish();
@@ -399,7 +401,7 @@ export default {
       let data = new FormData();
       data.append("pageNo", this.pageNo);
       data.append("pageSize", this.pageSize);
-      data.append("keywords", this.searchWords);
+      data.append("keywords", this.searchWords?this.searchWords:"");
       data.append("sortType", this.sortType);
       data.append("sortField", this.sortField);
       data.append("movieType", this.movieType);
@@ -482,13 +484,13 @@ export default {
   height: 100%;
 }
 .floatButton {
-            float: right;
-            position: fixed;
-            width: 60;
-            top: 300px;
-            overflow: auto;
-            z-index: 999;
-        }
+  float: right;
+  position: fixed;
+  width: 60;
+  top: 300px;
+  overflow: auto;
+  z-index: 999;
+}
 .image-tool {
   margin-top: 1px;
   margin-bottom: 1px;
@@ -500,6 +502,9 @@ export default {
 }
 .context-text {
   margin-top: 22px;
+  overflow: hidden;
+  /* white-space: nowrap; */
+  text-overflow: ellipsis;
 }
 .list-item {
   width: 245px;

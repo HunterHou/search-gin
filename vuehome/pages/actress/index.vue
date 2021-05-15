@@ -1,6 +1,6 @@
 <template>
   <div class="container-body">
-    <!-- <el-button
+    <el-button
       style="
         position: fixed;
         top: 600px;
@@ -23,7 +23,7 @@
       round
       @click="pageLoading(1)"
       >下一页</el-button
-    > -->
+    >
     <el-row>
       <el-col :span="2" :offset="1">
         <el-button
@@ -47,17 +47,6 @@
           <el-radio-button label="asc">正</el-radio-button>
         </el-radio-group>
       </el-col>
-      <el-col :span="4">
-        <el-radio-group v-model="movieType" @change="queryList()" size="small">
-          <el-radio-button label="">全部</el-radio-button>
-          <el-radio-button label="步兵">步</el-radio-button>
-          <el-radio-button label="骑兵">騎</el-radio-button>
-        </el-radio-group>
-        <el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()"
-          >查重</el-checkbox
-        >
-      </el-col>
-
       <el-col :span="6"
         ><el-input placeholder="请输入内容" v-model="searchWords" clearable>
           <el-button
@@ -89,33 +78,29 @@
     >
       <ul class="infinite-list" style="overflow: auto">
         <li
-          v-bind:class="listStyle"
           class="infinite-list-item list-item"
           v-for="item in dataList"
           :key="item.Id"
         >
           <div v-if="item" class="img-list-item">
-            <el-badge :value="item.MovieType" class="badge-item">
+            <span >{{ item.Name }}</span>
+            <span >{{ item.SizeStr }}</span>
+            <el-badge :value="item.Cnt  ">
               <el-image
-                style="width: 100%; height: 100%"
                 :src="item.JpgUrl"
-                fit="cover"
+                :fit="fit"
                 lazy
-                @click="openWin(item.Id)"
+                round
+                @click="open(item.Name)"
               >
               </el-image
             ></el-badge>
           </div>
-          <div class="context-text">
-            <el-tooltip placement="bottom" style="width: 60px" effect="dark">
-              <div slot="content">{{ item.Name }}</div>
-              <span>【{{ item.SizeStr }}】 {{ item.Name }}</span>
-            </el-tooltip>
-          </div>
+          
         </li>
       </ul>
     </div>
-    <!-- <el-pagination
+    <el-pagination
       class="pageTool"
       :page-sizes="[5, 7, 10, 12, 14, 30, 60, 90, 200]"
       :page-size="pageSize"
@@ -124,7 +109,7 @@
       layout="total,prev, pager, next, sizes"
       :current-page="pageNo"
       :total="totalCnt"
-    ></el-pagination> -->
+    ></el-pagination>
   </div>
 </template>
 <script>
@@ -132,28 +117,17 @@ import axios from "axios";
 export default {
   data() {
     return {
-      file: "",
       baseUrl: "www.baidu.com",
-      onlyRepeat: false,
       dialogVisible: false,
-      sortField: "mtime",
       sortType: "desc",
       movieType: "",
-      listStyle: {
-        width: "240px",
-        height: "380px",
-        float: "left",
-        "margin-right": "25px",
-        overflow: "auto",
-      },
       dataList: "",
       dataCnt: 0,
+      pageSize:30,
       errorMsg: "",
       fit: "fit",
       searchWords: "",
-      pagerCount: 10,
       pageNo: 1,
-      pageSize: 14,
       totalCnt: 0,
       totalPage: 0,
       loading: false,
@@ -181,27 +155,9 @@ export default {
         if (res.status == 200) {
           this.BaseUrl = res.data.baseUrl;
         }
-
-        // store.commit('setStars', res.data)
       });
     },
-    notQiBing(movieType) {
-      if (movieType != "骑兵") {
-        return true;
-      }
-      return false;
-    },
-    notBuBing(movieType) {
-      if (movieType != "步兵") {
-        return true;
-      }
-      return false;
-    },
-    onlyRepeatQuery() {
-      if (this.onlyRepeat) {
-        this.queryList();
-      }
-    },
+
     pageLoading(i) {
       this.pageNo = parseInt(this.pageNo) + parseInt(i);
       if (this.pageNo < 1) {
@@ -231,8 +187,12 @@ export default {
     queryList(concat) {
       this.dataList = [];
       let data = new FormData();
+      data.append("pageNo", this.pageNo);
+      data.append("pageSize", this.pageSize);
+      data.append("keywords", this.searchWords);
+      data.append("sortType", this.sortType);
       this.loading = true;
-      axios.get("api/actressList", data).then((res) => {
+      axios.post("api/actressList", data).then((res) => {
         if (res.status === 200) {
           const resData = res.data.Data;
           this.totalCnt = res.data.TotalCnt;
@@ -249,7 +209,6 @@ export default {
               });
             }
           }
-          this.onlyRepeat = false;
           this.loading = false;
         }
       });
@@ -257,25 +216,7 @@ export default {
 
     open(filename) {
       const self = this;
-      console.log(filename);
-      self.$router.push("context/" + filename + "?pageNo=" + this.pageNo);
-    },
-    openLick(code) {
-      const url = this.baseUrl + code;
-      window.open(url, "_blank");
-    },
-    openSearch(actress) {
-      const url = this.baseUrl + "search/" + actress;
-      window.open(url, "_blank");
-    },
-
-    openWin(id) {
-      axios.get("api/info/" + id).then((res) => {
-        if (res.status === 200) {
-          this.file = res.data;
-          this.dialogVisible = true;
-        }
-      });
+      self.$router.push("/menu?searchWords=" + filename);
     },
     handleSizeChange(val) {
       this.pageSize = val;
@@ -307,24 +248,19 @@ export default {
   min-height: 600px;
   height: 100%;
 }
-.context-text {
-  margin-top: 22px;
-  overflow: hidden;
-  /* white-space: nowrap; */
-  text-overflow: ellipsis;
-}
-/*.list-item {*/
-/*  width: 200px;*/
-/*  height: 300px;*/
-/*  float: left;*/
-/*  list-style: none;*/
-/*  margin-top: 10px;*/
-/*}*/
 
-/*.img-list-item {*/
-/*  width: 180px;*/
-/*  height: 400px;*/
-/*}*/
+.list-item {
+  width: 180px;
+  height: 240px;
+  float: left;
+  list-style: none;
+  margin-top: 10px;
+}
+
+.img-list-item {
+  width: 150px;
+  height: 180px;
+}
 .up {
   height: 100%;
   width: 100%;
@@ -334,9 +270,18 @@ export default {
   line-height: 40px;
   color: #1989fa;
 }
-.badge-item {
-  margin-top: 0px;
-  margin-right: 0px;
+.pageTool {
+  position: fixed;
+  bottom: 1px;
+  overflow: auto;
+  z-index: 999;
+}
+.pagination {
+  align-content: center;
+  position: fixed;
+  bottom: 0px;
+  overflow: auto;
+  z-index: 999;
 }
 </style>
  

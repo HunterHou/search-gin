@@ -1,18 +1,8 @@
 <template>
-  <div>
-    <el-container style="margin:0">
-      <el-aside
-        background-color="#545c64"
-        text-color="#fff"
-        style="background:#545c64;margin-bottom:0;width: 125px;"
-      >
-        <MenuTool/>
-        </el-aside>
-      <el-container>
-        <Nuxt />
-      </el-container>
-    </el-container>
-  </div>
+  <el-container>
+    <el-header> <MenuTool /></el-header>
+    <el-main> <Nuxt /></el-main>
+  </el-container>
 </template>
 
 <style>

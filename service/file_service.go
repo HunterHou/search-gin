@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -15,6 +14,8 @@ import (
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 type FileService struct {
@@ -292,10 +293,17 @@ func (fs FileService) FindNext(Id string, offset int) datamodels.Movie {
 	return curFile
 }
 
-func (fs FileService) SortAct(lib []datamodels.Actress) {
-	sort.Slice(lib, func(i, j int) bool {
-		return lib[i].Cnt > lib[j].Cnt
-	})
+func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
+	if sortType == "desc" {
+		sort.Slice(lib, func(i, j int) bool {
+			return lib[i].Cnt > lib[j].Cnt
+		})
+	} else {
+		sort.Slice(lib, func(i, j int) bool {
+			return lib[i].Cnt < lib[j].Cnt
+		})
+	}
+
 }
 
 func (fs FileService) ScanAll() {
@@ -347,6 +355,12 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	datasource.FileLib = fileMap
 	datasource.FileList = newFiles
 	datasource.ActressLib = actressMap
+
+	var newActress []datamodels.Actress
+	for _, item := range actressMap {
+		newActress = append(newActress, item)
+	}
+	datasource.ActressList = newActress
 	datasource.SupplierLib = supplierMap
 	datasource.FileSize = fileSize
 
@@ -400,6 +414,42 @@ func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64,
 	}
 
 	return result, size
+}
+
+func (fs FileService) SearchActressByKeyWord(files []datamodels.Actress, keyWord string) ([]datamodels.Actress, int) {
+
+	if keyWord == "" || keyWord == "undefined" {
+		return files, len(files)
+	}
+	var result []datamodels.Actress
+	cnt := 0
+	for _, file := range files {
+		if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(keyWord)) {
+			result = append(result, file)
+		}
+	}
+
+	return result, cnt
+}
+
+func (fs FileService) GetActressPage(files []datamodels.Actress, pageNo int, pageSize int) []datamodels.Actress {
+
+	if len(files) == 0 {
+		return files
+	}
+	size := len(files)
+	start := (pageNo - 1) * pageSize
+
+	end := size
+	if size-start > pageSize {
+		end = start + pageSize
+	}
+	if len(files) <= pageSize {
+		return files
+	}
+
+	data := files[start:end]
+	return data
 }
 
 func (fs FileService) GetPage(files []datamodels.Movie, pageNo int, pageSize int) []datamodels.Movie {

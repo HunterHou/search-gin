@@ -2,7 +2,8 @@
   <el-menu
     router
     :default-active="'/home'"
-    class="el-menu-vertical-demo"
+    class="el-menu-demo"
+    mode="horizontal"
     background-color="#545c64"
     text-color="#fff"
     active-text-color="#ffd04b"
@@ -15,9 +16,9 @@
       <i class="el-icon-menu"></i>
       <span slot="title">目录</span>
     </el-menu-item>
-    <el-menu-item index="/context">
-      <i class="el-icon-location"></i
-    ></el-menu-item>
+    <el-menu-item index="/actress">
+      <i class="el-icon-location"></i><span slot="title">优优</span>
+    </el-menu-item>
     <el-menu-item index="/setting">
       <i class="el-icon-setting"></i>
       <span slot="title">设置</span>
