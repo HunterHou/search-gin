@@ -37,16 +37,20 @@
           >索引</el-button
         ></el-col
       >
-      <el-col :span="8"
-        ><el-radio-group v-model="sortField" @change="queryList()" size="small">
+      <el-col :span="4">
+        <el-radio-group v-model="sortField" @change="queryList()" size="small">
           <el-radio-button label="code">名称</el-radio-button>
           <el-radio-button label="mtime">时间</el-radio-button>
           <el-radio-button label="size">大小</el-radio-button>
         </el-radio-group>
+      </el-col>
+      <el-col :span="3">
         <el-radio-group v-model="sortType" @change="queryList()" size="small">
           <el-radio-button label="desc">倒</el-radio-button>
           <el-radio-button label="asc">正</el-radio-button>
         </el-radio-group>
+      </el-col>
+      <el-col :span="4">
         <el-radio-group v-model="movieType" @change="queryList()" size="small">
           <el-radio-button label="">全部</el-radio-button>
           <el-radio-button label="步兵">步</el-radio-button>
@@ -56,6 +60,7 @@
           >查重</el-checkbox
         >
       </el-col>
+
       <el-col :span="6"
         ><el-input placeholder="请输入内容" v-model="searchWords" clearable>
           <el-button
@@ -85,7 +90,6 @@
       element-loading-spinner="el-icon-loading"
       style="margin-top: 10px"
     >
-
       <ul class="infinite-list" style="overflow: auto">
         <li
           v-bind:class="listStyle"
@@ -98,7 +102,7 @@
               <el-image
                 style="width: 100%; height: 100%"
                 :src="item.PngUrl"
-                :fit="fill"
+                fit="cover"
                 lazy
                 @click="openWin(item.Id)"
               >
@@ -428,7 +432,7 @@ export default {
     open(filename) {
       const self = this;
       console.log(filename);
-      self.$router.push("api/context/" + filename + "/" + this.pageNo);
+      self.$router.push("context/" + filename + "?pageNo=" + this.pageNo);
     },
     openLick(code) {
       const url = this.baseUrl + code;
@@ -471,12 +475,20 @@ export default {
 };
 </script>
 <style>
-.container-body{
+.container-body {
   margin-top: 5px;
   min-width: 600px;
   min-height: 600px;
   height: 100%;
 }
+.floatButton {
+            float: right;
+            position: fixed;
+            width: 60;
+            top: 300px;
+            overflow: auto;
+            z-index: 999;
+        }
 .image-tool {
   margin-top: 1px;
   margin-bottom: 1px;

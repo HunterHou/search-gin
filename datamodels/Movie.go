@@ -57,8 +57,8 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		MTime:     modTime.Format("2006-01-02 15:04:05"),
 		PngBase:   "",
 		ImageBase: "",
-		PngUrl:    "api/png/" + id,
-		JpgUrl:    "api/jpg/" + id,
+		PngUrl:    "/api/png/" + id,
+		JpgUrl:    "/api/jpg/" + id,
 		MovieType: movieType,
 	}
 	return result
