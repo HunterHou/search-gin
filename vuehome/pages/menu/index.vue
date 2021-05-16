@@ -169,7 +169,7 @@
             </div>
           </div>
           <div class="context-text">
-            <el-tooltip placement="bottom" style="width: 60px" effect="dark">
+            <el-tooltip placement="bottom"  effect="dark">
               <div slot="content">{{ item.Name }}</div>
               <span>【{{ item.SizeStr }}】 {{ item.Name }}</span>
             </el-tooltip>
@@ -248,13 +248,6 @@ export default {
       sortField: "mtime",
       sortType: "desc",
       movieType: "",
-      listStyle: {
-        width: "240px",
-        height: "380px",
-        float: "left",
-        "margin-right": "25px",
-        overflow: "auto",
-      },
       dataList: "",
       dataCnt: 0,
       errorMsg: "",
@@ -501,22 +494,23 @@ export default {
   margin-left: 4px;
 }
 .context-text {
-  margin-top: 22px;
+  margin-top: 85px;
+  font-size: 12px;
   overflow: hidden;
   /* white-space: nowrap; */
   text-overflow: ellipsis;
 }
 .list-item {
-  width: 245px;
-  height: 450px;
+  width: 200px;
+  height: 350px;
   float: left;
   list-style: none;
   margin-top: 10px;
 }
 
 .img-list-item {
-  width: 220px;
-  height: 320px;
+  width: 180px;
+  height: 200px;
 }
 
 .pageTool {

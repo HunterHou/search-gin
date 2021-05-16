@@ -250,16 +250,16 @@ export default {
 }
 
 .list-item {
-  width: 180px;
-  height: 240px;
+  width: 200px;
+  height: 350px;
   float: left;
   list-style: none;
   margin-top: 10px;
 }
 
 .img-list-item {
-  width: 150px;
-  height: 180px;
+  width: 180px;
+  height: 200px;
 }
 .up {
   height: 100%;
