@@ -119,7 +119,12 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 			return result
 		}
 	}
-	resp, downErr := http.Get(toFile.Jpg)
+	url := toFile.Jpg
+	if !strings.Contains(url, cons.BaseUrl) {
+		url = cons.BaseUrl + url
+	}
+	fmt.Println(url)
+	resp, downErr := httpGet(url)
 	if downErr != nil {
 		result.Fail()
 		fmt.Println("downErr:", downErr)
@@ -216,6 +221,7 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 		} else if strings.Contains(url, "-") {
 			url = strings.ReplaceAll(url, "-", "_")
 		}
+		fmt.Println(url)
 		resp, err = httpGet(url)
 		if 200 != resp.StatusCode {
 			fmt.Println("status error:", resp.StatusCode, resp.Status)
