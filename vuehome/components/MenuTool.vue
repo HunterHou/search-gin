@@ -17,7 +17,7 @@
       <span slot="title">目录</span>
     </el-menu-item>
     <el-menu-item index="/actress">
-      <i class="el-icon-location"></i><span slot="title">优优</span>
+      <i class="el-icon-location"></i><span slot="title">YY</span>
     </el-menu-item>
     <el-menu-item index="/setting">
       <i class="el-icon-setting"></i>

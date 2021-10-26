@@ -361,7 +361,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          axios.get("/delete/" + id).then((res) => {
+          axios.get("api/delete/" + id).then((res) => {
             if (res.status === 200) {
               this.alertSuccess(res.data.Message);
             }
