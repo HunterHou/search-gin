@@ -15,6 +15,7 @@ type Movie struct {
 	Path      string
 	Png       string
 	Nfo       string
+	Srt       string
 	Jpg       string
 	Actress   string
 	FileType  string
@@ -48,6 +49,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		Png:       utils.GetPng(path, "png"),
 		Nfo:       utils.GetPng(path, "nfo"),
 		Jpg:       utils.GetPng(path, "jpg"),
+		Srt:       utils.GetPng(path, "srt"),
 		Actress:   utils.GetActress(name),
 		FileType:  fileType,
 		DirPath:   dir,
