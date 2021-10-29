@@ -71,13 +71,15 @@
         <el-autocomplete placeholder="请输入内容"
                          v-model="searchWords" clearable
                          :fetch-suggestions="fetchSuggestion"
-                         @select="handleSelect">
+                         @select="handleSelect"
+                         @keyup.enter.native="queryList()">
           <el-button
             slot="append"
             type="primary"
             size="small"
             icon="el-icon-search"
             @click="queryList()"
+
           >Go!
           </el-button
           >
@@ -432,7 +434,7 @@
         data.append("movieType", this.movieType);
         data.append("onlyRepeat", this.onlyRepeat);
         if (keywords !== "") {
-          if (this.suggestions.indexOf(keywords) <= 0) {
+          if (this.suggestions.indexOf(keywords) < 0) {
             this.suggestions.unshift(keywords)
             if (this.suggestions.length > 7) {
               this.suggestions.pop()
