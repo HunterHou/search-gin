@@ -434,13 +434,15 @@
         data.append("movieType", this.movieType);
         data.append("onlyRepeat", this.onlyRepeat);
         if (keywords !== "") {
-          if (this.suggestions.indexOf(keywords) < 0) {
-            this.suggestions.unshift(keywords)
-            if (this.suggestions.length > 7) {
+          const idx = this.suggestions.indexOf(keywords)
+          if (idx >= 0) {
+            this.suggestions.splice(idx,1)
+          }
+          this.suggestions.unshift(keywords)
+            if (this.suggestions.length > 10) {
               this.suggestions.pop()
             }
-            localStorage.setItem("searchSuggestions",this.suggestions)
-          }
+          localStorage.setItem("searchSuggestions",this.suggestions)
         }
         this.loading = true;
         axios.post("api/movieList", data).then((res) => {
