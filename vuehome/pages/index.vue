@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-   <h1 align="center">欢迎使用本系统</h1>
+   <h1 align="center">Welcome Hello World!!!</h1>
   </div>
 </template>
 

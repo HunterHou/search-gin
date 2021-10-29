@@ -9,7 +9,7 @@ import (
 // true 静态文件
 // false 打包二进制文佳 (要求打包html目录)
 //初始化 扫描路径
-var PortNo = ":80"
+var PortNo = ":3000"
 var Port = "//" + PortNo
 var BaseUrl = "https://www.cdnbus.one/"
 var DirFile = ""

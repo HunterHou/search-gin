@@ -297,8 +297,8 @@
         this.$nuxt.$loading.finish();
 
         const suggestionsCaches=localStorage.getItem("searchSuggestions")
-        if (suggestionsCaches && suggestionsCaches.length>0){
-          this.suggestions = suggestionsCaches;
+        if (suggestionsCaches){
+          this.suggestions = suggestionsCaches.split(",");
         }
 
       });
