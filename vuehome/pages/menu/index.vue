@@ -410,11 +410,8 @@
       },
       handleSelect(item) {
         this.searchWords = item
-        console.log(item);
       },
       fetchSuggestion(queryString, cb) {
-        console.log(queryString)
-        console.log(this.suggestions)
         cb(this.suggestions)
       },
       queryList(concat) {
