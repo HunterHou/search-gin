@@ -13,7 +13,8 @@
       "
       round
       @click="pageLoading(-1)"
-      >上一页</el-button
+    >上一页
+    </el-button
     >
     <el-button
       style="
@@ -25,7 +26,8 @@
       "
       round
       @click="pageLoading(1)"
-      >下一页</el-button
+    >下一页
+    </el-button
     >
     <el-row>
       <el-col :span="2" :offset="1">
@@ -34,8 +36,10 @@
           size="small"
           icon="el-icon-location"
           @click="refreshIndex()"
-          >索引</el-button
-        ></el-col
+        >索引
+        </el-button
+        >
+      </el-col
       >
       <el-col :span="4">
         <el-radio-group v-model="sortField" @change="queryList()" size="small">
@@ -57,32 +61,43 @@
           <el-radio-button label="骑兵">騎</el-radio-button>
         </el-radio-group>
         <el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()"
-          >查重</el-checkbox
+        >查重
+        </el-checkbox
         >
       </el-col>
 
       <el-col :span="6"
-        ><el-input placeholder="请输入内容" v-model="searchWords" clearable>
+      >
+        <el-autocomplete placeholder="请输入内容"
+                         v-model="searchWords" clearable
+                         :fetch-suggestions="fetchSuggestion"
+                         @select="handleSelect">
           <el-button
             slot="append"
             type="primary"
             size="small"
             icon="el-icon-search"
             @click="queryList()"
-            >Go!</el-button
+          >Go!
+          </el-button
           >
-        </el-input>
+          <template slot-scope="{ item }">
+            <div v-if="item" class="name">{{ item }}</div>
+          </template>
+        </el-autocomplete>
       </el-col>
     </el-row>
 
     <el-row
-      ><el-col :span="24" :offset="1"
-        ><span>
+    >
+      <el-col :span="24" :offset="1"
+      ><span>
           扫描库：{{ totalSize }} 搜索：{{ resultSize }} 当前：{{
             curSize
           }}</span
-        ></el-col
-      ></el-row
+      ></el-col
+      >
+    </el-row
     >
     <div
       v-loading="loading"
@@ -107,7 +122,8 @@
                 @click="openWin(item.Id)"
               >
               </el-image
-            ></el-badge>
+              >
+            </el-badge>
             <div class="image-tool">
               <i
                 :underline="false"
@@ -169,7 +185,7 @@
             </div>
           </div>
           <div class="context-text">
-            <el-tooltip placement="bottom"  effect="dark">
+            <el-tooltip placement="bottom" effect="dark">
               <div slot="content">{{ item.Name }}</div>
               <span>【{{ item.SizeStr }}】 {{ item.Name }}</span>
             </el-tooltip>
@@ -204,7 +220,7 @@
           </el-col>
           <el-col :span="16">
             <a href="javascript:void(0);" @click="openLick(file.Code)"
-              ><span>{{ file.Code }}</span></a
+            ><span>{{ file.Code }}</span></a
             >
           </el-col>
         </el-row>
@@ -219,7 +235,8 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="4"> <span>时间:</span> </el-col>'
+          <el-col :span="4"><span>时间:</span></el-col>
+          '
           <el-col :span="16">
             <span>{{ file.MTime }}</span>
           </el-col>
@@ -237,306 +254,333 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-export default {
-  data() {
-    return {
-      file: "",
-      baseUrl: "www.baidu.com",
-      onlyRepeat: false,
-      dialogVisible: false,
-      sortField: "mtime",
-      sortType: "desc",
-      movieType: "",
-      dataList: "",
-      dataCnt: 0,
-      errorMsg: "",
-      fit: "fit",
-      searchWords: "",
-      pagerCount: 10,
-      pageNo: 1,
-      pageSize: 14,
-      totalCnt: 0,
-      totalPage: 0,
-      loading: false,
-      totalSize: 0,
-      resultSize: 0,
-      curSize: 0,
-    };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.$nuxt.$loading.start();
-      this.fetch();
-      document.title = "目录";
-      const {searchWords,no} = this.$route.query
-      this.searchWords=searchWords
-      this.pageNo = no ? parseInt(no) : 1;
-      console.log(this.searchWords)
-      this.queryButtom();
-      this.queryList();
-      this.$nuxt.$loading.finish();
-    });
-  },
-  methods: {
-    fetch() {
-      axios.get("api/buttoms").then((res) => {
-        console.log(res);
-        if (res.status == 200) {
-          this.BaseUrl = res.data.baseUrl;
-        }
+  import axios from "axios";
 
-        // store.commit('setStars', res.data)
-      });
+  export default {
+    data() {
+      return {
+        file: "",
+        baseUrl: "www.baidu.com",
+        onlyRepeat: false,
+        dialogVisible: false,
+        sortField: "mtime",
+        sortType: "desc",
+        movieType: "",
+        dataList: "",
+        dataCnt: 0,
+        errorMsg: "",
+        fit: "fit",
+        searchWords: "",
+        pagerCount: 10,
+        pageNo: 1,
+        pageSize: 14,
+        totalCnt: 0,
+        totalPage: 0,
+        loading: false,
+        totalSize: 0,
+        resultSize: 0,
+        curSize: 0,
+        suggestions: [],
+      };
     },
-    notQiBing(movieType) {
-      if (movieType != "骑兵") {
-        return true;
-      }
-      return false;
-    },
-    notBuBing(movieType) {
-      if (movieType != "步兵") {
-        return true;
-      }
-      return false;
-    },
-    onlyRepeatQuery() {
-      if (this.onlyRepeat) {
+    mounted() {
+      this.$nextTick(() => {
+        this.$nuxt.$loading.start();
+        this.fetch();
+        document.title = "目录";
+        const {searchWords, no} = this.$route.query
+        this.searchWords = searchWords
+        this.pageNo = no ? parseInt(no) : 1;
+        console.log(this.searchWords)
+        this.queryButtom();
         this.queryList();
-      }
-    },
-    pageLoading(i) {
-      this.pageNo = parseInt(this.pageNo) + parseInt(i);
-      if (this.pageNo < 1) {
-        this.pageNo = 1;
-      }
-      if (this.pageNo > this.totalPage) {
-        this.pageNo = this.totalPage;
-      }
-      this.queryList(true);
-    },
-    playThis(id) {
-      axios.get("api/play/" + id).then((res) => {
-        if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
-        } else {
-          this.alertFail(res.data.Message);
-        }
+        this.$nuxt.$loading.finish();
       });
     },
-    thisActress(actress) {
-      this.searchWords = actress;
-      this.queryList();
-    },
-    openThisFolder(id) {
-      axios.get("api/openFolder/" + id).then((res) => {
-        if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
-        }
-      });
-    },
-    syncThis(id) {
-      axios.get("api/sync/" + id).then((res) => {
-        if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
-        }
-      });
-    },
-    setMovieType(id, movieType) {
-      movieType = movieType == "1" ? "步兵" : "骑兵";
-      axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
-        if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
-        }
-      });
-    },
-    infoThis(id) {
-      console.log("info", id);
-    },
-    deleteThis(id) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          axios.get("api/delete/" + id).then((res) => {
-            if (res.status === 200) {
-              this.alertSuccess(res.data.Message);
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
+    methods: {
+      fetch() {
+        axios.get("api/buttoms").then((res) => {
+          console.log(res);
+          if (res.status == 200) {
+            this.BaseUrl = res.data.baseUrl;
+          }
+
+          // store.commit('setStars', res.data)
         });
-    },
-    refreshIndex() {
-      axios.get("api/refreshIndex").then((res) => {
-        if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
+      },
+      notQiBing(movieType) {
+        if (movieType != "骑兵") {
+          return true;
+        }
+        return false;
+      },
+      notBuBing(movieType) {
+        if (movieType != "步兵") {
+          return true;
+        }
+        return false;
+      },
+      onlyRepeatQuery() {
+        if (this.onlyRepeat) {
           this.queryList();
         }
-      });
-    },
-    queryButtom() {
-      axios.get("api/buttoms").then((res) => {
-        if (res.status === 200) {
-          this.baseUrl = res.data.baseUrl;
+      },
+      pageLoading(i) {
+        this.pageNo = parseInt(this.pageNo) + parseInt(i);
+        if (this.pageNo < 1) {
+          this.pageNo = 1;
         }
-      });
-    },
-    queryList(concat) {
-      this.dataList = [];
-      let data = new FormData();
-      data.append("pageNo", this.pageNo);
-      data.append("pageSize", this.pageSize);
-      data.append("keywords", this.searchWords?this.searchWords:"");
-      data.append("sortType", this.sortType);
-      data.append("sortField", this.sortField);
-      data.append("movieType", this.movieType);
-      data.append("onlyRepeat", this.onlyRepeat);
-
-      this.loading = true;
-      axios.post("api/movieList", data).then((res) => {
-        if (res.status === 200) {
-          const resData = res.data.Data;
-          this.totalCnt = res.data.TotalCnt;
-          this.totalPage = res.data.TotalPage;
-          this.totalSize = res.data.TotalSize;
-          this.resultSize = res.data.ResultSize;
-          this.curSize = res.data.CurSize;
-          if (resData && resData.length > 0) {
-            if (!concat) {
-              this.dataList = resData;
-            } else {
-              resData.map((item) => {
-                this.dataList.push(item);
-              });
+        if (this.pageNo > this.totalPage) {
+          this.pageNo = this.totalPage;
+        }
+        this.queryList(true);
+      },
+      playThis(id) {
+        axios.get("api/play/" + id).then((res) => {
+          if (res.status === 200) {
+            this.alertSuccess(res.data.Message);
+          } else {
+            this.alertFail(res.data.Message);
+          }
+        });
+      },
+      thisActress(actress) {
+        this.searchWords = actress;
+        this.queryList();
+      },
+      openThisFolder(id) {
+        axios.get("api/openFolder/" + id).then((res) => {
+          if (res.status === 200) {
+            this.alertSuccess(res.data.Message);
+          }
+        });
+      },
+      syncThis(id) {
+        axios.get("api/sync/" + id).then((res) => {
+          if (res.status === 200) {
+            this.alertSuccess(res.data.Message);
+          }
+        });
+      },
+      setMovieType(id, movieType) {
+        movieType = movieType == "1" ? "步兵" : "骑兵";
+        axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
+          if (res.status === 200) {
+            this.alertSuccess(res.data.Message);
+          }
+        });
+      },
+      infoThis(id) {
+        console.log("info", id);
+      },
+      deleteThis(id) {
+        this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            axios.get("api/delete/" + id).then((res) => {
+              if (res.status === 200) {
+                this.alertSuccess(res.data.Message);
+              }
+            });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除",
+            });
+          });
+      },
+      refreshIndex() {
+        axios.get("api/refreshIndex").then((res) => {
+          if (res.status === 200) {
+            this.alertSuccess(res.data.Message);
+            this.queryList();
+          }
+        });
+      },
+      queryButtom() {
+        axios.get("api/buttoms").then((res) => {
+          if (res.status === 200) {
+            this.baseUrl = res.data.baseUrl;
+          }
+        });
+      },
+      handleSelect(item) {
+        this.searchWords = item
+        console.log(item);
+      },
+      fetchSuggestion(queryString, cb) {
+        console.log(queryString)
+        console.log(this.suggestions)
+        cb(this.suggestions)
+      },
+      queryList(concat) {
+        this.dataList = [];
+        let data = new FormData();
+        const keywords = this.searchWords ? this.searchWords : ""
+        data.append("pageNo", this.pageNo);
+        data.append("pageSize", this.pageSize);
+        data.append("keywords", keywords);
+        data.append("sortType", this.sortType);
+        data.append("sortField", this.sortField);
+        data.append("movieType", this.movieType);
+        data.append("onlyRepeat", this.onlyRepeat);
+        if (keywords !== "") {
+          if (this.suggestions.indexOf(keywords) <= 0) {
+            this.suggestions.unshift(keywords)
+            if (this.suggestions.length > 7) {
+              this.suggestions.pop()
             }
           }
-          this.onlyRepeat = false;
-          this.loading = false;
         }
-      });
-    },
+        this.loading = true;
+        axios.post("api/movieList", data).then((res) => {
+          if (res.status === 200) {
+            const resData = res.data.Data;
+            this.totalCnt = res.data.TotalCnt;
+            this.totalPage = res.data.TotalPage;
+            this.totalSize = res.data.TotalSize;
+            this.resultSize = res.data.ResultSize;
+            this.curSize = res.data.CurSize;
+            if (resData && resData.length > 0) {
+              if (!concat) {
+                this.dataList = resData;
+              } else {
+                resData.map((item) => {
+                  this.dataList.push(item);
+                });
+              }
+            }
+            this.onlyRepeat = false;
+            this.loading = false;
+          }
+        });
+      },
 
-    open(filename) {
-      const self = this;
-      console.log(filename);
-      self.$router.push("context/" + filename + "?pageNo=" + this.pageNo);
-    },
-    openLick(code) {
-      const url = this.baseUrl + code;
-      window.open(url, "_blank");
-    },
-    openSearch(actress) {
-      const url = this.baseUrl + "search/" + actress;
-      window.open(url, "_blank");
-    },
+      open(filename) {
+        const self = this;
+        console.log(filename);
+        self.$router.push("context/" + filename + "?pageNo=" + this.pageNo);
+      },
+      openLick(code) {
+        const url = this.baseUrl + code;
+        window.open(url, "_blank");
+      },
+      openSearch(actress) {
+        const url = this.baseUrl + "search/" + actress;
+        window.open(url, "_blank");
+      },
 
-    openWin(id) {
-      axios.get("api/info/" + id).then((res) => {
-        if (res.status === 200) {
-          this.file = res.data;
-          this.dialogVisible = true;
-        }
-      });
+      openWin(id) {
+        axios.get("api/info/" + id).then((res) => {
+          if (res.status === 200) {
+            this.file = res.data;
+            this.dialogVisible = true;
+          }
+        });
+      },
+      handleSizeChange(val) {
+        this.pageSize = val;
+        this.queryList();
+      },
+      handleCurrentChange(val) {
+        this.pageNo = val;
+        this.queryList();
+      },
+      alertSuccess(msg) {
+        this.$message({
+          message: msg,
+          type: "success",
+        });
+      },
+      alertFail(msg) {
+        this.$message({
+          message: msg,
+          type: "fail",
+        });
+      },
     },
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.queryList();
-    },
-    handleCurrentChange(val) {
-      this.pageNo = val;
-      this.queryList();
-    },
-    alertSuccess(msg) {
-      this.$message({
-        message: msg,
-        type: "success",
-      });
-    },
-    alertFail(msg) {
-      this.$message({
-        message: msg,
-        type: "fail",
-      });
-    },
-  },
-};
+  };
 </script>
 <style>
-.container-body {
-  margin-top: 5px;
-  min-width: 600px;
-  min-height: 600px;
-  height: 100%;
-}
-.floatButton {
-  float: right;
-  position: fixed;
-  width: 60;
-  top: 300px;
-  overflow: auto;
-  z-index: 999;
-}
-.image-tool {
-  margin-top: 1px;
-  margin-bottom: 1px;
-}
-.icon-style {
-  font-size: 24px;
-  color: red;
-  margin-left: 4px;
-}
-.context-text {
-  margin-top: 85px;
-  font-size: 12px;
-  overflow: hidden;
-  /* white-space: nowrap; */
-  text-overflow: ellipsis;
-}
-.list-item {
-  width: 200px;
-  height: 350px;
-  float: left;
-  list-style: none;
-  margin-top: 10px;
-}
+  .container-body {
+    margin-top: 5px;
+    min-width: 600px;
+    min-height: 600px;
+    height: 100%;
+  }
 
-.img-list-item {
-  width: 180px;
-  height: 200px;
-}
+  .floatButton {
+    float: right;
+    position: fixed;
+    width: 60;
+    top: 300px;
+    overflow: auto;
+    z-index: 999;
+  }
 
-.pageTool {
-  position: fixed;
-  bottom: 1px;
-  overflow: auto;
-  z-index: 999;
-}
-.pagination {
-  align-content: center;
-  position: fixed;
-  bottom: 0px;
-  overflow: auto;
-  z-index: 999;
-}
-.up {
-  height: 100%;
-  width: 100%;
-  background-color: #f2f5f6;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
-  text-align: center;
-  line-height: 40px;
-  color: #1989fa;
-}
-.badge-item {
-  margin-top: 0px;
-  margin-right: 0px;
-}
+  .image-tool {
+    margin-top: 1px;
+    margin-bottom: 1px;
+  }
+
+  .icon-style {
+    font-size: 24px;
+    color: red;
+    margin-left: 4px;
+  }
+
+  .context-text {
+    margin-top: 85px;
+    font-size: 12px;
+    overflow: hidden;
+    /* white-space: nowrap; */
+    text-overflow: ellipsis;
+  }
+
+  .list-item {
+    width: 200px;
+    height: 350px;
+    float: left;
+    list-style: none;
+    margin-top: 10px;
+  }
+
+  .img-list-item {
+    width: 180px;
+    height: 200px;
+  }
+
+  .pageTool {
+    position: fixed;
+    bottom: 1px;
+    overflow: auto;
+    z-index: 999;
+  }
+
+  .pagination {
+    align-content: center;
+    position: fixed;
+    bottom: 0px;
+    overflow: auto;
+    z-index: 999;
+  }
+
+  .up {
+    height: 100%;
+    width: 100%;
+    background-color: #f2f5f6;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+    text-align: center;
+    line-height: 40px;
+    color: #1989fa;
+  }
+
+  .badge-item {
+    margin-top: 0px;
+    margin-right: 0px;
+  }
 </style>
