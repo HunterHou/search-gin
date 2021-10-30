@@ -187,7 +187,7 @@
             </div>
           </div>
           <div class="context-text">
-            <el-tooltip placement="bottom" effect="dark">
+            <el-tooltip placement="bottom" effect="dark" :popper-class="popperClass">
               <div slot="content">{{ item.Name }}</div>
               <span>【{{ item.SizeStr }}】 {{ item.Name }}</span>
             </el-tooltip>
@@ -298,8 +298,8 @@
         this.queryList();
         this.$nuxt.$loading.finish();
 
-        const suggestionsCaches=localStorage.getItem("searchSuggestions")
-        if (suggestionsCaches){
+        const suggestionsCaches = localStorage.getItem("searchSuggestions")
+        if (suggestionsCaches) {
           this.suggestions = suggestionsCaches.split(",");
         }
 
@@ -420,10 +420,10 @@
         this.searchWords = item
       },
       fetchSuggestion(queryString, callback) {
-        const sourceSuggestions=this.suggestions
+        const sourceSuggestions = this.suggestions
         const results = queryString ? sourceSuggestions.filter(this.createFilter(queryString)) : sourceSuggestions;
         // 调用 callback 返回建议列表的数据
-        const finalResults = results.slice(0,7)
+        const finalResults = results.slice(0, 7)
         callback(finalResults)
       },
       createFilter(queryString) {
@@ -445,13 +445,13 @@
         if (keywords !== "") {
           const idx = this.suggestions.indexOf(keywords)
           if (idx >= 0) {
-            this.suggestions.splice(idx,1)
+            this.suggestions.splice(idx, 1)
           }
           this.suggestions.unshift(keywords)
-            if (this.suggestions.length > 100) {
-              this.suggestions.pop()
-            }
-          localStorage.setItem("searchSuggestions",this.suggestions)
+          if (this.suggestions.length > 100) {
+            this.suggestions.pop()
+          }
+          localStorage.setItem("searchSuggestions", this.suggestions)
         }
         this.loading = true;
         axios.post("api/movieList", data).then((res) => {
@@ -545,22 +545,29 @@
   }
 
   .icon-style {
-    font-size: 24px;
+    font-size: 22px;
     color: red;
-    margin-left: 4px;
+    margin-left: 2px;
   }
 
   .context-text {
-    margin-top: 85px;
+    display: block;
+    margin-top: 80px;
     font-size: 12px;
     overflow: hidden;
-    /* white-space: nowrap; */
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  popperClass{
+    height: auto;
+    width: 300px;
   }
 
   .list-item {
     width: 200px;
-    height: 350px;
+    height: 300px;
     float: left;
     list-style: none;
     margin-top: 10px;
@@ -568,7 +575,7 @@
 
   .img-list-item {
     width: 180px;
-    height: 200px;
+    height: auto;
   }
 
   .pageTool {
@@ -599,5 +606,10 @@
   .badge-item {
     margin-top: 0px;
     margin-right: 0px;
+  }
+</style>
+<style>
+  .el-tooltip__popper{
+   width: 300px;
   }
 </style>
