@@ -86,7 +86,7 @@
             icon="el-icon-search"
             @click="queryList()"
 
-          >Go!
+          >Go
           </el-button
           >
           <template slot-scope="{ item }">
@@ -107,12 +107,14 @@
       >
     </el-row
     >
+    <el-empty description="描述文字"></el-empty>
     <div
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       style="margin-top: 10px"
     >
+
       <ul class="infinite-list" style="overflow: auto">
         <li
           v-bind:class="listStyle"
@@ -556,8 +558,9 @@
   }
 
   .context-text {
+    position: relative;
     display: block;
-    margin-top: 80px;
+    margin-top: 10px;
     font-size: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -572,7 +575,7 @@
 
   .list-item {
     width: 200px;
-    height: 300px;
+    height: auto;
     float: left;
     list-style: none;
     margin-top: 10px;
