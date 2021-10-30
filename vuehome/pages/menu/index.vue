@@ -33,7 +33,7 @@
       <el-col :span="2" :offset="1">
         <el-button
           type="success"
-          size="small"
+          size="mini"
           icon="el-icon-location"
           @click="refreshIndex()"
         >索引
@@ -42,41 +42,47 @@
       </el-col
       >
       <el-col :span="4">
-        <el-radio-group v-model="sortField" @change="queryList()" size="small">
-          <el-radio-button label="code">名称</el-radio-button>
-          <el-radio-button label="mtime">时间</el-radio-button>
-          <el-radio-button label="size">大小</el-radio-button>
+        <el-radio-group v-model="sortField" @change="queryList()" size="mini">
+          <el-radio-button label="code">名</el-radio-button>
+          <el-radio-button label="mtime">时</el-radio-button>
+          <el-radio-button label="size">容</el-radio-button>
         </el-radio-group>
       </el-col>
       <el-col :span="3">
-        <el-radio-group v-model="sortType" @change="queryList()" size="small">
+        <el-radio-group v-model="sortType" @change="queryList()" size="mini">
           <el-radio-button label="desc">倒</el-radio-button>
           <el-radio-button label="asc">正</el-radio-button>
         </el-radio-group>
       </el-col>
       <el-col :span="4">
-        <el-radio-group v-model="movieType" @change="queryList()" size="small">
+        <el-radio-group v-model="movieType" @change="queryList()" size="mini">
           <el-radio-button label="">全部</el-radio-button>
           <el-radio-button label="步兵">步</el-radio-button>
           <el-radio-button label="骑兵">騎</el-radio-button>
         </el-radio-group>
-        <el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()"
-        >查重
-        </el-checkbox
-        >
+
+
+        <i
+          :underline="false"
+          class="el-icon-zoom-out"
+          title="播放"
+          v-model="onlyRepeat"
+          @click="onlyRepeatQuery()"
+        ></i>
       </el-col>
 
       <el-col :span="6"
       >
-        <el-autocomplete placeholder="请输入内容"
+        <el-autocomplete placeholder="请输入关键词"
                          v-model="searchWords" clearable
                          :fetch-suggestions="fetchSuggestion"
                          @select="handleSelect"
+                         size="mini"
                          @keyup.enter.native="queryList()">
           <el-button
             slot="append"
             type="primary"
-            size="small"
+            size="mini"
             icon="el-icon-search"
             @click="queryList()"
 
@@ -329,9 +335,8 @@
         return false;
       },
       onlyRepeatQuery() {
-        if (this.onlyRepeat) {
-          this.queryList();
-        }
+        this.onlyRepeat = true
+        this.queryList();
       },
       pageLoading(i) {
         this.pageNo = parseInt(this.pageNo) + parseInt(i);
