@@ -448,7 +448,7 @@
             this.suggestions.splice(idx,1)
           }
           this.suggestions.unshift(keywords)
-            if (this.suggestions.length > 10) {
+            if (this.suggestions.length > 100) {
               this.suggestions.pop()
             }
           localStorage.setItem("searchSuggestions",this.suggestions)
