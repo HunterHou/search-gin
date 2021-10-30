@@ -419,8 +419,17 @@
       handleSelect(item) {
         this.searchWords = item
       },
-      fetchSuggestion(queryString, cb) {
-        cb(this.suggestions)
+      fetchSuggestion(queryString, callback) {
+        const sourceSuggestions=this.suggestions
+        const results = queryString ? sourceSuggestions.filter(this.createFilter(queryString)) : sourceSuggestions;
+        // 调用 callback 返回建议列表的数据
+        const finalResults = results.slice(0,7)
+        callback(finalResults)
+      },
+      createFilter(queryString) {
+        return (res) => {
+          return (res.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
+        };
       },
       queryList(concat) {
         this.dataList = [];
@@ -436,7 +445,7 @@
         if (keywords !== "") {
           if (this.suggestions.indexOf(keywords) < 0) {
             this.suggestions.unshift(keywords)
-            if (this.suggestions.length > 7) {
+            if (this.suggestions.length > 100) {
               this.suggestions.pop()
             }
             localStorage.setItem("searchSuggestions",this.suggestions)
