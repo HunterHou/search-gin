@@ -112,7 +112,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 10px"
+      style="margin-top: 4px"
     >
 
       <ul class="infinite-list" style="overflow: auto">
@@ -531,7 +531,7 @@
 </script>
 <style>
   .container-body {
-    margin-top: 5px;
+    margin-top: 4px;
     min-width: 600px;
     min-height: 600px;
     height: 100%;
@@ -560,7 +560,7 @@
   .context-text {
     position: relative;
     display: block;
-    margin-top: 10px;
+    margin-top: 2px;
     font-size: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -570,19 +570,20 @@
   }
   popperClass{
     height: auto;
-    width: 300px;
+    width: 400px;
   }
 
   .list-item {
     width: 200px;
-    height: auto;
+    height: 360px;
     float: left;
     list-style: none;
-    margin-top: 10px;
+    margin-top: 6px;
+    margin-right: 8px;
   }
 
   .img-list-item {
-    width: 180px;
+    width: 190px;
     height: auto;
   }
 
