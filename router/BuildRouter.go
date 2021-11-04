@@ -14,6 +14,7 @@ func BuildRouter() *gin.Engine {
 	router.LoadHTMLFiles("./vuehome/dist/index.html")
 	// router.LoadHTMLGlob("vuehome/dist/*")
 
+	router.NoRoute(controller.Index)
 	router.GET("/", controller.Index)
 	router.POST("/api/movieList", controller.PostMovies)
 	router.GET("/api/refresh", controller.GetFresh)
