@@ -108,7 +108,6 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 4px"
     >
       <ul class="infinite-list" style="overflow: auto">
         <li
@@ -200,7 +199,6 @@
         </li>
       </ul>
     </div>
-    {{ pageNo }}
     <el-pagination
       class="pageTool"
       :page-sizes="[5, 7, 10, 12, 14, 30, 60, 90, 200]"
@@ -215,7 +213,6 @@
     <el-dialog
       :title="file.Name"
       :visible.sync="dialogVisible"
-      style="width:80%"
     >
       <div v-if="file" style="margin-left: 0px">
         <el-row :gutter="24">
@@ -285,7 +282,7 @@ export default {
       searchWords: searchWords ? searchWords : "",
       pagerCount: 10,
       pageNo: no ? parseInt(no) : 1,
-      pageSize: 14,
+      pageSize: 12,
       totalCnt: 0,
       totalPage: 0,
       loading: false,
@@ -587,7 +584,7 @@ export default {
   float: left;
   list-style: none;
   margin-top: 6px;
-  margin-right: 8px;
+  /* margin-right: 8px; */
 }
 
 .img-list-item {
@@ -597,8 +594,8 @@ export default {
 
 .pageTool {
   position: fixed;
-  bottom: 1px;
-  overflow: auto;
+  bottom: 8px;
+  overflow: auto ;
   z-index: 999;
 }
 
