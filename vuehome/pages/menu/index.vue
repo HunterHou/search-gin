@@ -55,6 +55,7 @@
           <el-radio-button label="">全</el-radio-button>
           <el-radio-button label="步兵">步</el-radio-button>
           <el-radio-button label="骑兵">騎</el-radio-button>
+          <el-radio-button label="斯巴达">欧</el-radio-button>
         </el-radio-group>
 
         <i
@@ -151,12 +152,19 @@
                 title="步"
                 @click="setMovieType(item.Id, 1)"
               ></i>
+             
 
               <i
                 v-if="notQiBing(item.MovieType)"
                 class="el-icon-star-on icon-style"
                 title="骑"
                 @click="setMovieType(item.Id, 2)"
+              ></i>
+               <i
+                v-if="siBaDa(item.MovieType)"
+                class="el-icon-star-off icon-style"
+                title="欧"
+                @click="setMovieType(item.Id, 3)"
               ></i>
               <el-dropdown placement="top-start">
                 <i class="el-icon-more-outline icon-style"></i>
@@ -372,7 +380,7 @@ export default {
       });
     },
     setMovieType(id, movieType) {
-      movieType = movieType == "1" ? "步兵" : "骑兵";
+      movieType = movieType == "2"?"斯巴达":(movieType =="1" ? "步兵" : "骑兵");
       axios.get("api/setMovieType/" + id + "/" + movieType).then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
