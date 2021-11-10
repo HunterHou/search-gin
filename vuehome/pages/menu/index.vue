@@ -147,22 +147,20 @@
                 @click="syncThis(item.Id)"
               ></i>
               <i
+                v-if="notQiBing(item.MovieType)"
+                class="el-icon-view icon-style"
+                title="骑"
+                @click="setMovieType(item.Id, 2)"
+              ></i>
+              <i
                 v-if="notBuBing(item.MovieType)"
                 class="el-icon-star-off icon-style"
                 title="步"
                 @click="setMovieType(item.Id, 1)"
               ></i>
-             
-
-              <i
-                v-if="notQiBing(item.MovieType)"
-                class="el-icon-star-on icon-style"
-                title="骑"
-                @click="setMovieType(item.Id, 2)"
-              ></i>
                <i
-                v-if="siBaDa(item.MovieType)"
-                class="el-icon-star-off icon-style"
+                v-if="notSiBaDa(item.MovieType)"
+                class="el-icon-star-on icon-style"
                 title="欧"
                 @click="setMovieType(item.Id, 3)"
               ></i>
@@ -332,6 +330,12 @@ export default {
       }
       return false;
     },
+     notSiBaDa(movieType) {
+      if (movieType != "斯巴达") {
+        return true;
+      }
+      return false;
+    },
     notBuBing(movieType) {
       if (movieType != "步兵") {
         return true;
@@ -380,7 +384,7 @@ export default {
       });
     },
     setMovieType(id, movieType) {
-      movieType = movieType == "2"?"斯巴达":(movieType =="1" ? "步兵" : "骑兵");
+      movieType = movieType == "3"?"斯巴达":(movieType =="1" ? "步兵" : "骑兵");
       axios.get("api/setMovieType/" + id + "/" + movieType).then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
@@ -542,7 +546,7 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="css" scoped>
 .container-body {
   margin-top: 4px;
   min-width: 600px;
@@ -633,5 +637,8 @@ export default {
 <style>
 .el-tooltip__popper {
   width: 300px;
+}
+.el-badge__content{
+  right:  40px;
 }
 </style>
