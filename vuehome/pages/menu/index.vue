@@ -117,16 +117,15 @@
           :key="item.Id"
         >
           <div v-if="item" class="img-list-item">
-            <el-badge :value="item.MovieType" class="badge-item">
-              <el-image
-                style="width: 100%; height: 100%"
-                :src="item.PngUrl"
-                fit="cover"
-                lazy
-                @click="openWin(item.Id)"
-              >
-              </el-image>
-            </el-badge>
+            <el-tag v-if="item.MovieType" type="danger" effect="dark">{{ item.MovieType }}</el-tag>
+            <el-image
+              style="width: 100%; height: 100%"
+              :src="item.PngUrl"
+              fit="cover"
+              lazy
+              @click="openWin(item.Id)"
+            >
+            </el-image>
             <div class="image-tool">
               <i
                 :underline="false"
@@ -158,7 +157,7 @@
                 title="步"
                 @click="setMovieType(item.Id, 1)"
               ></i>
-               <i
+              <i
                 v-if="notSiBaDa(item.MovieType)"
                 class="el-icon-star-on icon-style"
                 title="欧"
@@ -216,10 +215,7 @@
       :total="totalCnt"
     ></el-pagination>
     <!-- 弹窗 -->
-    <el-dialog
-      :title="file.Name"
-      :visible.sync="dialogVisible"
-    >
+    <el-dialog :title="file.Name" :visible.sync="dialogVisible">
       <div v-if="file" style="margin-left: 0px">
         <el-row :gutter="24">
           <el-image
@@ -330,7 +326,7 @@ export default {
       }
       return false;
     },
-     notSiBaDa(movieType) {
+    notSiBaDa(movieType) {
       if (movieType != "斯巴达") {
         return true;
       }
@@ -384,7 +380,8 @@ export default {
       });
     },
     setMovieType(id, movieType) {
-      movieType = movieType == "3"?"斯巴达":(movieType =="1" ? "步兵" : "骑兵");
+      movieType =
+        movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
       axios.get("api/setMovieType/" + id + "/" + movieType).then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
@@ -546,7 +543,7 @@ export default {
   }
 };
 </script>
-<style lang="css" scoped>
+<style scoped>
 .container-body {
   margin-top: 4px;
   min-width: 600px;
@@ -603,11 +600,20 @@ export default {
   width: 190px;
   height: auto;
 }
+.img-list-item span {
+  filter: alpha(opacity=50);
+  opacity: 0.8;
+  background: #ffffff;
+  position:fixed;
+  z-index: 99;
+  color: #ff0000;
+  /* margin-left: 120px; */
+}
 
 .pageTool {
   position: fixed;
   bottom: 8px;
-  overflow: auto ;
+  overflow: auto;
   z-index: 999;
 }
 
@@ -633,12 +639,15 @@ export default {
   margin-top: 0px;
   margin-right: 0px;
 }
-</style>
-<style>
 .el-tooltip__popper {
   width: 300px;
 }
-.el-badge__content{
-  right:  40px;
+v-deep .el-badge__content {
+  right: 40px;
+}
+</style>
+<style>
+.el-badge__content {
+  right: 40px;
 }
 </style>
