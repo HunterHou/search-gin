@@ -601,12 +601,12 @@ export default {
   height: auto;
 }
 .img-list-item span {
-  filter: alpha(opacity=50);
+  filter: alpha(opacity=80);
   opacity: 0.8;
-  background: #ffffff;
+  background: #e01616;
   position:fixed;
   z-index: 99;
-  color: #ff0000;
+  color: #ffffff;
   /* margin-left: 120px; */
 }
 
