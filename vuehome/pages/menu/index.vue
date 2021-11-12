@@ -476,7 +476,7 @@ export default {
         ? sourceSuggestions.filter(this.createFilter(queryString))
         : sourceSuggestions;
       // 调用 callback 返回建议列表的数据
-      const finalResults = results.slice(0, 7);
+      const finalResults = results.slice(0, 50);
       callback(finalResults);
     },
     createFilter(queryString) {
