@@ -87,7 +87,38 @@ func PostMovies(c *gin.Context) {
 
 	c.JSON(http.StatusOK, result)
 }
-
+func GetLastInfo(c *gin.Context) {
+	id := c.Param("id")
+	keywords := c.DefaultQuery("keywords", "")
+	sortType := c.DefaultQuery("sortType", "")
+	sortField := c.DefaultQuery("sortField", "desc")
+	movieType := c.DefaultQuery("movieType", "")
+	service := service.FileService{}
+	if len(datasource.FileList) == 0 {
+		service.ScanAll()
+	}
+	datasource.SortMovies(sortField, sortType, false)
+	list, _ := service.SearchByKeyWord(datasource.FileList, datasource.FileSize, keywords, movieType)
+	file := service.FindNext(id, list, -1)
+	file.Jpg = "/jpg/" + file.Id
+	c.JSON(http.StatusOK, file)
+}
+func GetNextInfo(c *gin.Context) {
+	id := c.Param("id")
+	keywords := c.DefaultQuery("keywords", "")
+	sortType := c.DefaultQuery("sortType", "")
+	sortField := c.DefaultQuery("sortField", "desc")
+	movieType := c.DefaultQuery("movieType", "")
+	service := service.FileService{}
+	if len(datasource.FileList) == 0 {
+		service.ScanAll()
+	}
+	datasource.SortMovies(sortField, sortType, false)
+	list, _ := service.SearchByKeyWord(datasource.FileList, datasource.FileSize, keywords, movieType)
+	file := service.FindNext(id, list, 1)
+	file.Jpg = "/jpg/" + file.Id
+	c.JSON(http.StatusOK, file)
+}
 func PostActess(c *gin.Context) {
 
 	keywords := c.PostForm("keywords")
@@ -152,20 +183,6 @@ func GetInfo(c *gin.Context) {
 	id := c.Param("id")
 	service := service.FileService{}
 	file := service.FindOne(id)
-	c.JSON(http.StatusOK, file)
-}
-func GetLastInfo(c *gin.Context) {
-	id := c.Param("id")
-	service := service.FileService{}
-	file := service.FindNext(id, -1)
-	file.Jpg = "/jpg/" + file.Id
-	c.JSON(http.StatusOK, file)
-}
-func GetNextInfo(c *gin.Context) {
-	id := c.Param("id")
-	service := service.FileService{}
-	file := service.FindNext(id, 1)
-	file.Jpg = "/jpg/" + file.Id
 	c.JSON(http.StatusOK, file)
 }
 

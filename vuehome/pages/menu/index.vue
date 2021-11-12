@@ -53,8 +53,8 @@
       <el-col :span="4">
         <el-radio-group v-model="movieType" @change="queryList()" size="mini">
           <el-radio-button label="">全</el-radio-button>
+          <el-radio-button label="骑兵">骑</el-radio-button>
           <el-radio-button label="步兵">步</el-radio-button>
-          <el-radio-button label="骑兵">騎</el-radio-button>
           <el-radio-button label="斯巴达">欧</el-radio-button>
         </el-radio-group>
 
@@ -82,7 +82,7 @@
             size="mini"
             icon="el-icon-search"
             @click="
-              e => {
+              (e) => {
                 this.pageNo = 1;
                 queryList();
               }
@@ -109,62 +109,77 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
+      style="margin-top: 20px"
     >
-      <ul class="infinite-list" style="overflow: auto">
-        <li
-          class="infinite-list-item list-item"
-          v-for="item in dataList"
-          :key="item.Id"
-        >
-          <div v-if="item" class="img-list-item">
-            <el-tag v-if="item.MovieType" type="danger" effect="dark">{{ item.MovieType }}</el-tag>
-            <el-image
-              style="width: 100%; height: 100%"
-              :src="item.PngUrl"
-              fit="cover"
-              lazy
-              @click="openWin(item.Id)"
-            >
-            </el-image>
-            <div class="image-tool">
-              <i
+      <li
+        style="overflow: auto"
+        class="list-item"
+        v-for="item in dataList"
+        :key="item.Id"
+      >
+        <div v-if="item" class="img-list-item">
+          <el-tag v-if="item.MovieType" type="danger" effect="dark">{{
+            item.MovieType
+          }}</el-tag>
+          <el-image
+            style="width: 100%; height: 100%"
+            :src="item.PngUrl"
+            fit="cover"
+            lazy
+            @click="openWin(item.Id)"
+          >
+          </el-image>
+          <div class="image-tool">
+            <el-link
+              ><i
                 :underline="false"
                 class="el-icon-video-play icon-style"
-                title="播"
+                title="播放"
                 @click="playThis(item.Id)"
-              ></i>
-              <i
+              ></i
+            ></el-link>
+            <el-link
+              ><i
                 :underline="false"
-                class="el-icon-user icon-style"
-                title="搜"
+                class="el-icon-user-solid icon-style"
+                title="搜同"
                 @click="thisActress(item.Actress)"
-              ></i>
+              ></i
+            ></el-link>
+            <el-link>
               <i
-                :underline="false"
-                class="el-icon-refresh icon-style"
-                title="同步"
-                @click="syncThis(item.Id)"
-              ></i>
+                class="el-icon-folder-opened icon-style"
+                title="文件夹"
+                @click="openThisFolder(item.Id, 2)"
+              ></i
+            ></el-link>
+            <el-link>
               <i
                 v-if="notQiBing(item.MovieType)"
-                class="el-icon-view icon-style"
-                title="骑"
+                class="el-icon-bicycle icon-style"
+                title="骑兵"
                 @click="setMovieType(item.Id, 2)"
-              ></i>
+              ></i
+            ></el-link>
+            <el-link>
               <i
                 v-if="notBuBing(item.MovieType)"
-                class="el-icon-star-off icon-style"
-                title="步"
+                class="el-icon-sunny icon-style"
+                title="步兵"
                 @click="setMovieType(item.Id, 1)"
-              ></i>
+              ></i
+            ></el-link>
+            <el-link>
               <i
                 v-if="notSiBaDa(item.MovieType)"
-                class="el-icon-star-on icon-style"
-                title="欧"
+                class="el-icon-ship icon-style"
+                title="欧美"
                 @click="setMovieType(item.Id, 3)"
-              ></i>
+              ></i
+            ></el-link>
+            <el-link>
               <el-dropdown placement="top-start">
-                <i class="el-icon-more-outline icon-style"></i>
+                <i class="el-icon-more icon-style"></i>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
                     <i
@@ -174,35 +189,39 @@
                     ></i>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <i
-                      class="el-icon-delete icon-style"
-                      title="删除"
-                      @click="deleteThis(item.Id, 2)"
-                    ></i>
+                    <el-link>
+                      <i
+                        class="el-icon-delete icon-style"
+                        title="删除"
+                        @click="deleteThis(item.Id, 2)"
+                      ></i
+                    ></el-link>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <i
-                      class="el-icon-folder-opened icon-style"
-                      title="文件夹"
-                      @click="openThisFolder(item.Id, 2)"
-                    ></i>
+                    <el-link>
+                      <i
+                        :underline="false"
+                        class="el-icon-refresh icon-style"
+                        title="同步"
+                        @click="syncThis(item.Id)"
+                      ></i
+                    ></el-link>
                   </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div>
+                </el-dropdown-menu> </el-dropdown
+            ></el-link>
           </div>
-          <div class="context-text">
-            <el-tooltip
-              placement="bottom"
-              effect="dark"
-              popper-class="popperClass"
-            >
-              <div slot="content">{{ item.Name }}</div>
-              <span>【{{ item.SizeStr }}】 {{ item.Name }}</span>
-            </el-tooltip>
-          </div>
-        </li>
-      </ul>
+        </div>
+        <div class="context-text">
+          <el-tooltip
+            placement="bottom"
+            effect="dark"
+            popper-class="popperClass"
+          >
+            <div slot="content">{{ item.Name }}</div>
+            <span>【{{ item.SizeStr }}】 {{ item.Name }}</span>
+          </el-tooltip>
+        </div>
+      </li>
     </div>
     <el-pagination
       class="pageTool"
@@ -215,13 +234,19 @@
       :total="totalCnt"
     ></el-pagination>
     <!-- 弹窗 -->
-    <el-dialog :title="file.Name" :visible.sync="dialogVisible">
+    <el-dialog
+      width="60%"
+      :modal="true"
+      :lock-scroll="true"
+      :title="file.Name"
+      :visible.sync="dialogVisible"
+    >
       <div v-if="file" style="margin-left: 0px">
         <el-row :gutter="24">
           <el-image
             @click="open(file.Id)"
             :src="file.JpgUrl"
-            style="width: 100%"
+            style="width: auto"
           />
         </el-row>
         <el-row :gutter="20">
@@ -236,7 +261,7 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="4">
-            <span>YY:</span>
+            <span>脸谱:</span>
           </el-col>
           <el-col :span="16">
             <a href="javascript:void(0);" @click="openSearch(file.Actress)">
@@ -245,7 +270,7 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="4"><span>时:</span></el-col>
+          <el-col :span="4"><span>时间:</span></el-col>
           '
           <el-col :span="16">
             <span>{{ file.MTime }}</span>
@@ -253,10 +278,18 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="4">
-            <span>大:</span>
+            <span>大小:</span>
           </el-col>
           <el-col :span="16">
             <span>{{ file.SizeStr }}</span>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="4">
+            <span>源:</span>
+          </el-col>
+          <el-col :span="16">
+            <span>{{ file.Path }}</span>
           </el-col>
         </el-row>
       </div>
@@ -291,7 +324,7 @@ export default {
       totalSize: 0,
       resultSize: 0,
       curSize: 0,
-      suggestions: [] //搜索框 提示
+      suggestions: [], //搜索框 提示
     };
   },
   created() {
@@ -311,8 +344,8 @@ export default {
   },
   methods: {
     fetch() {
-      axios.get("api/buttoms").then(res => {
-        console.log(res);
+      axios.get("api/buttoms").then((res) => {
+        // console.log(res);
         if (res.status == 200) {
           this.BaseUrl = res.data.baseUrl;
         }
@@ -353,7 +386,7 @@ export default {
       this.queryList(true);
     },
     playThis(id) {
-      axios.get("api/play/" + id).then(res => {
+      axios.get("api/play/" + id).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         } else {
@@ -361,44 +394,21 @@ export default {
         }
       });
     },
-    thisActress(actress) {
-      this.searchWords = actress;
-      this.queryList();
-    },
     openThisFolder(id) {
-      axios.get("api/openFolder/" + id).then(res => {
+      axios.get("api/openFolder/" + id).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
       });
-    },
-    syncThis(id) {
-      axios.get("api/sync/" + id).then(res => {
-        if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
-        }
-      });
-    },
-    setMovieType(id, movieType) {
-      movieType =
-        movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
-      axios.get("api/setMovieType/" + id + "/" + movieType).then(res => {
-        if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
-        }
-      });
-    },
-    infoThis(id) {
-      console.log("info", id);
     },
     deleteThis(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       })
         .then(() => {
-          axios.get("api/delete/" + id).then(res => {
+          axios.get("api/delete/" + id).then((res) => {
             if (res.status === 200) {
               this.alertSuccess(res.data.Message);
             }
@@ -407,12 +417,43 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消删除",
           });
         });
     },
+    thisActress(actress) {
+      this.pageNo = 1;
+      this.searchWords = actress;
+      this.queryList();
+    },
+
+    syncThis(id) {
+      axios.get("api/sync/" + id).then((res) => {
+        if (res.status === 200) {
+          this.alertSuccess(res.data.Message);
+        }
+      });
+    },
+    setMovieType(id, movieType) {
+      movieType =
+        movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
+      axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
+        if (res.status === 200) {
+          this.alertSuccess(res.data.Message);
+        }
+      });
+    },
+    infoThis(id) {
+      console.log("info", id);
+      axios.get("api/info/" + id).then((res) => {
+        if (res.status === 200) {
+          this.alertSuccess(res.data.Message);
+        }
+      });
+    },
+
     refreshIndex() {
-      axios.get("api/refreshIndex").then(res => {
+      axios.get("api/refreshIndex").then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
           this.queryList();
@@ -420,7 +461,7 @@ export default {
       });
     },
     queryButtom() {
-      axios.get("api/buttoms").then(res => {
+      axios.get("api/buttoms").then((res) => {
         if (res.status === 200) {
           this.baseUrl = res.data.baseUrl;
         }
@@ -439,7 +480,7 @@ export default {
       callback(finalResults);
     },
     createFilter(queryString) {
-      return res => {
+      return (res) => {
         return res.toLowerCase().indexOf(queryString.toLowerCase()) >= 0;
       };
     },
@@ -466,7 +507,7 @@ export default {
         localStorage.setItem("searchSuggestions", this.suggestions);
       }
       this.loading = true;
-      axios.post("api/movieList", data).then(res => {
+      axios.post("api/movieList", data).then((res) => {
         if (res.status === 200) {
           const resData = res.data.Data;
           this.totalCnt = res.data.TotalCnt;
@@ -478,18 +519,18 @@ export default {
             if (!concat) {
               this.dataList = resData;
             } else {
-              resData.map(item => {
+              resData.map((item) => {
                 this.dataList.push(item);
               });
             }
           }
           const { path, no } = this.$route.query;
           if (no != this.pageNo) {
-            this.$router.replace({
-              path,
-              query: { searchWords: keywords, no: this.pageNo }
-            });
           }
+          this.$router.replace({
+            path,
+            query: { searchWords: keywords, no: this.pageNo },
+          });
 
           this.onlyRepeat = false;
           this.loading = false;
@@ -500,8 +541,23 @@ export default {
 
     open(filename) {
       const self = this;
-      console.log(filename);
-      self.$router.push("context/" + filename + "?pageNo=" + this.pageNo);
+      // console.log(filename);
+      self.$router.push(
+        "context/" +
+          filename +
+          "?pageNo=" +
+          this.pageNo +
+          "&pageSize=" +
+          this.pageSize +
+          "&searchWords=" +
+          this.searchWords +
+          "&sortType=" +
+          this.sortType +
+          "&sortField=" +
+          this.sortField +
+          "&movieType=" +
+          this.movieType
+      );
     },
     openLick(code) {
       const url = this.baseUrl + code;
@@ -513,7 +569,7 @@ export default {
     },
 
     openWin(id) {
-      axios.get("api/info/" + id).then(res => {
+      axios.get("api/info/" + id).then((res) => {
         if (res.status === 200) {
           this.file = res.data;
           this.dialogVisible = true;
@@ -531,24 +587,24 @@ export default {
     alertSuccess(msg) {
       this.$message({
         message: msg,
-        type: "success"
+        type: "success",
       });
     },
     alertFail(msg) {
       this.$message({
         message: msg,
-        type: "fail"
+        type: "fail",
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
 .container-body {
-  margin-top: 4px;
   min-width: 600px;
   min-height: 600px;
   height: 100%;
+  padding: 2px;
 }
 
 .floatButton {
@@ -566,7 +622,7 @@ export default {
 }
 
 .icon-style {
-  font-size: 22px;
+  font-size: 21px;
   color: red;
   margin-left: 2px;
 }
@@ -579,7 +635,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 .popperClass {
@@ -588,38 +644,40 @@ export default {
 }
 
 .list-item {
-  width: 200px;
+  width: 210px;
   height: 360px;
   float: left;
   list-style: none;
-  margin-top: 6px;
-  /* margin-right: 8px; */
 }
 
 .img-list-item {
-  width: 190px;
+  width: 196px;
   height: auto;
 }
 .img-list-item span {
   filter: alpha(opacity=80);
   opacity: 0.8;
   background: #e01616;
-  position:fixed;
+  position: absolute;
   z-index: 99;
+  margin-top: 4px;
+  margin-left: 4px;
+  text-align: justify;
+  text-align-last: justify;
+  width: 54px;
   color: #ffffff;
-  /* margin-left: 120px; */
 }
 
 .pageTool {
   position: fixed;
-  bottom: 8px;
+  bottom: 4px;
   overflow: auto;
   z-index: 999;
 }
 
 .pagination {
   align-content: center;
-  position: fixed;
+  position: absolute;
   bottom: 0px;
   overflow: auto;
   z-index: 999;
@@ -634,20 +692,7 @@ export default {
   line-height: 40px;
   color: #1989fa;
 }
-
-.badge-item {
-  margin-top: 0px;
-  margin-right: 0px;
-}
-.el-tooltip__popper {
+v-deep .el-tooltip__popper {
   width: 300px;
-}
-v-deep .el-badge__content {
-  right: 40px;
-}
-</style>
-<style>
-.el-badge__content {
-  right: 40px;
 }
 </style>

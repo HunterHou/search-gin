@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header> <MenuTool /></el-header>
-    <el-main> <Nuxt /></el-main>
+    <el-main style="overflow:hidden"> <Nuxt /></el-main>
   </el-container>
 </template>
 
@@ -45,7 +45,7 @@ html {
   border: 1px solid #35495e;
   color: #35495e;
   text-decoration: none;
-  padding: 10px 30px;
+  padding: 10px 20px;
   margin-left: 15px;
 }
 

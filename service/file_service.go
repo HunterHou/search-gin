@@ -282,17 +282,15 @@ func (fs FileService) FindOne(Id string) datamodels.Movie {
 	return curFile
 }
 
-func (fs FileService) FindNext(Id string, offset int) datamodels.Movie {
-	if len(datasource.FileList) == 0 {
-		fs.ScanAll()
-	}
-	length := len(datasource.FileList)
+func (fs FileService) FindNext(Id string, sourceLib []datamodels.Movie, offset int) datamodels.Movie {
+
+	length := len(sourceLib)
 	for i := 0; i < length; i++ { //looping from 0 to the length of the array
-		if datasource.FileList[i].Id == Id {
+		if sourceLib[i].Id == Id {
 			if i+offset < 0 || i+offset > length {
-				return datasource.FileList[i]
+				return sourceLib[i]
 			}
-			return datasource.FileList[i+offset]
+			return sourceLib[i+offset]
 		}
 	}
 	curFile := datasource.FileLib[Id]
@@ -394,7 +392,7 @@ func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
 
 func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64, keyWord string, movieType string) ([]datamodels.Movie, int64) {
 
-	if (keyWord == "" || keyWord == "undefined") && movieType == "" {
+	if (keyWord == "" || keyWord == "undefined") && (movieType == "" || movieType == "undefined") {
 		return files, totalSize
 	}
 	fmt.Println("movieType:" + movieType)
@@ -414,6 +412,9 @@ func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64,
 			result = append(result, file)
 			size = size + file.Size
 		} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(keyWord)) && isMovieType {
+			result = append(result, file)
+			size = size + file.Size
+		} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(keyWord)) && isMovieType {
 			result = append(result, file)
 			size = size + file.Size
 		}

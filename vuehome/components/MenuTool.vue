@@ -17,7 +17,7 @@
       <span slot="title">目录</span>
     </el-menu-item>
     <el-menu-item index="/actress">
-      <i class="el-icon-location"></i><span slot="title">YY</span>
+      <i class="el-icon-location"></i><span slot="title">脸谱</span>
     </el-menu-item>
     <el-menu-item index="/setting">
       <i class="el-icon-setting"></i>
@@ -27,8 +27,8 @@
 </template>
 <style>
 .header-style {
-  height: 50px;
-  line-height: 50px;
+  height: 36px;
+  line-height: 36px;
 }
 </style>
 
