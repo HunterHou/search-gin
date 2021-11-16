@@ -3,6 +3,7 @@
     <el-backtop :bottom="100" style="width: 50px; height: 50px">
       <div class="up">UP</div>
     </el-backtop>
+    <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
       style="
         position: fixed;
@@ -12,9 +13,11 @@
         left: 20px;
       "
       round
+      @keyup.37.native="pageLoading(-1)"
       @click="pageLoading(-1)"
       >上一页
     </el-button>
+    <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
       style="
         position: fixed;
@@ -24,6 +27,7 @@
         right: 80px;
       "
       round
+      @keyup.37.native="pageLoading(1)"
       @click="pageLoading(1)"
       >下一页
     </el-button>
