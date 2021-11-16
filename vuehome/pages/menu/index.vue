@@ -307,7 +307,7 @@ export default {
     var searchPage = new Map();
     return {
       file: "",
-      baseUrl: "www.baidu.com",
+      baseUrl: "",
       onlyRepeat: false, //是否查重
       dialogVisible: false, //是否弹窗
       sortField: "mtime",
@@ -379,7 +379,7 @@ export default {
     fetchButtom() {
       axios.get("api/buttoms").then(res => {
         if (res.status == 200) {
-          this.BaseUrl = res.data.baseUrl;
+          this.baseUrl = res.data.baseUrl;
         }
 
         // store.commit('setStars', res.data)
@@ -601,6 +601,7 @@ export default {
     },
     openLick(code) {
       const url = this.baseUrl + code;
+      console.log(url)
       window.open(url, "_blank");
     },
     openSearch(actress) {
