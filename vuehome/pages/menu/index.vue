@@ -85,7 +85,7 @@
             size="mini"
             icon="el-icon-search"
             @click="
-              e => {
+              (e) => {
                 queryList();
               }
             "
@@ -213,6 +213,7 @@
             ></el-link>
           </div>
         </div>
+
         <div class="context-text">
           <el-tooltip
             placement="bottom"
@@ -220,7 +221,11 @@
             popper-class="popperClass"
           >
             <div slot="content">{{ item.Name }}</div>
-            <span>【{{ item.SizeStr }}】 {{ item.Name }}</span>
+            <span>
+              <el-link @click="copy(item.Actress)">{{ item.Actress }}</el-link>
+              <el-link @click="copy(item.Code)">{{ item.Code }}</el-link>
+              【{{ item.SizeStr }}】 {{ item.Name }}
+            </span>
           </el-tooltip>
         </div>
       </li>
@@ -328,7 +333,7 @@ export default {
       totalSize: 0,
       resultSize: 0,
       curSize: 0,
-      suggestions: [] //搜索框 提示
+      suggestions: [], //搜索框 提示
     };
   },
   created() {
@@ -364,20 +369,34 @@ export default {
       } else if (key == 9) {
       } else if (key >= 49 && key <= 59) {
         //1
-        const pageIndex =key - 48;
-        this.pageNo = (pageIndex>this.totalPage?this.totalPage:pageIndex);
+        const pageIndex = key - 48;
+        this.pageNo = pageIndex > this.totalPage ? this.totalPage : pageIndex;
         this.queryList();
       }
     };
   },
   watch: {
-    searchWords: a => {
+    searchWords: (a) => {
       console.log(a);
-    }
+    },
   },
   methods: {
+    copy(data) {
+      let target = document.createElement("input"); //创建input节点
+      target.value = data; // 给input的value赋值
+      target.id="copyInput"
+      document.body.appendChild(target); // 向页面插入input节点
+      target.select(); // 选中input
+      try {
+        let success = document.execCommand("Copy"); // 执行浏览器复制命令
+        this.alertSuccess("复制成功");
+      } catch {
+        this.alertFail("复制失败");
+      }
+      document.body.removeChild(target)
+    },
     fetchButtom() {
-      axios.get("api/buttoms").then(res => {
+      axios.get("api/buttoms").then((res) => {
         if (res.status == 200) {
           this.baseUrl = res.data.baseUrl;
         }
@@ -418,7 +437,7 @@ export default {
       this.queryList(true);
     },
     playThis(id) {
-      axios.get("api/play/" + id).then(res => {
+      axios.get("api/play/" + id).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         } else {
@@ -427,7 +446,7 @@ export default {
       });
     },
     openThisFolder(id) {
-      axios.get("api/openFolder/" + id).then(res => {
+      axios.get("api/openFolder/" + id).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -437,10 +456,10 @@ export default {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       })
         .then(() => {
-          axios.get("api/delete/" + id).then(res => {
+          axios.get("api/delete/" + id).then((res) => {
             if (res.status === 200) {
               this.alertSuccess(res.data.Message);
             }
@@ -449,7 +468,7 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消删除",
           });
         });
     },
@@ -460,7 +479,7 @@ export default {
     },
 
     syncThis(id) {
-      axios.get("api/sync/" + id).then(res => {
+      axios.get("api/sync/" + id).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -469,7 +488,7 @@ export default {
     setMovieType(id, movieType) {
       movieType =
         movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
-      axios.get("api/setMovieType/" + id + "/" + movieType).then(res => {
+      axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -477,7 +496,7 @@ export default {
     },
     infoThis(id) {
       console.log("info", id);
-      axios.get("api/info/" + id).then(res => {
+      axios.get("api/info/" + id).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -485,7 +504,7 @@ export default {
     },
 
     refreshIndex() {
-      axios.get("api/refreshIndex").then(res => {
+      axios.get("api/refreshIndex").then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
           this.queryList();
@@ -506,7 +525,7 @@ export default {
       callback(finalResults);
     },
     createFilter(queryString) {
-      return res => {
+      return (res) => {
         return res.toLowerCase().indexOf(queryString.toLowerCase()) >= 0;
       };
     },
@@ -546,7 +565,7 @@ export default {
 
       this.loading = true;
 
-      axios.post("api/movieList", data).then(res => {
+      axios.post("api/movieList", data).then((res) => {
         if (res.status === 200) {
           const resData = res.data.Data;
           this.totalCnt = res.data.TotalCnt;
@@ -555,20 +574,31 @@ export default {
           this.resultSize = res.data.ResultSize;
           this.curSize = res.data.CurSize;
           if (resData && resData.length > 0) {
+            debugger
+            resData.map((item) => {
+              
+              if(item.Code ==item.Actress){
+                item.Code = ''
+                item.Actress = ''
+              }
+              item.Name = item.Name.replace("[" + item.Code + "]", "");
+              item.Name = item.Name.replace("[" + item.Actress + "]", "");
+            });
             if (!concat) {
               this.dataList = resData;
             } else {
-              resData.map(item => {
+              resData.map((item) => {
                 this.dataList.push(item);
               });
             }
           }
+
           const { path, no } = this.$route.query;
           if (no != this.pageNo) {
           }
           this.$router.replace({
             path,
-            query: { searchWords: keywords, no: this.pageNo }
+            query: { searchWords: keywords, no: this.pageNo },
           });
 
           this.onlyRepeat = false;
@@ -601,7 +631,7 @@ export default {
     },
     openLick(code) {
       const url = this.baseUrl + code;
-      console.log(url)
+      console.log(url);
       window.open(url, "_blank");
     },
     openSearch(actress) {
@@ -610,7 +640,7 @@ export default {
     },
 
     openWin(id) {
-      axios.get("api/info/" + id).then(res => {
+      axios.get("api/info/" + id).then((res) => {
         if (res.status === 200) {
           this.file = res.data;
           this.dialogVisible = true;
@@ -628,16 +658,16 @@ export default {
     alertSuccess(msg) {
       this.$message({
         message: msg,
-        type: "success"
+        type: "success",
       });
     },
     alertFail(msg) {
       this.$message({
         message: msg,
-        type: "fail"
+        type: "fail",
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
@@ -686,7 +716,7 @@ export default {
 
 .list-item {
   width: 210px;
-  height: 360px;
+  height: 370px;
   float: left;
   list-style: none;
 }
