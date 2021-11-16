@@ -13,7 +13,6 @@
         left: 20px;
       "
       round
-      @keyup.37.native="pageLoading(-1)"
       @click="pageLoading(-1)"
       >上一页
     </el-button>
@@ -27,7 +26,6 @@
         right: 80px;
       "
       round
-      @keyup.37.native="pageLoading(1)"
       @click="pageLoading(1)"
       >下一页
     </el-button>
@@ -228,7 +226,7 @@
     </div>
     <el-pagination
       class="pageTool"
-      :page-sizes="[2,5, 7, 10, 12, 14, 30, 60, 90, 200]"
+      :page-sizes="[2, 5, 7, 10, 12, 14, 30, 60, 90, 200]"
       :page-size="pageSize"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -343,6 +341,16 @@ export default {
         this.suggestions = suggestionsCaches.split(",");
       }
     });
+  },
+  mounted() {
+    document.onkeydown = () => {
+      let key = window.event.keyCode;
+      if (key === 37) {
+        this.pageLoading(-1);
+      } else if (key === 39) {
+        this.pageLoading(1);
+      }
+    };
   },
   watch: {
     searchWords: a => {
@@ -517,7 +525,7 @@ export default {
       } else {
         title = "目录";
       }
-    
+
       this.loading = true;
 
       axios.post("api/movieList", data).then(res => {
