@@ -82,8 +82,7 @@
             size="mini"
             icon="el-icon-search"
             @click="
-              (e) => {
-                this.pageNo = 1;
+              e => {
                 queryList();
               }
             "
@@ -225,7 +224,7 @@
     </div>
     <el-pagination
       class="pageTool"
-      :page-sizes="[5, 7, 10, 12, 14, 30, 60, 90, 200]"
+      :page-sizes="[2,5, 7, 10, 12, 14, 30, 60, 90, 200]"
       :page-size="pageSize"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -302,6 +301,7 @@ import axios from "axios";
 export default {
   data() {
     const { searchWords, no } = this.$route.query;
+    var searchPage = new Map();
     return {
       file: "",
       baseUrl: "www.baidu.com",
@@ -315,6 +315,7 @@ export default {
       errorMsg: "",
       fit: "fit",
       searchWords: searchWords ? searchWords : "",
+      searchPage: searchPage,
       pagerCount: 10,
       pageNo: no ? parseInt(no) : 1,
       pageSize: 12,
@@ -324,16 +325,13 @@ export default {
       totalSize: 0,
       resultSize: 0,
       curSize: 0,
-      suggestions: [], //搜索框 提示
+      suggestions: [] //搜索框 提示
     };
   },
   created() {
     this.$nextTick(() => {
       this.$nuxt.$loading.start();
-      this.fetch();
-      document.title = "目录";
-
-      this.queryButtom();
+      this.fetchButtom();
       this.queryList();
       this.$nuxt.$loading.finish();
       const suggestionsCaches = localStorage.getItem("searchSuggestions");
@@ -342,10 +340,14 @@ export default {
       }
     });
   },
+  watch: {
+    searchWords: a => {
+      console.log(a);
+    }
+  },
   methods: {
-    fetch() {
-      axios.get("api/buttoms").then((res) => {
-        // console.log(res);
+    fetchButtom() {
+      axios.get("api/buttoms").then(res => {
         if (res.status == 200) {
           this.BaseUrl = res.data.baseUrl;
         }
@@ -386,7 +388,7 @@ export default {
       this.queryList(true);
     },
     playThis(id) {
-      axios.get("api/play/" + id).then((res) => {
+      axios.get("api/play/" + id).then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         } else {
@@ -395,7 +397,7 @@ export default {
       });
     },
     openThisFolder(id) {
-      axios.get("api/openFolder/" + id).then((res) => {
+      axios.get("api/openFolder/" + id).then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -405,10 +407,10 @@ export default {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning",
+        type: "warning"
       })
         .then(() => {
-          axios.get("api/delete/" + id).then((res) => {
+          axios.get("api/delete/" + id).then(res => {
             if (res.status === 200) {
               this.alertSuccess(res.data.Message);
             }
@@ -417,7 +419,7 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除",
+            message: "已取消删除"
           });
         });
     },
@@ -428,7 +430,7 @@ export default {
     },
 
     syncThis(id) {
-      axios.get("api/sync/" + id).then((res) => {
+      axios.get("api/sync/" + id).then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -437,7 +439,7 @@ export default {
     setMovieType(id, movieType) {
       movieType =
         movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
-      axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
+      axios.get("api/setMovieType/" + id + "/" + movieType).then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -445,7 +447,7 @@ export default {
     },
     infoThis(id) {
       console.log("info", id);
-      axios.get("api/info/" + id).then((res) => {
+      axios.get("api/info/" + id).then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -453,20 +455,14 @@ export default {
     },
 
     refreshIndex() {
-      axios.get("api/refreshIndex").then((res) => {
+      axios.get("api/refreshIndex").then(res => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
           this.queryList();
         }
       });
     },
-    queryButtom() {
-      axios.get("api/buttoms").then((res) => {
-        if (res.status === 200) {
-          this.baseUrl = res.data.baseUrl;
-        }
-      });
-    },
+
     handleSelect(item) {
       this.searchWords = item;
     },
@@ -480,7 +476,7 @@ export default {
       callback(finalResults);
     },
     createFilter(queryString) {
-      return (res) => {
+      return res => {
         return res.toLowerCase().indexOf(queryString.toLowerCase()) >= 0;
       };
     },
@@ -488,6 +484,14 @@ export default {
       this.dataList = [];
       let data = new FormData();
       const keywords = this.searchWords ? this.searchWords : "";
+      const page = this.searchPage.get(keywords);
+      if (page) {
+        this.page = page;
+      } else {
+        this.page = 1;
+      }
+      this.searchPage.set(keywords, this.pageNo);
+
       data.append("pageNo", this.pageNo);
       data.append("pageSize", this.pageSize);
       data.append("keywords", keywords);
@@ -495,6 +499,7 @@ export default {
       data.append("sortField", this.sortField);
       data.append("movieType", this.movieType);
       data.append("onlyRepeat", this.onlyRepeat);
+      let title = keywords;
       if (keywords !== "") {
         const idx = this.suggestions.indexOf(keywords);
         if (idx >= 0) {
@@ -505,9 +510,13 @@ export default {
           this.suggestions.pop();
         }
         localStorage.setItem("searchSuggestions", this.suggestions);
+      } else {
+        title = "目录";
       }
+      document.title = title;
       this.loading = true;
-      axios.post("api/movieList", data).then((res) => {
+
+      axios.post("api/movieList", data).then(res => {
         if (res.status === 200) {
           const resData = res.data.Data;
           this.totalCnt = res.data.TotalCnt;
@@ -519,7 +528,7 @@ export default {
             if (!concat) {
               this.dataList = resData;
             } else {
-              resData.map((item) => {
+              resData.map(item => {
                 this.dataList.push(item);
               });
             }
@@ -529,7 +538,7 @@ export default {
           }
           this.$router.replace({
             path,
-            query: { searchWords: keywords, no: this.pageNo },
+            query: { searchWords: keywords, no: this.pageNo }
           });
 
           this.onlyRepeat = false;
@@ -569,7 +578,7 @@ export default {
     },
 
     openWin(id) {
-      axios.get("api/info/" + id).then((res) => {
+      axios.get("api/info/" + id).then(res => {
         if (res.status === 200) {
           this.file = res.data;
           this.dialogVisible = true;
@@ -587,16 +596,16 @@ export default {
     alertSuccess(msg) {
       this.$message({
         message: msg,
-        type: "success",
+        type: "success"
       });
     },
     alertFail(msg) {
       this.$message({
         message: msg,
-        type: "fail",
+        type: "fail"
       });
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>
