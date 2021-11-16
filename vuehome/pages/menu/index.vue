@@ -350,18 +350,26 @@ export default {
         //left
         this.pageLoading(-1);
       } else if (key === 39) {
-         //right
+        //right
         this.pageLoading(1);
       } else if (key == 45) {
         //insert
-        document.getElementById("searchInput").focus()
+        document.getElementById("searchInput").focus();
       } else if (key == 13) {
         //enter
-        document.getElementById("searchInput").click()
-      }
-      else if (key == 27) {
+        document.getElementById("searchInput").click();
+      } else if (key == 192) {
         //esc
-        this.refreshIndex()
+        this.refreshIndex();
+      } else if (key == 9) {
+        //Tab
+        // var goto = document.getElementsByClassName(
+        //   "el-pagination__editor el-input__inner"
+        // );
+        // goto.focus();
+      } else if (key == 97) {
+        //1
+        // document.getElementsByClassName("el-select-dropdown el-popper").focus();
       }
     };
   },
