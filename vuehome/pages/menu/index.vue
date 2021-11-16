@@ -70,6 +70,7 @@
 
       <el-col :span="6">
         <el-autocomplete
+          id="searchInput"
           placeholder="请输入关键词"
           v-model="searchWords"
           clearable
@@ -346,9 +347,21 @@ export default {
     document.onkeydown = () => {
       let key = window.event.keyCode;
       if (key === 37) {
+        //left
         this.pageLoading(-1);
       } else if (key === 39) {
+         //right
         this.pageLoading(1);
+      } else if (key == 45) {
+        //insert
+        document.getElementById("searchInput").focus()
+      } else if (key == 13) {
+        //enter
+        document.getElementById("searchInput").click()
+      }
+      else if (key == 27) {
+        //esc
+        this.refreshIndex()
       }
     };
   },
