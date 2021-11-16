@@ -513,7 +513,7 @@ export default {
       } else {
         title = "目录";
       }
-      document.title = title;
+    
       this.loading = true;
 
       axios.post("api/movieList", data).then(res => {
@@ -543,6 +543,7 @@ export default {
 
           this.onlyRepeat = false;
           this.loading = false;
+          document.title = title;
           this.$forceUpdate();
         }
       });
