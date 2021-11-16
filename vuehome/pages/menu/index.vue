@@ -362,14 +362,11 @@ export default {
         //esc
         this.refreshIndex();
       } else if (key == 9) {
-        //Tab
-        // var goto = document.getElementsByClassName(
-        //   "el-pagination__editor el-input__inner"
-        // );
-        // goto.focus();
-      } else if (key == 97) {
+      } else if (key >= 49 && key <= 59) {
         //1
-        // document.getElementsByClassName("el-select-dropdown el-popper").focus();
+        const pageIndex =key - 48;
+        this.pageNo = (pageIndex>this.totalPage?this.totalPage:pageIndex);
+        this.queryList();
       }
     };
   },
