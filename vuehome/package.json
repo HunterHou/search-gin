@@ -9,7 +9,6 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "clipboard": "^2.0.8",
     "core-js": "^3.9.1",
     "element-ui": "^2.15.1",
     "nuxt": "^2.15.3"
