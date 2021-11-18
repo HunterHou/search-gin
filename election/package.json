@@ -1,0 +1,12 @@
+{
+  "name": "search",
+  "version": "1.0.0",
+  "description": "search window",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "hunter",
+  "license": "ISC"
+}
