@@ -34,6 +34,8 @@ type Movie struct {
 	PngUrl    string
 	JpgUrl    string
 	MovieType string
+	ImageBase string
+	PngBase   string
 }
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
@@ -81,30 +83,30 @@ func (f Movie) PngBase64() string {
 
 }
 
-// func (f *Movie) SetPngBase64() {
-// 	path := f.Png
-// 	if !utils.ExistsFiles(path) {
-// 		path = f.Jpg
-// 	}
-// 	if !utils.ExistsFiles(path) {
-// 		path = f.Path
-// 	}
-// 	res := "data:image/png;base64," + utils.ImageToString(path)
-// 	f.PngBase = res
+func (f *Movie) SetPngBase64() {
+	path := f.Png
+	if !utils.ExistsFiles(path) {
+		path = f.Jpg
+	}
+	if !utils.ExistsFiles(path) {
+		path = f.Path
+	}
+	res := "data:image/png;base64," + utils.ImageToString(path)
+	f.PngBase = res
 
-// }
-// func (f *Movie) SetImageBase64() {
-// 	path := f.Jpg
-// 	if !utils.ExistsFiles(path) {
-// 		path = f.Png
-// 	}
-// 	if !utils.ExistsFiles(path) {
-// 		path = f.Path
-// 	}
-// 	res := "data:image/jpg;base64," + utils.ImageToString(path)
-// 	f.ImageBase = res
+}
+func (f *Movie) SetImageBase64() {
+	path := f.Jpg
+	if !utils.ExistsFiles(path) {
+		path = f.Png
+	}
+	if !utils.ExistsFiles(path) {
+		path = f.Path
+	}
+	res := "data:image/jpg;base64," + utils.ImageToString(path)
+	f.ImageBase = res
 
-// }
+}
 
 func (f Movie) GetPng() string {
 	path := f.Path

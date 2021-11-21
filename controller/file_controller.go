@@ -46,6 +46,15 @@ func GetJpg(c *gin.Context) {
 	}
 }
 
+func PostStream(c *gin.Context) {
+	path := c.Param("path")
+	if utils.ExistsFiles(path) {
+		c.File(path)
+	} else {
+		c.File(path)
+	}
+}
+
 func PostMovies(c *gin.Context) {
 	keywords := c.PostForm("keywords")
 	pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
@@ -184,6 +193,17 @@ func GetInfo(c *gin.Context) {
 	service := service.FileService{}
 	file := service.FindOne(id)
 	c.JSON(http.StatusOK, file)
+}
+func GetDirInfo(c *gin.Context) {
+	id := c.Param("id")
+	fileService := service.FileService{}
+	file := fileService.FindOne(id)
+
+	files := service.Walk(file.DirPath, cons.Types)
+	for i := 0; i < len(files); i++ {
+		files[i].SetImageBase64()
+	}
+	c.JSON(http.StatusOK, files)
 }
 
 func GetOpenFoler(c *gin.Context) {

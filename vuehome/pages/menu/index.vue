@@ -101,10 +101,9 @@
           <el-radio-button label="cover">封面</el-radio-button>
           <el-radio-button label="post">海报</el-radio-button>
         </el-radio-group>
-         
       </el-col>
       <el-col :span="1">
-       <el-link>
+        <el-link>
           <i
             :underline="true"
             class="el-icon-zoom-out"
@@ -134,6 +133,7 @@
       >
         <div
           v-if="item"
+          @click="openWin(item.Id)"
           :class="showStle == 'cover' ? 'img-list-item-cover' : 'img-list-item'"
         >
           <el-tag v-if="item.MovieType" type="danger" effect="dark">{{
@@ -144,7 +144,6 @@
             :src="item.PngUrl"
             fit="contain"
             lazy
-            @click="openWin(item.Id)"
           >
           </el-image>
         </div>
@@ -263,11 +262,12 @@
     >
       <div v-if="file" style="margin-left: 0px">
         <el-row :gutter="24">
-          <el-image
-            @click="open(file.Id)"
-            :src="file.JpgUrl"
-            style="width: auto"
-          />
+          <div   @click="open(file.Id)" style="width: auto; ">
+            <el-image
+              :src="file.JpgUrl"
+              style="width: auto; min-height: 200px; min-width: 200px"
+            />
+          </div>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="4">
@@ -735,6 +735,7 @@ export default {
 }
 .img-list-item {
   width: 198px;
+  min-height: 100px;
   height: auto;
 }
 .img-list-item span {
