@@ -4,9 +4,12 @@
   "description": "search window",
   "main": "index.js",
   "scripts": {
-    "start": "electron .",
+    "dev": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "hunter",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^16.0.0"
+  }
 }
