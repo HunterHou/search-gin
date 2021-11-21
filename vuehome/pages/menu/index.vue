@@ -59,13 +59,6 @@
           <el-radio-button label="步兵">步</el-radio-button>
           <el-radio-button label="斯巴达">欧</el-radio-button>
         </el-radio-group>
-
-        <i
-          :underline="false"
-          class="el-icon-zoom-out"
-          title="播放"
-          @click="onlyRepeatQuery()"
-        ></i>
       </el-col>
 
       <el-col :span="6">
@@ -98,141 +91,161 @@
       </el-col>
     </el-row>
 
-    <el-row>
-      <el-col :span="24" :offset="1"
-        ><span>
-          扫描库：{{ totalSize }} 搜索：{{ resultSize }} 当前：{{
-            curSize
-          }}</span
-        ></el-col
-      >
+    <el-row style="margin-top: 4px">
+      <el-col :span="3" :offset="1">
+        <el-radio-group
+          v-model="showStle"
+          @change="showStleChange()"
+          size="mini"
+        >
+          <el-radio-button label="cover">封面</el-radio-button>
+          <el-radio-button label="post">海报</el-radio-button>
+        </el-radio-group>
+         
+      </el-col>
+      <el-col :span="1">
+       <el-link>
+          <i
+            :underline="true"
+            class="el-icon-zoom-out"
+            title="播放"
+            @click="onlyRepeatQuery()"
+            >查重</i
+          ></el-link
+        >
+      </el-col>
+      <el-col :span="12">
+        <span> 扫描库：{{ totalSize }} </span>
+        <span> 搜索：{{ resultSize }} </span>
+        <span> 当前：{{ curSize }}</span>
+      </el-col>
     </el-row>
     <div
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 20px"
+      style="margin-top: 10px"
     >
       <li
         style="overflow: auto"
-        class="list-item"
+        :class="showStle == 'cover' ? 'list-item-cover' : 'list-item'"
         v-for="item in dataList"
         :key="item.Id"
       >
-        <div v-if="item" class="img-list-item">
+        <div
+          v-if="item"
+          :class="showStle == 'cover' ? 'img-list-item-cover' : 'img-list-item'"
+        >
           <el-tag v-if="item.MovieType" type="danger" effect="dark">{{
             item.MovieType
           }}</el-tag>
           <el-image
             style="width: 100%; height: 100%"
             :src="item.PngUrl"
-            fit="cover"
+            fit="contain"
             lazy
             @click="openWin(item.Id)"
           >
           </el-image>
-          <div class="image-tool">
-            <el-link
-              ><i
-                :underline="false"
-                class="el-icon-video-play icon-style"
-                title="播放"
-                @click="playThis(item.Id)"
-              ></i
-            ></el-link>
-            <el-link
-              ><i
-                :underline="false"
-                class="el-icon-user-solid icon-style"
-                title="搜同"
-                @click="thisActress(item.Actress)"
-              ></i
-            ></el-link>
-            <el-link>
-              <i
-                class="el-icon-folder-opened icon-style"
-                title="文件夹"
-                @click="openThisFolder(item.Id, 2)"
-              ></i
-            ></el-link>
-            <el-link>
-              <i
-                v-if="notQiBing(item.MovieType)"
-                class="el-icon-bicycle icon-style"
-                title="骑兵"
-                @click="setMovieType(item.Id, 2)"
-              ></i
-            ></el-link>
-            <el-link>
-              <i
-                v-if="notBuBing(item.MovieType)"
-                class="el-icon-sunny icon-style"
-                title="步兵"
-                @click="setMovieType(item.Id, 1)"
-              ></i
-            ></el-link>
-            <el-link>
-              <i
-                v-if="notSiBaDa(item.MovieType)"
-                class="el-icon-ship icon-style"
-                title="欧美"
-                @click="setMovieType(item.Id, 3)"
-              ></i
-            ></el-link>
-            <el-link>
-              <el-dropdown placement="top-start">
-                <i class="el-icon-more icon-style"></i>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    <i
-                      class="el-icon-refresh-right icon-style"
-                      title="信息"
-                      @click="infoThis(item.Id, 2)"
-                    ></i>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <el-link>
-                      <i
-                        class="el-icon-delete icon-style"
-                        title="删除"
-                        @click="deleteThis(item.Id, 2)"
-                      ></i
-                    ></el-link>
-                  </el-dropdown-item>
-                  <el-dropdown-item>
-                    <el-link>
-                      <i
-                        :underline="false"
-                        class="el-icon-refresh icon-style"
-                        title="同步"
-                        @click="syncThis(item.Id)"
-                      ></i
-                    ></el-link>
-                  </el-dropdown-item>
-                </el-dropdown-menu> </el-dropdown
-            ></el-link>
-          </div>
         </div>
-
-        <div class="context-text">
-          <el-tooltip
-            placement="bottom"
-            effect="dark"
-            popper-class="popperClass"
-          >
-            <div slot="content">{{ item.Name }}</div>
-            <span>
-              <el-link @click="copy(item.Actress)">{{ item.Actress }}</el-link>
-              <el-link @click="copy(item.Code)">{{ item.Code }}</el-link>
-              【{{ item.SizeStr }}】 {{ item.Name }}
-            </span>
-          </el-tooltip>
+        <div class="image-tool">
+          <el-link
+            ><i
+              :underline="false"
+              class="el-icon-video-play icon-style"
+              title="播放"
+              @click="playThis(item.Id)"
+            ></i
+          ></el-link>
+          <el-link
+            ><i
+              :underline="false"
+              class="el-icon-user-solid icon-style"
+              title="搜同"
+              @click="thisActress(item.Actress)"
+            ></i
+          ></el-link>
+          <el-link>
+            <i
+              class="el-icon-folder-opened icon-style"
+              title="文件夹"
+              @click="openThisFolder(item.Id, 2)"
+            ></i
+          ></el-link>
+          <el-link>
+            <i
+              v-if="notQiBing(item.MovieType)"
+              class="el-icon-bicycle icon-style"
+              title="骑兵"
+              @click="setMovieType(item.Id, 2)"
+            ></i
+          ></el-link>
+          <el-link>
+            <i
+              v-if="notBuBing(item.MovieType)"
+              class="el-icon-sunny icon-style"
+              title="步兵"
+              @click="setMovieType(item.Id, 1)"
+            ></i
+          ></el-link>
+          <el-link>
+            <i
+              v-if="notSiBaDa(item.MovieType)"
+              class="el-icon-ship icon-style"
+              title="欧美"
+              @click="setMovieType(item.Id, 3)"
+            ></i
+          ></el-link>
+          <el-link>
+            <el-dropdown placement="top-start">
+              <i class="el-icon-more icon-style"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <i
+                    class="el-icon-refresh-right icon-style"
+                    title="信息"
+                    @click="infoThis(item.Id, 2)"
+                  ></i>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-link>
+                    <i
+                      class="el-icon-delete icon-style"
+                      title="删除"
+                      @click="deleteThis(item.Id, 2)"
+                    ></i
+                  ></el-link>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-link>
+                    <i
+                      :underline="false"
+                      class="el-icon-refresh icon-style"
+                      title="同步"
+                      @click="syncThis(item.Id)"
+                    ></i
+                  ></el-link>
+                </el-dropdown-item>
+              </el-dropdown-menu> </el-dropdown
+          ></el-link>
+          <div class="context-text">
+            <el-tooltip placement="bottom" effect="dark">
+              <div slot="content">{{ item.Name }}</div>
+              <span>
+                <el-link @click="copy(item.Actress)">{{
+                  item.Actress
+                }}</el-link>
+                <el-link @click="copy(item.Code)">{{ item.Code }}</el-link>
+                【{{ item.SizeStr }}】 {{ item.Name }}
+              </span>
+            </el-tooltip>
+          </div>
         </div>
       </li>
     </div>
     <el-pagination
       class="pageTool"
-      :page-sizes="[2, 5, 7, 10, 12, 14, 30, 60, 90, 200]"
+      :page-sizes="[2, 4, 6, 10, 12, 14, 30, 60, 90, 200]"
       :page-size="pageSize"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -311,6 +324,7 @@ export default {
     const { searchWords, no } = this.$route.query;
     var searchPage = new Map();
     return {
+      showStle: "post",
       file: "",
       baseUrl: "",
       onlyRepeat: false, //是否查重
@@ -381,10 +395,11 @@ export default {
     },
   },
   methods: {
+    showStleChange() {},
     copy(data) {
       let target = document.createElement("input"); //创建input节点
       target.value = data; // 给input的value赋值
-      target.id="copyInput"
+      target.id = "copyInput";
       document.body.appendChild(target); // 向页面插入input节点
       target.select(); // 选中input
       try {
@@ -393,7 +408,7 @@ export default {
       } catch {
         this.alertFail("复制失败");
       }
-      document.body.removeChild(target)
+      document.body.removeChild(target);
     },
     fetchButtom() {
       axios.get("api/buttoms").then((res) => {
@@ -574,12 +589,10 @@ export default {
           this.resultSize = res.data.ResultSize;
           this.curSize = res.data.CurSize;
           if (resData && resData.length > 0) {
-            debugger
             resData.map((item) => {
-              
-              if(item.Code ==item.Actress){
-                item.Code = ''
-                item.Actress = ''
+              if (item.Code == item.Actress) {
+                item.Code = "";
+                item.Actress = "";
               }
               item.Name = item.Name.replace("[" + item.Code + "]", "");
               item.Name = item.Name.replace("[" + item.Actress + "]", "");
@@ -675,21 +688,21 @@ export default {
   min-width: 600px;
   min-height: 600px;
   height: 100%;
-  padding: 2px;
+  padding: 1px;
 }
 
 .floatButton {
   float: right;
   position: fixed;
-  width: 60;
-  top: 300px;
+  width: 80;
+  top: 320px;
   overflow: auto;
   z-index: 999;
 }
 
 .image-tool {
-  margin-top: 1px;
-  margin-bottom: 1px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .icon-style {
@@ -699,14 +712,14 @@ export default {
 }
 
 .context-text {
+  font-size: 14px;
+  font-size-adjust: inherit;
+  margin-right: 2px;
   position: relative;
-  display: block;
-  margin-top: 2px;
-  font-size: 12px;
+  height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 .popperClass {
@@ -715,17 +728,40 @@ export default {
 }
 
 .list-item {
-  width: 210px;
-  height: 370px;
+  width: 230px;
+  height: 390px;
   float: left;
   list-style: none;
 }
-
 .img-list-item {
-  width: 196px;
+  width: 198px;
   height: auto;
 }
 .img-list-item span {
+  filter: alpha(opacity=80);
+  opacity: 0.8;
+  background: #e01616;
+  position: absolute;
+  z-index: 99;
+  margin-top: 4px;
+  margin-left: 4px;
+  text-align: justify;
+  text-align-last: justify;
+  width: 54px;
+  color: #ffffff;
+}
+
+.list-item-cover {
+  width: 550px;
+  height: 360px;
+  float: left;
+  list-style: none;
+}
+.img-list-item-cover {
+  width: 520px;
+  height: 280px;
+}
+.img-list-item-cover span {
   filter: alpha(opacity=80);
   opacity: 0.8;
   background: #e01616;
@@ -765,5 +801,6 @@ export default {
 }
 v-deep .el-tooltip__popper {
   width: 300px;
+  height: 40px;
 }
 </style>
