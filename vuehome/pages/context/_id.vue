@@ -1,6 +1,15 @@
 <template>
   <div style="width: 100%; background: white; border: 1px">
-    <div style="position: flex; z-index: 100; left: 0; right: 0; background: white; border: 1px">
+    <div
+      style="
+        position: flex;
+        z-index: 100;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px;
+      "
+    >
       <el-button
         style="float: left; left: 0px"
         @click="lastPage"
@@ -25,79 +34,99 @@
     </div>
 
     <el-tabs
-      type="border-card"
+      style="margin-top: 10px"
+      type="card"
       tab-position="top"
       @tab-click="tabChange()"
       v-model="tabIndex"
     >
       <el-tab-pane label="基础信息" name="base" style="">
-        <div style="margin-left: 120px; positon: relative">
-          <el-row :gutter="24">
-            <el-image :src="file.JpgUrl" style="width: 800px; height: auto" />
-          </el-row>
-          <el-row>
-            <el-link
-              ><i
-                :underline="false"
-                class="el-icon-video-play icon-style"
-                title="播放"
-                @click="playThis(file.Id)"
-              ></i
-            ></el-link>
-            <el-link>
-              <i
-                class="el-icon-folder-opened icon-style"
-                title="文件夹"
-                @click="openThisFolder(file.Id, 2)"
-              ></i
-            ></el-link>
-            <el-link>
-              <i
-                :underline="false"
-                class="el-icon-refresh icon-style"
-                title="同步"
-                @click="syncThis(file.Id)"
-              ></i
-            ></el-link>
-            <el-link>
-              <i
-                class="el-icon-delete icon-style"
-                title="删除"
-                @click="deleteThis(file.Id, 2)"
-              ></i
-            ></el-link>
+        <div style="margin: 0 auto">
+          <el-row :gutter="20" :offset="2">
+            <el-image
+              :src="file.JpgUrl"
+              style="
+                display: flex;
+                max-width: 1000px;
+                width: auto;
+                height: auto;
+                magin: 0 auto;
+              "
+            />
           </el-row>
           <el-row :gutter="20">
             <el-col :span="2">
-              <span>番号:</span>
+              <el-link
+                ><i
+                  :underline="false"
+                  class="el-icon-video-play icon-style"
+                  title="播放"
+                  @click="playThis(file.Id)"
+                ></i
+              ></el-link>
             </el-col>
-            <el-col :span="8">
+
+            <el-col :span="2">
+              <el-link>
+                <i
+                  class="el-icon-folder-opened icon-style"
+                  title="文件夹"
+                  @click="openThisFolder(file.Id, 2)"
+                ></i
+              ></el-link>
+            </el-col>
+            <el-col :span="2">
+              <el-link>
+                <i
+                  :underline="false"
+                  class="el-icon-refresh icon-style"
+                  title="同步"
+                  @click="syncThis(file.Id)"
+                ></i
+              ></el-link>
+            </el-col>
+            <el-col :span="2">
+              <el-link>
+                <i
+                  class="el-icon-delete icon-style"
+                  title="删除"
+                  @click="deleteThis(file.Id, 2)"
+                ></i
+              ></el-link>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="4">
+              <span>番号 :</span>
+            </el-col>
+            <el-col :span="16">
               <span v-if="file">{{ file.Code }}</span>
             </el-col>
           </el-row>
+
           <el-row :gutter="20">
-            <el-col :span="2">
-              <span>优优:</span>
+            <el-col :span="4">
+              <span>优优 :</span>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="16">
               <el-link v-if="file" @click="openActress(file.Actress)">
                 <span>{{ file.Actress }}</span></el-link
               >
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="2">
-              <span>时间:</span>
+            <el-col :span="4">
+              <span>时间 :</span>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="16">
               <span v-if="file">{{ file.MTime }}</span>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="2">
-              <span>大小:</span>
+            <el-col :span="4">
+              <span>大小 :</span>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="16">
               <span v-if="file">{{ file.SizeStr }}</span>
             </el-col>
           </el-row>
@@ -105,13 +134,14 @@
       </el-tab-pane>
       <el-tab-pane label="文件夹" name="dir">
         <div
-          v-for="item in dirFiles"
-          :key="item.Id"
+          v-for="(item, index) in sourceList"
+          :key="index"
           style="display: flex; margin: 10px auto"
         >
           <el-image
             style="width: auto; min-width: 800px; height: auto; margin: 0 auto"
-            :src="item.ImageBase"
+            :src="item"
+            :preview-src-list="sourceList"
             lazy
           >
           </el-image>
@@ -141,7 +171,8 @@ export default {
       file: "",
       iframeSrc: "",
       baseUrl: "",
-      dirFiles: [],
+      imageList: [],
+      sourceList: [],
     };
   },
   mounted: function () {
@@ -159,7 +190,7 @@ export default {
       } else if (key === 39) {
         //right
         this.nextPage(this.id);
-      } 
+      }
     };
   },
   methods: {
@@ -167,8 +198,11 @@ export default {
       if (this.tabIndex == "web") {
         this.makeIrameUrl(this.file);
       } else if (this.tabIndex == "dir") {
-        this.loadDirInfo(this.id);
+        this.loadImageList()
       }
+    },
+    loadImageList() {
+      this.sourceList = this.imageList;
     },
     getParam() {
       const {
@@ -219,13 +253,23 @@ export default {
         if (res.status === 200) {
           this.file = res.data;
           this.id = this.file.Id;
+          this.imageList = [];
+          this.loadDirInfo(this.id);
         }
       });
     },
-    loadDirInfo(id) {
+    loadDirInfo(id,loading) {
       axios.get("/api/dir/" + id).then((res) => {
         if (res.status === 200) {
-          this.dirFiles = res.data;
+          if (res.data && res.data.length > 0) {
+            this.imageList = [];
+            for (let i = 0; i < res.data.length; i++) {
+              this.imageList.push(res.data[i].ImageBase);
+            }
+            if(loading){
+              this.loadImageList()
+            }
+          }
         }
       });
     },
@@ -242,7 +286,7 @@ export default {
           this.file = res.data;
           this.id = this.file.Id;
           this.makeIrameUrl(this.file);
-          this.loadDirInfo(this.id);
+          this.loadDirInfo(this.id,true);
         }
       });
     },
@@ -254,7 +298,7 @@ export default {
           this.file = res.data;
           this.id = this.file.Id;
           this.makeIrameUrl(this.file);
-          this.loadDirInfo(this.id);
+          this.loadDirInfo(this.id,true);
         }
       });
     },

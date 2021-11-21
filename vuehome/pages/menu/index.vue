@@ -114,9 +114,13 @@
         >
       </el-col>
       <el-col :span="12">
+        <el-divider direction="vertical"></el-divider>
         <span> 扫描库：{{ totalSize }} </span>
+        <el-divider direction="vertical"></el-divider>
         <span> 搜索：{{ resultSize }} </span>
+        <el-divider direction="vertical"></el-divider>
         <span> 当前：{{ curSize }}</span>
+        <el-divider direction="vertical"></el-divider>
       </el-col>
     </el-row>
     <div
@@ -234,6 +238,7 @@
                 <el-link @click="copy(item.Actress)">{{
                   item.Actress
                 }}</el-link>
+                <el-divider direction="vertical"></el-divider>
                 <el-link @click="copy(item.Code)">{{ item.Code }}</el-link>
                 【{{ item.SizeStr }}】 {{ item.Name }}
               </span>
@@ -262,7 +267,7 @@
     >
       <div v-if="file" style="margin-left: 0px">
         <el-row :gutter="24">
-          <div   @click="open(file.Id)" style="width: auto; ">
+          <div @click="open(file.Id)" style="width: auto">
             <el-image
               :src="file.JpgUrl"
               style="width: auto; min-height: 200px; min-width: 200px"
