@@ -26,7 +26,7 @@ echo 'cd ..'
 cd ..
 echo 'cd vuehome'
 cd vuehome
-if [ $levelKey - ge 1 ]; then
+if [ $levelKey -ge 1 ]; then
 
     echo 开始打包前端文件
     echo 'npm run generate'
