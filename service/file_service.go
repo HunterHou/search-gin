@@ -160,6 +160,46 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 	return result
 }
 
+func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
+	result := utils.NewResult()
+	if len(toFile.ImageList) <= 0 {
+		result.Message = "No Image avaliable"
+		return result
+	}
+	for i := 0; i < len(toFile.ImageList); i++ {
+		url := toFile.ImageList[i]
+
+		filepath := toFile.DirPath + "\\" + toFile.Code + "-" + fmt.Sprint(i) + ".jpg"
+		fmt.Println(filepath)
+		jpgOut, createErr := os.Create(filepath)
+		if createErr != nil {
+			result.Message = "png生成失败"
+			return result
+		}
+		defer jpgOut.Close()
+		resp, downErr := httpGet(url)
+		if downErr != nil {
+			result.Fail()
+			fmt.Println("downErr:", downErr)
+			result.Message = "文件下载失败：" + toFile.Jpg
+			return result
+		}
+		body, readErr := ioutil.ReadAll(resp.Body)
+		if readErr != nil {
+			result.Fail()
+			fmt.Println("readErr:", readErr)
+			result.Message = "请求读取response失败"
+			return result
+		}
+		jpgOut.Write(body)
+		jpgOut.Close()
+	}
+	result.Fail()
+	result.Message = "No Image avaliable"
+	return result
+
+}
+
 func (fs FileService) MakeNfo(toFile datamodels.Movie) {
 	nfo, _ := os.Create(toFile.Nfo)
 	defer nfo.Close()
@@ -269,6 +309,16 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 			newFile.Code = selection.Next().Text()
 		}
 	})
+	waterFall := doc.Find(".sample-box")
+	var imageList = []string{}
+	waterFall.Each(func(i int, selection *goquery.Selection) {
+		item := selection.AttrOr("href", "")
+		if len(item) > 0 {
+			imageList = append(imageList, item)
+		}
+
+	})
+	newFile.ImageList = imageList
 	result.Success()
 	result.Data = newFile
 	return result, newFile
