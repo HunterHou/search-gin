@@ -225,14 +225,14 @@ func GetDelete(c *gin.Context) {
 }
 func GetSync(c *gin.Context) {
 	id := c.Param("id")
-	service := service.FileService{}
-	curFile := service.FindOne(id)
-	result, newFile := service.RequestToFile(curFile)
+	serviceFile := service.FileService{}
+	curFile := serviceFile.FindOne(id)
+	result, newFile := serviceFile.RequestToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return
 	}
-	result = service.MoveCut(curFile, newFile)
+	result = serviceFile.MoveCut(curFile, newFile)
 	c.JSON(http.StatusOK, result)
 }
 
