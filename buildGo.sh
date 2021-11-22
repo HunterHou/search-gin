@@ -51,7 +51,4 @@ if [ $levelKey -ge 3 ]; then
     cp -R app election/src
 
 fi
-echo ''
-echo 'success,over !!!'
-echo 'success,over !!!'
-echo 'success,over !!!'
+echo 'SUCCESS,OVER !!!'
