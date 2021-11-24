@@ -17,38 +17,10 @@ var staticDir string
 
 func init() {
 	curDir, _ := filepath.Abs(".")
-	cons.DirFile = curDir + "\\setting.json"
-	dict := service.ReadDictionaryFromJson(cons.DirFile)
-	dirs := dict.GetProperty("dir")
-	baseUrls := dict.GetProperty("BaseUrl")
-	if len(baseUrls) > 0 {
-		cons.BaseUrl = baseUrls[0]
-	}
-	Images := dict.GetProperty("Images")
-	if len(Images) > 0 {
-		cons.Images = Images
-	}
-	VideoTypes := dict.GetProperty("VideoTypes")
-	if len(VideoTypes) > 0 {
-		cons.VideoTypes = VideoTypes
-	}
-	Docs := dict.GetProperty("Docs")
-	if len(Images) > 0 {
-		cons.Docs = Docs
-	}
-	Types := dict.GetProperty("Types")
-	if len(Types) > 0 {
-		cons.Types = Types
-	}
-
-	cons.SetBaseDir(dirs)
+	cons.OSSetting.SelfPath = curDir + "\\" + cons.OSSetting.SelfPath
+	dict := service.ReadDictionaryFromJson(cons.OSSetting.SelfPath)
+	cons.OSSetting = dict
 	staticDir = curDir + "/static"
-	// cons.Play = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/play.jpg")
-	// cons.Open = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/open.jpg")
-	// cons.Change = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/change.jpg")
-	// cons.Replay = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/replay.jpg")
-	// cons.Close = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/close.jpg")
-	// cons.Stop = "data:image/png;base64," + utils.ImageToString(staticDir+"/image/stop.jpg")
 }
 
 func main() {

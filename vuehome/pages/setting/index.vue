@@ -174,10 +174,10 @@ export default {
             axios.get("api/settingInfo").then((res) => {
                 if (res.status == 200) {
                     this.form.BaseUrl = res.data.BaseUrl
-                    this.form.Images = res.data.Images.filter(item=>{
+                    this.form.Images = res.data.ImageTypes.filter(item=>{
                       return item !==""
                     })
-                    this.form.Docs = res.data.Docs.filter(item=>{
+                    this.form.Docs = res.data.DocTypes.filter(item=>{
                       return item !==""
                     })
                     this.form.VideoTypes = res.data.VideoTypes.filter(item=>{
@@ -186,7 +186,7 @@ export default {
                     this.form.Types = res.data.Types.filter(item=>{
                       return item !==""
                     })
-                    this.form.BaseDir = res.data.BaseDir.filter(item=>{
+                    this.form.BaseDir = res.data.Dirs.filter(item=>{
                       return item !==""
                     })
                 }

@@ -45,7 +45,7 @@ export default {
     '@nuxtjs/axios', "@nuxtjs/proxy"
   ],
 
-  
+
   axios: {
     proxyHeaders: true,
     proxy:true,  // 表示开启代理
@@ -53,12 +53,12 @@ export default {
     withCredentials: true,
     headers: { 'Content-Type': 'application/json', 'crossDomain': true },
     timeout: 5000,
-    
+
   },
 
   proxy:{
     '/api': {
-      target: "http://localhost:80", // 目标服务器
+      target: "http://localhost:12121", // 目标服务器
       pathRewrite: {
         '^/api': '/api' ,// 把 /api 替换成 /api
       },

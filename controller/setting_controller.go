@@ -11,31 +11,18 @@ import (
 )
 
 func GetSettingInfo(c *gin.Context) {
-	fmt.Println(cons.BaseDir)
-	dirs := cons.GetBaseDir()
-	data := gin.H{
-		"BaseUrl":    cons.BaseUrl,
-		"Images":     cons.Images,
-		"Docs":       cons.Docs,
-		"VideoTypes": cons.VideoTypes,
-		"Types":      cons.Types,
-		"BaseDir":    dirs,
-	}
-
-	c.JSON(http.StatusOK, data)
+	resData := utils.InterfaceToMap(cons.OSSetting)
+	fmt.Println(resData)
+	c.JSON(http.StatusOK, resData)
 }
 func PostSetting(c *gin.Context) {
-
-	cons.BaseUrl = c.PostForm("BaseUrl")
-	dirs := strings.Split(c.PostForm("BaseDir"), ",")
-
-	cons.Images = strings.Split(c.PostForm("Images"), ",")
-	cons.Types = strings.Split(c.PostForm("Types"), ",")
-	cons.VideoTypes = strings.Split(c.PostForm("VideoTypes"), ",")
-	cons.Docs = strings.Split(c.PostForm("Docs"), ",")
-	cons.SetBaseDir(dirs)
-	service.FlushDictionart(cons.DirFile)
-
+	cons.OSSetting.BaseUrl = c.PostForm("BaseUrl")
+	cons.OSSetting.Dirs = strings.Split(c.PostForm("BaseDir"), ",")
+	cons.OSSetting.ImageTypes = strings.Split(c.PostForm("Images"), ",")
+	cons.OSSetting.Types = strings.Split(c.PostForm("Types"), ",")
+	cons.OSSetting.VideoTypes = strings.Split(c.PostForm("VideoTypes"), ",")
+	cons.OSSetting.DocsTypes = strings.Split(c.PostForm("Docs"), ",")
+	service.FlushDictionart(cons.OSSetting.SelfPath)
 	res := utils.NewSuccess()
 	c.JSON(http.StatusOK, res)
 }

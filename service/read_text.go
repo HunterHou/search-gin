@@ -14,37 +14,16 @@ import (
 )
 
 func FlushDictionart(path string) {
-	dict := datamodels.NewDictionary()
-	dict.PutProperty("BaseUrl", cons.BaseUrl)
-	for _, dir := range cons.BaseDir {
-		dict.PutProperty("dir", dir)
-	}
-	for _, image := range cons.Images {
-		dict.PutProperty("Images", image)
-	}
-	for _, video := range cons.VideoTypes {
-		dict.PutProperty("VideoTypes", video)
-	}
-	for _, doc := range cons.Docs {
-		dict.PutProperty("Docs", doc)
-	}
-	for _, typ := range cons.Types {
-		dict.PutProperty("Types", typ)
-	}
-	WriteDictionaryToJson(path, dict)
-
+	WriteDictionaryToJson(path, cons.OSSetting)
 }
 
-func ReadDictionaryFromJson(path string) datamodels.Dictionary {
-	/**
-	read setting
-	*/
+func ReadDictionaryFromJson(path string) datamodels.Setting {
 	reader, _ := os.ReadFile(path)
-	dict := datamodels.NewDictionary()
+	dict := datamodels.Setting{}
 	json.Unmarshal(reader, &dict)
 	return dict
 }
-func WriteDictionaryToJson(path string, dict datamodels.Dictionary) {
+func WriteDictionaryToJson(path string, dict datamodels.Setting) {
 	data, _ := json.Marshal(dict)
 	if !utils.ExistsFiles(path) {
 		os.Create(path)

@@ -167,7 +167,7 @@ func GetFresh(c *gin.Context) {
 
 func GetButtom(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"baseUrl": cons.BaseUrl,
+		"baseUrl": cons.OSSetting.BaseUrl,
 	})
 }
 func GetPlay(c *gin.Context) {

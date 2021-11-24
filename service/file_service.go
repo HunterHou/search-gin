@@ -120,8 +120,8 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 		}
 	}
 	url := toFile.Jpg
-	if !strings.Contains(url, cons.BaseUrl) {
-		url = cons.BaseUrl + url
+	if !strings.Contains(url, cons.OSSetting.BaseUrl) {
+		url = cons.OSSetting.BaseUrl + url
 	}
 	fmt.Println(url)
 	resp, downErr := httpGet(url)
@@ -247,7 +247,7 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 		result.Fail()
 		return result, newFile
 	}
-	url := cons.BaseUrl + srcFile.Code
+	url := cons.OSSetting.BaseUrl + srcFile.Code
 	resp, err := httpGet(url)
 	if err != nil {
 		fmt.Println("err", err)
@@ -362,13 +362,14 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 
 func (fs FileService) ScanAll() {
 	dirList := []string{}
-	for _, v := range cons.BaseDir {
+	setting := cons.OSSetting
+	for _, v := range setting.Dirs {
 		dirList = append(dirList, v)
 	}
 	cons.QueryTypes = []string{}
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.VideoTypes)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Docs)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, cons.Images)
+	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
+	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
+	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
 	fs.ScanDisk(dirList, cons.QueryTypes)
 }
 func (fs FileService) Delete(id string) {
