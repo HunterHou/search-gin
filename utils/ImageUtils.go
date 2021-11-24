@@ -15,7 +15,7 @@ func ImageToString(path string) string {
 	}
 	file, _ := os.Open(path)
 	defer file.Close()
-	sourceBuffer := make([]byte, 5000000)
+	sourceBuffer := make([]byte, 50000000)
 	n, _ := file.Read(sourceBuffer)
 	return base64.StdEncoding.EncodeToString(sourceBuffer[:n])
 }

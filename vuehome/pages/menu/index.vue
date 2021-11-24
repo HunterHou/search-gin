@@ -203,6 +203,13 @@
             <el-dropdown placement="top-start">
               <i class="el-icon-more icon-style"></i>
               <el-dropdown-menu slot="dropdown">
+                 <el-dropdown-item>
+                  <i
+                    class="el-icon-refresh-right icon-style"
+                    title="刮图"
+                    @click="getImageList(item.Id, 2)"
+                  ></i>
+                </el-dropdown-item>
                 <el-dropdown-item>
                   <i
                     class="el-icon-refresh-right icon-style"
@@ -259,20 +266,21 @@
     ></el-pagination>
     <!-- 弹窗 -->
     <el-dialog
-      width="60%"
+      width="72%"
       :modal="true"
       :lock-scroll="true"
       :title="file.Name"
       :visible.sync="dialogVisible"
     >
-      <div v-if="file" style="margin-left: 0px">
-        <el-row :gutter="24">
-          <div @click="open(file.Id)" style="width: auto">
+      <div v-if="file">
+        <div @click="open(file.Id)">
             <el-image
               :src="file.JpgUrl"
-              style="width: auto; min-height: 200px; min-width: 200px"
+              style="magin:0 0;width: 80%;height:auto;"
             />
           </div>
+        <el-row :gutter="24">
+          
         </el-row>
         <el-row :gutter="20">
           <el-col :span="4">
@@ -318,6 +326,19 @@
           </el-col>
         </el-row>
       </div>
+      <div
+          v-for="(item, index) in sourceList"
+          :key="index"
+          style="display: flex; margin: 10px auto"
+        >
+          <el-image
+            style="width: 80%; min-width: 800px; height: auto; margin: 0 auto"
+            :src="item"
+            :preview-src-list="sourceList"
+            lazy
+          >
+          </el-image>
+        </div>
     </el-dialog>
   </div>
 </template>
@@ -329,6 +350,7 @@ export default {
     const { searchWords, no } = this.$route.query;
     var searchPage = new Map();
     return {
+      sourceList:[],
       showStle: "post",
       file: "",
       baseUrl: "",
@@ -515,8 +537,14 @@ export default {
       });
     },
     infoThis(id) {
-      console.log("info", id);
       axios.get("api/info/" + id).then((res) => {
+        if (res.status === 200) {
+          this.alertSuccess(res.data.Message);
+        }
+      });
+    },
+    getImageList(id){
+      axios.get("api/imageList/" + id).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
         }
@@ -659,9 +687,26 @@ export default {
 
     openWin(id) {
       axios.get("api/info/" + id).then((res) => {
+        this.sourceList=[]
         if (res.status === 200) {
           this.file = res.data;
           this.dialogVisible = true;
+          this.loadDirInfo(this.file.Id,true)
+        }
+      });
+    },
+    loadDirInfo(id,loading) {
+      axios.get("/api/dir/" + id).then((res) => {
+        if (res.status === 200) {
+          if (res.data && res.data.length > 0) {
+            this.imageList = [];
+            for (let i = 0; i < res.data.length; i++) {
+              this.imageList.push(res.data[i].ImageBase);
+            }
+            if(loading){
+              this.sourceList = this.imageList;
+            }
+          }
         }
       });
     },

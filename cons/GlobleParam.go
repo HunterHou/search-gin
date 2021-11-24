@@ -11,7 +11,7 @@ import (
 //初始化 扫描路径
 var PortNo = ":80"
 var Port = "//" + PortNo
-var BaseUrl = "https://www.javbus.com/"
+var BaseUrl = "https://www.busjav.blog/"
 var DirFile = ""
 var BaseDir = map[string]string{
 	//"1":  "E:\\emby",

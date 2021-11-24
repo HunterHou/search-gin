@@ -194,6 +194,7 @@ func GetInfo(c *gin.Context) {
 	file := service.FindOne(id)
 	c.JSON(http.StatusOK, file)
 }
+
 func GetDirInfo(c *gin.Context) {
 	id := c.Param("id")
 	fileService := service.FileService{}
@@ -233,6 +234,26 @@ func GetSync(c *gin.Context) {
 		return
 	}
 	result = serviceFile.MoveCut(curFile, newFile)
+	c.JSON(http.StatusOK, result)
+}
+
+func GetImageList(c *gin.Context) {
+	id := c.Param("id")
+	serviceFile := service.FileService{}
+	curFile := serviceFile.FindOne(id)
+	result, newFile := serviceFile.RequestToFile(curFile)
+	if result.Code != 200 {
+		c.JSON(http.StatusOK, result)
+		return
+	}
+	if len(newFile.ImageList) == 0 {
+		result.Fail()
+		result.Message = "无图可用"
+		c.JSON(http.StatusOK, result)
+		return
+	}
+	curFile.ImageList = newFile.ImageList
+	result = serviceFile.DownImage(curFile)
 	c.JSON(http.StatusOK, result)
 }
 

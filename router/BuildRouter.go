@@ -24,6 +24,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/play/:id", controller.GetPlay)
 	router.GET("/api/setMovieType/:id/:movieType", controller.SetMovieType)
 	router.GET("/api/info/:id", controller.GetInfo)
+	router.GET("/api/imageList/:id", controller.GetImageList)
 	router.GET("/api/dir/:id", controller.GetDirInfo)
 	router.GET("/api/delete/:id", controller.GetDelete)
 	router.GET("/api/sync/:id", controller.GetSync)
