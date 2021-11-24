@@ -1,8 +1,8 @@
 #!/bin/bash
 levelKey=${1}
-printf '执行参数：levelKey[{%s}] \n' $levelKey
+printf '执行参数：levelKey[{%s}] \n' "$levelKey"
 levelValue=''
-if [ !$levelKey ]; then
+if [ ! "$levelKey" ]; then
     levelKey=2
     levelValue='vueGo'
 elif [ $levelKey -eq 0 ]; then
