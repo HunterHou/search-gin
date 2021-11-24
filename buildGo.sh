@@ -51,6 +51,6 @@ if [ $levelKey -ge 3 ]; then
     echo 移动源到 Election代码目录
     echo 'cp -R app election/src'
     cp -R app election/src
-
+#TODO Electron 打包系统
 fi
 echo 'SUCCESS,OVER !!!'
