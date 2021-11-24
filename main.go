@@ -17,8 +17,10 @@ var staticDir string
 
 func init() {
 	curDir, _ := filepath.Abs(".")
-	cons.OSSetting.SelfPath = curDir + "\\" + cons.OSSetting.SelfPath
-	dict := service.ReadDictionaryFromJson(cons.OSSetting.SelfPath)
+	osSetting := cons.OSSetting
+	settingPath := curDir + "\\" + cons.OSSetting.SelfPath
+	dict := service.ReadDictionaryFromJson(settingPath)
+	dict.SelfPath = osSetting.SelfPath
 	cons.OSSetting = dict
 	staticDir = curDir + "/static"
 }

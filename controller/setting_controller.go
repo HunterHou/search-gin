@@ -1,27 +1,30 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"search-gin/cons"
+	"search-gin/datamodels"
 	"search-gin/service"
 	"search-gin/utils"
-	"strings"
 )
 
 func GetSettingInfo(c *gin.Context) {
-	resData := utils.InterfaceToMap(cons.OSSetting)
-	fmt.Println(resData)
-	c.JSON(http.StatusOK, resData)
+	//resData := utils.InterfaceToMap(cons.OSSetting)
+	//fmt.Println(resData)
+	c.JSON(http.StatusOK, cons.OSSetting)
 }
 func PostSetting(c *gin.Context) {
-	cons.OSSetting.BaseUrl = c.PostForm("BaseUrl")
-	cons.OSSetting.Dirs = strings.Split(c.PostForm("BaseDir"), ",")
-	cons.OSSetting.ImageTypes = strings.Split(c.PostForm("Images"), ",")
-	cons.OSSetting.Types = strings.Split(c.PostForm("Types"), ",")
-	cons.OSSetting.VideoTypes = strings.Split(c.PostForm("VideoTypes"), ",")
-	cons.OSSetting.DocsTypes = strings.Split(c.PostForm("Docs"), ",")
+	setInfo := datamodels.Setting{}
+	c.ShouldBindJSON(&setInfo)
+	//cons.OSSetting.BaseUrl = c.PostForm("BaseUrl")
+	//cons.OSSetting.Dirs = c.PostFormArray("BaseDir")
+	//cons.OSSetting.ImageTypes = c.PostFormArray("Images")
+	//cons.OSSetting.Types = c.PostFormArray("Types")
+	//cons.OSSetting.VideoTypes = c.PostFormArray("VideoTypes")
+	//cons.OSSetting.DocsTypes = c.PostFormArray("Docs")
+	setInfo.SelfPath = cons.OSSetting.SelfPath
+	cons.OSSetting = setInfo
 	service.FlushDictionart(cons.OSSetting.SelfPath)
 	res := utils.NewSuccess()
 	c.JSON(http.StatusOK, res)
