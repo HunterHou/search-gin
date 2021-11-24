@@ -14,7 +14,7 @@
       "
       round
       @click="pageLoading(-1)"
-    >上一页
+      >上一页
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
@@ -27,7 +27,7 @@
       "
       round
       @click="pageLoading(1)"
-    >下一页
+      >下一页
     </el-button>
     <el-row>
       <el-col :span="2" :offset="1">
@@ -36,7 +36,7 @@
           size="mini"
           icon="el-icon-location"
           @click="refreshIndex()"
-        >索引
+          >索引
         </el-button>
       </el-col>
       <el-col :span="4">
@@ -82,7 +82,7 @@
                 queryList();
               }
             "
-          >Go
+            >Go
           </el-button>
           <template slot-scope="{ item }">
             <div v-if="item" class="name">{{ item }}</div>
@@ -109,7 +109,7 @@
             class="el-icon-zoom-out"
             title="播放"
             @click="onlyRepeatQuery()"
-          >查重</i
+            >查重</i
           ></el-link
         >
       </el-col>
@@ -140,9 +140,8 @@
           @click="openWin(item.Id)"
           :class="showStle == 'cover' ? 'img-list-item-cover' : 'img-list-item'"
         >
-          <el-tag v-if="item.MovieType" type="danger" effect="dark">{{
-              item.MovieType
-            }}
+          <el-tag v-if="item.MovieType" type="danger" effect="dark"
+            >{{ item.MovieType }}
           </el-tag>
           <el-image
             style="width: 100%; height: 100%"
@@ -154,20 +153,20 @@
         </div>
         <div class="image-tool">
           <el-link
-          ><i
-            :underline="false"
-            class="el-icon-video-play icon-style"
-            title="播放"
-            @click="playThis(item.Id)"
-          ></i
+            ><i
+              :underline="false"
+              class="el-icon-video-play icon-style"
+              title="播放"
+              @click="playThis(item.Id)"
+            ></i
           ></el-link>
           <el-link
-          ><i
-            :underline="false"
-            class="el-icon-user-solid icon-style"
-            title="搜同"
-            @click="thisActress(item.Actress)"
-          ></i
+            ><i
+              :underline="false"
+              class="el-icon-user-solid icon-style"
+              title="搜同"
+              @click="thisActress(item.Actress)"
+            ></i
           ></el-link>
           <el-link>
             <i
@@ -175,7 +174,7 @@
               title="文件夹"
               @click="openThisFolder(item.Id, 2)"
             ></i
-            ></el-link>
+          ></el-link>
           <el-link>
             <i
               v-if="notQiBing(item.MovieType)"
@@ -183,7 +182,7 @@
               title="骑兵"
               @click="setMovieType(item.Id, 2)"
             ></i
-            ></el-link>
+          ></el-link>
           <el-link>
             <i
               v-if="notBuBing(item.MovieType)"
@@ -191,7 +190,7 @@
               title="步兵"
               @click="setMovieType(item.Id, 1)"
             ></i
-            ></el-link>
+          ></el-link>
           <el-link>
             <i
               v-if="notSiBaDa(item.MovieType)"
@@ -199,28 +198,28 @@
               title="欧美"
               @click="setMovieType(item.Id, 3)"
             ></i
-            ></el-link>
+          ></el-link>
           <el-link>
             <el-dropdown placement="top-start">
-              <i class="el-icon-more icon-style"></i>
-
-              <el-dropdown-item>
-                <i
-                  class="el-icon-refresh-right icon-style"
-                  title="信息"
-                  @click="infoThis(item.Id, 2)"
-                ></i>
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <el-link>
-                  <i
-                    class="el-icon-delete icon-style"
-                    title="删除"
-                    @click="deleteThis(item.Id, 2)"
-                  ></i
-                  ></el-link>
-              </el-dropdown-item>
+               <i class="el-icon-more icon-style"></i>
               <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <i
+                    class="el-icon-refresh-right icon-style"
+                    title="信息"
+                    @click="infoThis(item.Id, 2)"
+                  ></i>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-link>
+                    <i
+                      class="el-icon-delete icon-style"
+                      title="删除"
+                      @click="deleteThis(item.Id, 2)"
+                    ></i
+                  ></el-link>
+                </el-dropdown-item>
+
                 <el-dropdown-item>
                   <i
                     class="el-icon-download icon-style"
@@ -236,19 +235,18 @@
                       title="同步"
                       @click="syncThis(item.Id)"
                     ></i
-                    ></el-link>
+                  ></el-link>
                 </el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown
-            >
+            </el-dropdown>
           </el-link>
           <div class="context-text">
             <el-tooltip placement="bottom" effect="dark">
               <div slot="content">{{ item.Name }}</div>
               <span>
                 <el-link @click="copy(item.Actress)">{{
-                    item.Actress
-                  }}</el-link>
+                  item.Actress
+                }}</el-link>
                 <el-divider direction="vertical"></el-divider>
                 <el-link @click="copy(item.Code)">{{ item.Code }}</el-link>
                 【{{ item.SizeStr }}】 {{ item.Name }}
@@ -280,19 +278,17 @@
         <div @click="open(file.Id)">
           <el-image
             :src="file.JpgUrl"
-            style="magin:0 0;width: 80%;height:auto;"
+            style="magin: 0 0; width: 80%; height: auto"
           />
         </div>
-        <el-row :gutter="24">
-
-        </el-row>
+        <el-row :gutter="24"> </el-row>
         <el-row :gutter="20">
           <el-col :span="4">
             <span>番:</span>
           </el-col>
           <el-col :span="16">
             <a href="javascript:void(0);" @click="openLick(file.Code)"
-            ><span>{{ file.Code }}</span></a
+              ><span>{{ file.Code }}</span></a
             >
           </el-col>
         </el-row>
@@ -351,7 +347,7 @@ import axios from "axios";
 
 export default {
   data() {
-    const {searchWords, no} = this.$route.query;
+    const { searchWords, no } = this.$route.query;
     var searchPage = new Map();
     return {
       sourceList: [],
@@ -426,8 +422,7 @@ export default {
     },
   },
   methods: {
-    showStleChange() {
-    },
+    showStleChange() {},
     copy(data) {
       let target = document.createElement("input"); //创建input节点
       target.value = data; // 给input的value赋值
@@ -644,12 +639,12 @@ export default {
             }
           }
 
-          const {path, no} = this.$route.query;
+          const { path, no } = this.$route.query;
           if (no != this.pageNo) {
           }
           this.$router.replace({
             path,
-            query: {searchWords: keywords, no: this.pageNo},
+            query: { searchWords: keywords, no: this.pageNo },
           });
 
           this.onlyRepeat = false;
@@ -665,19 +660,19 @@ export default {
       // console.log(filename);
       self.$router.push(
         "context/" +
-        filename +
-        "?pageNo=" +
-        this.pageNo +
-        "&pageSize=" +
-        this.pageSize +
-        "&searchWords=" +
-        this.searchWords +
-        "&sortType=" +
-        this.sortType +
-        "&sortField=" +
-        this.sortField +
-        "&movieType=" +
-        this.movieType
+          filename +
+          "?pageNo=" +
+          this.pageNo +
+          "&pageSize=" +
+          this.pageSize +
+          "&searchWords=" +
+          this.searchWords +
+          "&sortType=" +
+          this.sortType +
+          "&sortField=" +
+          this.sortField +
+          "&movieType=" +
+          this.movieType
       );
     },
     openLick(code) {
@@ -692,11 +687,11 @@ export default {
 
     openWin(id) {
       axios.get("api/info/" + id).then((res) => {
-        this.sourceList = []
+        this.sourceList = [];
         if (res.status === 200) {
           this.file = res.data;
           this.dialogVisible = true;
-          this.loadDirInfo(this.file.Id, true)
+          this.loadDirInfo(this.file.Id, true);
         }
       });
     },
