@@ -17,8 +17,8 @@ var staticDir string
 
 func init() {
 	curDir, _ := filepath.Abs(".")
-	cons.DirFile = curDir + "\\dirList.ini"
-	dict := service.ReadDictionary(cons.DirFile)
+	cons.DirFile = curDir + "\\setting.json"
+	dict := service.ReadDictionaryFromJson(cons.DirFile)
 	dirs := dict.GetProperty("dir")
 	baseUrls := dict.GetProperty("BaseUrl")
 	if len(baseUrls) > 0 {

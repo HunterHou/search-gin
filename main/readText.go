@@ -9,7 +9,7 @@ import (
 
 // TestScan4 ..
 func TestScan4(test testing.T) {
-	service.ReadDictionary("D:\\code\\search-iris\\src\\dirList.ini")
+	service.ReadDictionaryFromTxt("D:\\code\\search-iris\\src\\dirList.ini")
 	for index, name := range datasource.DictLib.LibMap {
 		if len(name) <= 1 {
 			fmt.Println(index, ":", name)

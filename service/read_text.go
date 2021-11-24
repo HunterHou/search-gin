@@ -2,8 +2,10 @@ package service
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
+	"search-gin/utils"
 	"strings"
 )
 import (
@@ -29,26 +31,35 @@ func FlushDictionart(path string) {
 	for _, typ := range cons.Types {
 		dict.PutProperty("Types", typ)
 	}
-	WriteDictionary(path, dict)
+	WriteDictionaryToJson(path, dict)
 
 }
 
-func WriteDictionary(path string, dict datamodels.Dictionary) {
+func ReadDictionaryFromJson(path string) datamodels.Dictionary {
+	/**
+	read setting
+	*/
+	reader, _ := os.ReadFile(path)
+	dict := datamodels.NewDictionary()
+	json.Unmarshal(reader, &dict)
+	return dict
+}
+func WriteDictionaryToJson(path string, dict datamodels.Dictionary) {
+	data, _ := json.Marshal(dict)
+	if !utils.ExistsFiles(path) {
+		os.Create(path)
+	}
 	outStream, openErr := os.OpenFile(path, os.O_TRUNC|os.O_RDWR, os.ModePerm)
 	defer outStream.Close()
 	if openErr != nil {
 		fmt.Println("openErr", openErr)
 	}
 	writer := bufio.NewWriter(outStream)
-	for key, value := range dict.LibMap {
-		for _, v := range value {
-			writer.WriteString(key + "=" + v + "\n")
-		}
-	}
+	writer.Write(data)
 	writer.Flush()
 }
 
-func ReadDictionary(path string) datamodels.Dictionary {
+func ReadDictionaryFromTxt(path string) datamodels.Dictionary {
 	outStream, openErr := os.Open(path)
 	defer outStream.Close()
 	if openErr != nil {
@@ -69,4 +80,18 @@ func ReadDictionary(path string) datamodels.Dictionary {
 		dict.PutProperty(line[0], line[1])
 	}
 	return dict
+}
+func WriteDictionaryToText(path string, dict datamodels.Dictionary) {
+	outStream, openErr := os.OpenFile(path, os.O_TRUNC|os.O_RDWR, os.ModePerm)
+	defer outStream.Close()
+	if openErr != nil {
+		fmt.Println("openErr", openErr)
+	}
+	writer := bufio.NewWriter(outStream)
+	for key, value := range dict.LibMap {
+		for _, v := range value {
+			writer.WriteString(key + "=" + v + "\n")
+		}
+	}
+	writer.Flush()
 }
