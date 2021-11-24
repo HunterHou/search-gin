@@ -42,6 +42,7 @@ if [ $levelKey -ge 2 ]; then
     go build -o app/appVue.exe -ldflags "-H=windowsgui"
     echo 移动配置文件 '*.*(1)'
     echo 'cp dirList.ini app/dirList.ini(1)'
+    echo 'cp setting.json app/setting.json(1)'
     cp dirList.ini 'app/dirList.ini(1)'
     echo APP打包完成！！！
 fi
