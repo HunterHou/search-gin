@@ -818,7 +818,7 @@ export default {
 .img-list-item {
   width: 198px;
   min-height: 120px;
-  max-height: 600px;
+  /* max-height: 600px; */
   height: auto;
 }
 
@@ -838,7 +838,9 @@ export default {
 
 .list-item-cover {
   width: 550px;
-  height: 360px;
+  min-height: 300px;
+  /* height: 360px; */
+  height: auto;
   float: left;
   list-style: none;
 }

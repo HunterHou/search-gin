@@ -114,14 +114,6 @@ export default {
   },
   methods: {
     submitForm() {
-      // let data = new FormData()
-      // console.log(this.form)
-      // data.append("BaseUrl", this.form.BaseUrl)
-      // data.append("Images", this.form.Images)
-      // data.append("Docs", this.form.Docs)
-      // data.append("VideoTypes", this.form.VideoTypes)
-      // data.append("Types", this.form.Types)
-      // data.append("BaseDir", this.form.BaseDir)
       const postForm = {...this.form,BaseDir:this.form.Dirs}
       this.loading = true;
       axios.post("api/setting", postForm).then((res) => {
