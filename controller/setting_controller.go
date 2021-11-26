@@ -10,8 +10,6 @@ import (
 )
 
 func GetSettingInfo(c *gin.Context) {
-	//resData := utils.InterfaceToMap(cons.OSSetting)
-	//fmt.Println(resData)
 	c.JSON(http.StatusOK, cons.OSSetting)
 }
 func PostSetting(c *gin.Context) {
