@@ -26,7 +26,7 @@
         <div class="up">UP</div>
       </el-backtop>
       <el-page-header
-        @back="goBack"
+        @back="urlBack()"
         title="返回"
         v-bind:content="file ? file.Name : ''"
       >
@@ -203,6 +203,10 @@ export default {
     },
     loadImageList() {
       this.sourceList = this.imageList;
+    },
+    urlBack(){
+       const self = this;
+      self.$router.push("/menu" + this.getParam());
     },
     getParam() {
       const {
