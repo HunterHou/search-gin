@@ -810,16 +810,16 @@ export default {
 
 .list-item {
   width: 230px;
-  height: auto;
+  height: 100%;
   float: left;
   list-style: none;
 }
 
 .img-list-item {
-  width: 198px;
-  min-height: 120px;
-  /* max-height: 600px; */
-  height: auto;
+  width: 98%;
+   height: 98%;
+  min-height: 160px;
+ 
 }
 
 .img-list-item span {
