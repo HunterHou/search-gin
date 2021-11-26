@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"search-gin/cons"
 	"search-gin/datamodels"
@@ -195,7 +194,7 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 		jpgOut.Close()
 	}
 	result.Fail()
-	result.Message = "No Image avaliable"
+	result.Message = "执行成功!"
 	return result
 
 }
@@ -255,15 +254,15 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 		return result, newFile
 	}
 	defer resp.Body.Close()
-	if 200 != resp.StatusCode {
+	if resp.StatusCode != 200 {
 		if strings.Contains(url, "_") {
 			url = strings.ReplaceAll(url, "_", "-")
 		} else if strings.Contains(url, "-") {
 			url = strings.ReplaceAll(url, "-", "_")
 		}
 		fmt.Println(url)
-		resp, err = httpGet(url)
-		if 200 != resp.StatusCode {
+		resp, _ = httpGet(url)
+		if resp.StatusCode != 200 {
 			fmt.Println("status error:", resp.StatusCode, resp.Status)
 			result.Fail()
 			result.Message = "请求失败：" + resp.Status + " url:" + url
@@ -363,9 +362,10 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 func (fs FileService) ScanAll() {
 	dirList := []string{}
 	setting := cons.OSSetting
-	for _, v := range setting.Dirs {
-		dirList = append(dirList, v)
-	}
+	dirList = append(dirList, setting.Dirs...)
+	// for _, v := range setting.Dirs {
+	// 	dirList = append(dirList, v)
+	// }
 	cons.QueryTypes = []string{}
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
@@ -388,16 +388,16 @@ func (fs FileService) Delete(id string) {
 
 }
 
-func deleteDir(filename string) {
-	dirname, _ := path.Split(filename)
-	files2, _ := ioutil.ReadDir(dirname)
-	if len(files2) == 0 {
-		os.Remove(dirname)
-		return
-	}
-	dirname2, _ := path.Split(dirname)
-	deleteDir(dirname2)
-}
+// func deleteDir(filename string) {
+// 	dirname, _ := path.Split(filename)
+// 	files2, _ := ioutil.ReadDir(dirname)
+// 	if len(files2) == 0 {
+// 		os.Remove(dirname)
+// 		return
+// 	}
+// 	dirname2, _ := path.Split(dirname)
+// 	deleteDir(dirname2)
+// }
 
 func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	datasource.FileLib = make(map[string]datamodels.Movie)

@@ -119,8 +119,6 @@
         <span> 搜索：{{ resultSize }} </span>
         <el-divider direction="vertical"></el-divider>
         <span> 当前：{{ curSize }}</span>
-        <span> showIconNum：{{ showIconNum }}</span>
-        <span> showStyle：{{ showStyle }}</span>
         <el-divider direction="vertical"></el-divider>
       </el-col>
     </el-row>

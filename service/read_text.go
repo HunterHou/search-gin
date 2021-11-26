@@ -5,12 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"search-gin/utils"
-	"strings"
-)
-import (
 	"search-gin/cons"
 	"search-gin/datamodels"
+	"search-gin/utils"
+	"strings"
 )
 
 func FlushDictionart(path string) {
@@ -29,10 +27,10 @@ func WriteDictionaryToJson(path string, dict datamodels.Setting) {
 		os.Create(path)
 	}
 	outStream, openErr := os.OpenFile(path, os.O_TRUNC|os.O_RDWR, os.ModePerm)
-	defer outStream.Close()
 	if openErr != nil {
 		fmt.Println("openErr", openErr)
 	}
+	defer outStream.Close()
 	writer := bufio.NewWriter(outStream)
 	writer.Write(data)
 	writer.Flush()
@@ -40,10 +38,11 @@ func WriteDictionaryToJson(path string, dict datamodels.Setting) {
 
 func ReadDictionaryFromTxt(path string) datamodels.Dictionary {
 	outStream, openErr := os.Open(path)
-	defer outStream.Close()
 	if openErr != nil {
 		fmt.Println("openErr", openErr)
 	}
+	defer outStream.Close()
+
 	reader := bufio.NewReader(outStream)
 	dict := datamodels.NewDictionary()
 	for {
@@ -62,10 +61,10 @@ func ReadDictionaryFromTxt(path string) datamodels.Dictionary {
 }
 func WriteDictionaryToText(path string, dict datamodels.Dictionary) {
 	outStream, openErr := os.OpenFile(path, os.O_TRUNC|os.O_RDWR, os.ModePerm)
-	defer outStream.Close()
 	if openErr != nil {
 		fmt.Println("openErr", openErr)
 	}
+	defer outStream.Close()
 	writer := bufio.NewWriter(outStream)
 	for key, value := range dict.LibMap {
 		for _, v := range value {
