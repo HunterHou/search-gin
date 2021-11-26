@@ -17,12 +17,6 @@ func GetSettingInfo(c *gin.Context) {
 func PostSetting(c *gin.Context) {
 	setInfo := datamodels.Setting{}
 	c.ShouldBindJSON(&setInfo)
-	//cons.OSSetting.BaseUrl = c.PostForm("BaseUrl")
-	//cons.OSSetting.Dirs = c.PostFormArray("BaseDir")
-	//cons.OSSetting.ImageTypes = c.PostFormArray("Images")
-	//cons.OSSetting.Types = c.PostFormArray("Types")
-	//cons.OSSetting.VideoTypes = c.PostFormArray("VideoTypes")
-	//cons.OSSetting.DocsTypes = c.PostFormArray("Docs")
 	setInfo.SelfPath = cons.OSSetting.SelfPath
 	cons.OSSetting = setInfo
 	service.FlushDictionart(cons.OSSetting.SelfPath)
