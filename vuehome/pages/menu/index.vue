@@ -14,7 +14,7 @@
       "
       round
       @click="pageLoading(-1)"
-    >上一页
+      >上一页
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
@@ -27,7 +27,7 @@
       "
       round
       @click="pageLoading(1)"
-    >下一页
+      >下一页
     </el-button>
     <el-row>
       <el-col :span="2" :offset="1">
@@ -36,7 +36,7 @@
           size="mini"
           icon="el-icon-location"
           @click="refreshIndex()"
-        >索引
+          >索引
         </el-button>
       </el-col>
       <el-col :span="4">
@@ -69,6 +69,7 @@
           clearable
           :fetch-suggestions="fetchSuggestion"
           @select="handleSelect"
+          @clear="clearWords"
           size="mini"
           @keyup.enter.native="queryList()"
         >
@@ -79,10 +80,11 @@
             icon="el-icon-search"
             @click="
               (e) => {
+                this.pageNo=1
                 queryList();
               }
             "
-          >Go
+            >Go
           </el-button>
           <template slot-scope="{ item }">
             <div v-if="item" class="name">{{ item }}</div>
@@ -93,10 +95,7 @@
 
     <el-row style="margin-top: 4px">
       <el-col :span="3" :offset="1">
-        <el-radio-group
-          v-model="showStyle"
-          size="mini"
-        >
+        <el-radio-group v-model="showStyle" size="mini">
           <el-radio-button label="cover">封面</el-radio-button>
           <el-radio-button label="post">海报</el-radio-button>
         </el-radio-group>
@@ -108,7 +107,7 @@
             class="el-icon-zoom-out"
             title="播放"
             @click="onlyRepeatQuery()"
-          >查重</i
+            >查重</i
           ></el-link
         >
       </el-col>
@@ -126,7 +125,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 10px"
+      style="margin-top: 10px;padding-buttom:40px"
     >
       <li
         style="overflow: auto"
@@ -140,7 +139,7 @@
           :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
         >
           <el-tag v-if="item.MovieType" type="danger" effect="dark"
-          >{{ item.MovieType }}
+            >{{ item.MovieType }}
           </el-tag>
           <el-image
             style="width: 100%; height: 100%"
@@ -152,20 +151,20 @@
         </div>
         <div class="image-tool">
           <el-link
-          ><i
-            :underline="false"
-            class="el-icon-video-play icon-style"
-            title="播放"
-            @click="playThis(item.Id)"
-          ></i
+            ><i
+              :underline="false"
+              class="el-icon-video-play icon-style"
+              title="播放"
+              @click="playThis(item.Id)"
+            ></i
           ></el-link>
           <el-link
-          ><i
-            :underline="false"
-            class="el-icon-user-solid icon-style"
-            title="搜同"
-            @click="thisActress(item.Actress)"
-          ></i
+            ><i
+              :underline="false"
+              class="el-icon-user-solid icon-style"
+              title="搜同"
+              @click="thisActress(item.Actress)"
+            ></i
           ></el-link>
           <el-link>
             <i
@@ -173,7 +172,7 @@
               title="文件夹"
               @click="openThisFolder(item.Id, 2)"
             ></i
-            ></el-link>
+          ></el-link>
           <el-link>
             <i
               v-if="notQiBing(item.MovieType)"
@@ -181,7 +180,7 @@
               title="骑兵"
               @click="setMovieType(item.Id, 2)"
             ></i
-            ></el-link>
+          ></el-link>
           <el-link>
             <i
               v-if="notBuBing(item.MovieType)"
@@ -189,7 +188,7 @@
               title="步兵"
               @click="setMovieType(item.Id, 1)"
             ></i
-            ></el-link>
+          ></el-link>
           <el-link>
             <i
               v-if="notSiBaDa(item.MovieType)"
@@ -197,7 +196,7 @@
               title="欧美"
               @click="setMovieType(item.Id, 3)"
             ></i
-            ></el-link>
+          ></el-link>
 
           <el-link v-if="7 < showIconNum">
             <i
@@ -205,13 +204,14 @@
               title="删除"
               @click="deleteThis(item.Id, 2)"
             ></i
-            ></el-link>
+          ></el-link>
           <el-link v-if="8 < showIconNum">
             <i
               class="el-icon-download icon-style"
               title="刮图"
               @click="getImageList(item.Id, 2)"
-            ></i></el-link>
+            ></i
+          ></el-link>
           <el-link v-if="9 < showIconNum">
             <i
               :underline="false"
@@ -219,7 +219,7 @@
               title="同步"
               @click="syncThis(item.Id)"
             ></i
-            ></el-link>
+          ></el-link>
 
           <el-link>
             <el-dropdown placement="top-start" v-if="7 > showIconNum">
@@ -232,24 +232,24 @@
                     @click="infoThis(item.Id, 2)"
                   ></i>
                 </el-dropdown-item>
-                <el-dropdown-item v-if="8 >  showIconNum">
+                <el-dropdown-item v-if="8 > showIconNum">
                   <el-link>
                     <i
                       class="el-icon-delete icon-style"
                       title="删除"
                       @click="deleteThis(item.Id, 2)"
                     ></i
-                    ></el-link>
+                  ></el-link>
                 </el-dropdown-item>
 
-                <el-dropdown-item v-if="9 >  showIconNum">
+                <el-dropdown-item v-if="9 > showIconNum">
                   <i
                     class="el-icon-download icon-style"
                     title="刮图"
                     @click="getImageList(item.Id, 2)"
                   ></i>
                 </el-dropdown-item>
-                <el-dropdown-item v-if="10 >  showIconNum">
+                <el-dropdown-item v-if="10 > showIconNum">
                   <el-link>
                     <i
                       :underline="false"
@@ -257,7 +257,7 @@
                       title="同步"
                       @click="syncThis(item.Id)"
                     ></i
-                    ></el-link>
+                  ></el-link>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -267,8 +267,8 @@
               <div slot="content">{{ item.Name }}</div>
               <span>
                 <el-link @click="copy(item.Actress)">{{
-                    item.Actress
-                  }}</el-link>
+                  item.Actress
+                }}</el-link>
                 <el-divider direction="vertical"></el-divider>
                 <el-link @click="copy(item.Code)">{{ item.Code }}</el-link>
                 【{{ item.SizeStr }}】 {{ item.Name }}
@@ -310,7 +310,7 @@
           </el-col>
           <el-col :span="16">
             <a href="javascript:void(0);" @click="openLick(file.Code)"
-            ><span>{{ file.Code }}</span></a
+              ><span>{{ file.Code }}</span></a
             >
           </el-col>
         </el-row>
@@ -369,7 +369,7 @@ import axios from "axios";
 
 export default {
   data() {
-    const {searchWords, no} = this.$route.query;
+    const { searchWords, no } = this.$route.query;
     var searchPage = new Map();
     return {
       showIconNum: 5,
@@ -445,13 +445,18 @@ export default {
     },
   },
   methods: {
+    clearWords() {
+      console.log("clear:", this.searchPage);
+      this.pageNo = this.searchPage.get("");
+      this.queryList();
+    },
     isShowCover() {
-      if (this.showStyle == 'cover'){
-        this.showIconNum=10
-        return true
+      if (this.showStyle == "cover") {
+        this.showIconNum = 10;
+        return true;
       }
-      this.showIconNum=6
-      return  false
+      this.showIconNum = 6;
+      return false;
     },
     copy(data) {
       let target = document.createElement("input"); //创建input节点
@@ -611,14 +616,8 @@ export default {
       this.dataList = [];
       let data = new FormData();
       const keywords = this.searchWords ? this.searchWords : "";
-      const page = this.searchPage.get(keywords);
-      if (page) {
-        this.page = page;
-      } else {
-        this.page = 1;
-      }
       this.searchPage.set(keywords, this.pageNo);
-
+      console.log("query:", this.searchPage);
       data.append("pageNo", this.pageNo);
       data.append("pageSize", this.pageSize);
       data.append("keywords", keywords);
@@ -669,12 +668,12 @@ export default {
             }
           }
 
-          const {path, no} = this.$route.query;
+          const { path, no } = this.$route.query;
           if (no != this.pageNo) {
           }
           this.$router.replace({
             path,
-            query: {searchWords: keywords, no: this.pageNo},
+            query: { searchWords: keywords, no: this.pageNo },
           });
 
           this.onlyRepeat = false;
@@ -690,19 +689,19 @@ export default {
       // console.log(filename);
       self.$router.push(
         "context/" +
-        filename +
-        "?pageNo=" +
-        this.pageNo +
-        "&pageSize=" +
-        this.pageSize +
-        "&searchWords=" +
-        this.searchWords +
-        "&sortType=" +
-        this.sortType +
-        "&sortField=" +
-        this.sortField +
-        "&movieType=" +
-        this.movieType
+          filename +
+          "?pageNo=" +
+          this.pageNo +
+          "&pageSize=" +
+          this.pageSize +
+          "&searchWords=" +
+          this.searchWords +
+          "&sortType=" +
+          this.sortType +
+          "&sortField=" +
+          this.sortField +
+          "&movieType=" +
+          this.movieType
       );
     },
     openLick(code) {
@@ -769,6 +768,7 @@ export default {
   min-height: 600px;
   height: 100%;
   padding: 1px;
+  margin-bottom: 40px;
 }
 
 .floatButton {
@@ -809,17 +809,15 @@ export default {
 }
 
 .list-item {
-  width: 230px;
-  height: 100%;
+  width: 240px;
+  height: auto;
   float: left;
   list-style: none;
 }
 
 .img-list-item {
-  width: 98%;
-   height: 98%;
-  min-height: 160px;
- 
+  width: 220px;
+  height: 280px;
 }
 
 .img-list-item span {
@@ -837,16 +835,16 @@ export default {
 }
 
 .list-item-cover {
-  width: 550px;
-  min-height: 300px;
-  /* height: 360px; */
+  width: 476px;
+  /* min-height: 300px; */
   height: auto;
+  /* height: auto; */
   float: left;
   list-style: none;
 }
 
 .img-list-item-cover {
-  width: 520px;
+  width: 460px;
   height: 280px;
 }
 

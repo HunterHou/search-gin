@@ -33,6 +33,57 @@
       </el-page-header>
     </div>
 
+    <el-row :gutter="20">
+      <el-col :span="2">
+        <el-link
+          ><i
+            :underline="false"
+            class="el-icon-video-play icon-style"
+            title="播放"
+            @click="playThis(file.Id)"
+          ></i
+        ></el-link>
+      </el-col>
+
+      <el-col :span="2">
+        <el-link>
+          <i
+            class="el-icon-folder-opened icon-style"
+            title="文件夹"
+            @click="openThisFolder(file.Id, 2)"
+          ></i
+        ></el-link>
+      </el-col>
+      <el-col :span="2">
+        <el-link>
+          <i
+            :underline="false"
+            class="el-icon-refresh icon-style"
+            title="同步"
+            @click="syncThis(file.Id)"
+          ></i
+        ></el-link>
+      </el-col>
+      <el-col :span="2">
+        <el-link>
+          <i
+            class="el-icon-delete icon-style"
+            title="删除"
+            @click="deleteThis(file.Id, 2)"
+          ></i
+        ></el-link>
+      </el-col>
+      <el-col :span="2">
+        <el-link>
+          <i
+            class="el-icon-download icon-style"
+            title="刮图"
+            @click="getImageList(file.Id, 2)"
+          ></i
+        ></el-link>
+      </el-col>
+    </el-row>
+
     <el-tabs
       style="margin-top: 10px"
       type="card"
@@ -47,53 +98,12 @@
               :src="file.JpgUrl"
               style="
                 display: flex;
-                max-width: 1000px;
+                max-width: 900px;
                 width: auto;
                 height: auto;
                 magin: 0 auto;
               "
             />
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="2">
-              <el-link
-                ><i
-                  :underline="false"
-                  class="el-icon-video-play icon-style"
-                  title="播放"
-                  @click="playThis(file.Id)"
-                ></i
-              ></el-link>
-            </el-col>
-
-            <el-col :span="2">
-              <el-link>
-                <i
-                  class="el-icon-folder-opened icon-style"
-                  title="文件夹"
-                  @click="openThisFolder(file.Id, 2)"
-                ></i
-              ></el-link>
-            </el-col>
-            <el-col :span="2">
-              <el-link>
-                <i
-                  :underline="false"
-                  class="el-icon-refresh icon-style"
-                  title="同步"
-                  @click="syncThis(file.Id)"
-                ></i
-              ></el-link>
-            </el-col>
-            <el-col :span="2">
-              <el-link>
-                <i
-                  class="el-icon-delete icon-style"
-                  title="删除"
-                  @click="deleteThis(file.Id, 2)"
-                ></i
-              ></el-link>
-            </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="4">
@@ -103,7 +113,6 @@
               <span v-if="file">{{ file.Code }}</span>
             </el-col>
           </el-row>
-
           <el-row :gutter="20">
             <el-col :span="4">
               <span>优优 :</span>
@@ -139,7 +148,7 @@
           style="display: flex; margin: 10px auto"
         >
           <el-image
-            style="width: auto; min-width: 800px; height: auto; margin: 0 auto"
+            style="width: auto; min-width: 1000px; height: auto; margin: 0 auto"
             :src="item"
             :preview-src-list="sourceList"
             lazy
@@ -198,14 +207,14 @@ export default {
       if (this.tabIndex == "web") {
         this.makeIrameUrl(this.file);
       } else if (this.tabIndex == "dir") {
-        this.loadImageList()
+        this.loadImageList();
       }
     },
     loadImageList() {
       this.sourceList = this.imageList;
     },
-    urlBack(){
-       const self = this;
+    urlBack() {
+      const self = this;
       self.$router.push("/menu" + this.getParam());
     },
     getParam() {
@@ -238,6 +247,7 @@ export default {
     },
     openActress(actress) {
       const self = this;
+      this.searchWords = actress;
       self.$router.push("/menu" + this.getParam());
     },
     settingBase() {
@@ -262,7 +272,7 @@ export default {
         }
       });
     },
-    loadDirInfo(id,loading) {
+    loadDirInfo(id, loading) {
       axios.get("/api/dir/" + id).then((res) => {
         if (res.status === 200) {
           if (res.data && res.data.length > 0) {
@@ -270,8 +280,8 @@ export default {
             for (let i = 0; i < res.data.length; i++) {
               this.imageList.push(res.data[i].ImageBase);
             }
-            if(loading){
-              this.loadImageList()
+            if (loading) {
+              this.loadImageList();
             }
           }
         }
@@ -290,7 +300,7 @@ export default {
           this.file = res.data;
           this.id = this.file.Id;
           this.makeIrameUrl(this.file);
-          this.loadDirInfo(this.id,true);
+          this.loadDirInfo(this.id, true);
         }
       });
     },
@@ -302,7 +312,7 @@ export default {
           this.file = res.data;
           this.id = this.file.Id;
           this.makeIrameUrl(this.file);
-          this.loadDirInfo(this.id,true);
+          this.loadDirInfo(this.id, true);
         }
       });
     },
@@ -319,6 +329,14 @@ export default {
       axios.get("api/openFolder/" + id).then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
+        }
+      });
+    },
+    getImageList(id) {
+      axios.get("api/imageList/" + id).then((res) => {
+        if (res.status === 200) {
+          this.alertSuccess(res.data.Message);
+          this.loadDirInfo(this.id, true);
         }
       });
     },
