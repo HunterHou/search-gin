@@ -369,7 +369,7 @@
         </el-image>
       </div>
     </el-dialog>
-    <el-dialog title="文件信息" :visible.sync="dialogFormItemVisible">
+    <el-dialog title="文件信息" :visible.sync="dialogFormItemVisible" :close-on-press-escape="false" :close-on-click-modal="false">
       <el-form :model="formItem">
         <el-form-item label="文件名称">
           <el-input v-model="formItem.name" autocomplete="off"></el-input>

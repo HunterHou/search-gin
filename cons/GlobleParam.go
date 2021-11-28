@@ -16,6 +16,7 @@ var QueryTypes []string
 var OSSetting = datamodels.Setting{
 	SelfPath: "setting.json",
 	BaseUrl:  "https://www.busjav.blog/",
+	OMUrl:    "https://www.busjav.blog/",
 	Dirs: []string{
 		"e://emby",
 	},

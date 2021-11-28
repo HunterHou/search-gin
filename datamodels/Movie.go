@@ -10,7 +10,7 @@ import (
 //声明一个File结构体 表示一个文件信息
 type Movie struct {
 	Id        string
-	Code      string "json:'code'"
+	Code      string
 	Name      string
 	Path      string
 	Png       string

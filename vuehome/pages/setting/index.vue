@@ -5,6 +5,9 @@
       <el-form-item label="URL">
         <el-input v-model="form.BaseUrl" style="width: 80%"></el-input>
       </el-form-item>
+       <el-form-item label="URLOM">
+        <el-input v-model="form.OMUrl" style="width: 80%"></el-input>
+      </el-form-item>
       <el-form-item label="图片类型">
         <el-select v-model="form.ImageTypes" multiple placeholder="请选择" style="width: 80%">
           <el-option
@@ -101,6 +104,7 @@ export default {
 
       form: {
         BaseUrl: "",
+        OMUrl: "",
         ImageTypes: [],
         DocsTypes: [],
         VideoTypes: [],
@@ -168,6 +172,7 @@ export default {
       axios.get("api/settingInfo").then((res) => {
         if (res.status == 200) {
           this.form.BaseUrl = res.data.BaseUrl
+          this.form.OMUrl = res.data.OMUrl
           this.form.ImageTypes = res.data.ImageTypes
           this.form.DocsTypes = res.data.DocsTypes
           this.form.VideoTypes = res.data.VideoTypes

@@ -165,38 +165,48 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 		result.Message = "No Image avaliable"
 		return result
 	}
-	for i := 0; i < len(toFile.ImageList); i++ {
-		url := toFile.ImageList[i]
 
-		filepath := toFile.DirPath + "\\" + toFile.Code + "-" + fmt.Sprint(i) + ".jpg"
-		fmt.Println(filepath)
-		jpgOut, createErr := os.Create(filepath)
-		if createErr != nil {
-			result.Message = "png生成失败"
-			return result
-		}
-		defer jpgOut.Close()
-		resp, downErr := httpGet(url)
-		if downErr != nil {
-			result.Fail()
-			fmt.Println("downErr:", downErr)
-			result.Message = "文件下载失败：" + toFile.Jpg
-			return result
-		}
-		body, readErr := ioutil.ReadAll(resp.Body)
-		if readErr != nil {
-			result.Fail()
-			fmt.Println("readErr:", readErr)
-			result.Message = "请求读取response失败"
-			return result
-		}
-		jpgOut.Write(body)
-		jpgOut.Close()
+	var wg sync.WaitGroup
+	wg.Add(len(toFile.ImageList))
+	for i := 0; i < len(toFile.ImageList); i++ {
+		go downImageItem(toFile, i, &wg)
 	}
+	wg.Wait()
 	result.Fail()
 	result.Message = "执行成功!"
 	return result
 
+}
+
+func downImageItem(currentFile datamodels.Movie, i int, wg *sync.WaitGroup) utils.Result {
+	defer wg.Done()
+	result := utils.NewResult()
+	url := currentFile.ImageList[i]
+	filepath := currentFile.DirPath + "\\" + currentFile.Code + "-" + fmt.Sprint(i) + ".jpg"
+	fmt.Println(filepath)
+	jpgOut, createErr := os.Create(filepath)
+	if createErr != nil {
+		result.Message = "png生成失败"
+		return result
+	}
+	defer jpgOut.Close()
+	resp, downErr := httpGet(url)
+	if downErr != nil {
+		result.Fail()
+		fmt.Println("downErr:", downErr)
+		result.Message = "文件下载失败：" + currentFile.Jpg
+		return result
+	}
+	body, readErr := ioutil.ReadAll(resp.Body)
+	if readErr != nil {
+		result.Fail()
+		fmt.Println("readErr:", readErr)
+		result.Message = "请求读取response失败"
+		return result
+	}
+	jpgOut.Write(body)
+	jpgOut.Close()
+	return result
 }
 
 func (fs FileService) MakeNfo(toFile datamodels.Movie) {
@@ -238,6 +248,10 @@ func httpGet(url string) (*http.Response, error) {
 
 }
 
+func isOM(name string) bool {
+	return strings.Contains(name, "斯巴达")
+}
+
 func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
 
 	result := utils.Result{}
@@ -247,6 +261,11 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 		return result, newFile
 	}
 	url := cons.OSSetting.BaseUrl + srcFile.Code
+	if isOM(srcFile.Name) {
+		url = cons.OSSetting.OMUrl + srcFile.Code
+		url = strings.ReplaceAll(url, "{{斯巴达}}", "")
+	}
+
 	resp, err := httpGet(url)
 	if err != nil {
 		fmt.Println("err", err)
