@@ -33,7 +33,7 @@
       </el-page-header>
     </div>
 
-    <el-row :gutter="20" style="margin-top:20px;">
+    <el-row :gutter="20" style="margin-top:10px;margin-buttom:10px;">
       <el-col :span="2">
         <el-link
           ><i
