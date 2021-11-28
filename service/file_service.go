@@ -168,7 +168,7 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	wg.Add(len(toFile.ImageList))
-	go downImageItem(toFile.JpgUrl, toFile.DirPath, toFile.Code, "-post", &wg)
+	go downImageItem(toFile.JpgUrl, toFile.DirPath, toFile.Actress, "-post", &wg)
 	for i := 0; i < len(toFile.ImageList); i++ {
 		go downImageItem(toFile.ImageList[i], toFile.DirPath, toFile.Code, fmt.Sprintf("%d", i), &wg)
 	}
