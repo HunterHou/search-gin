@@ -33,7 +33,7 @@
       </el-page-header>
     </div>
 
-    <el-row :gutter="20">
+    <el-row :gutter="20" style="margin-top:20px;">
       <el-col :span="2">
         <el-link
           ><i
@@ -74,8 +74,8 @@
       </el-col>
       <el-col :span="3">
         <el-link>
-          <i class="icon-style" title="刷新" @click="$router.go(0)"
-            >刷新</i
+          <i class="el-icon-refresh icon-style" title="刷新" @click="$router.go(0)"
+            >F5</i
           ></el-link
         >
       </el-col>
@@ -293,8 +293,9 @@ export default {
         if (res.status === 200) {
           this.file = res.data;
           this.id = this.file.Id;
-          this.makeIrameUrl(this.file);
-          this.loadDirInfo(this.id, true);
+          this.$router.push("/context/" + this.file.Id + this.getParam());
+          // this.makeIrameUrl(this.file);
+          // this.loadDirInfo(this.id, true);
         }
       });
     },
@@ -305,8 +306,9 @@ export default {
         if (res.status === 200) {
           this.file = res.data;
           this.id = this.file.Id;
-          this.makeIrameUrl(this.file);
-          this.loadDirInfo(this.id, true);
+          this.$router.push("/context/" + this.file.Id + this.getParam());
+          // this.makeIrameUrl(this.file);
+          // this.loadDirInfo(this.id, true);
         }
       });
     },
