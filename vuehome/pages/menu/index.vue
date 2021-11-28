@@ -80,7 +80,7 @@
             icon="el-icon-search"
             @click="
               (e) => {
-                this.pageNo=1
+                this.pageNo = 1;
                 queryList();
               }
             "
@@ -125,7 +125,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 10px;padding-buttom:40px"
+      style="margin-top: 10px; padding-buttom: 40px"
     >
       <li
         style="overflow: auto"
@@ -171,6 +171,13 @@
               class="el-icon-folder-opened icon-style"
               title="文件夹"
               @click="openThisFolder(item.Id, 2)"
+            ></i
+          ></el-link>
+          <el-link>
+            <i
+              class="el-icon-edit icon-style"
+              title="编辑"
+              @click="editItem(item)"
             ></i
           ></el-link>
           <el-link>
@@ -362,6 +369,17 @@
         </el-image>
       </div>
     </el-dialog>
+    <el-dialog title="文件信息" :visible.sync="dialogFormItemVisible">
+      <el-form :model="formItem">
+        <el-form-item label="文件名称">
+          <el-input v-model="formItem.name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormItemVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editItemSubmit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -379,6 +397,7 @@ export default {
       baseUrl: "",
       onlyRepeat: false, //是否查重
       dialogVisible: false, //是否弹窗
+      dialogFormItemVisible: false,
       sortField: "mtime",
       sortType: "desc",
       movieType: "",
@@ -398,6 +417,7 @@ export default {
       resultSize: 0,
       curSize: 0,
       suggestions: [], //搜索框 提示
+      formItem: {},
     };
   },
   created() {
@@ -417,10 +437,10 @@ export default {
       let key = window.event.keyCode;
       if (key === 37) {
         //left
-        this.pageLoading(-1);
+        // this.pageLoading(-1);
       } else if (key === 39) {
         //right
-        this.pageLoading(1);
+        // this.pageLoading(1);
       } else if (key == 45) {
         //insert
         document.getElementById("searchInput").focus();
@@ -433,9 +453,9 @@ export default {
       } else if (key == 9) {
       } else if (key >= 49 && key <= 59) {
         //1
-        const pageIndex = key - 48;
-        this.pageNo = pageIndex > this.totalPage ? this.totalPage : pageIndex;
-        this.queryList();
+        // const pageIndex = key - 48;
+        // this.pageNo = pageIndex > this.totalPage ? this.totalPage : pageIndex;
+        // this.queryList();
       }
     };
   },
@@ -445,6 +465,27 @@ export default {
     },
   },
   methods: {
+    editItem(item) {
+      console.log(item);
+      this.formItem = item;
+      this.dialogFormItemVisible = true;
+    },
+    editItemSubmit() {
+      const { Id, name } = this.formItem;
+      const param = { Id, Name: name };
+      axios.post("api/file/rename", param).then((res) => {
+        if (res.status === 200) {
+          if (res.data.Code == 200) {
+            this.alertSuccess(res.data.Message);
+            this.refreshIndex();
+            this.formItem = {};
+            this.dialogFormItemVisible = false;
+          } else {
+            this.alertFail(res.data.Message);
+          }
+        }
+      });
+    },
     clearWords() {
       console.log("clear:", this.searchPage);
       this.pageNo = this.searchPage.get("");
@@ -656,6 +697,7 @@ export default {
                 item.Code = "";
                 item.Actress = "";
               }
+              item.name = item.Name;
               item.Name = item.Name.replace("[" + item.Code + "]", "");
               item.Name = item.Name.replace("[" + item.Actress + "]", "");
             });

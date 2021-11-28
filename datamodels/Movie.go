@@ -71,6 +71,14 @@ func (f Movie) GetFileInfo() string {
 		f.Name, f.Code, f.FileType, f.SizeStr, f.Actress, f.Path)
 	return info
 }
+
+func (f Movie) IsNull() bool {
+	//
+	if f.Id == "" || f.Path == "" {
+		return true
+	}
+	return false
+}
 func (f Movie) PngBase64() string {
 	path := f.Png
 	if !utils.ExistsFiles(path) {

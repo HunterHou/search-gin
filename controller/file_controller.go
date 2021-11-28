@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"search-gin/cons"
+	"search-gin/datamodels"
 	"search-gin/datasource"
 	"search-gin/service"
 	"search-gin/utils"
@@ -193,6 +194,13 @@ func GetInfo(c *gin.Context) {
 	service := service.FileService{}
 	file := service.FindOne(id)
 	c.JSON(http.StatusOK, file)
+}
+func PostRename(c *gin.Context) {
+	currentFile := datamodels.Movie{}
+	c.ShouldBindJSON(&currentFile)
+	service := service.FileService{}
+	res := service.Rename(currentFile)
+	c.JSON(http.StatusOK, res)
 }
 
 func GetDirInfo(c *gin.Context) {

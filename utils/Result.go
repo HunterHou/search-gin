@@ -19,3 +19,7 @@ func NewSuccess() Result {
 func (res *Result) Fail() {
 	res.MessageCode.Fail()
 }
+func (res *Result) FailMsg(msg string) {
+	res.MessageCode.Fail()
+	res.Message = msg
+}
