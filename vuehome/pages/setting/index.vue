@@ -1,45 +1,64 @@
 <template>
-  <div align="center" width="80%" style="margin-right:20%">
+  <div align="center" width="80%" style="margin-right: 20%">
     <h1 align="center">设置</h1>
+    <br />
     <el-form label-width="20%" ref="form" :model="form">
       <el-form-item label="URL">
         <el-input v-model="form.BaseUrl" style="width: 80%"></el-input>
       </el-form-item>
-       <el-form-item label="URLOM">
+      <el-form-item label="OM-URL">
         <el-input v-model="form.OMUrl" style="width: 80%"></el-input>
       </el-form-item>
       <el-form-item label="图片类型">
-        <el-select v-model="form.ImageTypes" multiple placeholder="请选择" style="width: 80%">
+        <el-select
+          v-model="form.ImageTypes"
+          multiple
+          placeholder="请选择"
+          style="width: 80%"
+        >
           <el-option
             v-for="item in form.Types"
             :key="item"
             :label="item"
-            :value="item">
+            :value="item"
+          >
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="文档类型">
-        <el-select v-model="form.DocsTypes" multiple placeholder="请选择" style="width: 80%">
+        <el-select
+          v-model="form.DocsTypes"
+          multiple
+          placeholder="请选择"
+          style="width: 80%"
+        >
           <el-option
             v-for="item in form.Types"
             :key="item"
             :label="item"
-            :value="item">
+            :value="item"
+          >
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="视频类型">
-        <el-select v-model="form.VideoTypes" multiple placeholder="请选择" style="width: 80%">
+        <el-select
+          v-model="form.VideoTypes"
+          multiple
+          placeholder="请选择"
+          style="width: 80%"
+        >
           <el-option
             v-for="item in form.Types"
             :key="item"
             :label="item"
-            :value="item">
+            :value="item"
+          >
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="文件类型">
-        <el-tag
+      <el-form-item label="枚举文件类型">
+        <!-- <el-tag
           :key="tag"
           v-for="tag,index in form.Types"
           closable effect="dark"
@@ -57,16 +76,36 @@
           @blur="handleInputConfirm"
         >
         </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button> -->
+
+        <el-select
+          v-model="form.Types"
+          multiple
+          filterable
+          allow-create
+          default-first-option
+          placeholder="请添加类型"
+          style="width: 80%"
+        >
+          <el-option
+            v-for="item in form.Types"
+            :key="item"
+            :label="item"
+            :value="item"
+          >
+          </el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item label="文件路徑">
         <el-tag
           :key="tag"
-          v-for="(tag,index ) in form.Dirs"
-          closable effect="light"
+          v-for="(tag, index) in form.Dirs"
+          closable
+          effect="light"
           :disable-transitions="false"
-          @close="handleCloseFile(tag)">
+          @close="handleCloseFile(tag)"
+        >
           {{ index + 1 }} : {{ tag }}
         </el-tag>
         <el-input
@@ -79,15 +118,36 @@
           @blur="handleInputConfirmFile"
         >
         </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInputFile">+ New Tag</el-button>
+        <br />
+        <el-button class="button-new-tag" size="small" @click="showInputFile"
+          >+ 新路径</el-button
+        >
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" align-text="center" @click="submitForm('form')">提交</el-button>
+        <el-row>
+          <el-col :span="8" :offset="2"
+            ><div class="grid-content bg-purple-dark">
+            <el-button
+              type="warning"
+              align-text="center"
+              style="width:120px;"
+              @click="goMenu()"
+              >返回</el-button
+            ></div
+          ></el-col>
+          <el-col :span="8" :offset="-6"
+            ><div class="grid-content bg-purple-dark"><el-button
+              type="primary"
+              align-text="center"
+               style="width:120px;"
+              @click="submitForm('form')"
+              >提交</el-button
+            ></div
+          ></el-col>
+        </el-row>
       </el-form-item>
     </el-form>
-
-
   </div>
 </template>
 <script>
@@ -97,10 +157,10 @@ export default {
   data: function () {
     return {
       inputVisible: false,
-      inputValue: '',
+      inputValue: "",
 
       inputVisibleFile: false,
-      inputValueFile: '',
+      inputValueFile: "",
 
       form: {
         BaseUrl: "",
@@ -110,27 +170,29 @@ export default {
         VideoTypes: [],
         Types: [],
         Dirs: [],
-      }
-    }
+      },
+    };
   },
   mounted: function () {
     this.loadData();
   },
   methods: {
+    goMenu(){
+      this.$router.push("/menu")
+    },
     submitForm() {
-      const postForm = {...this.form,BaseDir:this.form.Dirs}
+      const postForm = { ...this.form, BaseDir: this.form.Dirs };
       this.loading = true;
       axios.post("api/setting", postForm).then((res) => {
         if (res.status === 200) {
           this.$message({
             message: res.data.Message,
-            type: 'success'
+            type: "success",
           });
           this.loadData();
           this.loading = false;
         }
-
-      })
+      });
     },
     handleClose(tag) {
       this.form.Types.splice(this.form.Types.indexOf(tag), 1);
@@ -138,7 +200,7 @@ export default {
 
     showInput() {
       this.inputVisible = true;
-      this.$nextTick(_ => {
+      this.$nextTick((_) => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
@@ -148,7 +210,7 @@ export default {
         this.form.Types.push(inputValue);
       }
       this.inputVisible = false;
-      this.inputValue = '';
+      this.inputValue = "";
     },
     handleCloseFile(tag) {
       this.form.BaseDir.splice(this.form.BaseDir.indexOf(tag), 1);
@@ -156,7 +218,7 @@ export default {
 
     showInputFile() {
       this.inputVisibleFile = true;
-      this.$nextTick(_ => {
+      this.$nextTick((_) => {
         this.$refs.saveTagInputFile.$refs.input.focus();
       });
     },
@@ -166,23 +228,23 @@ export default {
         this.form.BaseDir.push(inputValueFile);
       }
       this.inputVisibleFile = false;
-      this.inputValueFile = '';
+      this.inputValueFile = "";
     },
     loadData() {
       axios.get("api/settingInfo").then((res) => {
         if (res.status == 200) {
-          this.form.BaseUrl = res.data.BaseUrl
-          this.form.OMUrl = res.data.OMUrl
-          this.form.ImageTypes = res.data.ImageTypes
-          this.form.DocsTypes = res.data.DocsTypes
-          this.form.VideoTypes = res.data.VideoTypes
-          this.form.Types = res.data.Types
-          this.form.Dirs = res.data.Dirs
-          console.log(this.form)
-          console.log(res.data)
+          this.form.BaseUrl = res.data.BaseUrl;
+          this.form.OMUrl = res.data.OMUrl;
+          this.form.ImageTypes = res.data.ImageTypes;
+          this.form.DocsTypes = res.data.DocsTypes;
+          this.form.VideoTypes = res.data.VideoTypes;
+          this.form.Types = res.data.Types;
+          this.form.Dirs = res.data.Dirs;
+          console.log(this.form);
+          console.log(res.data);
         }
-      })
-    }
-  }
-}
+      });
+    },
+  },
+};
 </script>

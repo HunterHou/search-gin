@@ -165,11 +165,12 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 		result.Message = "No Image avaliable"
 		return result
 	}
-
 	var wg sync.WaitGroup
+	wg.Add(1)
 	wg.Add(len(toFile.ImageList))
+	go downImageItem(toFile.JpgUrl, toFile.DirPath, toFile.Code, "-post", &wg)
 	for i := 0; i < len(toFile.ImageList); i++ {
-		go downImageItem(toFile, i, &wg)
+		go downImageItem(toFile.ImageList[i], toFile.DirPath, toFile.Code, fmt.Sprintf("%d", i), &wg)
 	}
 	wg.Wait()
 	result.Fail()
@@ -178,11 +179,10 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 
 }
 
-func downImageItem(currentFile datamodels.Movie, i int, wg *sync.WaitGroup) utils.Result {
+func downImageItem(url string, dirPath string, prefix string, sufix string, wg *sync.WaitGroup) utils.Result {
 	defer wg.Done()
 	result := utils.NewResult()
-	url := currentFile.ImageList[i]
-	filepath := currentFile.DirPath + "\\" + currentFile.Code + "-" + fmt.Sprint(i) + ".jpg"
+	filepath := dirPath + "\\" + prefix + "-" + sufix + ".jpg"
 	fmt.Println(filepath)
 	jpgOut, createErr := os.Create(filepath)
 	if createErr != nil {
@@ -194,7 +194,7 @@ func downImageItem(currentFile datamodels.Movie, i int, wg *sync.WaitGroup) util
 	if downErr != nil {
 		result.Fail()
 		fmt.Println("downErr:", downErr)
-		result.Message = "文件下载失败：" + currentFile.Jpg
+		result.Message = "文件下载失败：" + url
 		return result
 	}
 	body, readErr := ioutil.ReadAll(resp.Body)

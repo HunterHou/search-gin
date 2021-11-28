@@ -9,6 +9,7 @@ import (
 	"search-gin/service"
 	"search-gin/utils"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -260,6 +261,7 @@ func GetImageList(c *gin.Context) {
 		c.JSON(http.StatusOK, result)
 		return
 	}
+	curFile.JpgUrl = cons.OSSetting.BaseUrl + strings.Replace(newFile.Jpg, "/", "", 1)
 	curFile.ImageList = newFile.ImageList
 	result = serviceFile.DownImage(curFile)
 	c.JSON(http.StatusOK, result)

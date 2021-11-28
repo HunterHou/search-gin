@@ -271,7 +271,7 @@
           </el-link>
           <div class="context-text">
             <el-tooltip placement="bottom" effect="dark">
-              <div slot="content">{{ item.Name }}</div>
+              <div slot="content">{{ item.name }}</div>
               <span>
                 <el-link @click="copy(item.Actress)">{{
                   item.Actress
@@ -369,10 +369,27 @@
         </el-image>
       </div>
     </el-dialog>
-    <el-dialog title="文件信息" :visible.sync="dialogFormItemVisible" :close-on-press-escape="false" :close-on-click-modal="false">
-      <el-form :model="formItem">
+    <el-dialog
+      title="文件信息"
+      :visible.sync="dialogFormItemVisible"
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        :label-position="right"
+        :model="formItem"
+        size="small"
+        border="1"
+        label-width="20%"
+      >
+        <el-form-item label="脸谱">
+          <el-input v-model="formItem.Actress" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="编码">
+          <el-input v-model="formItem.Code" autocomplete="off"></el-input>
+        </el-form-item>
         <el-form-item label="文件名称">
-          <el-input v-model="formItem.name" autocomplete="off"></el-input>
+          <el-input v-model="formItem.Name" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -471,8 +488,13 @@ export default {
       this.dialogFormItemVisible = true;
     },
     editItemSubmit() {
-      const { Id, name } = this.formItem;
-      const param = { Id, Name: name };
+      const { Id, Name, Code, Actress } = this.formItem;
+      const code = Code.trim().replaceAll(".", "-");
+      const name =
+        (code.length != 0
+          ? "[" + Actress.trim() + "]" + "[" + code + "]"
+          : "") + Name;
+      const param = { Id, Name: name, Code: code, Actress };
       axios.post("api/file/rename", param).then((res) => {
         if (res.status === 200) {
           if (res.data.Code == 200) {
@@ -772,7 +794,11 @@ export default {
           if (res.data && res.data.length > 0) {
             this.imageList = [];
             for (let i = 0; i < res.data.length; i++) {
-              this.imageList.push(res.data[i].ImageBase);
+              if (
+                res.data[i].FileType == "jpg"
+              ) {
+                this.imageList.push(res.data[i].ImageBase);
+              }
             }
             if (loading) {
               this.sourceList = this.imageList;
