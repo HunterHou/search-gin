@@ -493,7 +493,7 @@ export default {
       const name =
         (code.length != 0
           ? "[" + Actress.trim() + "]" + "[" + code + "]"
-          : "") + Name;
+          : "") + Name.trim();
       const param = { Id, Name: name, Code: code, Actress };
       axios.post("api/file/rename", param).then((res) => {
         if (res.status === 200) {
