@@ -74,12 +74,10 @@
       </el-col>
       <el-col :span="3">
         <el-link>
-          <i
-            class="icon-style"
-            title="刷新"
-            @click="$router.go(0)"
-          >刷新</i
-        ></el-link>
+          <i class="icon-style" title="刷新" @click="$router.go(0)"
+            >刷新</i
+          ></el-link
+        >
       </el-col>
     </el-row>
 
@@ -277,7 +275,9 @@ export default {
           if (res.data && res.data.length > 0) {
             this.imageList = [];
             for (let i = 0; i < res.data.length; i++) {
-              this.imageList.push(res.data[i].ImageBase);
+              if (res.data[i].FileType == "jpg") {
+                this.imageList.push(res.data[i].ImageBase);
+              }
             }
             if (loading) {
               this.loadImageList();
