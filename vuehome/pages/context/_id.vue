@@ -72,6 +72,15 @@
           ></i
         ></el-link>
       </el-col>
+      <el-col :span="3">
+        <el-link>
+          <i
+            class="icon-style"
+            title="刷新"
+            @click="$router.go(0)"
+          >刷新</i
+        ></el-link>
+      </el-col>
     </el-row>
 
     <el-tabs
