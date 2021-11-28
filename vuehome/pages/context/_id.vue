@@ -57,6 +57,16 @@
       <el-col :span="2">
         <el-link>
           <i
+            class="el-icon-edit icon-style"
+            title="编辑"
+            @click="editItem(file)"
+          ></i
+        ></el-link>
+      </el-col>
+
+      <el-col :span="2">
+        <el-link>
+          <i
             :underline="false"
             class="el-icon-refresh icon-style"
             title="同步"
@@ -166,6 +176,17 @@
         ></iframe>
       </el-tab-pane>
     </el-tabs>
+    <el-dialog title="文件信息" :visible.sync="dialogFormItemVisible">
+      <el-form :model="formItem">
+        <el-form-item label="文件名称">
+          <el-input v-model="formItem.Name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormItemVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editItemSubmit();dialogFormItemVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -182,6 +203,8 @@ export default {
       baseUrl: "",
       imageList: [],
       sourceList: [],
+      dialogFormItemVisible: false,
+      formItem: {},
     };
   },
   mounted: function () {
@@ -203,6 +226,29 @@ export default {
     };
   },
   methods: {
+    editItem(item) {
+      console.log(item);
+      this.formItem = item;
+      this.dialogFormItemVisible = true;
+    },
+    editItemSubmit() {
+      const { Id, Name } = this.formItem;
+      const param = { Id, Name};
+      axios.post("api/file/rename", param).then((res) => {
+        if (res.status === 200) {
+          if (res.data.Code == 200) {
+            this.alertSuccess(res.data.Message);
+            this.refreshIndex();
+            this.formItem = {};
+            this.dialogFormItemVisible = false;
+            this.urlBack()
+          } else {
+            this.alertFail(res.data.Message);
+          }
+        }
+      });
+    },
+
     tabChange() {
       if (this.tabIndex == "web") {
         this.makeIrameUrl(this.file);
