@@ -354,16 +354,49 @@ func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 	res := utils.NewSuccess()
 	movieLib := fs.FindOne(movie.Id)
 	if movieLib.IsNull() {
+		res.FailMsg("数据不存在")
+		return res
+	}
+	oldPath := movieLib.Path
+	if !utils.ExistsFiles(oldPath) {
 		res.FailMsg("文件不存在")
 		return res
 	}
 	newPath := movieLib.DirPath + "\\" + movie.Name
-	err := os.Rename(movieLib.Path, newPath)
+	err := os.Rename(oldPath, newPath)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 		res.FailMsg("执行失败")
 		return res
 	}
+
+	//png
+	targetSuffix := ".png"
+	suffix := "." + utils.GetSuffux(oldPath)
+	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
+	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
+	if utils.ExistsFiles(oldPath) {
+		os.Rename(oldPath, newPath)
+	}
+
+	//jpg
+	targetSuffix = ".jpg"
+	suffix = "." + utils.GetSuffux(oldPath)
+	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
+	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
+	if utils.ExistsFiles(oldPath) {
+		os.Rename(oldPath, newPath)
+	}
+
+	//nfo
+	targetSuffix = ".nfo"
+	suffix = "." + utils.GetSuffux(oldPath)
+	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
+	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
+	if utils.ExistsFiles(oldPath) {
+		os.Rename(oldPath, newPath)
+	}
+
 	return res
 }
 
