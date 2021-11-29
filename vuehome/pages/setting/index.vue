@@ -153,7 +153,7 @@ export default {
       },
     };
   },
-  mounted:  ()=> {
+  mounted: function(){
     this.loadData();
   },
   methods: {
