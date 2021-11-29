@@ -101,7 +101,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="1">
-        <el-link>
+        <el-link style="color:green;">
           <i
             :underline="true"
             class="el-icon-zoom-out"
@@ -273,11 +273,11 @@
             <el-tooltip placement="bottom" effect="dark">
               <div slot="content">{{ item.name }}</div>
               <span>
-                <el-link @click="copy(item.Actress)">{{
+                <el-link style="color:green;" @click="copy(item.Actress)">{{
                   item.Actress
                 }}</el-link>
                 <el-divider direction="vertical"></el-divider>
-                <el-link @click="copy(item.Code)">{{ item.Code }}</el-link>
+                <el-link style="color:orange;" @click="copy(item.Code)">{{ item.Code }}</el-link>
                 【{{ item.SizeStr }}】 {{ item.Name }}
               </span>
             </el-tooltip>
