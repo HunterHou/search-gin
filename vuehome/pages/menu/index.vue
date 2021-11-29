@@ -492,18 +492,20 @@ export default {
       const code = Code.trim().replaceAll(".", "-");
       let name = "";
       if (Actress.length != 0) {
-        name += "[" + Actress.trim() + "]";
+        name += "[" + Actress.trim().replaceAll(".", " ") + "]";
       }
       if (code.length != 0) {
         name += " [" + code.trim() + "]";
       }
       const arr = Name.trim().split(".");
-      const arrLength = arr.length
+      const arrLength = arr.length;
       for (let idx = 0; idx < arrLength; idx++) {
         if (idx == arrLength - 1) {
-          name += "."+arr[idx];
-        } else {
+          name += "." + arr[idx];
+        } else if (idx == 0) {
           name += arr[idx];
+        } else {
+          name += " " + arr[idx];
         }
       }
       const param = { Id, Name: name, Code: code, Actress };
