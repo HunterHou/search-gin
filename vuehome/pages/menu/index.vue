@@ -376,7 +376,7 @@
       :close-on-click-modal="false"
     >
       <el-form
-        :label-position="right"
+        label-position="right"
         :model="formItem"
         size="small"
         border="1"
@@ -490,10 +490,22 @@ export default {
     editItemSubmit() {
       const { Id, Name, Code, Actress } = this.formItem;
       const code = Code.trim().replaceAll(".", "-");
-      const name =
-        (code.length != 0
-          ? "[" + Actress.trim() + "]" + "[" + code + "]"
-          : "") + Name.trim();
+      let name = "";
+      if (Actress.length != 0) {
+        name += "[" + Actress.trim() + "]";
+      }
+      if (code.length != 0) {
+        name += " [" + code.trim() + "]";
+      }
+      const arr = Name.trim().split(".");
+      const arrLength = arr.length
+      for (let idx = 0; idx < arrLength; idx++) {
+        if (idx == arrLength - 1) {
+          name += "."+arr[idx];
+        } else {
+          name += arr[idx];
+        }
+      }
       const param = { Id, Name: name, Code: code, Actress };
       axios.post("api/file/rename", param).then((res) => {
         if (res.status === 200) {
@@ -719,7 +731,7 @@ export default {
                 item.Code = "";
                 item.Actress = "";
               }
-              item.name = item.Name;
+              item.name = item.Name.trim();
               item.Name = item.Name.replace("[" + item.Code + "]", "");
               item.Name = item.Name.replace("[" + item.Actress + "]", "");
             });
@@ -794,9 +806,7 @@ export default {
           if (res.data && res.data.length > 0) {
             this.imageList = [];
             for (let i = 0; i < res.data.length; i++) {
-              if (
-                res.data[i].FileType == "jpg"
-              ) {
+              if (res.data[i].FileType == "jpg") {
                 this.imageList.push(res.data[i].ImageBase);
               }
             }
