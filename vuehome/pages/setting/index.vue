@@ -78,7 +78,7 @@
       </el-form-item>
 
       <el-form-item label="文件路徑">
-        <el-tag
+        <!-- <el-tag
           :key="tag"
           v-for="(tag, index) in form.Dirs"
           closable
@@ -101,7 +101,25 @@
         <br />
         <el-button class="button-new-tag" size="small" @click="showInputFile"
           >+ 新路径</el-button
+        > -->
+
+         <el-select
+          v-model="form.Dirs"
+          multiple
+          filterable
+          allow-create
+          default-first-option
+          placeholder="请添加路径"
+          style="width: 80%"
         >
+          <el-option
+            v-for="item in form.Dirs"
+            :key="item"
+            :label="item"
+            :value="item"
+          >
+          </el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item>
