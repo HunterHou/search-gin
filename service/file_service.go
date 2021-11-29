@@ -168,7 +168,12 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	wg.Add(len(toFile.ImageList))
-	go downImageItem(toFile.JpgUrl, toFile.DirPath, toFile.Actress, "-post", &wg)
+
+	jpgUrl := toFile.JpgUrl
+	if !strings.HasPrefix(jpgUrl, "http") {
+		jpgUrl = cons.OSSetting.BaseUrl + strings.Replace(jpgUrl, "/", "", 1)
+	}
+	go downImageItem(jpgUrl, toFile.DirPath, toFile.Actress, "", &wg)
 	for i := 0; i < len(toFile.ImageList); i++ {
 		go downImageItem(toFile.ImageList[i], toFile.DirPath, toFile.Code, fmt.Sprintf("%d", i), &wg)
 	}
@@ -182,7 +187,11 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 func downImageItem(url string, dirPath string, prefix string, sufix string, wg *sync.WaitGroup) utils.Result {
 	defer wg.Done()
 	result := utils.NewResult()
-	filepath := dirPath + "\\" + prefix + "-" + sufix + ".jpg"
+	filepath := dirPath + "\\" + prefix
+	if len(sufix) > 0 {
+		filepath = filepath + "-" + sufix + ".jpg"
+	}
+	filepath = filepath + ".jpg"
 	fmt.Println(filepath)
 	jpgOut, createErr := os.Create(filepath)
 	if createErr != nil {
