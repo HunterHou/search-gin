@@ -58,26 +58,6 @@
         </el-select>
       </el-form-item>
       <el-form-item label="枚举文件类型">
-        <!-- <el-tag
-          :key="tag"
-          v-for="tag,index in form.Types"
-          closable effect="dark"
-          :disable-transitions="false"
-          @close="handleClose(tag)">
-          {{ index + 1 }} : {{ tag }}
-        </el-tag>
-        <el-input
-          class="input-new-tag"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="small"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        >
-        </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button> -->
-
         <el-select
           v-model="form.Types"
           multiple
