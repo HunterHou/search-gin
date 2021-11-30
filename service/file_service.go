@@ -160,10 +160,8 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 }
 
 func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
-	result := utils.NewResult()
 	if len(toFile.ImageList) <= 0 {
-		result.Message = "No Image avaliable"
-		return result
+		return utils.NewFailByMsg("No Image avaliable")
 	}
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -178,9 +176,7 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 		go downImageItem(toFile.ImageList[i], toFile.DirPath, toFile.Code, fmt.Sprintf("%d", i), &wg)
 	}
 	wg.Wait()
-	result.Fail()
-	result.Message = "执行成功!"
-	return result
+	return utils.NewSuccessByMsg("下载完成!")
 
 }
 
@@ -363,19 +359,19 @@ func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 	res := utils.NewSuccess()
 	movieLib := fs.FindOne(movie.Id)
 	if movieLib.IsNull() {
-		res.FailMsg("数据不存在")
+		res.FailByMsg("数据不存在")
 		return res
 	}
 	oldPath := movieLib.Path
 	if !utils.ExistsFiles(oldPath) {
-		res.FailMsg("文件不存在")
+		res.FailByMsg("文件不存在")
 		return res
 	}
 	newPath := movieLib.DirPath + "\\" + movie.Name
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
-		res.FailMsg("执行失败")
+		res.FailByMsg("执行失败")
 		return res
 	}
 

@@ -51,10 +51,10 @@ func TestWriteJson(t *testing.T) {
 		os.Create(jsonPath)
 	}
 	outStream, openErr := os.OpenFile(jsonPath, os.O_TRUNC|os.O_RDWR, os.ModePerm)
-	defer outStream.Close()
 	if openErr != nil {
 		fmt.Println("openErr", openErr)
 	}
+	defer outStream.Close()
 	writer := bufio.NewWriter(outStream)
 	writer.Write(data)
 	writer.Flush()

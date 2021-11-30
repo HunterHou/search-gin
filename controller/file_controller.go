@@ -162,7 +162,7 @@ func GetFresh(c *gin.Context) {
 	service := service.FileService{}
 	service.ScanAll()
 	datasource.SortMovieForce()
-	result := utils.Success()
+	result := utils.NewSuccessByMsg("刷新成功")
 	c.JSON(http.StatusOK, result)
 }
 
@@ -177,7 +177,7 @@ func GetPlay(c *gin.Context) {
 	file := service.FindOne(id)
 	//c.File(file.Path)
 	utils.ExecCmdStart(file.Path)
-	res := utils.NewSuccess()
+	res := utils.NewSuccessByMsg("播放成功")
 	c.JSON(http.StatusOK, res)
 }
 func SetMovieType(c *gin.Context) {
@@ -186,7 +186,7 @@ func SetMovieType(c *gin.Context) {
 	service := service.FileService{}
 	file := service.FindOne(id)
 	service.SetMovieType(file, movieType)
-	res := utils.NewSuccess()
+	res := utils.NewSuccessByMsg("打标成功")
 	c.JSON(http.StatusOK, res)
 }
 func GetInfo(c *gin.Context) {
@@ -221,7 +221,7 @@ func GetOpenFoler(c *gin.Context) {
 	file := service.FindOne(id)
 	fmt.Println(file.DirPath)
 	utils.ExecCmdExplorer(file.DirPath)
-	res := utils.NewSuccess()
+	res := utils.NewSuccessByMsg("打开成功")
 	c.JSON(http.StatusOK, res)
 }
 
@@ -229,7 +229,7 @@ func GetDelete(c *gin.Context) {
 	id := c.Param("id")
 	service := service.FileService{}
 	service.Delete(id)
-	res := utils.NewSuccess()
+	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
 }
 func GetSync(c *gin.Context) {
@@ -271,6 +271,6 @@ func GetRefresIndex(c *gin.Context) {
 	service := service.FileService{}
 	service.ScanAll()
 	datasource.SortMovieForce()
-	res := utils.NewSuccess()
+	res := utils.NewSuccessByMsg("扫描结束！")
 	c.JSON(http.StatusOK, res)
 }

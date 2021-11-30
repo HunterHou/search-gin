@@ -16,10 +16,22 @@ func NewSuccess() Result {
 	res.Success()
 	return res
 }
+func NewSuccessByMsg(msg string) Result {
+	res := Result{}
+	res.Success()
+	res.Message = msg
+	return res
+}
+func NewFailByMsg(msg string) Result {
+	res := Result{}
+	res.Success()
+	res.Message = msg
+	return res
+}
 func (res *Result) Fail() {
 	res.MessageCode.Fail()
 }
-func (res *Result) FailMsg(msg string) {
+func (res *Result) FailByMsg(msg string) {
 	res.MessageCode.Fail()
 	res.Message = msg
 }

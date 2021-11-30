@@ -494,7 +494,7 @@ export default {
       const code = Code.trim().replaceAll(".", "-");
       let name = "";
       if (Actress.length != 0) {
-        name += "[" + Actress.trim().replaceAll(".", " ") + "]";
+        name += "[" + Actress.trim().replaceAll(".", " ").trim() + "]";
       }
       if (code.length != 0) {
         name += " [" + code.trim() + "]";
@@ -502,12 +502,14 @@ export default {
       const arr = Name.trim().split(".");
       const arrLength = arr.length;
       for (let idx = 0; idx < arrLength; idx++) {
+        const str=arr[idx]
+        const strNew = str.replace(str.charAt(0),str.charAt(0).toUpperCase())
         if (idx == arrLength - 1) {
-          name += "." + arr[idx];
+          name += "." +strNew;
         } else if (idx == 0) {
-          name += arr[idx];
+          name += strNew;
         } else {
-          name += " " + arr[idx];
+          name += " " + strNew;
         }
       }
       const param = { Id, Name: name, Code: code, Actress };

@@ -51,7 +51,7 @@ func IndexOf(lib []string, item string) int {
 func RemoveItem(lib []string, item string) []string {
 	index := IndexOf(lib, item)
 	if index != -1 {
-		return ExtandsItems(lib[0:index], lib[(index+1):len(lib)])
+		return ExtandsItems(lib[0:index], lib[(index+1):])
 	}
 	return lib
 }
