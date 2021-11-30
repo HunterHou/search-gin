@@ -101,7 +101,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="1">
-        <el-link style="color:green;">
+        <el-link style="color: green">
           <i
             :underline="true"
             class="el-icon-zoom-out"
@@ -273,11 +273,13 @@
             <el-tooltip placement="bottom" effect="dark">
               <div slot="content">{{ item.name }}</div>
               <span>
-                <el-link style="color:green;" @click="copy(item.Actress)">{{
+                <el-link style="color: green" @click="copy(item.Actress)">{{
                   item.Actress
                 }}</el-link>
                 <el-divider direction="vertical"></el-divider>
-                <el-link style="color:orange;" @click="copy(item.Code)">{{ item.Code }}</el-link>
+                <el-link style="color: orange" @click="copy(item.Code)">{{
+                  item.Code
+                }}</el-link>
                 【{{ item.SizeStr }}】 {{ item.Name }}
               </span>
             </el-tooltip>
@@ -745,15 +747,12 @@ export default {
               });
             }
           }
-
-          const { path, no } = this.$route.query;
-          if (no != this.pageNo) {
-          }
-          this.$router.replace({
+          const query = this.getRouterParam();
+          const { path } = query;
+          this.$router.push({
             path,
-            query: { searchWords: keywords, no: this.pageNo },
+            query: { ...query, searchWords: keywords, no: this.pageNo ,path:undefined},
           });
-
           this.onlyRepeat = false;
           this.loading = false;
           document.title = title;
@@ -762,29 +761,28 @@ export default {
       });
     },
 
-    open(filename) {
-      const self = this;
-      // console.log(filename);
-      self.$router.push(
-        "context/" +
-          filename +
-          "?pageNo=" +
-          this.pageNo +
-          "&pageSize=" +
-          this.pageSize +
-          "&searchWords=" +
-          this.searchWords +
-          "&sortType=" +
-          this.sortType +
-          "&sortField=" +
-          this.sortField +
-          "&movieType=" +
-          this.movieType
-      );
+    getRouterParam() {
+      const { query, path } = this.$route;
+      const queryParam = {
+        ...query,
+        path,
+        pageSize: this.pageSize,
+        sortField: this.sortField,
+        sortType: this.sortType,
+        movieType: this.movieType,
+      };
+      return queryParam;
+    },
+
+    open(fileId) {
+      this.$router.push({
+        path: `/context/${id}`,
+        param: { id: fileId },
+        query: { ...this.getRouterParam() },
+      });
     },
     openLick(code) {
       const url = this.baseUrl + code;
-      console.log(url);
       window.open(url, "_blank");
     },
     openSearch(actress) {

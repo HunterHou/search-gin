@@ -211,41 +211,12 @@ export default {
       this.sourceList = this.imageList;
     },
     urlBack() {
-      const self = this;
-      self.$router.push("/menu" + this.getParam());
-    },
-    getParam() {
-      const {
-        sortType,
-        sortField,
-        "": movieType,
-        pageSize,
-        pageNo,
-        searchWords,
-      } = this.$route.query;
-      return (
-        "?pageNo=" +
-        pageNo +
-        "&no=" +
-        pageNo +
-        "&pageSize=" +
-        pageSize +
-        "&keywords=" +
-        (searchWords ? searchWords : "") +
-        "&searchWords=" +
-        (searchWords ? searchWords : "") +
-        "&sortType=" +
-        (sortType ? sortType : "") +
-        "&sortField=" +
-        (sortField ? sortField : "") +
-        "&movieType=" +
-        (movieType ? movieType : "")
-      );
+      const  query = this.$route.query
+      this.$router.push({path:"/menu" ,query:{...query,no:query.pageNo}});
     },
     openActress(actress) {
-      const self = this;
       this.searchWords = actress;
-      self.$router.push("/menu" + this.getParam());
+      this.$router.push({path:"/menu" ,query:{...this.$router.query}})
     },
     settingBase() {
       axios.get("api/buttoms").then((res) => {
@@ -287,28 +258,26 @@ export default {
       });
     },
     lastPage() {
-      const restApi = "/api/infoLast/" + this.id + this.getParam();
+      const restApi = "/api/infoLast/" + this.id ;
       this.iframeSrc = "";
       axios.get(restApi).then((res) => {
         if (res.status === 200) {
+          const lastId = res.data.Id
           this.file = res.data;
-          this.id = this.file.Id;
-          this.$router.push("/context/" + this.file.Id + this.getParam());
-          // this.makeIrameUrl(this.file);
-          // this.loadDirInfo(this.id, true);
+          this.id = lastId;
+          this.$router.push({path:`/context/${id}` ,params:{ id:lastId }  ,query:{...this.$router.query} });
         }
       });
     },
     nextPage() {
-      const restApi = "/api/infoNext/" + this.id + this.getParam();
+      const restApi = "/api/infoNext/" + this.id ;
       this.iframeSrc = "";
       axios.get(restApi).then((res) => {
         if (res.status === 200) {
+          const nextId = res.data.Id
           this.file = res.data;
-          this.id = this.file.Id;
-          this.$router.push("/context/" + this.file.Id + this.getParam());
-          // this.makeIrameUrl(this.file);
-          // this.loadDirInfo(this.id, true);
+          this.id = nextId;
+          this.$router.push({path:`/context/${id}` ,params:{ id:nextId }  ,query:{...this.$router.query} });
         }
       });
     },
