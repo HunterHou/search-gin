@@ -502,13 +502,21 @@ export default {
       const arr = Name.trim().split(".");
       const arrLength = arr.length;
       for (let idx = 0; idx < arrLength; idx++) {
-        const str=arr[idx]
-        const strNew = str.replace(str.charAt(0),str.charAt(0).toUpperCase())
+        const str = arr[idx];
+
         if (idx == arrLength - 1) {
-          name += "." +strNew;
+          name += "." + str;
         } else if (idx == 0) {
+          const strNew = str.replace(
+            str.charAt(0),
+            str.charAt(0).toUpperCase()
+          );
           name += strNew;
         } else {
+          const strNew = str.replace(
+            str.charAt(0),
+            str.charAt(0).toUpperCase()
+          );
           name += " " + strNew;
         }
       }
@@ -753,7 +761,12 @@ export default {
           const { path } = query;
           this.$router.push({
             path,
-            query: { ...query, searchWords: keywords, no: this.pageNo ,path:undefined},
+            query: {
+              ...query,
+              searchWords: keywords,
+              no: this.pageNo,
+              path: undefined,
+            },
           });
           this.onlyRepeat = false;
           this.loading = false;

@@ -20,15 +20,13 @@ import (
 type FileService struct {
 }
 
-func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) {
+func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) utils.Result {
 
 	//video
 	if movie.MovieType != "" {
 		originVideoType := utils.GetMovieType(movie.Path)
-		fmt.Println(movieType)
-		fmt.Println(originVideoType)
 		if originVideoType == movieType {
-			return
+			return utils.NewSuccessByMsg("执行成功")
 		}
 		path := strings.ReplaceAll(movie.Path, originVideoType, movieType)
 		os.Rename(movie.Path, path)
@@ -38,8 +36,7 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) {
 		os.Rename(movie.Png, path)
 		path = strings.ReplaceAll(movie.Nfo, originVideoType, movieType)
 		os.Rename(movie.Nfo, path)
-
-		return
+		return utils.NewSuccessByMsg("执行成功")
 	}
 	newMovieType := "{{" + movieType + "}}"
 	fmt.Println(movieType)
@@ -79,7 +76,7 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) {
 		os.Rename(movie.Nfo, newName)
 
 	}
-
+	return utils.NewSuccessByMsg("执行成功")
 }
 
 func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
@@ -211,6 +208,7 @@ func downImageItem(url string, dirPath string, prefix string, sufix string, wg *
 	}
 	jpgOut.Write(body)
 	jpgOut.Close()
+	resp.Body.Close()
 	return result
 }
 
@@ -520,7 +518,6 @@ func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64,
 	if (keyWord == "" || keyWord == "undefined") && (movieType == "" || movieType == "undefined") {
 		return files, totalSize
 	}
-	fmt.Println("movieType:" + movieType)
 	var result []datamodels.Movie
 	var size int64
 	for _, file := range files {

@@ -32,9 +32,12 @@ func GetPng(c *gin.Context) {
 	file := service.FindOne(path)
 	if utils.ExistsFiles(file.Png) {
 		c.File(file.Png)
-	} else {
+	} else if utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
+	} else {
+		c.File("")
 	}
+
 }
 func GetJpg(c *gin.Context) {
 	path := c.Param("path")
@@ -42,8 +45,10 @@ func GetJpg(c *gin.Context) {
 	file := service.FindOne(path)
 	if utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
-	} else {
+	} else if utils.ExistsFiles(file.Png) {
 		c.File(file.Png)
+	} else {
+		c.File("")
 	}
 }
 
@@ -185,8 +190,7 @@ func SetMovieType(c *gin.Context) {
 	movieType := c.Param("movieType")
 	service := service.FileService{}
 	file := service.FindOne(id)
-	service.SetMovieType(file, movieType)
-	res := utils.NewSuccessByMsg("打标成功")
+	res := service.SetMovieType(file, movieType)
 	c.JSON(http.StatusOK, res)
 }
 func GetInfo(c *gin.Context) {
