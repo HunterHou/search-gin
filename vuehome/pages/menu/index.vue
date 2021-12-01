@@ -491,7 +491,7 @@ export default {
     },
     editItemSubmit() {
       const { Id, Name, Code, Actress } = this.formItem;
-      const code = Code.trim().replaceAll(".", "-");
+      const code = Code.trim().replaceAll(".", "_");
       let name = "";
       if (Actress.length != 0) {
         name += "[" + Actress.trim().replaceAll(".", " ").trim() + "]";
