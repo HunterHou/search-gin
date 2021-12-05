@@ -143,7 +143,7 @@
           </el-tag>
           <el-image
             style="width: 100%; height: 100%"
-            :src="item.PngUrl"
+            :src="isShowCover() ?item.JpgUrl:item.PngUrl"
             fit="contain"
             lazy
           >
