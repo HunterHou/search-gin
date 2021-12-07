@@ -215,7 +215,6 @@ export default {
     },
     urlBack() {
       const query = this.$route.query;
-      debugger
       this.$router.push({
         path: "/menu",
         query: { ...query},
