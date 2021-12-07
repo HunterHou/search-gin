@@ -409,11 +409,6 @@ export default {
     const { searchWords, no } = this.$route.query;
     var searchPage = new Map();
 
-    let pageSize = localStorage.getItem("pageSize");
-    if (!pageSize) {
-      pageSize = 12;
-    }
-
     return {
       showIconNum: 5,
       sourceList: [],
@@ -434,8 +429,8 @@ export default {
       searchPage: searchPage,
       pagerCount: 10,
       pageNo: no ? parseInt(no) : 1,
-      pageSize: pageSize,
-      pageSizes:[2, 4, 6, 10, 12, 14, 30, 60, 90, 200],
+      pageSize: 12,
+      pageSizes: [2, 4, 6, 10, 12, 14, 30, 60, 90, 200],
       totalCnt: 0,
       totalPage: 0,
       loading: false,
@@ -443,7 +438,7 @@ export default {
       resultSize: 0,
       curSize: 0,
       suggestions: [], //搜索框 提示
-      formItem: {},
+      formItem: {}, //编辑弹窗模型
     };
   },
   created() {
@@ -456,6 +451,11 @@ export default {
       if (suggestionsCaches) {
         this.suggestions = suggestionsCaches.split(",");
       }
+      const pageSize  = localStorage.getItem("pageSizeStore")
+      if(pageSize){
+        this.pageSize = pageSize
+      }
+
     });
   },
   mounted() {
@@ -841,7 +841,7 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val;
-      localStorage.setItem("pageSize",val)
+      localStorage.setItem("pageSizeStore", val);
       this.queryList();
     },
     handleCurrentChange(val) {
