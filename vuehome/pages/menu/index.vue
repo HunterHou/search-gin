@@ -143,7 +143,7 @@
           </el-tag>
           <el-image
             style="width: 100%; height: 100%"
-            :src="isShowCover() ?item.JpgUrl:item.PngUrl"
+            :src="isShowCover() ? item.JpgUrl : item.PngUrl"
             fit="contain"
             lazy
           >
@@ -289,7 +289,7 @@
     </div>
     <el-pagination
       class="pageTool"
-      :page-sizes="[2, 4, 6, 10, 12, 14, 30, 60, 90, 200]"
+      :page-sizes="pageSizes"
       :page-size="pageSize"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -408,6 +408,12 @@ export default {
   data() {
     const { searchWords, no } = this.$route.query;
     var searchPage = new Map();
+
+    let pageSize = localStorage.getItem("pageSize");
+    if (!pageSize) {
+      pageSize = 12;
+    }
+
     return {
       showIconNum: 5,
       sourceList: [],
@@ -428,7 +434,8 @@ export default {
       searchPage: searchPage,
       pagerCount: 10,
       pageNo: no ? parseInt(no) : 1,
-      pageSize: 12,
+      pageSize: pageSize,
+      pageSizes:[2, 4, 6, 10, 12, 14, 30, 60, 90, 200],
       totalCnt: 0,
       totalPage: 0,
       loading: false,
@@ -834,6 +841,7 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val;
+      localStorage.setItem("pageSize",val)
       this.queryList();
     },
     handleCurrentChange(val) {
