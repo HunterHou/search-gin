@@ -33,7 +33,7 @@
       </el-page-header>
     </div>
 
-    <el-row :gutter="20" style="margin-top:10px;margin-buttom:10px;">
+    <el-row :gutter="20" style="margin-top: 10px; margin-buttom: 10px">
       <el-col :span="2">
         <el-link
           ><i
@@ -74,7 +74,10 @@
       </el-col>
       <el-col :span="3">
         <el-link>
-          <i class="el-icon-refresh icon-style" title="刷新" @click="$router.go(0)"
+          <i
+            class="el-icon-refresh icon-style"
+            title="刷新"
+            @click="$router.go(0)"
             >F5</i
           ></el-link
         >
@@ -211,12 +214,16 @@ export default {
       this.sourceList = this.imageList;
     },
     urlBack() {
-      const  query = this.$route.query
-      this.$router.push({path:"/menu" ,query:{...query,no:query.pageNo}});
+      const query = this.$route.query;
+      debugger
+      this.$router.push({
+        path: "/menu",
+        query: { ...query},
+      });
     },
     openActress(actress) {
       this.searchWords = actress;
-      this.$router.push({path:"/menu" ,query:{...this.$router.query}})
+      this.$router.push({ path: "/menu", query: { ...this.$router.query } });
     },
     settingBase() {
       axios.get("api/buttoms").then((res) => {
@@ -258,26 +265,36 @@ export default {
       });
     },
     lastPage() {
-      const restApi = "/api/infoLast/" + this.id ;
+      const restApi = "/api/infoLast/" + this.id;
       this.iframeSrc = "";
+      const queryParam = this.$route.query;
+      console.log(queryParam)
       axios.get(restApi).then((res) => {
         if (res.status === 200) {
-          const lastId = res.data.Id
+          const lastId = res.data.Id;
           this.file = res.data;
           this.id = lastId;
-          this.$router.push({path:`/context/${id}` ,params:{ id:lastId }  ,query:{...this.$router.query} });
+          this.$router.push({
+            path: `/context/${lastId}`,
+            query: { ...queryParam },
+          });
         }
       });
     },
     nextPage() {
-      const restApi = "/api/infoNext/" + this.id ;
+      const restApi = "/api/infoNext/" + this.id;
       this.iframeSrc = "";
+      const queryParam = this.$route.query;
+      console.log(queryParam)
       axios.get(restApi).then((res) => {
         if (res.status === 200) {
-          const nextId = res.data.Id
+          const nextId = res.data.Id;
           this.file = res.data;
           this.id = nextId;
-          this.$router.push({path:`/context/${id}` ,params:{ id:nextId }  ,query:{...this.$router.query} });
+          this.$router.push({
+            path: `/context/${nextId}`,
+            query: { ...queryParam },
+          });
         }
       });
     },

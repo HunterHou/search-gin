@@ -306,7 +306,7 @@
       :visible.sync="dialogVisible"
     >
       <div v-if="file">
-        <div @click="open(file.Id)">
+        <div @click="gotoContext(file.Id)">
           <el-image
             :src="file.JpgUrl"
             style="magin: 0 0; width: 80%; height: auto"
@@ -789,12 +789,12 @@ export default {
       return queryParam;
     },
 
-    open(fileId) {
+    gotoContext(fileId) {
       this.$router.push({
-        path: `/context/${id}`,
-        param: { id: fileId },
+        path: `/context/${fileId}`,
         query: { ...this.getRouterParam() },
       });
+      // this.$router.push({path: `/context/${fileId}`  ,query:{...this.$router.query} });
     },
     openLick(code) {
       const url = this.baseUrl + code;
