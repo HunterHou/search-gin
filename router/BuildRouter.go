@@ -1,7 +1,9 @@
 package router
 
 import (
+	"io"
 	"net/http"
+	"os"
 	"search-gin/controller"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +11,10 @@ import (
 
 func BuildRouter() *gin.Engine {
 	router := gin.Default()
+
+	fLog, _ := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(fLog, os.Stdout)
+
 	// router.StaticFS("/static", http.Dir("static"))
 	router.StaticFS("/_nuxt", http.Dir("./vuehome/dist/_nuxt"))
 	router.LoadHTMLFiles("./vuehome/dist/index.html")
