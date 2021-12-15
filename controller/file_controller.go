@@ -96,7 +96,8 @@ func PostSearchMovie(c *gin.Context) {
 	result.CurSize = utils.GetSizeStr(size)
 	result.CurCnt = len(list)
 	result.Data = list
-
+	result.PageSize = pageSize
+	result.SetResultCnt(resultCnt, pageNo)
 	c.JSON(http.StatusOK, result)
 }
 

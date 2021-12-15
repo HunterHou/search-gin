@@ -3,7 +3,6 @@ package service
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/blevesearch/bleve"
 
@@ -61,11 +60,7 @@ func SearchIndex(searchParam datamodels.SearchParam) ([]datamodels.Movie, int64,
 	index := GetIndex()
 	var queryString = ""
 	if searchParam.Keyword != "" {
-		queryString += "+Name:["
-		for _, s := range strings.Split(searchParam.Keyword, " ") {
-			queryString += s
-		}
-		queryString += "]"
+		queryString += "+Name:" + searchParam.Keyword
 	} else {
 		queryString = "*"
 	}

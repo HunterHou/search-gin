@@ -742,7 +742,7 @@ export default {
       axios.post("api/movieList", data).then((res) => {
         if (res.status === 200) {
           const resData = res.data.Data;
-          this.totalCnt = res.data.TotalCnt;
+          this.totalCnt = res.data.ResultCnt;
           this.totalPage = res.data.TotalPage;
           this.totalSize = res.data.TotalSize;
           this.resultSize = res.data.ResultSize;
