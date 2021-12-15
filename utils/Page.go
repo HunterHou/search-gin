@@ -16,6 +16,8 @@ type Page struct {
 	ResultSize string
 	TotalSize  string
 	CurSize    string
+
+	IndexProgress bool
 }
 
 func NewPage() Page {
@@ -27,6 +29,10 @@ func NewPage() Page {
 		Data:     nil,
 		KeyWord:  "",
 	}
+}
+
+func (p *Page) SetProgress(progress bool) {
+	p.IndexProgress = progress
 }
 
 func (p *Page) SetResultCnt(resultCnt int, pageNo int) {

@@ -9,3 +9,6 @@ node_modules/
 /app/
 __debug_bin
 election/src/
+searchGin/**
+gin.log
+/gin.log

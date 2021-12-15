@@ -22,7 +22,7 @@ func BuildRouter() *gin.Engine {
 
 	router.NoRoute(controller.Index)
 	router.GET("/", controller.Index)
-	router.POST("/api/movieList", controller.PostMovies)
+	router.POST("/api/movieList", controller.PostSearch)
 	router.GET("/api/refresh", controller.GetFresh)
 	router.POST("/api/actressList", controller.PostActess)
 	router.GET("/api/actressImgae/:path", controller.GetActessImage)

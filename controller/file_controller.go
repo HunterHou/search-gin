@@ -61,6 +61,45 @@ func PostStream(c *gin.Context) {
 	}
 }
 
+func PostSearch(c *gin.Context) {
+	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
+	if cons.OverIndex() && onlyRepeat != "true" {
+		PostSearchMovie(c)
+	} else {
+		// PostSearchMovie(c)
+		PostMovies(c)
+	}
+}
+
+func PostSearchMovie(c *gin.Context) {
+	keywords := c.PostForm("keywords")
+	pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
+	if pageNo < 1 {
+		pageNo = 1
+	}
+	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "14"))
+	if pageSize < 1 {
+		pageSize = 14
+	}
+	sortType := c.DefaultPostForm("sortType", "code")
+	sortField := c.DefaultPostForm("sortField", "desc")
+	// onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
+	// movieType := c.DefaultPostForm("movieType", "")
+
+	result := utils.NewPage()
+	result.SetProgress(cons.OverIndex())
+	result.TotalCnt = len(datasource.FileList)
+	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
+	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType)
+	list, size, resultCnt := service.SearchIndex(searchParam)
+	result.ResultCnt = resultCnt
+	result.CurSize = utils.GetSizeStr(size)
+	result.CurCnt = len(list)
+	result.Data = list
+
+	c.JSON(http.StatusOK, result)
+}
+
 func PostMovies(c *gin.Context) {
 	keywords := c.PostForm("keywords")
 	pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
@@ -78,6 +117,7 @@ func PostMovies(c *gin.Context) {
 
 	service := service.FileService{}
 	result := utils.NewPage()
+	result.SetProgress(cons.OverIndex())
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
 		datasource.SortMovies(sortField, sortType, true)

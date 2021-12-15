@@ -3,7 +3,6 @@
     <!-- <h2>This is Home</h2> -->
     <el-table
       :data="tableData"
-      border="true"
       style="text-algin: center; align: center"
     >
       <el-table-column prop="name" label="结果集"> </el-table-column>

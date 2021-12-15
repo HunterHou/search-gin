@@ -2,6 +2,7 @@ package cons
 
 import (
 	"search-gin/datamodels"
+	"search-gin/datasource"
 	"search-gin/utils"
 )
 
@@ -14,7 +15,21 @@ var PortNo = ":80"
 var Port = "//" + PortNo
 var QueryTypes []string
 
-var IndexName = "search-Gin"
+var IndexName = "searchGin"
+var IndexOver = false
+
+// var IndexProgress = 0
+
+func OverIndex() bool {
+	libSize := len(datasource.FileList)
+	// if libSize == 0 {
+	// 	return false
+	// }
+	// pro := IndexProgress
+	// fmt.Printf("total:%d  progress:%d", libSize, pro)
+	// return pro >= libSize
+	return IndexOver && libSize > 0
+}
 
 var MovieFields = utils.InterfaceFields(datamodels.Movie{})
 

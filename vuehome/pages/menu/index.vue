@@ -41,9 +41,9 @@
       </el-col>
       <el-col :span="4">
         <el-radio-group v-model="sortField" @change="queryList()" size="mini">
-          <el-radio-button label="code">名</el-radio-button>
-          <el-radio-button label="mtime">时</el-radio-button>
-          <el-radio-button label="size">容</el-radio-button>
+          <el-radio-button label="Code">名</el-radio-button>
+          <el-radio-button label="Mtime">时</el-radio-button>
+          <el-radio-button label="Size">容</el-radio-button>
         </el-radio-group>
       </el-col>
       <el-col :span="3">
@@ -114,6 +114,7 @@
       <el-col :span="12">
         <el-divider direction="vertical"></el-divider>
         <span> 扫描库：{{ totalSize }} </span>
+        <span> 更新：{{ IndexProgress?"完成":"进行中" }} </span>
         <el-divider direction="vertical"></el-divider>
         <span> 搜索：{{ resultSize }} </span>
         <el-divider direction="vertical"></el-divider>
@@ -381,8 +382,7 @@
         label-position="right"
         :model="formItem"
         size="small"
-        border="1"
-        label-width="20%"
+        label-width="20%" 
       >
         <el-form-item label="脸谱">
           <el-input v-model="formItem.Actress" autocomplete="off"></el-input>
@@ -439,6 +439,7 @@ export default {
       curSize: 0,
       suggestions: [], //搜索框 提示
       formItem: {}, //编辑弹窗模型
+      IndexProgress:""
     };
   },
   created() {
@@ -746,6 +747,7 @@ export default {
           this.totalSize = res.data.TotalSize;
           this.resultSize = res.data.ResultSize;
           this.curSize = res.data.CurSize;
+          this.IndexProgress = res.data.IndexProgress
           if (resData && resData.length > 0) {
             resData.map((item) => {
               if (item.Code == item.Actress) {
