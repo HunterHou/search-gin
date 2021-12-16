@@ -42,7 +42,7 @@
       <el-col :span="4">
         <el-radio-group v-model="sortField" @change="queryList()" size="mini">
           <el-radio-button label="Code">名</el-radio-button>
-          <el-radio-button label="Mtime">时</el-radio-button>
+          <el-radio-button label="MTime">时</el-radio-button>
           <el-radio-button label="Size">容</el-radio-button>
         </el-radio-group>
       </el-col>
