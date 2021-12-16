@@ -39,6 +39,7 @@ var OSSetting = datamodels.Setting{
 	OMUrl:    "https://www.busjav.blog/",
 	Dirs: []string{
 		"e://emby",
+		"e://code",
 	},
 	ImageTypes: []string{GIF, PNG, JPG},
 	DocsTypes:  []string{TXT, XLSX},

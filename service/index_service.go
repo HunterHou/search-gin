@@ -26,6 +26,7 @@ func CreateIndex() bleve.Index {
 		bIndex.Close()
 	}
 	mapping := bleve.NewIndexMapping()
+	mapping.AnalyzerNamed("standard")
 	os.RemoveAll(cons.IndexName)
 	index, err := bleve.New(cons.IndexName, mapping)
 	if err != nil {
@@ -37,10 +38,16 @@ func CreateIndex() bleve.Index {
 
 func UpdateIndex(movies []datamodels.Movie) utils.Result {
 	index := GetIndex()
+	//batch := index.NewBatch()
 	for _, movie := range movies {
 		index.Index(movie.Id, movie)
+		//batch.Index(movie.Id, movie)
 		// &cons.IndexProgress = &cons.IndexProgress + 1
 	}
+	//err := index.Batch(batch)
+	//if err != nil {
+	//	return utils.NewFailByMsg(err.Error())
+	//}
 	return utils.NewSuccessByMsg("更新成功")
 }
 func DeleteIndexes(movies []datamodels.Movie) utils.Result {

@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/blevesearch/bleve"
 	"os"
 	"search-gin/datamodels"
 	"search-gin/datasource"
 	"search-gin/service"
 	"search-gin/utils"
 	"testing"
-
-	"github.com/blevesearch/bleve"
+	"time"
 )
 
 var m1 = datamodels.Movie{
@@ -34,7 +34,7 @@ var m3 = datamodels.Movie{
 	Size:      200,
 	ImageList: []string{"111", "2222"},
 }
-var indexName = "searchGin"
+var indexName = "searchTest"
 var mFields = utils.InterfaceFields(m1)
 
 func TestMan(t *testing.T) {
@@ -61,7 +61,7 @@ func TestQueryIndex(t *testing.T) {
 	keyword := "777"
 	queryString := ""
 	if keyword != "" {
-		queryString = "+Name:[満員,痴漢]"
+		queryString = "+Name:*"
 	}
 	query := bleve.NewQueryStringQuery(queryString)
 	searchRequest := bleve.NewSearchRequestOptions(query, 10, 0, false)
@@ -80,25 +80,29 @@ func TestQueryIndex(t *testing.T) {
 	// t.Log(searchResult)
 }
 
-func TestCreateIndex(t *testing.T) {
-
-	//documentMapping := bleve.NewDocumentMapping()
-	//documentMapping.AddFieldMappingsAt("Id", bleve.NewTextFieldMapping())
-	//documentMapping.AddFieldMappingsAt("Name", bleve.NewTextFieldMapping())
-
+func createIndex() {
 	mapping := bleve.NewIndexMapping()
 	//mapping.DefaultMapping = documentMapping
 
 	os.RemoveAll(indexName)
 	index, err := bleve.New(indexName, mapping)
 	if err != nil {
-		t.Log("create index err", err)
+
 	}
 	defer index.Close()
 	index.Index(m1.Id, m1)
 }
-func TestUpdateIndex(t *testing.T) {
 
+func TestCreateIndex(t *testing.T) {
+
+	//documentMapping := bleve.NewDocumentMapping()
+	//documentMapping.AddFieldMappingsAt("Id", bleve.NewTextFieldMapping())
+	//documentMapping.AddFieldMappingsAt("Name", bleve.NewTextFieldMapping())
+
+	createIndex()
+}
+func TestUpdateIndex(t *testing.T) {
+	createIndex()
 	index, err := bleve.Open(indexName)
 	if err != nil {
 		t.Log("open index err", err)
@@ -106,15 +110,40 @@ func TestUpdateIndex(t *testing.T) {
 	defer index.Close()
 	serviceFile := service.FileService{}
 	serviceFile.ScanAll()
-	fmt.Println("开始执行:", len(datasource.FileList))
+	start := time.Now()
+	fmt.Printf("%v 开始执行:%d \n", start, len(datasource.FileList))
 	for idx, v := range datasource.FileList {
 		index.Index(v.Id, v)
-		fmt.Println(idx, ":", v.Code)
-		if idx > 100 {
+		if idx > 500 {
 			break
 		}
 	}
-	fmt.Println("over")
+	end := time.Now()
+	fmt.Printf("%v 结束执行:%d \n", end, end.UnixNano()-start.UnixNano())
+
+}
+
+func TestBatchUpdateIndex(t *testing.T) {
+	createIndex()
+	index, err := bleve.Open(indexName)
+	if err != nil {
+		t.Log("open index err", err)
+	}
+	defer index.Close()
+	serviceFile := service.FileService{}
+	serviceFile.ScanAll()
+	batch := index.NewBatch()
+	start := time.Now()
+	fmt.Printf("%v 开始执行:%d \n", start, len(datasource.FileList))
+	for idx, v := range datasource.FileList {
+		batch.Index(v.Id, v)
+		if idx > 500 {
+			break
+		}
+	}
+	index.Batch(batch)
+	end := time.Now()
+	fmt.Printf("%v 结束执行:%d \n", end, end.UnixNano()-start.UnixNano())
 
 }
 func TestFind(t *testing.T) {

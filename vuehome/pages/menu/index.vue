@@ -382,7 +382,7 @@
         label-position="right"
         :model="formItem"
         size="small"
-        label-width="20%" 
+        label-width="20%"
       >
         <el-form-item label="脸谱">
           <el-input v-model="formItem.Actress" autocomplete="off"></el-input>
@@ -439,7 +439,7 @@ export default {
       curSize: 0,
       suggestions: [], //搜索框 提示
       formItem: {}, //编辑弹窗模型
-      IndexProgress:""
+      IndexProgress:false,
     };
   },
   created() {
