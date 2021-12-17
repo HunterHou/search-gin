@@ -7,8 +7,8 @@ export default {
   target: 'static',
 
   server: {
-    port: 8000, // default: 3000
-    host: '0.0.0.0', // default: localhost
+    port: 4000, // default: 3000
+    host: 'localhost', // default: localhost
     },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -61,7 +61,7 @@ export default {
 
   proxy:{
     '/api': {
-      target: "http://localhost:80", // 目标服务器
+      target: "http://localhost:99", // 目标服务器
       pathRewrite: {
         '^/api': '/api' ,// 把 /api 替换成 /api
       },

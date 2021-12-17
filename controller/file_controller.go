@@ -35,7 +35,22 @@ func GetPng(c *gin.Context) {
 	} else if utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
 	} else {
-		c.File("")
+		response, err := http.Get("https://raw.githubusercontent.com/gin-gonic/logo/master/color.png")
+		if err != nil || response.StatusCode != http.StatusOK {
+			c.Status(http.StatusServiceUnavailable)
+			return
+		}
+
+		reader := response.Body
+		defer reader.Close()
+		contentLength := response.ContentLength
+		contentType := response.Header.Get("Content-Type")
+
+		extraHeaders := map[string]string{
+			"Content-Disposition": `jpeg; filename="gopher.png"`,
+		}
+
+		c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
 	}
 
 }

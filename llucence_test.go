@@ -3,18 +3,17 @@ package main
 import (
 	"fmt"
 	"github.com/blevesearch/bleve"
-	"os"
+	"search-gin/cons"
 	"search-gin/datamodels"
 	"search-gin/datasource"
 	"search-gin/service"
 	"search-gin/utils"
 	"testing"
-	"time"
 )
 
 var m1 = datamodels.Movie{
 	Id:        "zhangsan",
-	Name:      "zhangsandename",
+	Name:      "中文",
 	Series:    "aaaa",
 	Size:      500,
 	ImageList: []string{"1", "2"},
@@ -22,14 +21,14 @@ var m1 = datamodels.Movie{
 
 var m2 = datamodels.Movie{
 	Id:        "lisi",
-	Name:      "lisidename",
+	Name:      "中国",
 	Series:    "bbbb",
 	Size:      800,
 	ImageList: []string{"11", "22"},
 }
 var m3 = datamodels.Movie{
 	Id:        "wangwu",
-	Name:      "wangwudename",
+	Name:      "中人",
 	Series:    "cccc",
 	Size:      200,
 	ImageList: []string{"111", "2222"},
@@ -38,8 +37,9 @@ var indexName = "searchTest"
 var mFields = utils.InterfaceFields(m1)
 
 func TestMan(t *testing.T) {
+	service.BIndex, _ = bleve.Open(cons.IndexName)
 	searchParam := datamodels.SearchParam{
-		Keyword:   "",
+		Keyword:   "中文",
 		Page:      1,
 		PageSize:  15,
 		SortField: "Size",
@@ -54,15 +54,12 @@ func TestMan(t *testing.T) {
 
 }
 func TestQueryIndex(t *testing.T) {
-	index, err := bleve.Open(indexName)
-	if err != nil {
-		t.Log("create index err", err)
-	}
-	keyword := "777"
+	index := service.OpenIndex()
 	queryString := ""
-	if keyword != "" {
-		queryString = "+Name:*"
-	}
+	//keyword := "777"
+	//if keyword != "" {
+	//	queryString = "+Name:*"
+	//}
 	query := bleve.NewQueryStringQuery(queryString)
 	searchRequest := bleve.NewSearchRequestOptions(query, 10, 0, false)
 	searchRequest.Fields = mFields
@@ -80,70 +77,17 @@ func TestQueryIndex(t *testing.T) {
 	// t.Log(searchResult)
 }
 
-func createIndex() {
-	mapping := bleve.NewIndexMapping()
-	//mapping.DefaultMapping = documentMapping
-
-	os.RemoveAll(indexName)
-	index, err := bleve.New(indexName, mapping)
-	if err != nil {
-
-	}
-	defer index.Close()
-	index.Index(m1.Id, m1)
-}
-
 func TestCreateIndex(t *testing.T) {
-
-	//documentMapping := bleve.NewDocumentMapping()
-	//documentMapping.AddFieldMappingsAt("Id", bleve.NewTextFieldMapping())
-	//documentMapping.AddFieldMappingsAt("Name", bleve.NewTextFieldMapping())
-
-	createIndex()
+	service.CreateIndex()
 }
 func TestUpdateIndex(t *testing.T) {
-	createIndex()
-	index, err := bleve.Open(indexName)
-	if err != nil {
-		t.Log("open index err", err)
-	}
-	defer index.Close()
-	serviceFile := service.FileService{}
-	serviceFile.ScanAll()
-	start := time.Now()
-	fmt.Printf("%v 开始执行:%d \n", start, len(datasource.FileList))
-	for idx, v := range datasource.FileList {
-		index.Index(v.Id, v)
-		if idx > 500 {
-			break
-		}
-	}
-	end := time.Now()
-	fmt.Printf("%v 结束执行:%d \n", end, end.UnixNano()-start.UnixNano())
 
-}
-
-func TestBatchUpdateIndex(t *testing.T) {
-	createIndex()
-	index, err := bleve.Open(indexName)
-	if err != nil {
-		t.Log("open index err", err)
+	fileService := service.FileService{}
+	fileService.ScanAll()
+	index := service.OpenIndex()
+	for _, e := range datasource.FileList {
+		index.Index(e.Id, e)
 	}
-	defer index.Close()
-	serviceFile := service.FileService{}
-	serviceFile.ScanAll()
-	batch := index.NewBatch()
-	start := time.Now()
-	fmt.Printf("%v 开始执行:%d \n", start, len(datasource.FileList))
-	for idx, v := range datasource.FileList {
-		batch.Index(v.Id, v)
-		if idx > 500 {
-			break
-		}
-	}
-	index.Batch(batch)
-	end := time.Now()
-	fmt.Printf("%v 结束执行:%d \n", end, end.UnixNano()-start.UnixNano())
 
 }
 func TestFind(t *testing.T) {

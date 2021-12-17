@@ -2,38 +2,85 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"search-gin/data"
 
 	"github.com/blevesearch/bleve"
-
+	"github.com/blevesearch/bleve/mapping"
 	"search-gin/cons"
 	"search-gin/datamodels"
 	"search-gin/utils"
 )
 
-var bIndex bleve.Index
+var BIndex bleve.Index
+
+//  载入词典
+// var segmenter sego.Segmenter
+
+func init() {
+	// segmenter.LoadDictionary("../data/dictionary.txt")
+	// // 分词
+	// text := []byte("中华人民共和国中央人民政府")
+	// segments := segmenter.Segment(text)
+	// fmt.Println(sego.SegmentsToString(segments, true))
+}
+
+func OpenIndex() bleve.Index {
+	index, _ := bleve.Open(cons.IndexName)
+	return index
+}
 
 func GetIndex() bleve.Index {
-	if bIndex == nil {
-		bIndex = CreateIndex()
-		return bIndex
+	if BIndex == nil {
+		BIndex = CreateIndex()
+		return BIndex
 	}
-	return bIndex
+	return BIndex
+}
+
+func GetMapping() *mapping.IndexMappingImpl {
+	mapping := bleve.NewIndexMapping()
+	err := mapping.AddCustomTokenizer("sego",
+		map[string]interface{}{
+			"files": "data/dictionary.txt",
+			"type":  data.TokenizerName,
+		})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// create a custom analyzer
+	err = mapping.AddCustomAnalyzer("sego",
+		map[string]interface{}{
+			"type":      "standard",
+			"tokenizer": "sego",
+			"token_filters": []string{
+				"possessive_en",
+				"to_lower",
+				"stop_en",
+			},
+		})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	mapping.DefaultAnalyzer = "sego"
+	return mapping
 }
 
 func CreateIndex() bleve.Index {
-	if bIndex != nil {
-		bIndex.Close()
+	if BIndex != nil {
+		BIndex.Close()
 	}
-	mapping := bleve.NewIndexMapping()
-	mapping.AnalyzerNamed("standard")
+
 	os.RemoveAll(cons.IndexName)
-	index, err := bleve.New(cons.IndexName, mapping)
+	index, err := bleve.New(cons.IndexName, GetMapping())
 	if err != nil {
 		fmt.Println("create index err", err)
 	}
-	bIndex = index
-	return bIndex
+	BIndex = index
+	return BIndex
 }
 
 func UpdateIndex(movies []datamodels.Movie) utils.Result {
