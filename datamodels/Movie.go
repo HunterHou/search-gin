@@ -65,6 +65,11 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 	return result
 }
 
+func (f Movie) SetId(id string) Movie {
+	f.Id = id
+	return f
+}
+
 func (f Movie) GetFileInfo() string {
 	//
 	info := fmt.Sprintf("name: %v\t code:%v\t fileType:%v\t sizeStr:%v\t actress:%v\t path:%v\t",
