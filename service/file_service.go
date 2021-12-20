@@ -554,7 +554,7 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	datasource.FileLib = fileMap
 	datasource.FileList = newFiles
 
-	datasource.GoAddMovieByPage(newFiles, 1000, &cons.IndexOver)
+	go datasource.GoAddMovieByPage(newFiles, 1000, &cons.IndexOver)
 
 	datasource.ActressLib = actressMap
 	// 添加索引

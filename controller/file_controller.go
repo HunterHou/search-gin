@@ -80,8 +80,8 @@ func PostStream(c *gin.Context) {
 func PostSearch(c *gin.Context) {
 	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
 	if cons.OverIndex() && onlyRepeat != "true" {
-		// PostSearchMovie(c)
-		PostMovies(c)
+		PostSearchMovie(c)
+		// PostMovies(c)
 	} else {
 		// PostSearchMovie(c)
 		PostMovies(c)
