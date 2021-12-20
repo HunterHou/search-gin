@@ -1,23 +1,32 @@
 package datamodels
 
+import "strings"
+
 type SearchParam struct {
-	Keyword   string
-	Page      int
-	PageSize  int
-	SortField string
-	SortType  string
+	Keyword    string
+	OnlyRepeat bool
+	MovieType  string
+	Page       int
+	PageSize   int
+	SortField  string
+	SortType   string
 }
 
-func NewSearchParam(keyword string, page int, pageSize int, sortField string, sortType string) SearchParam {
+func NewSearchParam(keyword string, page int, pageSize int, sortField string, sortType string, moiveType string) SearchParam {
 	res := SearchParam{
-		Keyword:   keyword,
+		Keyword:   strings.TrimSpace(keyword),
 		Page:      page,
 		PageSize:  pageSize,
 		SortField: sortField,
 		SortType:  sortType,
+		MovieType: strings.TrimSpace(moiveType),
 	}
 	return res
 
+}
+
+func (p *SearchParam) SetOnlyRepeat(b bool) {
+	p.OnlyRepeat = b
 }
 
 func (p *SearchParam) StartNum() int {

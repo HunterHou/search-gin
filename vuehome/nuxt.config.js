@@ -61,7 +61,7 @@ export default {
 
   proxy:{
     '/api': {
-      target: "http://localhost:99", // 目标服务器
+      target: "http://localhost:80", // 目标服务器
       pathRewrite: {
         '^/api': '/api' ,// 把 /api 替换成 /api
       },

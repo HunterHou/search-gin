@@ -6,10 +6,10 @@ import (
 	"search-gin/cons"
 	"search-gin/datamodels"
 	"search-gin/datasource"
-	"search-gin/drop"
 	"search-gin/service"
 	"search-gin/utils"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -80,7 +80,8 @@ func PostStream(c *gin.Context) {
 func PostSearch(c *gin.Context) {
 	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
 	if cons.OverIndex() && onlyRepeat != "true" {
-		PostSearchMovie(c)
+		// PostSearchMovie(c)
+		PostMovies(c)
 	} else {
 		// PostSearchMovie(c)
 		PostMovies(c)
@@ -99,21 +100,11 @@ func PostSearchMovie(c *gin.Context) {
 	}
 	sortType := c.DefaultPostForm("sortType", "code")
 	sortField := c.DefaultPostForm("sortField", "desc")
-	// onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
-	// movieType := c.DefaultPostForm("movieType", "")
+	movieType := c.DefaultPostForm("movieType", "")
+	fileService := service.FileService{}
 
-	result := utils.NewPage()
-	result.SetProgress(cons.OverIndex())
-	result.TotalCnt = len(datasource.FileList)
-	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
-	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType)
-	list, size, resultCnt := drop.SearchIndex(searchParam)
-	result.ResultCnt = resultCnt
-	result.CurSize = utils.GetSizeStr(size)
-	result.CurCnt = len(list)
-	result.Data = list
-	result.PageSize = pageSize
-	result.SetResultCnt(resultCnt, pageNo)
+	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
+	result := fileService.SearchIndex(searchParam)
 	c.JSON(http.StatusOK, result)
 }
 
@@ -132,31 +123,14 @@ func PostMovies(c *gin.Context) {
 	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
 	movieType := c.DefaultPostForm("movieType", "")
 
-	service := service.FileService{}
-	result := utils.NewPage()
-	result.SetProgress(cons.OverIndex())
-	if len(datasource.FileList) == 0 {
-		service.ScanAll()
-		datasource.SortMovies(sortField, sortType, true)
-	}
-	datasource.SortMovies(sortField, sortType, false)
-	dataSource := datasource.FileList
-	if onlyRepeat == "true" {
-		keywords = ""
-		dataSource = service.OnlyRepeat(dataSource)
-	}
-	list, size := service.SearchByKeyWord(dataSource, datasource.FileSize, keywords, movieType)
-	result.TotalCnt = len(list)
+	fileService := service.FileService{}
+
+	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
+	searchParam.SetOnlyRepeat(strings.EqualFold("true", onlyRepeat))
+	result := fileService.SearchDataSource(searchParam)
 	result.PageSize = pageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
-	result.ResultSize = utils.GetSizeStr(size)
 	result.SetResultCnt(result.TotalCnt, pageNo)
-	list = service.GetPage(list, pageNo, pageSize)
-
-	result.CurSize = utils.GetSizeStr(service.DataSize(list))
-	result.CurCnt = len(list)
-	result.Data = list
-
 	c.JSON(http.StatusOK, result)
 }
 func GetLastInfo(c *gin.Context) {
@@ -169,7 +143,7 @@ func GetLastInfo(c *gin.Context) {
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
 	}
-	datasource.SortMovies(sortField, sortType, false)
+	datasource.SortDataSourceMovies(sortField, sortType, false)
 	list, _ := service.SearchByKeyWord(datasource.FileList, datasource.FileSize, keywords, movieType)
 	file := service.FindNext(id, list, -1)
 	file.Jpg = "/jpg/" + file.Id
@@ -185,7 +159,7 @@ func GetNextInfo(c *gin.Context) {
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
 	}
-	datasource.SortMovies(sortField, sortType, false)
+	datasource.SortDataSourceMovies(sortField, sortType, false)
 	list, _ := service.SearchByKeyWord(datasource.FileList, datasource.FileSize, keywords, movieType)
 	file := service.FindNext(id, list, 1)
 	file.Jpg = "/jpg/" + file.Id

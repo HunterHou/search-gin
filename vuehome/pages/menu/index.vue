@@ -113,12 +113,12 @@
       </el-col>
       <el-col :span="12">
         <el-divider direction="vertical"></el-divider>
-        <span> 扫描库：{{ totalSize }} </span>
+        <span> 扫描库：{{ TotalSize }}({{ TotalCnt }}) </span>
         <span> 更新：{{ IndexProgress?"完成":"进行中" }} </span>
         <el-divider direction="vertical"></el-divider>
-        <span> 搜索：{{ resultSize }} </span>
+        <span> 搜索：{{ ResultSize }}({{ ResultCnt }}) </span>
         <el-divider direction="vertical"></el-divider>
-        <span> 当前：{{ curSize }}</span>
+        <span> 当前：{{ CurSize }}({{ CurCnt }})</span>
         <el-divider direction="vertical"></el-divider>
       </el-col>
     </el-row>
@@ -144,7 +144,7 @@
           </el-tag>
           <el-image
             style="width: 100%; height: 100%"
-            :src="isShowCover() ? item.JpgUrl : item.PngUrl"
+            :src="isShowCover() ?getJpg(item.Id):getPng(item.Id)"
             fit="contain"
             lazy
           >
@@ -296,7 +296,7 @@
       @current-change="handleCurrentChange"
       layout="total,prev, pager, next, sizes, jumper"
       :current-page="pageNo"
-      :total="totalCnt"
+      :total="ResultCnt"
     ></el-pagination>
     <!-- 弹窗 -->
     <el-dialog
@@ -309,7 +309,7 @@
       <div v-if="file">
         <div @click="gotoContext(file.Id)">
           <el-image
-            :src="file.JpgUrl"
+            :src="getJpg(file.Id)"
             style="magin: 0 0; width: 80%; height: auto"
           />
         </div>
@@ -431,12 +431,14 @@ export default {
       pageNo: no ? parseInt(no) : 1,
       pageSize: 12,
       pageSizes: [2, 4, 6, 10, 12, 14, 30, 60, 90, 200],
-      totalCnt: 0,
-      totalPage: 0,
+      TotalCnt: 0,
+      TotalPage: 0,
       loading: false,
-      totalSize: 0,
-      resultSize: 0,
-      curSize: 0,
+      TotalSize: 0,
+      CurCnt: 0,
+      ResultCnt: 0,
+      ResultSize: 0,
+      CurSize: 0,
       suggestions: [], //搜索框 提示
       formItem: {}, //编辑弹窗模型
       IndexProgress:false,
@@ -492,6 +494,12 @@ export default {
     },
   },
   methods: {
+    getPng(Id){
+      return "api/png/"+Id
+    },
+    getJpg(Id){
+      return  "api/jpg/"+Id
+    },
     editItem(item) {
       console.log(item);
       this.formItem = item;
@@ -605,8 +613,8 @@ export default {
       if (this.pageNo < 1) {
         this.pageNo = 1;
       }
-      if (this.pageNo > this.totalPage) {
-        this.pageNo = this.totalPage;
+      if (this.pageNo > this.TotalPage) {
+        this.pageNo = this.TotalPage;
       }
       this.queryList(true);
     },
@@ -738,15 +746,20 @@ export default {
       }
 
       this.loading = true;
+      this.IndexProgress = false
 
       axios.post("api/movieList", data).then((res) => {
         if (res.status === 200) {
           const resData = res.data.Data;
-          this.totalCnt = res.data.ResultCnt;
-          this.totalPage = res.data.TotalPage;
-          this.totalSize = res.data.TotalSize;
-          this.resultSize = res.data.ResultSize;
-          this.curSize = res.data.CurSize;
+          this.ResultCnt = res.data.ResultCnt;
+          this.TotalCnt = res.data.TotalCnt;
+          this.CurCnt = res.data.CurCnt;
+          this.TotalPage = res.data.TotalPage;
+          this.TotalSize = res.data.TotalSize;
+          this.ResultSize = res.data.ResultSize;
+          this.CurSize = res.data.CurSize;
+
+
           this.IndexProgress = res.data.IndexProgress
           if (resData && resData.length > 0) {
             resData.map((item) => {

@@ -4,6 +4,22 @@ import (
 	"strings"
 )
 
+func XItem(lib []string, items []string) []string {
+	var res []string
+	if len(lib) == 0 {
+		return items
+	}
+	if len(items) == 0 {
+		return lib
+	}
+	for _, v := range lib {
+		if HasItem(items, v) {
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
 //判断集合是否包含
 func HasItem(lib []string, item string) bool {
 	if lib == nil {

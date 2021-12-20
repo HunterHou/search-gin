@@ -20,6 +20,78 @@ import (
 type FileService struct {
 }
 
+func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page {
+
+	result := utils.NewPage()
+	result.TotalCnt = len(datasource.FileLib)
+	result.PageNo = searchParam.Page
+	result.PageSize = searchParam.PageSize
+	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
+
+	var list []datamodels.Movie
+	size := int64(0)
+	searchCnt := 0
+	if searchParam.Keyword == "" && searchParam.MovieType == "" {
+		list = datasource.FileList
+		searchCnt = len(list)
+		size = datasource.FileSize
+	} else {
+		keyWordIds := datasource.IndexData[searchParam.Keyword]
+		typeIds := datasource.IndexData[searchParam.MovieType]
+		x := utils.XItem(keyWordIds, typeIds)
+
+		for _, v := range x {
+			movie, ok := datasource.FileLib[v]
+			if ok {
+				searchCnt++
+				size += movie.Size
+				list = append(list, movie)
+			}
+		}
+	}
+
+	datasource.SortMovies(list, searchParam.SortField, searchParam.SortType, true)
+
+	result.ResultSize = utils.GetSizeStr(size)
+	result.SetResultCnt(searchCnt, searchParam.Page)
+	list = fs.GetPage(list, searchParam.Page, searchParam.PageSize)
+	result.CurSize = utils.GetSizeStr(fs.DataSize(list))
+	result.CurCnt = len(list)
+	result.Data = list
+	return result
+
+}
+
+func (fs FileService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
+
+	result := utils.NewPage()
+	result.SetProgress(cons.OverIndex())
+	if len(datasource.FileList) == 0 {
+		fs.ScanAll()
+		datasource.SortDataSourceMovies(searchParam.SortField, searchParam.SortType, true)
+	}
+	datasource.SortDataSourceMovies(searchParam.SortField, searchParam.SortType, false)
+	dataSource := datasource.FileList
+
+	if searchParam.OnlyRepeat {
+		dataSource = fs.OnlyRepeat(dataSource)
+	}
+
+	list, size := fs.SearchByKeyWord(dataSource, datasource.FileSize, searchParam.Keyword, searchParam.MovieType)
+	result.TotalCnt = len(list)
+	result.PageSize = searchParam.PageSize
+	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
+	result.ResultSize = utils.GetSizeStr(size)
+	result.SetResultCnt(result.TotalCnt, searchParam.Page)
+	list = fs.GetPage(list, searchParam.Page, searchParam.PageSize)
+
+	result.CurSize = utils.GetSizeStr(fs.DataSize(list))
+	result.CurCnt = len(list)
+	result.Data = list
+	return result
+
+}
+
 func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) utils.Result {
 
 	//video
@@ -481,6 +553,9 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	}
 	datasource.FileLib = fileMap
 	datasource.FileList = newFiles
+
+	datasource.GoAddMovieByPage(newFiles, 1000, &cons.IndexOver)
+
 	datasource.ActressLib = actressMap
 	// 添加索引
 
@@ -621,7 +696,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
 		size = size + curFile.Size
-		//curFile.Id = string(i)
+		curFile.Id = fmt.Sprint(i)
 		filemap[curFile.Id] = curFile
 		curActress, ok := actessmap[curFile.Actress]
 		if ok {

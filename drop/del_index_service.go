@@ -6,11 +6,12 @@ import (
 	"os"
 	"search-gin/drop/data"
 
-	"github.com/blevesearch/bleve"
-	"github.com/blevesearch/bleve/mapping"
 	"search-gin/cons"
 	"search-gin/datamodels"
 	"search-gin/utils"
+
+	"github.com/blevesearch/bleve"
+	"github.com/blevesearch/bleve/mapping"
 )
 
 var BIndex bleve.Index
