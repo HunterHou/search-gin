@@ -6,7 +6,7 @@ import (
 	"search-gin/datamodels"
 )
 
-var DefSortField = "mtime"
+var DefSortField = "MTime"
 var DefSortType = "desc"
 
 var CurSortField = ""
@@ -18,9 +18,8 @@ var FileList []datamodels.Movie
 var FileSize int64
 
 var ActressLib = map[string]datamodels.Actress{}
-var ActressList = []datamodels.Actress{}
+var ActressList []datamodels.Actress
 var SupplierLib = map[string]datamodels.Supplier{}
-var DictLib = datamodels.NewDictionary()
 
 func SortMovieForce() {
 	if CurSortField == "" {

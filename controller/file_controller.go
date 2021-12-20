@@ -6,6 +6,7 @@ import (
 	"search-gin/cons"
 	"search-gin/datamodels"
 	"search-gin/datasource"
+	"search-gin/drop"
 	"search-gin/service"
 	"search-gin/utils"
 	"strconv"
@@ -106,7 +107,7 @@ func PostSearchMovie(c *gin.Context) {
 	result.TotalCnt = len(datasource.FileList)
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
 	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType)
-	list, size, resultCnt := service.SearchIndex(searchParam)
+	list, size, resultCnt := drop.SearchIndex(searchParam)
 	result.ResultCnt = resultCnt
 	result.CurSize = utils.GetSizeStr(size)
 	result.CurCnt = len(list)
