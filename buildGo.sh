@@ -45,6 +45,7 @@ if [ $levelKey -ge 2 ]; then
     echo 'cp setting.json app/setting.json(1)'
     cp dirList.ini 'app/dirList.ini(1)'
     cp setting.json 'app/setting.json(1)'
+    # cp datasource/dictionary.txt 'app/datasource/dictionary.txt'
     cp -R data 'app/data'
     echo APP打包完成！！！
 fi

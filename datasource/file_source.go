@@ -31,7 +31,7 @@ var segmenter sego.Segmenter
 
 func init() {
 	//  载入词典
-	segmenter.LoadDictionary("./datasource/dictionary.txt")
+	segmenter.LoadDictionary("./data/dictionary.txt")
 }
 
 func GoAddMovieByPage(movie []datamodels.Movie, pageSize int, indexOver *bool) {
