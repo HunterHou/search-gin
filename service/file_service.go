@@ -446,7 +446,6 @@ func (fs FileService) ScanAll() {
 }
 func (fs FileService) Delete(id string) {
 	file := fs.FindOne(id)
-	DeleteIndex(id)
 	list := []string{file.Path, file.Png, file.Jpg, file.Nfo}
 	for i := 0; i < len(list); i++ {
 		err := os.Remove(list[i])
@@ -663,32 +662,6 @@ func Walks(baseDir []string, types []string) []datamodels.Movie {
 	}
 	// go AllIndex(result, &cons.IndexOver)
 	return result
-
-}
-
-func AllIndex(movies []datamodels.Movie, over *bool) {
-	total := len(movies)
-	fmt.Printf("total:%d \n", total)
-	pageSize := 500
-	CreateIndex()
-	totalPage := (total / pageSize) + 1
-	var wg sync.WaitGroup
-	wg.Add(totalPage)
-	*over = false
-	fmt.Printf("update:%v \n", cons.OverIndex())
-	for pageNo := 1; pageNo <= totalPage; pageNo++ {
-		list := GetPage(movies, pageNo, pageSize)
-		go goUpdateIndex(list, &wg)
-	}
-	wg.Wait()
-	*over = true
-	fmt.Printf("update:%v \n", cons.OverIndex())
-
-}
-
-func goUpdateIndex(movies []datamodels.Movie, wg *sync.WaitGroup) {
-	defer wg.Done()
-	UpdateIndex(movies)
 
 }
 

@@ -6,6 +6,7 @@ import (
 	"search-gin/cons"
 	"search-gin/datamodels"
 	"search-gin/datasource"
+	"search-gin/drop"
 	"search-gin/service"
 	"search-gin/utils"
 	"strconv"
@@ -35,7 +36,22 @@ func GetPng(c *gin.Context) {
 	} else if utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
 	} else {
-		c.File("")
+		response, err := http.Get("https://raw.githubusercontent.com/gin-gonic/logo/master/color.png")
+		if err != nil || response.StatusCode != http.StatusOK {
+			c.Status(http.StatusServiceUnavailable)
+			return
+		}
+
+		reader := response.Body
+		defer reader.Close()
+		contentLength := response.ContentLength
+		contentType := response.Header.Get("Content-Type")
+
+		extraHeaders := map[string]string{
+			"Content-Disposition": `jpeg; filename="gopher.png"`,
+		}
+
+		c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
 	}
 
 }
@@ -91,7 +107,7 @@ func PostSearchMovie(c *gin.Context) {
 	result.TotalCnt = len(datasource.FileList)
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
 	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType)
-	list, size, resultCnt := service.SearchIndex(searchParam)
+	list, size, resultCnt := drop.SearchIndex(searchParam)
 	result.ResultCnt = resultCnt
 	result.CurSize = utils.GetSizeStr(size)
 	result.CurCnt = len(list)
