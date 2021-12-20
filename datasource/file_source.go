@@ -40,17 +40,17 @@ func SortMovies(sF string, sT string, refresh bool) {
 	CurSortType = sT
 	sort.Slice(FileList, func(i, j int) bool {
 
-		if sF == "code" && sT == "desc" {
+		if sF == "Code" && sT == "desc" {
 			return FileList[i].Code > FileList[j].Code
-		} else if sF == "code" && sT == "asc" {
+		} else if sF == "Code" && sT == "asc" {
 			return FileList[i].Code < FileList[j].Code
-		} else if sF == "size" && sT == "desc" {
+		} else if sF == "Size" && sT == "desc" {
 			return FileList[i].Size > FileList[j].Size
-		} else if sF == "size" && sT == "asc" {
+		} else if sF == "Size" && sT == "asc" {
 			return FileList[i].Size < FileList[j].Size
-		} else if sF == "mtime" && sT == "desc" {
+		} else if sF == "MTime" && sT == "desc" {
 			return FileList[i].MTime > FileList[j].MTime
-		} else if sF == "mtime" && sT == "asc" {
+		} else if sF == "MTime" && sT == "asc" {
 			return FileList[i].MTime < FileList[j].MTime
 		} else {
 			return FileList[i].MTime > FileList[j].MTime

@@ -418,7 +418,7 @@ export default {
       onlyRepeat: false, //是否查重
       dialogVisible: false, //是否弹窗
       dialogFormItemVisible: false,
-      sortField: "mtime",
+      sortField: "MTime",
       sortType: "desc",
       movieType: "",
       dataList: "",

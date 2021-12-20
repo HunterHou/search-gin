@@ -661,7 +661,7 @@ func Walks(baseDir []string, types []string) []datamodels.Movie {
 		}
 		result = ExpandsMovie(result, data)
 	}
-	go AllIndex(result, &cons.IndexOver)
+	// go AllIndex(result, &cons.IndexOver)
 	return result
 
 }
