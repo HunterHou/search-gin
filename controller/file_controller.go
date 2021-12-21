@@ -33,8 +33,31 @@ func GetPng(c *gin.Context) {
 }
 
 func GetJpg(c *gin.Context) {
-	service := service.CreateFileService()
-	service.GetJpg(c)
+	path := c.Param("path")
+	fs := service.CreateFileService()
+	file := fs.FindOne(path)
+	if utils.ExistsFiles(file.Png) {
+		c.File(file.Png)
+	} else if utils.ExistsFiles(file.Jpg) {
+		c.File(file.Jpg)
+	} else {
+		response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
+		if err != nil || response.StatusCode != http.StatusOK {
+			c.Status(http.StatusServiceUnavailable)
+			return
+		}
+
+		reader := response.Body
+		defer reader.Close()
+		contentLength := response.ContentLength
+		contentType := response.Header.Get("Content-Type")
+
+		extraHeaders := map[string]string{
+			"Content-Disposition": `jpeg; filename="gopher.png"`,
+		}
+
+		c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
+	}
 }
 
 func PostStream(c *gin.Context) {

@@ -13,7 +13,7 @@ func TestWorld(t *testing.T) {
 	segmenter.LoadDictionary("dictionary.txt")
 
 	// 分词
-	text := []byte("中文,博大精深,中国人民政府")
+	text := []byte("微信图片_20211221095110.jpg")
 	segments := segmenter.InternalSegment(text, true)
 
 	// 处理分词结果

@@ -114,7 +114,7 @@
       <el-col :span="12">
         <el-divider direction="vertical"></el-divider>
         <span> 扫描库：{{ TotalSize }}({{ TotalCnt }}) </span>
-        <span> 更新：{{ IndexProgress?"完成":"进行中" }} </span>
+        <span> 更新：{{ IndexProgress ? "完成" : "进行中" }} </span>
         <el-divider direction="vertical"></el-divider>
         <span> 搜索：{{ ResultSize }}({{ ResultCnt }}) </span>
         <el-divider direction="vertical"></el-divider>
@@ -128,28 +128,64 @@
       element-loading-spinner="el-icon-loading"
       style="margin-top: 10px; padding-buttom: 40px"
     >
+      <v-contextmenu
+        ref="contextmenu"
+        :theme="theme"
+        @contextmenu="handleContextmenu"
+      >
+        <v-contextmenu-item @click="handleClick"
+          ><i
+            :underline="false"
+            class="el-icon-refresh icon-style"
+            style="margin: 0 20px"
+            title="同步"
+            >同步</i
+          ></v-contextmenu-item
+        >
+        <v-contextmenu-item @click="handleClick">
+          <i
+            :underline="false"
+            class="el-icon-download icon-style"
+            style="margin: 0 20px"
+            title="刮图"
+            >刮图</i
+          >
+        </v-contextmenu-item>
+        <v-contextmenu-item @click="handleClick">
+          <i
+            :underline="false"
+            class="el-icon-delete icon-style"
+            style="margin: 0 20px"
+            title="删除"
+            >删除</i
+          >
+        </v-contextmenu-item>
+      </v-contextmenu>
+
       <li
         style="overflow: auto"
         :class="isShowCover() ? 'list-item-cover' : 'list-item'"
         v-for="item in dataList"
         :key="item.Id"
       >
-        <div
-          v-if="item"
-          @click="openWin(item.Id)"
-          :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
-        >
-          <el-tag v-if="item.MovieType" type="danger" effect="dark"
-            >{{ item.MovieType }}
-          </el-tag>
-          <el-image
-            style="width: 100%; height: 100%"
-            :src="isShowCover() ?getJpg(item.Id):getPng(item.Id)"
-            fit="contain"
-            lazy
+        <div :class="[theme]" v-contextmenu:contextmenu :key="item.Id">
+          <div
+            v-if="item"
+            @click="openWin(item.Id)"
+            :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
           >
-          </el-image>
+            <el-tag v-if="item.MovieType" type="danger" effect="dark"
+              >{{ item.MovieType }}
+            </el-tag>
+            <el-image
+              style="width: 100%; height: 100%"
+              :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
+              fit="contain"
+              lazy
+            />
+          </div>
         </div>
+
         <div class="image-tool">
           <el-link
             ><i
@@ -439,9 +475,11 @@ export default {
       ResultCnt: 0,
       ResultSize: 0,
       CurSize: 0,
+      theme: "dark",
       suggestions: [], //搜索框 提示
       formItem: {}, //编辑弹窗模型
-      IndexProgress:false,
+      IndexProgress: false,
+      clickId: "",
     };
   },
   created() {
@@ -454,11 +492,10 @@ export default {
       if (suggestionsCaches) {
         this.suggestions = suggestionsCaches.split(",");
       }
-      const pageSize  = localStorage.getItem("pageSizeStore")
-      if(pageSize){
-        this.pageSize = pageSize
+      const pageSize = localStorage.getItem("pageSizeStore");
+      if (pageSize) {
+        this.pageSize = parseInt(pageSize);
       }
-
     });
   },
   mounted() {
@@ -494,11 +531,26 @@ export default {
     },
   },
   methods: {
-    getPng(Id){
-      return "api/png/"+Id
+    handleClick(vm, event) {
+      var buttom = vm.$slots.default[0].text;
+      var clickId = this.clickId;
+      if ("同步" == buttom) {
+        this.syncThis(clickId);
+      } else if ("刮图" == buttom) {
+        this.getImageList(clickId, 2);
+      } else if ("删除" == buttom) {
+        this.deleteThis(clickId, 2);
+      }
     },
-    getJpg(Id){
-      return  "api/jpg/"+Id
+    handleContextmenu(vnode) {
+      this.clickId = vnode.key;
+    },
+
+    getPng(Id) {
+      return "api/png/" + Id;
+    },
+    getJpg(Id) {
+      return "api/jpg/" + Id;
     },
     editItem(item) {
       console.log(item);
@@ -746,7 +798,7 @@ export default {
       }
 
       this.loading = true;
-      this.IndexProgress = false
+      this.IndexProgress = false;
 
       axios.post("api/movieList", data).then((res) => {
         if (res.status === 200) {
@@ -759,8 +811,7 @@ export default {
           this.ResultSize = res.data.ResultSize;
           this.CurSize = res.data.CurSize;
 
-
-          this.IndexProgress = res.data.IndexProgress
+          this.IndexProgress = res.data.IndexProgress;
           if (resData && resData.length > 0) {
             resData.map((item) => {
               if (item.Code == item.Actress) {

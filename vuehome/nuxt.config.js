@@ -12,14 +12,14 @@ export default {
     },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'vuehome',
+    title: '搜索',
     htmlAttrs: {
       lang: 'zh-cn'
     },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+      { hid: 'description', name: 'description', content: 'search' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -28,12 +28,14 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    'element-ui/lib/theme-chalk/index.css'
+    'element-ui/lib/theme-chalk/index.css',
+    'v-contextmenu/dist/index.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '@/plugins/element-ui'
+    '@/plugins/element-ui',
+    '@/plugins/vue-menucontext'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
