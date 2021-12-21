@@ -65,7 +65,7 @@ func addMovie(movie []datamodels.Movie) {
 func updateSearchData(movie datamodels.Movie) {
 	words := []string{movie.Actress, movie.Code}
 	words = utils.ExtandsItems(words, getKeywords(movie.Name))
-	words = utils.RemoveItem(words, "")
+	words = utils.RemoveItem(words, " ")
 	for i := 0; i < len(words); i++ {
 		word := strings.TrimSpace(words[i])
 		arr, ok := IndexData[word]
@@ -88,9 +88,10 @@ func getKeywords(str string) []string {
 	arr := sego.SegmentsToSlice(segments, true)
 	arr = utils.RemoveItem(arr, "-")
 	arr = utils.RemoveItem(arr, "[")
-	arr = utils.RemoveItem(arr, "]")
 	arr = utils.RemoveItem(arr, "_")
 	arr = utils.RemoveItem(arr, ".")
+	arr = utils.RemoveItem(arr, "{")
+	arr = utils.RemoveItem(arr, "}")
 	return arr
 }
 

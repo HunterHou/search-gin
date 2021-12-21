@@ -28,44 +28,13 @@ func GetActessImage(c *gin.Context) {
 
 }
 func GetPng(c *gin.Context) {
-	path := c.Param("path")
-	service := service.FileService{}
-	file := service.FindOne(path)
-	if utils.ExistsFiles(file.Png) {
-		c.File(file.Png)
-	} else if utils.ExistsFiles(file.Jpg) {
-		c.File(file.Jpg)
-	} else {
-		response, err := http.Get("https://raw.githubusercontent.com/gin-gonic/logo/master/color.png")
-		if err != nil || response.StatusCode != http.StatusOK {
-			c.Status(http.StatusServiceUnavailable)
-			return
-		}
-
-		reader := response.Body
-		defer reader.Close()
-		contentLength := response.ContentLength
-		contentType := response.Header.Get("Content-Type")
-
-		extraHeaders := map[string]string{
-			"Content-Disposition": `jpeg; filename="gopher.png"`,
-		}
-
-		c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
-	}
-
+	service := service.CreateFileService()
+	service.GetPng(c)
 }
+
 func GetJpg(c *gin.Context) {
-	path := c.Param("path")
-	service := service.FileService{}
-	file := service.FindOne(path)
-	if utils.ExistsFiles(file.Jpg) {
-		c.File(file.Jpg)
-	} else if utils.ExistsFiles(file.Png) {
-		c.File(file.Png)
-	} else {
-		c.File("")
-	}
+	service := service.CreateFileService()
+	service.GetJpg(c)
 }
 
 func PostStream(c *gin.Context) {
@@ -80,8 +49,8 @@ func PostStream(c *gin.Context) {
 func PostSearch(c *gin.Context) {
 	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
 	if cons.OverIndex() && onlyRepeat != "true" {
-		// PostSearchMovie(c)
-		PostMovies(c)
+		PostSearchMovie(c)
+		//PostMovies(c)
 	} else {
 		// PostSearchMovie(c)
 		PostMovies(c)
@@ -101,7 +70,7 @@ func PostSearchMovie(c *gin.Context) {
 	sortType := c.DefaultPostForm("sortType", "code")
 	sortField := c.DefaultPostForm("sortField", "desc")
 	movieType := c.DefaultPostForm("movieType", "")
-	fileService := service.FileService{}
+	fileService := service.CreateFileService()
 
 	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
 	result := fileService.SearchIndex(searchParam)
@@ -123,7 +92,7 @@ func PostMovies(c *gin.Context) {
 	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
 	movieType := c.DefaultPostForm("movieType", "")
 
-	fileService := service.FileService{}
+	fileService := service.CreateFileService()
 
 	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
 	searchParam.SetOnlyRepeat(strings.EqualFold("true", onlyRepeat))
@@ -139,7 +108,7 @@ func GetLastInfo(c *gin.Context) {
 	sortType := c.DefaultQuery("sortType", "")
 	sortField := c.DefaultQuery("sortField", "desc")
 	movieType := c.DefaultQuery("movieType", "")
-	service := service.FileService{}
+	service := service.CreateFileService()
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
 	}
@@ -155,7 +124,7 @@ func GetNextInfo(c *gin.Context) {
 	sortType := c.DefaultQuery("sortType", "")
 	sortField := c.DefaultQuery("sortField", "desc")
 	movieType := c.DefaultQuery("movieType", "")
-	service := service.FileService{}
+	service := service.CreateFileService()
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
 	}
@@ -177,7 +146,7 @@ func PostActess(c *gin.Context) {
 	if pageSize < 1 {
 		pageSize = 14
 	}
-	service := service.FileService{}
+	service := service.CreateFileService()
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
 		service.SortAct(datasource.ActressList, sortType)
@@ -195,7 +164,7 @@ func PostActess(c *gin.Context) {
 }
 
 func GetFresh(c *gin.Context) {
-	service := service.FileService{}
+	service := service.CreateFileService()
 	service.ScanAll()
 	datasource.SortMovieForce()
 	result := utils.NewSuccessByMsg("刷新成功")
@@ -209,7 +178,7 @@ func GetButtom(c *gin.Context) {
 }
 func GetPlay(c *gin.Context) {
 	id := c.Param("id")
-	service := service.FileService{}
+	service := service.CreateFileService()
 	file := service.FindOne(id)
 	//c.File(file.Path)
 	utils.ExecCmdStart(file.Path)
@@ -219,28 +188,28 @@ func GetPlay(c *gin.Context) {
 func SetMovieType(c *gin.Context) {
 	id := c.Param("id")
 	movieType := c.Param("movieType")
-	service := service.FileService{}
+	service := service.CreateFileService()
 	file := service.FindOne(id)
 	res := service.SetMovieType(file, movieType)
 	c.JSON(http.StatusOK, res)
 }
 func GetInfo(c *gin.Context) {
 	id := c.Param("id")
-	service := service.FileService{}
+	service := service.CreateFileService()
 	file := service.FindOne(id)
 	c.JSON(http.StatusOK, file)
 }
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.Movie{}
 	c.ShouldBindJSON(&currentFile)
-	service := service.FileService{}
+	service := service.CreateFileService()
 	res := service.Rename(currentFile)
 	c.JSON(http.StatusOK, res)
 }
 
 func GetDirInfo(c *gin.Context) {
 	id := c.Param("id")
-	fileService := service.FileService{}
+	fileService := service.CreateFileService()
 	file := fileService.FindOne(id)
 
 	files := service.Walk(file.DirPath, cons.Types)
@@ -252,7 +221,7 @@ func GetDirInfo(c *gin.Context) {
 
 func GetOpenFoler(c *gin.Context) {
 	id := c.Param("id")
-	service := service.FileService{}
+	service := service.CreateFileService()
 	file := service.FindOne(id)
 	fmt.Println(file.DirPath)
 	utils.ExecCmdExplorer(file.DirPath)
@@ -262,14 +231,14 @@ func GetOpenFoler(c *gin.Context) {
 
 func GetDelete(c *gin.Context) {
 	id := c.Param("id")
-	service := service.FileService{}
+	service := service.CreateFileService()
 	service.Delete(id)
 	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
 }
 func GetSync(c *gin.Context) {
 	id := c.Param("id")
-	serviceFile := service.FileService{}
+	serviceFile := service.CreateFileService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestToFile(curFile)
 	if result.Code != 200 {
@@ -282,7 +251,7 @@ func GetSync(c *gin.Context) {
 
 func GetImageList(c *gin.Context) {
 	id := c.Param("id")
-	serviceFile := service.FileService{}
+	serviceFile := service.CreateFileService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestToFile(curFile)
 	if result.Code != 200 {
@@ -303,7 +272,7 @@ func GetImageList(c *gin.Context) {
 }
 
 func GetRefresIndex(c *gin.Context) {
-	service := service.FileService{}
+	service := service.CreateFileService()
 	service.ScanAll()
 	datasource.SortMovieForce()
 	res := utils.NewSuccessByMsg("扫描结束！")

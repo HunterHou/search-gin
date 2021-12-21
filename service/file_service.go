@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -20,6 +21,10 @@ import (
 type FileService struct {
 }
 
+func CreateFileService() FileService {
+	return FileService{}
+}
+
 func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page {
 
 	result := utils.NewPage()
@@ -28,36 +33,49 @@ func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page
 	result.PageSize = searchParam.PageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
 
-	var list []datamodels.Movie
-	size := int64(0)
+	var searchList []datamodels.Movie
+	searchSize := int64(0)
 	searchCnt := 0
-	if searchParam.Keyword == "" && searchParam.MovieType == "" {
-		list = datasource.FileList
-		searchCnt = len(list)
-		size = datasource.FileSize
+	if searchParam.GetKeywords() == "" && searchParam.GetMovieType() == "" {
+		searchList = datasource.FileList
+		searchCnt = len(searchList)
+		searchSize = datasource.FileSize
 	} else {
-		keyWordIds := datasource.IndexData[searchParam.Keyword]
-		typeIds := datasource.IndexData[searchParam.MovieType]
+		var keyWordIds []string
+		if searchParam.Keyword != "" {
+			keyWordValue, ok := datasource.IndexData[searchParam.GetKeywords()]
+			if ok {
+				keyWordIds = keyWordValue
+			}
+		}
+		var typeIds []string
+		if searchParam.MovieType != "" {
+			typeIdValue, ok := datasource.IndexData[searchParam.GetMovieType()]
+			if ok {
+				typeIds = typeIdValue
+			}
+		}
+
 		x := utils.XItem(keyWordIds, typeIds)
 
 		for _, v := range x {
 			movie, ok := datasource.FileLib[v]
 			if ok {
 				searchCnt++
-				size += movie.Size
-				list = append(list, movie)
+				searchSize += movie.Size
+				searchList = append(searchList, movie)
 			}
 		}
 	}
 
-	datasource.SortMovies(list, searchParam.SortField, searchParam.SortType, true)
+	datasource.SortMovies(searchList, searchParam.SortField, searchParam.SortType, true)
 
-	result.ResultSize = utils.GetSizeStr(size)
+	result.ResultSize = utils.GetSizeStr(searchSize)
 	result.SetResultCnt(searchCnt, searchParam.Page)
-	list = fs.GetPage(list, searchParam.Page, searchParam.PageSize)
-	result.CurSize = utils.GetSizeStr(fs.DataSize(list))
-	result.CurCnt = len(list)
-	result.Data = list
+	pageList, pageSize := fs.GetPage(searchList, searchParam.Page, searchParam.PageSize)
+	result.CurSize = utils.GetSizeStr(pageSize)
+	result.CurCnt = len(pageList)
+	result.Data = pageList
 	return result
 
 }
@@ -77,17 +95,17 @@ func (fs FileService) SearchDataSource(searchParam datamodels.SearchParam) utils
 		dataSource = fs.OnlyRepeat(dataSource)
 	}
 
-	list, size := fs.SearchByKeyWord(dataSource, datasource.FileSize, searchParam.Keyword, searchParam.MovieType)
-	result.TotalCnt = len(list)
+	searchList, searchSize := fs.SearchByKeyWord(dataSource, datasource.FileSize, searchParam.Keyword, searchParam.MovieType)
+	result.TotalCnt = len(searchList)
 	result.PageSize = searchParam.PageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
-	result.ResultSize = utils.GetSizeStr(size)
+	result.ResultSize = utils.GetSizeStr(searchSize)
 	result.SetResultCnt(result.TotalCnt, searchParam.Page)
-	list = fs.GetPage(list, searchParam.Page, searchParam.PageSize)
+	pageList, pageSize := fs.GetPage(searchList, searchParam.Page, searchParam.PageSize)
 
-	result.CurSize = utils.GetSizeStr(fs.DataSize(list))
-	result.CurCnt = len(list)
-	result.Data = list
+	result.CurSize = utils.GetSizeStr(pageSize)
+	result.CurCnt = len(searchList)
+	result.Data = pageList
 	return result
 
 }
@@ -425,6 +443,61 @@ func (fs FileService) FindOne(Id string) datamodels.Movie {
 	return curFile
 }
 
+func (fs FileService) GetPng(c *gin.Context) {
+	path := c.Param("path")
+	file := fs.FindOne(path)
+	if utils.ExistsFiles(file.Png) {
+		c.File(file.Png)
+	} else if utils.ExistsFiles(file.Jpg) {
+		c.File(file.Jpg)
+	} else {
+		response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
+		if err != nil || response.StatusCode != http.StatusOK {
+			c.Status(http.StatusServiceUnavailable)
+			return
+		}
+
+		reader := response.Body
+		defer reader.Close()
+		contentLength := response.ContentLength
+		contentType := response.Header.Get("Content-Type")
+
+		extraHeaders := map[string]string{
+			"Content-Disposition": `jpeg; filename="gopher.png"`,
+		}
+
+		c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
+	}
+
+}
+func (fs FileService) GetJpg(c *gin.Context) {
+	path := c.Param("path")
+	file := fs.FindOne(path)
+	if utils.ExistsFiles(file.Jpg) {
+		c.File(file.Jpg)
+	} else if utils.ExistsFiles(file.Png) {
+		c.File(file.Png)
+	} else {
+		response, err := http.Get("http://pic.soutu123.cn/element_origin_min_pic/01/51/03/78574574779fe8f.jpg!/fw/700/quality/90/unsharp/true/compress/true")
+		if err != nil || response.StatusCode != http.StatusOK {
+			c.Status(http.StatusServiceUnavailable)
+			return
+		}
+
+		reader := response.Body
+		defer reader.Close()
+		contentLength := response.ContentLength
+		contentType := response.Header.Get("Content-Type")
+
+		extraHeaders := map[string]string{
+			"Content-Disposition": `jpeg; filename="gopher.png"`,
+		}
+
+		c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
+	}
+
+}
+
 func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 	res := utils.NewSuccess()
 	movieLib := fs.FindOne(movie.Id)
@@ -657,27 +730,33 @@ func (fs FileService) GetActressPage(files []datamodels.Actress, pageNo int, pag
 	return data
 }
 
-func (fs FileService) GetPage(files []datamodels.Movie, pageNo int, pageSize int) []datamodels.Movie {
+func (fs FileService) GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.Movie, int64) {
 	return GetPage(files, pageNo, pageSize)
 }
 
-func GetPage(files []datamodels.Movie, pageNo int, pageSize int) []datamodels.Movie {
+func GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.Movie, int64) {
 	if len(files) == 0 {
-		return files
+		return files, 0
 	}
-	size := len(files)
+	length := len(files)
 	start := (pageNo - 1) * pageSize
 
-	end := size
-	if size-start > pageSize {
+	end := length
+	if length-start > pageSize {
 		end = start + pageSize
 	}
 	if len(files) <= pageSize {
-		return files
+		return files, 0
 	}
 
-	data := files[start:end]
-	return data
+	data := []datamodels.Movie{}
+	var volume int64
+	for i := start; i <= end; i++ {
+		curFile := files[i]
+		volume += curFile.Size
+		data = append(data, curFile)
+	}
+	return data, volume
 }
 
 func (fs FileService) DataSize(data []datamodels.Movie) int64 {

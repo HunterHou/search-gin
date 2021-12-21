@@ -2,6 +2,7 @@ package datamodels
 
 import "strings"
 
+// SearchParam 查询参数
 type SearchParam struct {
 	Keyword    string
 	OnlyRepeat bool
@@ -23,6 +24,16 @@ func NewSearchParam(keyword string, page int, pageSize int, sortField string, so
 	}
 	return res
 
+}
+
+func (p *SearchParam) GetKeywords() string {
+	p.Keyword = strings.TrimSpace(p.Keyword)
+	return p.Keyword
+}
+
+func (p *SearchParam) GetMovieType() string {
+	p.MovieType = strings.TrimSpace(p.MovieType)
+	return p.MovieType
 }
 
 func (p *SearchParam) SetOnlyRepeat(b bool) {
