@@ -136,8 +136,8 @@
         <v-contextmenu-item @click="handleClick"
           ><i
             :underline="false"
-            class="el-icon-refresh icon-style"
-            style="margin: 0 10px"
+            class="el-icon-refresh "
+            style="margin: 0 4px"
             title="同步"
             action="sync"
             >同步</i
@@ -146,8 +146,8 @@
         <v-contextmenu-item @click="handleClick">
           <i
             :underline="false"
-            class="el-icon-download icon-style"
-            style="margin: 0 10px"
+            class="el-icon-download "
+            style="margin: 0 4px"
             title="刮图"
             action="downImage"
             >刮图</i
@@ -156,8 +156,8 @@
         <v-contextmenu-item @click="handleClick">
           <i
             :underline="false"
-            class="el-icon-delete icon-style"
-            style="margin: 0 10px"
+            class="el-icon-delete "
+            style="margin: 0 4px"
             title="删除"
             action="delete"
             >删除</i
