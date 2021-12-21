@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -14,6 +13,8 @@ import (
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -775,7 +776,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
 		size = size + curFile.Size
-		curFile.Id = fmt.Sprint(i)
+		// curFile.Id = fmt.Sprint(i)
 		filemap[curFile.Id] = curFile
 		curActress, ok := actessmap[curFile.Actress]
 		if ok {
