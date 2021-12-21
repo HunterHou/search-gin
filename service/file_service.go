@@ -479,7 +479,7 @@ func (fs FileService) GetJpg(c *gin.Context) {
 	} else if utils.ExistsFiles(file.Png) {
 		c.File(file.Png)
 	} else {
-		response, err := http.Get("http://pic.soutu123.cn/element_origin_min_pic/01/51/03/78574574779fe8f.jpg!/fw/700/quality/90/unsharp/true/compress/true")
+		response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
 		if err != nil || response.StatusCode != http.StatusOK {
 			c.Status(http.StatusServiceUnavailable)
 			return
