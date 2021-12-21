@@ -139,24 +139,27 @@
             class="el-icon-refresh icon-style"
             style="margin: 0 20px"
             title="同步"
+            action="sync"
             >同步</i
           ></v-contextmenu-item
         >
-        <!-- <v-contextmenu-item @click="handleClick">
+        <v-contextmenu-item @click="handleClick">
           <i
             :underline="false"
             class="el-icon-download icon-style"
             style="margin: 0 20px"
             title="刮图"
+            action="downImage"
             >刮图</i
           >
-        </v-contextmenu-item> -->
+        </v-contextmenu-item>
         <v-contextmenu-item @click="handleClick">
           <i
             :underline="false"
             class="el-icon-delete icon-style"
             style="margin: 0 20px"
             title="删除"
+            action="delete"
             >删除</i
           >
         </v-contextmenu-item>
@@ -534,14 +537,14 @@ export default {
     //确认点击事件 并执行
     handleClick(vm, event) {
       var buttom = vm.$slots.default[0];
-      var title = buttom.data.attrs.title;
+      var title = buttom.data.attrs.action;
       var clickId = this.clickId;
 
-      if ("同步" == title) {
+      if ("sync" == title) {
         this.syncThis(clickId);
-      } else if ("刮图" == title) {
+      } else if ("downImage" == title) {
         this.getImageList(clickId, 2);
-      } else if ("删除" == title) {
+      } else if ("delete" == title) {
         this.deleteThis(clickId, 2);
       }
     },
