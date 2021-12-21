@@ -137,7 +137,7 @@
           ><i
             :underline="false"
             class="el-icon-refresh icon-style"
-            style="margin: 0 20px"
+            style="margin: 0 10px"
             title="同步"
             action="sync"
             >同步</i
@@ -147,7 +147,7 @@
           <i
             :underline="false"
             class="el-icon-download icon-style"
-            style="margin: 0 20px"
+            style="margin: 0 10px"
             title="刮图"
             action="downImage"
             >刮图</i
@@ -157,7 +157,7 @@
           <i
             :underline="false"
             class="el-icon-delete icon-style"
-            style="margin: 0 20px"
+            style="margin: 0 10px"
             title="删除"
             action="delete"
             >删除</i
