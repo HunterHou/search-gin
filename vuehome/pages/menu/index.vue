@@ -142,7 +142,7 @@
             >同步</i
           ></v-contextmenu-item
         >
-        <v-contextmenu-item @click="handleClick">
+        <!-- <v-contextmenu-item @click="handleClick">
           <i
             :underline="false"
             class="el-icon-download icon-style"
@@ -150,7 +150,7 @@
             title="刮图"
             >刮图</i
           >
-        </v-contextmenu-item>
+        </v-contextmenu-item> -->
         <v-contextmenu-item @click="handleClick">
           <i
             :underline="false"
@@ -531,17 +531,21 @@ export default {
     },
   },
   methods: {
+    //确认点击事件 并执行
     handleClick(vm, event) {
-      var buttom = vm.$slots.default[0].text;
+      var buttom = vm.$slots.default[0];
+      var title = buttom.data.attrs.title;
       var clickId = this.clickId;
-      if ("同步" == buttom) {
+
+      if ("同步" == title) {
         this.syncThis(clickId);
-      } else if ("刮图" == buttom) {
+      } else if ("刮图" == title) {
         this.getImageList(clickId, 2);
-      } else if ("删除" == buttom) {
+      } else if ("删除" == title) {
         this.deleteThis(clickId, 2);
       }
     },
+    //确定点击的区域Id
     handleContextmenu(vnode) {
       this.clickId = vnode.key;
     },
