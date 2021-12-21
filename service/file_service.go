@@ -742,7 +742,7 @@ func GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.M
 	start := (pageNo - 1) * pageSize
 
 	end := length
-	if length-start > pageSize {
+	if length-start >= pageSize {
 		end = start + pageSize
 	}
 	if len(files) <= pageSize {
@@ -751,7 +751,7 @@ func GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.M
 
 	data := []datamodels.Movie{}
 	var volume int64
-	for i := start; i <= end; i++ {
+	for i := start; i < end; i++ {
 		curFile := files[i]
 		volume += curFile.Size
 		data = append(data, curFile)
