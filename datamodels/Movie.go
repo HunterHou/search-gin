@@ -25,17 +25,8 @@ type Movie struct {
 	CTime     string
 	MTime     string
 	PTime     string
-	Studio    string
-	Supplier  string
-	Length    string
-	Series    string
-	Director  string
-	Title     string
-	PngUrl    string
-	JpgUrl    string
 	MovieType string
 	ImageBase string
-	PngBase   string
 	ImageList []string
 }
 
@@ -58,8 +49,6 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		SizeStr:   utils.GetSizeStr(size),
 		CTime:     "",
 		MTime:     modTime.Format("2006-01-02 15:04:05"),
-		PngUrl:    "/api/png/" + id,
-		JpgUrl:    "/api/jpg/" + id,
 		MovieType: movieType,
 	}
 	return result
@@ -84,31 +73,7 @@ func (f Movie) IsNull() bool {
 	}
 	return false
 }
-func (f Movie) PngBase64() string {
-	path := f.Png
-	if !utils.ExistsFiles(path) {
-		path = f.Jpg
-	}
-	if !utils.ExistsFiles(path) {
-		path = f.Path
-	}
-	res := "data:image/png;base64," + utils.ImageToString(path)
-	return res
 
-}
-
-func (f *Movie) SetPngBase64() {
-	path := f.Png
-	if !utils.ExistsFiles(path) {
-		path = f.Jpg
-	}
-	if !utils.ExistsFiles(path) {
-		path = f.Path
-	}
-	res := "data:image/png;base64," + utils.ImageToString(path)
-	f.PngBase = res
-
-}
 func (f *Movie) SetImageBase64() {
 	path := f.Jpg
 	if !utils.ExistsFiles(path) {
@@ -122,7 +87,33 @@ func (f *Movie) SetImageBase64() {
 
 }
 
-func (f Movie) GetPng() string {
-	path := f.Path
-	return utils.GetPng(path, "png")
-}
+//func (f Movie) PngBase64() string {
+//	path := f.Png
+//	if !utils.ExistsFiles(path) {
+//		path = f.Jpg
+//	}
+//	if !utils.ExistsFiles(path) {
+//		path = f.Path
+//	}
+//	res := "data:image/png;base64," + utils.ImageToString(path)
+//	return res
+//
+//}
+
+//func (f *Movie) SetPngBase64() {
+//	path := f.Png
+//	if !utils.ExistsFiles(path) {
+//		path = f.Jpg
+//	}
+//	if !utils.ExistsFiles(path) {
+//		path = f.Path
+//	}
+//	res := "data:image/png;base64," + utils.ImageToString(path)
+//	f.PngBase = res
+//
+//}
+
+//func (f Movie) GetPng() string {
+//	path := f.Path
+//	return utils.GetPng(path, "png")
+//}
