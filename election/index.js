@@ -12,7 +12,7 @@ app.whenReady().then(() => {
     win = createWindow()
     // syetem.exec("C:\\Windows\\System32\\cmd.exe start ./app/appVue.exe")
     syetem.exec("start src/app/appVue.exe")
-    win.loadURL("http:\\127.0.0.1")
+    win.loadURL("http://127.0.0.1:8081/home")
     app.on('window-all-closed', function () {
         if (process.platform !== 'darwin') app.quit()
     })
@@ -20,4 +20,3 @@ app.whenReady().then(() => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
 })
-

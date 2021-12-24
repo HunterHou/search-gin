@@ -9,7 +9,8 @@
   },
   "author": "hunter",
   "license": "ISC",
-  "devDependencies": {
-    "electron": "^16.0.1"
+  "devDependencies": {},
+  "dependencies": {
+    "electrion": "0.0.1-security"
   }
 }
