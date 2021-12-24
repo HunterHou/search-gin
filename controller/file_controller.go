@@ -265,7 +265,7 @@ func GetImageList(c *gin.Context) {
 		c.JSON(http.StatusOK, result)
 		return
 	}
-	curFile.JpgUrl = newFile.Jpg
+	curFile.Jpg = newFile.Jpg
 	curFile.ImageList = newFile.ImageList
 	curFile.Actress = newFile.Actress
 	result = serviceFile.DownImage(curFile)

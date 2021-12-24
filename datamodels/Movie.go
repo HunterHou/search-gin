@@ -28,6 +28,15 @@ type Movie struct {
 	MovieType string
 	ImageBase string
 	ImageList []string
+
+	Studio   string
+	Supplier string
+	Length   string
+	Series   string
+	Director string
+	Title    string
+	PngUrl   string
+	JpgUrl   string
 }
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
