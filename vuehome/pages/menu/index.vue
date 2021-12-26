@@ -35,6 +35,7 @@
           type="success"
           size="mini"
           icon="el-icon-location"
+          :loading="refreshIndexFlag"
           @click="refreshIndex()"
           >索引
         </el-button>
@@ -360,63 +361,65 @@
     ></el-pagination>
     <!-- 弹窗 -->
     <el-dialog
-      width="72%"
+      width="70%"
       :modal="true"
       :lock-scroll="true"
       :title="file.Name"
       :visible.sync="dialogVisible"
     >
       <div v-if="file">
-        <div @click="gotoContext(file.Id)">
-          <el-image
-            :src="getJpg(file.Id)"
-            style="magin: 0 0; width: 80%; height: auto"
-          />
+        <div
+          @click="gotoContext(file.Id)"
+          style="margin: 10px auto; width: 90%; height: auto"
+        >
+          <el-image :src="getJpg(file.Id)" />
+           <el-divider></el-divider>
+          <el-row :gutter="24"></el-row>
+          <el-row :gutter="20">
+            <el-col :span="4">
+              <span>番:</span>
+            </el-col>
+            <el-col :span="16">
+              <a href="javascript:void(0);" @click="openLick(file.Code)"
+                ><span>{{ file.Code }}</span></a
+              >
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="4">
+              <span>脸谱:</span>
+            </el-col>
+            <el-col :span="16">
+              <a href="javascript:void(0);" @click="openSearch(file.Actress)">
+                <span>{{ file.Actress }}</span></a
+              >
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="4"><span>时间:</span></el-col>
+            '
+            <el-col :span="16">
+              <span>{{ file.MTime }}</span>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="4">
+              <span>大小:</span>
+            </el-col>
+            <el-col :span="16">
+              <span>{{ file.SizeStr }}</span>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="4">
+              <span>源:</span>
+            </el-col>
+            <el-col :span="16">
+              <span>{{ file.Path }}</span>
+            </el-col>
+          </el-row>
+           <el-divider></el-divider>
         </div>
-        <el-row :gutter="24"></el-row>
-        <el-row :gutter="20">
-          <el-col :span="4">
-            <span>番:</span>
-          </el-col>
-          <el-col :span="16">
-            <a href="javascript:void(0);" @click="openLick(file.Code)"
-              ><span>{{ file.Code }}</span></a
-            >
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="4">
-            <span>脸谱:</span>
-          </el-col>
-          <el-col :span="16">
-            <a href="javascript:void(0);" @click="openSearch(file.Actress)">
-              <span>{{ file.Actress }}</span></a
-            >
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="4"><span>时间:</span></el-col>
-          '
-          <el-col :span="16">
-            <span>{{ file.MTime }}</span>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="4">
-            <span>大小:</span>
-          </el-col>
-          <el-col :span="16">
-            <span>{{ file.SizeStr }}</span>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="4">
-            <span>源:</span>
-          </el-col>
-          <el-col :span="16">
-            <span>{{ file.Path }}</span>
-          </el-col>
-        </el-row>
       </div>
       <div
         v-for="(item, index) in sourceList"
@@ -431,6 +434,8 @@
         >
         </el-image>
       </div>
+           <el-divider></el-divider>
+
     </el-dialog>
     <el-dialog
       title="文件信息"
@@ -504,6 +509,7 @@ export default {
       formItem: {}, //编辑弹窗模型
       IndexProgress: false,
       clickId: "",
+      refreshIndexFlag: false,
     };
   },
   created() {
@@ -776,10 +782,12 @@ export default {
     },
 
     refreshIndex() {
+      this.refreshIndexFlag = true;
       axios.get("api/refreshIndex").then((res) => {
         if (res.status === 200) {
           this.alertSuccess(res.data.Message);
           this.queryList();
+          this.refreshIndexFlag = false;
         }
       });
     },

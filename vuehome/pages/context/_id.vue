@@ -75,7 +75,7 @@
       <el-col :span="3">
         <el-link>
           <i
-            class="el-icon-refresh icon-style"
+            class="icon-style"
             title="刷新"
             @click="$router.go(0)"
             >F5</i
@@ -95,7 +95,7 @@
         <div style="margin: 0 auto">
           <el-row :gutter="20" :offset="2">
             <el-image
-              :src="file.JpgUrl"
+              :src="'api/jpg/'+file.Id"
               style="
                 display: flex;
                 max-width: 900px;
