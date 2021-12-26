@@ -136,7 +136,28 @@
         <v-contextmenu-item @click="handleClick"
           ><i
             :underline="false"
-            class="el-icon-refresh "
+            class="el-icon-video-play"
+            style="margin: 0 4px"
+            title="播放"
+            action="play"
+            >播放</i
+          ></v-contextmenu-item
+        >
+
+        <v-contextmenu-item @click="handleClick"
+          ><i
+            :underline="false"
+            class="el-icon-folder-opened"
+            style="margin: 0 4px"
+            title="文件夹"
+            action="fold"
+            >文件夹</i
+          ></v-contextmenu-item
+        >
+        <v-contextmenu-item @click="handleClick"
+          ><i
+            :underline="false"
+            class="el-icon-refresh"
             style="margin: 0 4px"
             title="同步"
             action="sync"
@@ -146,7 +167,7 @@
         <v-contextmenu-item @click="handleClick">
           <i
             :underline="false"
-            class="el-icon-download "
+            class="el-icon-download"
             style="margin: 0 4px"
             title="刮图"
             action="downImage"
@@ -156,7 +177,7 @@
         <v-contextmenu-item @click="handleClick">
           <i
             :underline="false"
-            class="el-icon-delete "
+            class="el-icon-delete"
             style="margin: 0 4px"
             title="删除"
             action="delete"
@@ -542,6 +563,10 @@ export default {
 
       if ("sync" == title) {
         this.syncThis(clickId);
+      } else if ("play" == title) {
+        this.playThis(clickId);
+      } else if ("fold" == title) {
+        this.openThisFolder(clickId);
       } else if ("downImage" == title) {
         this.getImageList(clickId, 2);
       } else if ("delete" == title) {
