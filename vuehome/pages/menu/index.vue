@@ -152,7 +152,7 @@
             style="margin: 0 4px"
             title="文件夹"
             action="fold"
-            >文件夹</i
+            >文夹</i
           ></v-contextmenu-item
         >
         <v-contextmenu-item @click="handleClick"
