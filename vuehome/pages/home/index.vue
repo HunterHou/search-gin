@@ -19,6 +19,9 @@ export default {
       tableData: [],
     };
   },
+   mounted(){
+     document.title="首页"
+  },
   created() {
     this.loadData();
   },

@@ -137,6 +137,7 @@ export default {
     };
   },
   mounted() {
+    document.title="脸谱"
     this.$nextTick(() => {
       this.$nuxt.$loading.start();
       this.fetch();

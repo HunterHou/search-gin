@@ -7,6 +7,9 @@
 export default {
   created() {
     this.$router.push("/home")
+  },
+  mounted(){
+     document.title="设置"
   }
 }
 </script>
