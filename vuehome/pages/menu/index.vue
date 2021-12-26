@@ -351,6 +351,7 @@
     </div>
     <el-pagination
       class="pageTool"
+      background
       :page-sizes="pageSizes"
       :page-size="pageSize"
       @size-change="handleSizeChange"
@@ -1074,6 +1075,7 @@ export default {
   bottom: 4px;
   overflow: auto;
   z-index: 999;
+  margin-bottom: 8px;
 }
 
 /*.pagination {*/
