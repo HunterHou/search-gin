@@ -24,7 +24,7 @@ func DirpathForId(path string) (string, string) {
 		}
 		if length > 30 {
 			newpath += curArr[0:14]
-			newpath += "..."
+			newpath += "_" + fmt.Sprintf("%d", (length-30)) + "_"
 			newpath += curArr[length-15 : length]
 		} else {
 			newpath += curArr
