@@ -2,12 +2,9 @@ package datasource
 
 import (
 	"sort"
-	"strings"
 
 	"search-gin/datamodels"
-	"search-gin/utils"
-
-	"github.com/huichen/sego"
+	// "github.com/huichen/sego"
 )
 
 var DefSortField = "MTime"
@@ -27,78 +24,78 @@ var SupplierLib = map[string]datamodels.Supplier{}
 
 var IndexData = map[string][]string{}
 
-var segmenter sego.Segmenter
-var segmenterFlag = false
+// var segmenter sego.Segmenter
+// var segmenterFlag = false
 
-func LoadDictionary() {
-	//  载入词典
-	segmenter.LoadDictionary("./data/dictionary.txt")
-	segmenterFlag = true
-}
+// func LoadDictionary() {
+// 	//  载入词典
+// 	segmenter.LoadDictionary("./data/dictionary.txt")
+// 	segmenterFlag = true
+// }
 
-func GoAddMovieByPage(movie []datamodels.Movie, pageSize int, indexOver *bool) {
-	*indexOver = false
-	IndexData = map[string][]string{}
-	AddMovieByPage(movie, pageSize)
-	*indexOver = true
-}
+// func GoAddMovieByPage(movie []datamodels.Movie, pageSize int, indexOver *bool) {
+// 	*indexOver = false
+// 	IndexData = map[string][]string{}
+// 	AddMovieByPage(movie, pageSize)
+// 	*indexOver = true
+// }
 
-func AddMovieByPage(movie []datamodels.Movie, pageSize int) {
-	start := 0
-	length := len(movie)
-	var current []datamodels.Movie
-	for i := 0; i < len(movie); i++ {
-		start++
-		current = append(current, movie[i])
-		if start == pageSize || start == (length-1) {
-			addMovie(current)
-			start = 0
-		}
-	}
-}
+// func AddMovieByPage(movie []datamodels.Movie, pageSize int) {
+// 	start := 0
+// 	length := len(movie)
+// 	var current []datamodels.Movie
+// 	for i := 0; i < len(movie); i++ {
+// 		start++
+// 		current = append(current, movie[i])
+// 		if start == pageSize || start == (length-1) {
+// 			addMovie(current)
+// 			start = 0
+// 		}
+// 	}
+// }
 
-func addMovie(movie []datamodels.Movie) {
-	for i := 0; i < len(movie); i++ {
-		updateSearchData(movie[i])
-	}
-}
+// func addMovie(movie []datamodels.Movie) {
+// 	for i := 0; i < len(movie); i++ {
+// 		updateSearchData(movie[i])
+// 	}
+// }
 
-// 更新搜索库
-func updateSearchData(movie datamodels.Movie) {
-	words := []string{movie.Actress, movie.Code}
-	words = utils.ExtandsItems(words, getKeywords(movie.Name))
-	words = utils.RemoveItem(words, " ")
-	for i := 0; i < len(words); i++ {
-		word := strings.TrimSpace(words[i])
-		arr, ok := IndexData[word]
-		if ok {
-			if utils.HasItem(arr, movie.Id) {
-				continue
-			}
-			arr = append(arr, movie.Id)
-		} else {
-			arr = []string{movie.Id}
-		}
-		IndexData[word] = arr
-	}
-}
+// // 更新搜索库
+// func updateSearchData(movie datamodels.Movie) {
+// 	words := []string{movie.Actress, movie.Code}
+// 	words = utils.ExtandsItems(words, getKeywords(movie.Name))
+// 	words = utils.RemoveItem(words, " ")
+// 	for i := 0; i < len(words); i++ {
+// 		word := strings.TrimSpace(words[i])
+// 		arr, ok := IndexData[word]
+// 		if ok {
+// 			if utils.HasItem(arr, movie.Id) {
+// 				continue
+// 			}
+// 			arr = append(arr, movie.Id)
+// 		} else {
+// 			arr = []string{movie.Id}
+// 		}
+// 		IndexData[word] = arr
+// 	}
+// }
 
-//分词
-func getKeywords(str string) []string {
-	text := []byte(str)
-	if !segmenterFlag {
-		LoadDictionary()
-	}
-	segments := segmenter.Segment(text)
-	arr := sego.SegmentsToSlice(segments, true)
-	arr = utils.RemoveItem(arr, "-")
-	arr = utils.RemoveItem(arr, "[")
-	arr = utils.RemoveItem(arr, "_")
-	arr = utils.RemoveItem(arr, ".")
-	arr = utils.RemoveItem(arr, "{")
-	arr = utils.RemoveItem(arr, "}")
-	return arr
-}
+// //分词
+// func getKeywords(str string) []string {
+// 	text := []byte(str)
+// 	if !segmenterFlag {
+// 		LoadDictionary()
+// 	}
+// 	segments := segmenter.Segment(text)
+// 	arr := sego.SegmentsToSlice(segments, true)
+// 	arr = utils.RemoveItem(arr, "-")
+// 	arr = utils.RemoveItem(arr, "[")
+// 	arr = utils.RemoveItem(arr, "_")
+// 	arr = utils.RemoveItem(arr, ".")
+// 	arr = utils.RemoveItem(arr, "{")
+// 	arr = utils.RemoveItem(arr, "}")
+// 	return arr
+// }
 
 func SortMovieForce() {
 	if CurSortField == "" {

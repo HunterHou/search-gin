@@ -123,77 +123,94 @@
         <el-divider direction="vertical"></el-divider>
       </el-col>
     </el-row>
+
+    <v-contextmenu
+      ref="contextmenu"
+      :theme="theme"
+      @contextmenu="handleContextmenu"
+    >
+      <v-contextmenu-item @click="handleClick"
+        ><i
+          :underline="false"
+          class="el-icon-video-play"
+          style="margin: 0 4px"
+          title="播放"
+          action="play"
+          >播放</i
+        ></v-contextmenu-item
+      >
+
+      <v-contextmenu-item @click="handleClick"
+        ><i
+          :underline="false"
+          class="el-icon-share"
+          style="margin: 0 4px"
+          title="链接"
+          action="sourceLink"
+          >链接</i
+        ></v-contextmenu-item
+      >
+
+      <v-contextmenu-item @click="handleClick"
+        ><i
+          :underline="false"
+          class="el-icon-folder-opened"
+          style="margin: 0 4px"
+          title="文件夹"
+          action="fold"
+          >文夹</i
+        ></v-contextmenu-item
+      >
+      <v-contextmenu-item @click="handleClick"
+        ><i
+          :underline="false"
+          class="el-icon-refresh"
+          style="margin: 0 4px"
+          title="同步"
+          action="sync"
+          >同步</i
+        ></v-contextmenu-item
+      >
+      <v-contextmenu-item @click="handleClick">
+        <i
+          :underline="false"
+          class="el-icon-download"
+          style="margin: 0 4px"
+          title="刮图"
+          action="downImage"
+          >刮图</i
+        >
+      </v-contextmenu-item>
+      <v-contextmenu-item @click="handleClick">
+        <i
+          :underline="false"
+          class="el-icon-delete"
+          style="margin: 0 4px"
+          title="删除"
+          action="delete"
+          >删除</i
+        >
+      </v-contextmenu-item>
+    </v-contextmenu>
+
     <div
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       style="margin-top: 10px; padding-buttom: 40px"
     >
-      <v-contextmenu
-        ref="contextmenu"
-        :theme="theme"
-        @contextmenu="handleContextmenu"
-      >
-        <v-contextmenu-item @click="handleClick"
-          ><i
-            :underline="false"
-            class="el-icon-video-play"
-            style="margin: 0 4px"
-            title="播放"
-            action="play"
-            >播放</i
-          ></v-contextmenu-item
-        >
-
-        <v-contextmenu-item @click="handleClick"
-          ><i
-            :underline="false"
-            class="el-icon-folder-opened"
-            style="margin: 0 4px"
-            title="文件夹"
-            action="fold"
-            >文夹</i
-          ></v-contextmenu-item
-        >
-        <v-contextmenu-item @click="handleClick"
-          ><i
-            :underline="false"
-            class="el-icon-refresh"
-            style="margin: 0 4px"
-            title="同步"
-            action="sync"
-            >同步</i
-          ></v-contextmenu-item
-        >
-        <v-contextmenu-item @click="handleClick">
-          <i
-            :underline="false"
-            class="el-icon-download"
-            style="margin: 0 4px"
-            title="刮图"
-            action="downImage"
-            >刮图</i
-          >
-        </v-contextmenu-item>
-        <v-contextmenu-item @click="handleClick">
-          <i
-            :underline="false"
-            class="el-icon-delete"
-            style="margin: 0 4px"
-            title="删除"
-            action="delete"
-            >删除</i
-          >
-        </v-contextmenu-item>
-      </v-contextmenu>
-
       <li
         style="overflow: auto"
         :class="isShowCover() ? 'list-item-cover' : 'list-item'"
         v-for="item in dataList"
         :key="item.Id"
       >
-        <div :class="[theme]" v-contextmenu:contextmenu :key="item.Id">
+        <div
+          :class="[theme]"
+          v-contextmenu:contextmenu
+          :key="item.Id"
+          :code="item.Code"
+        >
           <div
             v-if="item"
             @click="openWin(item.Id)"
@@ -374,7 +391,7 @@
           style="margin: 10px auto; width: 90%; height: auto"
         >
           <el-image :src="getJpg(file.Id)" />
-           <el-divider></el-divider>
+          <el-divider></el-divider>
           <el-row :gutter="24"></el-row>
           <el-row :gutter="20">
             <el-col :span="4">
@@ -419,7 +436,7 @@
               <span>{{ file.Path }}</span>
             </el-col>
           </el-row>
-           <el-divider></el-divider>
+          <el-divider></el-divider>
         </div>
       </div>
       <div
@@ -435,8 +452,7 @@
         >
         </el-image>
       </div>
-           <el-divider></el-divider>
-
+      <el-divider></el-divider>
     </el-dialog>
     <el-dialog
       title="文件信息"
@@ -509,7 +525,11 @@ export default {
       suggestions: [], //搜索框 提示
       formItem: {}, //编辑弹窗模型
       IndexProgress: false,
-      clickId: "",
+      rightClick: {
+        clickId: "",
+        clickCode: "",
+      },
+
       refreshIndexFlag: false,
     };
   },
@@ -566,7 +586,7 @@ export default {
     handleClick(vm, event) {
       var buttom = vm.$slots.default[0];
       var title = buttom.data.attrs.action;
-      var clickId = this.clickId;
+      var { clickId, clickCode } = this.rightClick;
 
       if ("sync" == title) {
         this.syncThis(clickId);
@@ -578,11 +598,16 @@ export default {
         this.getImageList(clickId, 2);
       } else if ("delete" == title) {
         this.deleteThis(clickId, 2);
+      } else if ("sourceLink" == title) {
+        window.open(`${this.baseUrl}/${clickCode}`, "_blank");
       }
     },
     //确定点击的区域Id
     handleContextmenu(vnode) {
-      this.clickId = vnode.key;
+      this.rightClick = {
+        clickId: vnode.key,
+        clickCode: vnode.code,
+      };
     },
 
     getPng(Id) {

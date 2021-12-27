@@ -14,132 +14,132 @@
 
 package data
 
-import (
-	"fmt"
+// import (
+// 	"fmt"
 
-	"github.com/blevesearch/bleve/analysis"
-	"github.com/blevesearch/bleve/registry"
-)
+// 	"github.com/blevesearch/bleve/analysis"
+// 	"github.com/blevesearch/bleve/registry"
+// )
 
-const Name = "custom"
+// const Name = "custom"
 
-func AnalyzerConstructor(config map[string]interface{}, cache *registry.Cache) (*analysis.Analyzer, error) {
+// func AnalyzerConstructor(config map[string]interface{}, cache *registry.Cache) (*analysis.Analyzer, error) {
 
-	var err error
-	var charFilters []analysis.CharFilter
-	charFiltersValue, ok := config["char_filters"]
-	if ok {
-		switch charFiltersValue := charFiltersValue.(type) {
-		case []string:
-			charFilters, err = getCharFilters(charFiltersValue, cache)
-			if err != nil {
-				return nil, err
-			}
-		case []interface{}:
-			charFiltersNames, err := convertInterfaceSliceToStringSlice(charFiltersValue, "char filter")
-			if err != nil {
-				return nil, err
-			}
-			charFilters, err = getCharFilters(charFiltersNames, cache)
-			if err != nil {
-				return nil, err
-			}
-		default:
-			return nil, fmt.Errorf("unsupported type for char_filters, must be slice")
-		}
-	}
+// 	var err error
+// 	var charFilters []analysis.CharFilter
+// 	charFiltersValue, ok := config["char_filters"]
+// 	if ok {
+// 		switch charFiltersValue := charFiltersValue.(type) {
+// 		case []string:
+// 			charFilters, err = getCharFilters(charFiltersValue, cache)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 		case []interface{}:
+// 			charFiltersNames, err := convertInterfaceSliceToStringSlice(charFiltersValue, "char filter")
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			charFilters, err = getCharFilters(charFiltersNames, cache)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 		default:
+// 			return nil, fmt.Errorf("unsupported type for char_filters, must be slice")
+// 		}
+// 	}
 
-	var tokenizerName string
-	tokenizerValue, ok := config["tokenizer"]
-	if ok {
-		tokenizerName, ok = tokenizerValue.(string)
-		if !ok {
-			return nil, fmt.Errorf("must specify tokenizer as string")
-		}
-	} else {
-		return nil, fmt.Errorf("must specify tokenizer")
-	}
+// 	var tokenizerName string
+// 	tokenizerValue, ok := config["tokenizer"]
+// 	if ok {
+// 		tokenizerName, ok = tokenizerValue.(string)
+// 		if !ok {
+// 			return nil, fmt.Errorf("must specify tokenizer as string")
+// 		}
+// 	} else {
+// 		return nil, fmt.Errorf("must specify tokenizer")
+// 	}
 
-	tokenizer, err := cache.TokenizerNamed(tokenizerName)
-	if err != nil {
-		return nil, err
-	}
+// 	tokenizer, err := cache.TokenizerNamed(tokenizerName)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	var tokenFilters []analysis.TokenFilter
-	tokenFiltersValue, ok := config["token_filters"]
-	if ok {
-		switch tokenFiltersValue := tokenFiltersValue.(type) {
-		case []string:
-			tokenFilters, err = getTokenFilters(tokenFiltersValue, cache)
-			if err != nil {
-				return nil, err
-			}
-		case []interface{}:
-			tokenFiltersNames, err := convertInterfaceSliceToStringSlice(tokenFiltersValue, "token filter")
-			if err != nil {
-				return nil, err
-			}
-			tokenFilters, err = getTokenFilters(tokenFiltersNames, cache)
-			if err != nil {
-				return nil, err
-			}
-		default:
-			return nil, fmt.Errorf("unsupported type for token_filters, must be slice")
-		}
-	}
+// 	var tokenFilters []analysis.TokenFilter
+// 	tokenFiltersValue, ok := config["token_filters"]
+// 	if ok {
+// 		switch tokenFiltersValue := tokenFiltersValue.(type) {
+// 		case []string:
+// 			tokenFilters, err = getTokenFilters(tokenFiltersValue, cache)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 		case []interface{}:
+// 			tokenFiltersNames, err := convertInterfaceSliceToStringSlice(tokenFiltersValue, "token filter")
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			tokenFilters, err = getTokenFilters(tokenFiltersNames, cache)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 		default:
+// 			return nil, fmt.Errorf("unsupported type for token_filters, must be slice")
+// 		}
+// 	}
 
-	rv := analysis.Analyzer{
-		Tokenizer: tokenizer,
-	}
-	if charFilters != nil {
-		rv.CharFilters = charFilters
-	}
-	if tokenFilters != nil {
-		rv.TokenFilters = tokenFilters
-	}
-	return &rv, nil
-}
+// 	rv := analysis.Analyzer{
+// 		Tokenizer: tokenizer,
+// 	}
+// 	if charFilters != nil {
+// 		rv.CharFilters = charFilters
+// 	}
+// 	if tokenFilters != nil {
+// 		rv.TokenFilters = tokenFilters
+// 	}
+// 	return &rv, nil
+// }
 
-func init() {
-	registry.RegisterAnalyzer(Name, AnalyzerConstructor)
-}
+// func init() {
+// 	registry.RegisterAnalyzer(Name, AnalyzerConstructor)
+// }
 
-func getCharFilters(charFilterNames []string, cache *registry.Cache) ([]analysis.CharFilter, error) {
-	charFilters := make([]analysis.CharFilter, len(charFilterNames))
-	for i, charFilterName := range charFilterNames {
-		charFilter, err := cache.CharFilterNamed(charFilterName)
-		if err != nil {
-			return nil, err
-		}
-		charFilters[i] = charFilter
-	}
+// func getCharFilters(charFilterNames []string, cache *registry.Cache) ([]analysis.CharFilter, error) {
+// 	charFilters := make([]analysis.CharFilter, len(charFilterNames))
+// 	for i, charFilterName := range charFilterNames {
+// 		charFilter, err := cache.CharFilterNamed(charFilterName)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		charFilters[i] = charFilter
+// 	}
 
-	return charFilters, nil
-}
+// 	return charFilters, nil
+// }
 
-func getTokenFilters(tokenFilterNames []string, cache *registry.Cache) ([]analysis.TokenFilter, error) {
-	tokenFilters := make([]analysis.TokenFilter, len(tokenFilterNames))
-	for i, tokenFilterName := range tokenFilterNames {
-		tokenFilter, err := cache.TokenFilterNamed(tokenFilterName)
-		if err != nil {
-			return nil, err
-		}
-		tokenFilters[i] = tokenFilter
-	}
+// func getTokenFilters(tokenFilterNames []string, cache *registry.Cache) ([]analysis.TokenFilter, error) {
+// 	tokenFilters := make([]analysis.TokenFilter, len(tokenFilterNames))
+// 	for i, tokenFilterName := range tokenFilterNames {
+// 		tokenFilter, err := cache.TokenFilterNamed(tokenFilterName)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		tokenFilters[i] = tokenFilter
+// 	}
 
-	return tokenFilters, nil
-}
+// 	return tokenFilters, nil
+// }
 
-func convertInterfaceSliceToStringSlice(interfaceSlice []interface{}, objType string) ([]string, error) {
-	stringSlice := make([]string, len(interfaceSlice))
-	for i, interfaceObj := range interfaceSlice {
-		stringObj, ok := interfaceObj.(string)
-		if ok {
-			stringSlice[i] = stringObj
-		} else {
-			return nil, fmt.Errorf(objType + " name must be a string")
-		}
-	}
+// func convertInterfaceSliceToStringSlice(interfaceSlice []interface{}, objType string) ([]string, error) {
+// 	stringSlice := make([]string, len(interfaceSlice))
+// 	for i, interfaceObj := range interfaceSlice {
+// 		stringObj, ok := interfaceObj.(string)
+// 		if ok {
+// 			stringSlice[i] = stringObj
+// 		} else {
+// 			return nil, fmt.Errorf(objType + " name must be a string")
+// 		}
+// 	}
 
-	return stringSlice, nil
-}
+// 	return stringSlice, nil
+// }

@@ -1,30 +1,30 @@
 package data
 
-import (
-	"sync"
+// import (
+// 	"sync"
 
-	"github.com/tukdesk/sego"
-)
+// 	"github.com/tukdesk/sego"
+// )
 
-var (
-	dictSegmenterMap      = map[string]*sego.Segmenter{}
-	dictSegmenterMapMutex sync.Mutex
-)
+// var (
+// 	dictSegmenterMap      = map[string]*sego.Segmenter{}
+// 	dictSegmenterMapMutex sync.Mutex
+// )
 
-func getSegoSegmenter(dictFiles string) (*sego.Segmenter, error) {
-	dictSegmenterMapMutex.Lock()
-	defer dictSegmenterMapMutex.Unlock()
+// func getSegoSegmenter(dictFiles string) (*sego.Segmenter, error) {
+// 	dictSegmenterMapMutex.Lock()
+// 	defer dictSegmenterMapMutex.Unlock()
 
-	if segmenter, ok := dictSegmenterMap[dictFiles]; ok {
-		return segmenter, nil
-	}
+// 	if segmenter, ok := dictSegmenterMap[dictFiles]; ok {
+// 		return segmenter, nil
+// 	}
 
-	segmenter := new(sego.Segmenter)
-	if err := segmenter.LoadDictionary(dictFiles); err != nil {
-		return nil, err
-	}
+// 	segmenter := new(sego.Segmenter)
+// 	if err := segmenter.LoadDictionary(dictFiles); err != nil {
+// 		return nil, err
+// 	}
 
-	dictSegmenterMap[dictFiles] = segmenter
+// 	dictSegmenterMap[dictFiles] = segmenter
 
-	return segmenter, nil
-}
+// 	return segmenter, nil
+// }
