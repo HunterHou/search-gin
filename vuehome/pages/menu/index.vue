@@ -606,7 +606,7 @@ export default {
     handleContextmenu(vnode) {
       this.rightClick = {
         clickId: vnode.key,
-        clickCode: vnode.code,
+        clickCode: vnode.data.attrs["code"],
       };
     },
 
