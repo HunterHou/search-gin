@@ -2,6 +2,7 @@ package debugTest
 
 import (
 	"fmt"
+	"search-gin/utils"
 	"testing"
 
 	"github.com/huichen/sego"
@@ -23,4 +24,11 @@ func TestWorld(t *testing.T) {
 		fmt.Println(str[i])
 	}
 
+}
+
+func TestId(t *testing.T) {
+	Id := "D:\\emby\\泰勒·斯威夫特5K壁纸图片_彼岸图网{{斯巴达}}\\泰勒·斯威夫特5K壁纸图片_彼岸图网{{斯巴达}}泰勒·斯威夫特5K壁纸图片_彼岸图网{{斯巴达}}泰勒·斯威夫特5K壁纸图片_彼岸图网{{斯巴达}}\\泰勒·斯威夫特5K壁纸图片_彼岸图网{{斯巴达}}泰勒·斯威夫特5K壁纸图片_彼岸图网{{斯巴达}}泰勒·斯威夫特5K壁纸图片_彼岸图网{{斯巴达}}.jpeg"
+	id, pId := utils.DirpathForId(Id)
+	fmt.Println(id)
+	fmt.Println(pId)
 }

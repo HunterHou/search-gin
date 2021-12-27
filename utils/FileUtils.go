@@ -13,7 +13,24 @@ func DirpathForId(path string) (string, string) {
 	id, _ := url.QueryUnescape(path)
 	id = strings.ReplaceAll(id, "\\\\", "\\")
 	id = strings.ReplaceAll(id, "\\", "~")
-	newpath := strings.ReplaceAll(id, "~", "\\")
+	id = strings.ReplaceAll(id, "\\", "~")
+	arr := strings.Split(id, "~")
+	newpath := ""
+	for i := 0; i < len(arr); i++ {
+		curArr := arr[i]
+		length := len(curArr)
+		if i != 0 {
+			newpath += "~"
+		}
+		if length > 30 {
+			newpath += curArr[0:14]
+			newpath += "..."
+			newpath += curArr[length-15 : length]
+		} else {
+			newpath += curArr
+		}
+
+	}
 	return id, newpath
 }
 
