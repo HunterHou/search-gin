@@ -776,8 +776,15 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
 		size = size + curFile.Size
-		// curFile.Id = fmt.Sprint(i)
-		filemap[curFile.Id] = curFile
+		existMoive, ok := filemap[curFile.Id]
+		if ok {
+			//重名处理
+			existMoive.SetId(existMoive.Id + fmt.Sprint(i))
+			filemap[existMoive.Id] = existMoive
+		} else {
+			filemap[curFile.Id] = curFile
+		}
+
 		curActress, ok := actessmap[curFile.Actress]
 		if ok {
 			curActress.PlusCnt()
