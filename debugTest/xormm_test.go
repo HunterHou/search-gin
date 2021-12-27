@@ -2,11 +2,26 @@ package debugTest
 
 import (
 	"fmt"
+	_ "github.com/mattn/go-sqlite3"
 	"testing"
 	"xorm.io/xorm"
-
-	_ "github.com/mattn/go-sqlite3"
 )
+
+func TestXormQ(t *testing.T) {
+	engine, err := xorm.NewEngine("sqlite3", "test")
+	if err != nil {
+		t.Log(err)
+	}
+	var res []Libb
+	err = engine.Table("libb").Where("value like ? ", "%value%").Find(&res)
+	if err != nil {
+		t.Log(err)
+	}
+	for _, re := range res {
+		t.Logf("%v", re)
+	}
+
+}
 
 func TestXorm(t *testing.T) {
 	engine, err := xorm.NewEngine("sqlite3", "test")
