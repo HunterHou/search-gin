@@ -28,10 +28,12 @@ var SupplierLib = map[string]datamodels.Supplier{}
 var IndexData = map[string][]string{}
 
 var segmenter sego.Segmenter
+var segmenterFlag = false
 
-func init() {
+func LoadDictionary() {
 	//  载入词典
-	// segmenter.LoadDictionary("./data/dictionary.txt")
+	segmenter.LoadDictionary("./data/dictionary.txt")
+	segmenterFlag = true
 }
 
 func GoAddMovieByPage(movie []datamodels.Movie, pageSize int, indexOver *bool) {
@@ -84,6 +86,9 @@ func updateSearchData(movie datamodels.Movie) {
 //分词
 func getKeywords(str string) []string {
 	text := []byte(str)
+	if !segmenterFlag {
+		LoadDictionary()
+	}
 	segments := segmenter.Segment(text)
 	arr := sego.SegmentsToSlice(segments, true)
 	arr = utils.RemoveItem(arr, "-")
