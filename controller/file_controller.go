@@ -101,6 +101,7 @@ func PostMovies(c *gin.Context) {
 	result.PageSize = pageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
 	result.SetResultCnt(result.TotalCnt, pageNo)
+	result.IndexProgress = cons.IndexOver
 	c.JSON(http.StatusOK, result)
 }
 func GetLastInfo(c *gin.Context) {

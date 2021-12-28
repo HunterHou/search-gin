@@ -45,7 +45,6 @@ func CreateOrmService() OrmService {
 	service.DriveName(driveName)
 	service.DataSourceName(dataSourceName)
 	service.Builder()
-	service.SyncMovieTable()
 	return service
 }
 
@@ -91,7 +90,7 @@ func (o *OrmService) queryCount(param datamodels.SearchParam) (int64, int64) {
 
 func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 	total := int64(len(movies))
-	pageSize := int64(1000)
+	pageSize := int64(3000)
 	totalPage := total/pageSize + 1
 	startIndex := 0
 	var wg sync.WaitGroup
