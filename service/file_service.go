@@ -575,7 +575,7 @@ func (fs FileService) Delete(id string) {
 func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	datasource.FileLib = make(map[string]datamodels.Movie)
 	files := Walks(baseDir, types)
-	fileMap, actressMap, supplierMap, fileSize := ArrayToMap(files)
+	fileMap, actressMap, _, fileSize := ArrayToMap(files)
 	var newFiles []datamodels.Movie
 	for _, item := range fileMap {
 		newFiles = append(newFiles, item)
@@ -593,7 +593,7 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 		newActress = append(newActress, item)
 	}
 	datasource.ActressList = newActress
-	datasource.SupplierLib = supplierMap
+	//datasource.SupplierLib = supplierMap
 	datasource.FileSize = fileSize
 
 }
