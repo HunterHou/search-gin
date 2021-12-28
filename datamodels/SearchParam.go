@@ -30,6 +30,10 @@ func (p *SearchParam) GetKeywords() string {
 	p.Keyword = strings.TrimSpace(p.Keyword)
 	return p.Keyword
 }
+func (p *SearchParam) GetFuzzyKeywords() string {
+	p.Keyword = strings.TrimSpace(p.Keyword)
+	return "%" + p.Keyword + "%"
+}
 
 func (p *SearchParam) GetMovieType() string {
 	p.MovieType = strings.TrimSpace(p.MovieType)

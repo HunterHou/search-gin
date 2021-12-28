@@ -628,8 +628,6 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	datasource.FileLib = fileMap
 	datasource.FileList = newFiles
 
-	// go datasource.GoAddMovieByPage(newFiles, 1000, &cons.IndexOver)
-
 	datasource.ActressLib = actressMap
 	// 添加索引
 
@@ -822,7 +820,6 @@ func Walks(baseDir []string, types []string) []datamodels.Movie {
 		}
 		result = ExpandsMovie(result, data)
 	}
-	// go AllIndex(result, &cons.IndexOver)
 	return result
 
 }

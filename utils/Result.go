@@ -2,7 +2,8 @@ package utils
 
 type Result struct {
 	MessageCode
-	Data interface{}
+	Data       interface{}
+	EffectRows int64
 }
 
 func (res *Result) Success() {
