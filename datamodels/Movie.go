@@ -9,7 +9,7 @@ import (
 
 // Movie 声明一个File结构体 表示一个文件信息
 type Movie struct {
-	Id        string `xorm:"Text pk"  `
+	Id        string `xorm:"Varchar(1000) pk notnull"  `
 	Code      string `xorm:"Varchar(255)"`
 	Name      string `xorm:"Text"`
 	Path      string `xorm:"Text"`

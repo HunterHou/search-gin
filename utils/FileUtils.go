@@ -13,6 +13,14 @@ import (
 	"unicode"
 )
 
+var rootId = int64(0)
+
+func PKMovieId() int64 {
+	res := rootId
+	rootId++
+	return res
+}
+
 func DirpathForId(path string) (string, string) {
 	res, _ := url.QueryUnescape(path)
 	res = strings.ReplaceAll(res, "\\\\", "\\")
