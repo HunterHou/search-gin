@@ -586,7 +586,6 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	datasource.ActressLib = actressMap
 	// 添加索引
 	db := CreateOrmService()
-	db.SyncMovieTable()
 	go db.InsertBatchPage(newFiles)
 
 	var newActress []datamodels.Actress

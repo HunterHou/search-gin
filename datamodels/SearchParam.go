@@ -37,7 +37,7 @@ func (p *SearchParam) GetFuzzyKeywords() string {
 
 func (p *SearchParam) GetMovieType() string {
 	p.MovieType = strings.TrimSpace(p.MovieType)
-	return p.MovieType
+	return "%" + p.MovieType + "%"
 }
 
 func (p *SearchParam) SetOnlyRepeat(b bool) {

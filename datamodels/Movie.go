@@ -10,22 +10,22 @@ import (
 // Movie 声明一个File结构体 表示一个文件信息
 type Movie struct {
 	Id        string
-	Code      string
-	Name      string
-	Path      string
-	Png       string
-	Nfo       string
-	Srt       string
-	Jpg       string
-	Actress   string
-	FileType  string
-	DirPath   string
+	Code      string `xorm:"Varchar(255)"`
+	Name      string `xorm:"Text"`
+	Path      string `xorm:"Text"`
+	Png       string `xorm:"Text"`
+	Nfo       string `xorm:"Text"`
+	Srt       string `xorm:"Text"`
+	Jpg       string `xorm:"Text"`
+	Actress   string `xorm:"Text"`
+	FileType  string `xorm:"Text"`
+	DirPath   string `xorm:"Text"`
 	Size      int64
 	Flag      int64
 	SizeStr   string
-	CTime     string
-	MTime     string
-	PTime     string
+	CTime     string `xorm:"DateTime"`
+	MTime     string `xorm:"DateTime"`
+	PTime     string `xorm:"DateTime"`
 	MovieType string
 	ImageBase string
 	ImageList []string
@@ -36,8 +36,8 @@ type Movie struct {
 	Series   string
 	Director string
 	Title    string
-	PngUrl   string
-	JpgUrl   string
+	PngUrl   string `xorm:"Text"`
+	JpgUrl   string `xorm:"Text"`
 }
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {

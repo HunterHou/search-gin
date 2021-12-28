@@ -14,10 +14,11 @@ import (
 	"xorm.io/xorm/names"
 )
 
+var dbEngine *xorm.Engine
+
 type OrmService struct {
 	driveName      string
 	dataSourceName string
-	Engine         *xorm.Engine
 }
 
 func (o *OrmService) DriveName(driveName string) {
@@ -30,12 +31,13 @@ func (o *OrmService) DataSourceName(dataSourceName string) {
 func (o *OrmService) Builder() {
 	var err error
 	os.Remove("search-gin")
-	o.Engine, err = xorm.NewEngine("sqlite3", "search-gin")
+	dbEngine, err = xorm.NewEngine("sqlite3", "search-gin")
 	if err != nil {
 		fmt.Println(err)
 	}
-	o.Engine.ShowSQL(true)
-	o.Engine.SetMapper(names.SnakeMapper{})
+	o.SyncMovieTable()
+	dbEngine.ShowSQL(true)
+	dbEngine.SetMapper(names.SnakeMapper{})
 }
 
 func CreateOrmService() OrmService {
@@ -49,9 +51,8 @@ func CreateOrmService() OrmService {
 }
 
 func (o *OrmService) Find(Id string) datamodels.Movie {
-	engine := o.Engine
 	var res datamodels.Movie
-	has, err := engine.Where("id = ?", Id).Get(&res)
+	has, err := dbEngine.Table("movie").Where("id = ?", Id).Get(&res)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -63,11 +64,11 @@ func (o *OrmService) Find(Id string) datamodels.Movie {
 }
 
 func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, int64) {
-	engine := o.Engine
+
 	var res []datamodels.Movie
 	orderBy := strings.Join(param.GetSort(), ",")
 	orderBy = utils.Camel2Case(orderBy)
-	err := engine.Where("name like ?  ", param.GetFuzzyKeywords()).OrderBy(orderBy).Limit(param.GetPageSize(), param.StartNum()).Find(&res)
+	err := dbEngine.Where("name like ?  ", param.GetFuzzyKeywords()).And("name like ?  ", param.GetMovieType()).OrderBy(orderBy).Limit(param.GetPageSize(), param.StartNum()).Find(&res)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -79,8 +80,8 @@ func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, in
 
 }
 func (o *OrmService) queryCount(param datamodels.SearchParam) (int64, int64) {
-	engine := o.Engine
-	cnt, err := engine.Where("name like ?  ", param.GetFuzzyKeywords()).SumsInt(new(datamodels.Movie), "flag", "size")
+
+	cnt, err := dbEngine.Where("name like ?  ", param.GetFuzzyKeywords()).SumsInt(new(datamodels.Movie), "flag", "size")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -90,7 +91,7 @@ func (o *OrmService) queryCount(param datamodels.SearchParam) (int64, int64) {
 
 func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 	total := int64(len(movies))
-	pageSize := int64(3000)
+	pageSize := int64(1000)
 	totalPage := total/pageSize + 1
 	startIndex := 0
 	var wg sync.WaitGroup
@@ -104,7 +105,7 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 		}
 		curMovies := movies[startIndex:lastIndex]
 		go o.InsertBatch(curMovies, &wg)
-		startIndex = lastIndex + 1
+		startIndex = lastIndex
 	}
 	wg.Wait()
 	cons.IndexOver = true
@@ -115,8 +116,8 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 
 func (o *OrmService) InsertBatch(movies []datamodels.Movie, wg *sync.WaitGroup) utils.Result {
 	defer wg.Done()
-	engine := o.Engine
-	effectRows, err := engine.Insert(&movies)
+
+	effectRows, err := dbEngine.Insert(&movies)
 	if err != nil {
 		return utils.NewFailByMsg(err.Error())
 	}
@@ -126,8 +127,8 @@ func (o *OrmService) InsertBatch(movies []datamodels.Movie, wg *sync.WaitGroup) 
 }
 
 func (o *OrmService) DeleteAll() utils.Result {
-	engine := o.Engine
-	effectRows, err := engine.Where("1=1").Delete(new(datamodels.Movie))
+
+	effectRows, err := dbEngine.Where("1=1").Delete(new(datamodels.Movie))
 	if err != nil {
 		return utils.NewFailByMsg(err.Error())
 	}
@@ -137,8 +138,8 @@ func (o *OrmService) DeleteAll() utils.Result {
 }
 
 func (o *OrmService) SyncMovieTable() utils.Result {
-	engine := o.Engine
-	err := engine.Sync2(new(datamodels.Movie))
+
+	err := dbEngine.Sync2(new(datamodels.Movie))
 	if err != nil {
 		return utils.NewFailByMsg(err.Error())
 	}

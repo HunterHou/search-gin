@@ -72,9 +72,9 @@ func PostSearchMovie(c *gin.Context) {
 	sortField := c.DefaultPostForm("sortField", "desc")
 	movieType := c.DefaultPostForm("movieType", "")
 	fileService := service.CreateFileService()
-
 	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
 	result := fileService.SearchIndex(searchParam)
+	result.IndexProgress = cons.IndexOver
 	c.JSON(http.StatusOK, result)
 }
 
