@@ -21,6 +21,7 @@ type Movie struct {
 	FileType  string
 	DirPath   string
 	Size      int64
+	Flag      int64
 	SizeStr   string
 	CTime     string
 	MTime     string
@@ -41,7 +42,7 @@ type Movie struct {
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
-	_, id := utils.DirpathForId(path)
+	id, _ := utils.DirpathForId(path)
 	result := Movie{
 		Id:        id,
 		Code:      utils.GetCode(name),
@@ -55,6 +56,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		FileType:  fileType,
 		DirPath:   dir,
 		Size:      size,
+		Flag:      1,
 		SizeStr:   utils.GetSizeStr(size),
 		CTime:     "",
 		MTime:     modTime.Format("2006-01-02 15:04:05"),

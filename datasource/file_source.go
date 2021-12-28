@@ -22,7 +22,7 @@ var ActressLib = map[string]datamodels.Actress{}
 var ActressList []datamodels.Actress
 var SupplierLib = map[string]datamodels.Supplier{}
 
-var IndexData = map[string][]string{}
+// var IndexData = map[string][]string{}
 
 // var segmenter sego.Segmenter
 // var segmenterFlag = false

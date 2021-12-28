@@ -66,17 +66,15 @@ func (p *SearchParam) GetPage() int {
 }
 
 func (p *SearchParam) GetSort() []string {
-	var sortType = "+"
-	if p.SortType == "desc" {
-		sortType = "-"
+	if p.SortType == "" {
+		p.SortType = "desc"
 	}
-	sortType += p.GetSortField()
-	return []string{sortType}
+	return []string{p.GetSortField() + p.SortType}
 }
 
 func (p *SearchParam) GetSortField() string {
 	if p.SortField == "" {
 		p.SortField = "mtime"
 	}
-	return p.SortField
+	return p.SortField + " "
 }

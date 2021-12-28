@@ -27,55 +27,20 @@ func CreateFileService() FileService {
 }
 
 func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page {
-
+	db := CreateOrmService()
 	result := utils.NewPage()
 	result.TotalCnt = len(datasource.FileLib)
 	result.PageNo = searchParam.Page
 	result.PageSize = searchParam.PageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
 
-	var searchList []datamodels.Movie
-	searchSize := int64(0)
-	searchCnt := 0
-	if searchParam.GetKeywords() == "" && searchParam.GetMovieType() == "" {
-		searchList = datasource.FileList
-		searchCnt = len(searchList)
-		searchSize = datasource.FileSize
-	} else {
-		var keyWordIds []string
-		if searchParam.Keyword != "" {
-			keyWordValue, ok := datasource.IndexData[searchParam.GetKeywords()]
-			if ok {
-				keyWordIds = keyWordValue
-			}
-		}
-		var typeIds []string
-		if searchParam.MovieType != "" {
-			typeIdValue, ok := datasource.IndexData[searchParam.GetMovieType()]
-			if ok {
-				typeIds = typeIdValue
-			}
-		}
-
-		x := utils.XItem(keyWordIds, typeIds)
-
-		for _, v := range x {
-			movie, ok := datasource.FileLib[v]
-			if ok {
-				searchCnt++
-				searchSize += movie.Size
-				searchList = append(searchList, movie)
-			}
-		}
-	}
-
-	datasource.SortMovies(searchList, searchParam.SortField, searchParam.SortType, true)
-
+	pageList, pageSize := db.query(searchParam)
+	searchCount, searchSize := db.queryCount(searchParam)
 	result.ResultSize = utils.GetSizeStr(searchSize)
-	result.SetResultCnt(searchCnt, searchParam.Page)
-	pageList, pageSize := fs.GetPage(searchList, searchParam.Page, searchParam.PageSize)
+	result.SetResultCnt(int(searchCount), searchParam.Page)
 	result.CurSize = utils.GetSizeStr(pageSize)
 	result.CurCnt = len(pageList)
+	fmt.Printf("query over :searchCnt[%d] searchSize [%d]", searchCount, searchSize)
 	result.Data = pageList
 	return result
 
@@ -437,6 +402,10 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 }
 
 func (fs FileService) FindOne(Id string) datamodels.Movie {
+	if cons.IndexOver {
+		db := CreateOrmService()
+		return db.Find(Id)
+	}
 	if len(datasource.FileLib) == 0 {
 		fs.ScanAll()
 	}
@@ -447,9 +416,9 @@ func (fs FileService) FindOne(Id string) datamodels.Movie {
 func (fs FileService) GetPng(c *gin.Context) {
 	path := c.Param("path")
 	file := fs.FindOne(path)
-	if utils.ExistsFiles(file.Png) {
+	if !file.IsNull() && utils.ExistsFiles(file.Png) {
 		c.File(file.Png)
-	} else if utils.ExistsFiles(file.Jpg) {
+	} else if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
 	} else {
 		response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
@@ -474,9 +443,9 @@ func (fs FileService) GetPng(c *gin.Context) {
 func (fs FileService) GetJpg(c *gin.Context) {
 	path := c.Param("path")
 	file := fs.FindOne(path)
-	if utils.ExistsFiles(file.Jpg) {
+	if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
-	} else if utils.ExistsFiles(file.Png) {
+	} else if !file.IsNull() && utils.ExistsFiles(file.Png) {
 		c.File(file.Png)
 	} else {
 		response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
@@ -581,9 +550,6 @@ func (fs FileService) ScanAll() {
 	dirList := []string{}
 	setting := cons.OSSetting
 	dirList = append(dirList, setting.Dirs...)
-	// for _, v := range setting.Dirs {
-	// 	dirList = append(dirList, v)
-	// }
 	cons.QueryTypes = []string{}
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
@@ -630,6 +596,8 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 
 	datasource.ActressLib = actressMap
 	// 添加索引
+	db := CreateOrmService()
+	go db.InsertBatchPage(newFiles)
 
 	var newActress []datamodels.Actress
 	for _, item := range actressMap {
