@@ -52,7 +52,7 @@ func CreateOrmService() OrmService {
 
 func (o *OrmService) Find(Id string) datamodels.Movie {
 	var res datamodels.Movie
-	has, err := dbEngine.Table("movie").Where("id = ?", Id).Get(&res)
+	has, err := dbEngine.Where("id = ?", Id).Get(&res)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -82,7 +82,7 @@ func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, in
 }
 func (o *OrmService) NewSessionBySearchParam(param datamodels.SearchParam) *xorm.Session {
 	session := dbEngine.Where("1=1")
-	if param.GetFuzzyKeywords() != "" {
+	if param.GetKeywords() != "" {
 		session.And("name like ?  ", param.GetFuzzyKeywords())
 	}
 	if param.GetMovieType() != "" {

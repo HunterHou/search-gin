@@ -730,6 +730,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 	var size int64
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
+		//curFile.SetId("pk" + string(i))
 		size = size + curFile.Size
 		existMoive, ok := filemap[curFile.Id]
 		if ok {
