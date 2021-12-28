@@ -16,43 +16,29 @@ import (
 
 var dbEngine *xorm.Engine
 
-type OrmService struct {
-	driveName      string
-	dataSourceName string
-}
-
-func (o *OrmService) DriveName(driveName string) {
-	o.driveName = driveName
-}
-func (o *OrmService) DataSourceName(dataSourceName string) {
-	o.dataSourceName = dataSourceName
-}
-
-func (o *OrmService) Builder() {
+func init() {
 	var err error
 	os.Remove("search-gin")
 	dbEngine, err = xorm.NewEngine("sqlite3", "search-gin")
 	if err != nil {
 		fmt.Println(err)
 	}
-	o.SyncMovieTable()
-	dbEngine.ShowSQL(true)
+	dbEngine.Sync2(new(datamodels.Movie))
+	//dbEngine.ShowSQL(true)
 	dbEngine.SetMapper(names.SnakeMapper{})
 }
 
+type OrmService struct {
+}
+
 func CreateOrmService() OrmService {
-	driveName := "sqlite3"
-	dataSourceName := "test"
 	service := OrmService{}
-	service.DriveName(driveName)
-	service.DataSourceName(dataSourceName)
-	service.Builder()
 	return service
 }
 
 func (o *OrmService) Find(Id string) datamodels.Movie {
 	var res datamodels.Movie
-	has, err := dbEngine.Where("id = ?", Id).Get(&res)
+	has, err := dbEngine.ID(Id).Get(&res)
 	if err != nil {
 		fmt.Println(err)
 	}
