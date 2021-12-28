@@ -68,7 +68,8 @@ func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, in
 	var res []datamodels.Movie
 	orderBy := strings.Join(param.GetSort(), ",")
 	orderBy = utils.Camel2Case(orderBy)
-	err := dbEngine.Where("name like ?  ", param.GetFuzzyKeywords()).And("name like ?  ", param.GetMovieType()).OrderBy(orderBy).Limit(param.GetPageSize(), param.StartNum()).Find(&res)
+	session := o.NewSessionBySearchParam(param)
+	err := session.OrderBy(orderBy).Limit(param.GetPageSize(), param.StartNum()).Find(&res)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -79,9 +80,20 @@ func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, in
 	return res, size
 
 }
-func (o *OrmService) queryCount(param datamodels.SearchParam) (int64, int64) {
+func (o *OrmService) NewSessionBySearchParam(param datamodels.SearchParam) *xorm.Session {
+	session := dbEngine.Where("1=1")
+	if param.GetFuzzyKeywords() != "" {
+		session.And("name like ?  ", param.GetFuzzyKeywords())
+	}
+	if param.GetMovieType() != "" {
+		session.And("movie_type = ?", param.GetMovieType())
+	}
+	return session
 
-	cnt, err := dbEngine.Where("name like ?  ", param.GetFuzzyKeywords()).SumsInt(new(datamodels.Movie), "flag", "size")
+}
+func (o *OrmService) queryCount(param datamodels.SearchParam) (int64, int64) {
+	session := o.NewSessionBySearchParam(param)
+	cnt, err := session.SumsInt(new(datamodels.Movie), "flag", "size")
 	if err != nil {
 		fmt.Println(err)
 	}
