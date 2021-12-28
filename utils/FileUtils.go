@@ -14,12 +14,12 @@ import (
 )
 
 func DirpathForId(path string) (string, string) {
-	id, _ := url.QueryUnescape(path)
-	id = strings.ReplaceAll(id, "\\\\", "\\")
-	id = strings.ReplaceAll(id, "\\", "~")
-	id = strings.ReplaceAll(id, "\\", "~")
-	id = strings.ReplaceAll(id, ":", "")
-	arr := strings.Split(id, "~")
+	res, _ := url.QueryUnescape(path)
+	res = strings.ReplaceAll(res, "\\\\", "\\")
+	res = strings.ReplaceAll(res, "\\", "~")
+	res = strings.ReplaceAll(res, "\\", "~")
+	res = strings.ReplaceAll(res, ":", "")
+	arr := strings.Split(res, "~")
 	newpath := ""
 	for i := 0; i < len(arr); i++ {
 		curArr := arr[i]
@@ -36,7 +36,7 @@ func DirpathForId(path string) (string, string) {
 		}
 
 	}
-	return id, newpath
+	return res, newpath
 }
 
 func GetPng(path string, suffix string) string {
