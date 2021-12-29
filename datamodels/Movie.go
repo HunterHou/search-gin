@@ -44,7 +44,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 	// 使用工厂模式 返回一个 Movie 实例
 	//id, _ := utils.DirpathForId(path)
 	result := Movie{
-		Id:        utils.PKMovieId(),
+		Id:        utils.PKId(),
 		Code:      utils.GetCode(name),
 		Name:      name,
 		Path:      path,

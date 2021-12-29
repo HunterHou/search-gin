@@ -576,6 +576,7 @@ func (fs FileService) Delete(id int64) {
 // }
 
 func (fs FileService) ScanDisk(baseDir []string, types []string) {
+	utils.PKIdRest()
 	datasource.FileLib = make(map[int64]datamodels.Movie)
 	files := Walks(baseDir, types)
 	fileMap, actressMap, _, fileSize := ArrayToMap(files)
@@ -738,7 +739,7 @@ func ArrayToMap(files []datamodels.Movie) (map[int64]datamodels.Movie, map[strin
 		existMoive, ok := filemap[curFile.Id]
 		if ok {
 			//重名处理
-			existMoive.SetId(utils.PKMovieId())
+			existMoive.SetId(utils.PKId())
 			filemap[existMoive.Id] = existMoive
 		} else {
 			filemap[curFile.Id] = curFile
