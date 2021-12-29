@@ -23,9 +23,12 @@ func init() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	dbEngine.Sync2(new(datamodels.Movie))
+	movie := new(datamodels.Movie)
+	dbEngine.Sync2(movie)
 	//dbEngine.ShowSQL(true)
 	dbEngine.SetMapper(names.SnakeMapper{})
+	total, err := dbEngine.Count(movie)
+	fmt.Printf("movie total:%d", total)
 }
 
 type OrmService struct {
@@ -36,7 +39,7 @@ func CreateOrmService() OrmService {
 	return service
 }
 
-func (o *OrmService) Find(Id string) datamodels.Movie {
+func (o *OrmService) Find(Id int64) datamodels.Movie {
 	var res datamodels.Movie
 	has, err := dbEngine.ID(Id).Get(&res)
 	if err != nil {

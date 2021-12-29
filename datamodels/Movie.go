@@ -9,7 +9,7 @@ import (
 
 // Movie 声明一个File结构体 表示一个文件信息
 type Movie struct {
-	Id        string `xorm:"Varchar(1000) pk notnull"  `
+	Id        int64  `xorm:"pk"  `
 	Code      string `xorm:"Varchar(255)"`
 	Name      string `xorm:"Text"`
 	Path      string `xorm:"Text"`
@@ -42,9 +42,9 @@ type Movie struct {
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
-	id, _ := utils.DirpathForId(path)
+	//id, _ := utils.DirpathForId(path)
 	result := Movie{
-		Id:        id,
+		Id:        utils.PKMovieId(),
 		Code:      utils.GetCode(name),
 		Name:      name,
 		Path:      path,
@@ -65,7 +65,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 	return result
 }
 
-func (f Movie) SetId(id string) Movie {
+func (f Movie) SetId(id int64) Movie {
 	f.Id = id
 	return f
 }
@@ -79,7 +79,7 @@ func (f Movie) GetFileInfo() string {
 
 func (f Movie) IsNull() bool {
 	//
-	if f.Id == "" || f.Path == "" {
+	if f.Id == 0 || f.Path == "" {
 		return true
 	}
 	return false

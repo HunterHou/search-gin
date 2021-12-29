@@ -11,6 +11,7 @@ import (
 	"search-gin/datasource"
 	"search-gin/utils"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -401,7 +402,7 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 	return result, newFile
 }
 
-func (fs FileService) FindOne(Id string) datamodels.Movie {
+func (fs FileService) FindOne(Id int64) datamodels.Movie {
 	if cons.IndexOver {
 		db := CreateOrmService()
 		return db.Find(Id)
@@ -414,8 +415,9 @@ func (fs FileService) FindOne(Id string) datamodels.Movie {
 }
 
 func (fs FileService) GetPng(c *gin.Context) {
-	path := c.Param("path")
-	file := fs.FindOne(path)
+	//path := c.Param("path")
+	id, _ := strconv.Atoi(c.Param("path"))
+	file := fs.FindOne(int64(id))
 	if !file.IsNull() && utils.ExistsFiles(file.Png) {
 		c.File(file.Png)
 	} else if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
@@ -427,8 +429,9 @@ func (fs FileService) GetPng(c *gin.Context) {
 }
 
 func (fs FileService) GetJpg(c *gin.Context) {
-	path := c.Param("path")
-	file := fs.FindOne(path)
+	//path := c.Param("path")
+	id, _ := strconv.Atoi(c.Param("path"))
+	file := fs.FindOne(int64(id))
 	if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
 	} else if !file.IsNull() && utils.ExistsFiles(file.Png) {
@@ -507,7 +510,7 @@ func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 	return res
 }
 
-func (fs FileService) FindNext(Id string, sourceLib []datamodels.Movie, offset int) datamodels.Movie {
+func (fs FileService) FindNext(Id int64, sourceLib []datamodels.Movie, offset int) datamodels.Movie {
 
 	length := len(sourceLib)
 	for i := 0; i < length; i++ { //looping from 0 to the length of the array
@@ -545,7 +548,7 @@ func (fs FileService) ScanAll() {
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
 	fs.ScanDisk(dirList, cons.QueryTypes)
 }
-func (fs FileService) Delete(id string) {
+func (fs FileService) Delete(id int64) {
 	file := fs.FindOne(id)
 	list := []string{file.Path, file.Png, file.Jpg, file.Nfo}
 	for i := 0; i < len(list); i++ {
@@ -573,7 +576,7 @@ func (fs FileService) Delete(id string) {
 // }
 
 func (fs FileService) ScanDisk(baseDir []string, types []string) {
-	datasource.FileLib = make(map[string]datamodels.Movie)
+	datasource.FileLib = make(map[int64]datamodels.Movie)
 	files := Walks(baseDir, types)
 	fileMap, actressMap, _, fileSize := ArrayToMap(files)
 	var newFiles []datamodels.Movie
@@ -723,8 +726,8 @@ func (fs FileService) DataSize(data []datamodels.Movie) int64 {
 	return dataSize
 }
 
-func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[string]datamodels.Actress, map[string]datamodels.Supplier, int64) {
-	filemap := make(map[string]datamodels.Movie)
+func ArrayToMap(files []datamodels.Movie) (map[int64]datamodels.Movie, map[string]datamodels.Actress, map[string]datamodels.Supplier, int64) {
+	filemap := make(map[int64]datamodels.Movie)
 	actessmap := make(map[string]datamodels.Actress)
 	suppliermap := make(map[string]datamodels.Supplier)
 	var size int64
@@ -735,7 +738,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 		existMoive, ok := filemap[curFile.Id]
 		if ok {
 			//重名处理
-			existMoive.SetId(existMoive.Id + fmt.Sprint(i))
+			existMoive.SetId(utils.PKMovieId())
 			filemap[existMoive.Id] = existMoive
 		} else {
 			filemap[curFile.Id] = curFile
