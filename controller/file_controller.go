@@ -181,7 +181,9 @@ func GetButtom(c *gin.Context) {
 	})
 }
 func GetPlay(c *gin.Context) {
-	id := c.Param("id")
+	//id := c.Param("id")
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	id := int64(idInt)
 	service := service.CreateFileService()
 	file := service.FindOne(id)
 	//c.File(file.Path)
@@ -190,7 +192,8 @@ func GetPlay(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 func SetMovieType(c *gin.Context) {
-	id := c.Param("id")
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	id := int64(idInt)
 	movieType := c.Param("movieType")
 	service := service.CreateFileService()
 	file := service.FindOne(id)
@@ -198,7 +201,8 @@ func SetMovieType(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 func GetInfo(c *gin.Context) {
-	id := c.Param("id")
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	id := int64(idInt)
 	service := service.CreateFileService()
 	file := service.FindOne(id)
 	c.JSON(http.StatusOK, file)
@@ -212,7 +216,8 @@ func PostRename(c *gin.Context) {
 }
 
 func GetDirInfo(c *gin.Context) {
-	id := c.Param("id")
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	id := int64(idInt)
 	fileService := service.CreateFileService()
 	file := fileService.FindOne(id)
 
@@ -224,7 +229,8 @@ func GetDirInfo(c *gin.Context) {
 }
 
 func GetOpenFoler(c *gin.Context) {
-	id := c.Param("id")
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	id := int64(idInt)
 	service := service.CreateFileService()
 	file := service.FindOne(id)
 	fmt.Println(file.DirPath)
@@ -234,14 +240,16 @@ func GetOpenFoler(c *gin.Context) {
 }
 
 func GetDelete(c *gin.Context) {
-	id := c.Param("id")
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	id := int64(idInt)
 	service := service.CreateFileService()
 	service.Delete(id)
 	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
 }
 func GetSync(c *gin.Context) {
-	id := c.Param("id")
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	id := int64(idInt)
 	serviceFile := service.CreateFileService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestToFile(curFile)
@@ -254,7 +262,8 @@ func GetSync(c *gin.Context) {
 }
 
 func GetImageList(c *gin.Context) {
-	id := c.Param("id")
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	id := int64(idInt)
 	serviceFile := service.CreateFileService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestToFile(curFile)
