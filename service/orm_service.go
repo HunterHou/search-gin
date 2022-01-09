@@ -27,7 +27,7 @@ func init() {
 	dbEngine.Sync2(movie)
 	//dbEngine.ShowSQL(true)
 	dbEngine.SetMapper(names.SnakeMapper{})
-	total, err := dbEngine.Count(movie)
+	total, _ := dbEngine.Count(movie)
 	fmt.Printf("movie total:%d", total)
 }
 
@@ -71,11 +71,12 @@ func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, in
 }
 func (o *OrmService) NewSessionBySearchParam(param datamodels.SearchParam) *xorm.Session {
 	session := dbEngine.Where("1=1")
-	if param.GetKeywords() != "" {
-		session.And("name like ?  ", param.GetFuzzyKeywords())
-	}
+
 	if param.GetMovieType() != "" {
 		session.And("movie_type = ?", param.GetMovieType())
+	}
+	if param.GetKeywords() != "" {
+		session.And("(name like ?  or path like ? )", param.GetFuzzyKeywords(), param.GetFuzzyKeywords())
 	}
 	return session
 
