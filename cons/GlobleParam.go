@@ -15,7 +15,6 @@ var PortNo = ":8081"
 var Port = "//" + PortNo
 var QueryTypes []string
 
-var IndexName = "data/search"
 var IndexOver = false
 
 // var IndexProgress = 0
