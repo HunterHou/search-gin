@@ -34,13 +34,7 @@
           >索引</el-button
         ></el-col
       >
-      <el-col :span="4">
-        <el-radio-group v-model="sortField" @change="queryList()" size="small">
-          <el-radio-button label="code">名称</el-radio-button>
-          <el-radio-button label="mtime">时间</el-radio-button>
-          <el-radio-button label="size">大小</el-radio-button>
-        </el-radio-group>
-      </el-col>
+
       <el-col :span="3">
         <el-radio-group v-model="sortType" @change="queryList()" size="small">
           <el-radio-button label="desc">倒</el-radio-button>
