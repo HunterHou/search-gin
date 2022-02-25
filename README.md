@@ -1,3 +1,5 @@
-# search-gin 本地磁盘管理系统
+# search-gin 
 
-golang+gin+vue+element
+功能:本地磁盘搜索系统 剐JA
+
+技术架构:golang+gin+sqlite  +vue+element
