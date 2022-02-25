@@ -348,7 +348,7 @@
               </el-dropdown-menu>
             </el-dropdown>
           </el-link>
-          <div class="context-text">
+          <div class="context-text"  :class="item.MovieType ? '' : 'redbackground'">
             <el-tooltip placement="bottom" effect="dark">
               <div slot="content">{{ item.name }}</div>
               <span>
@@ -1017,7 +1017,9 @@ export default {
   margin-top: 2px;
   margin-bottom: 2px;
 }
-
+.redbackground{
+  background-color: yellowgreen;
+}
 .icon-style {
   font-size: 21px;
   color: red;
