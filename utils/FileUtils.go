@@ -15,10 +15,13 @@ import (
 
 var rootId = int64(0)
 
-func PKMovieId() int64 {
+func PKId() int64 {
 	res := rootId
 	rootId++
 	return res
+}
+func PKIdRest() {
+	rootId = int64(0)
 }
 
 func DirpathForId(path string) (string, string) {

@@ -779,7 +779,12 @@ export default {
     syncThis(id) {
       axios.get("api/sync/" + id).then((res) => {
         if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
+          // this.alertSuccess(res.data.Message);
+          this.$notify({
+            title: "成功",
+            message: res.data.Message,
+            type: "success",
+          });
         }
       });
     },
@@ -788,7 +793,12 @@ export default {
         movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
       axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
         if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
+          // this.alertSuccess(res.data.Message);
+          this.$notify({
+            title: "成功",
+            message: res.data.Message,
+            type: "success",
+          });
         }
       });
     },

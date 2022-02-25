@@ -15,10 +15,47 @@ var PortNo = ":8081"
 var Port = "//" + PortNo
 var QueryTypes []string
 
-var IndexName = "data/search"
 var IndexOver = false
 
-// var IndexProgress = 0
+type MenuSize struct {
+	Name    string
+	Cnt     int64
+	Size    int64
+	SizeStr string
+}
+
+func (m MenuSize) Plus(size int64) MenuSize {
+	m.Cnt++
+	m.Size += size
+	return m
+}
+
+var TypeMenu map[string]MenuSize
+
+func TypeSizePlus(targetType string, targetSize int64) {
+	if targetType == "" {
+		targetType = "无"
+	}
+	if len(TypeMenu) == 0 {
+		TypeMenu = make(map[string]MenuSize)
+		TypeMenu["全部"] = MenuSize{
+			Name: "全部",
+			Cnt:  0,
+			Size: 0,
+		}
+	}
+	target, ok := TypeMenu[targetType]
+	if ok {
+		TypeMenu[targetType] = target.Plus(targetSize)
+	} else {
+		TypeMenu[targetType] = MenuSize{
+			Name: targetType,
+			Cnt:  1,
+			Size: targetSize,
+		}
+	}
+	TypeMenu["全部"] = TypeMenu["全部"].Plus(targetSize)
+}
 
 func OverIndex() bool {
 	libSize := len(datasource.FileList)
