@@ -49,5 +49,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/refreshIndex", controller.GetRefresIndex)
 	router.GET("/api/settingInfo", controller.GetSettingInfo)
 	router.POST("/api/setting", controller.PostSetting)
+
+	router.GET("/api/typeSizeMap", controller.GetTypeSize)
 	return router
 }

@@ -8,6 +8,7 @@ import (
 	"search-gin/datasource"
 	"search-gin/service"
 	"search-gin/utils"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -206,6 +207,25 @@ func GetInfo(c *gin.Context) {
 	service := service.CreateFileService()
 	file := service.FindOne(id)
 	c.JSON(http.StatusOK, file)
+}
+
+func GetTypeSize(c *gin.Context) {
+	service := service.CreateFileService()
+	if len(datasource.FileList) == 0 {
+		service.ScanAll()
+		service.SortAct(datasource.ActressList, "desc")
+	}
+	res := []cons.MenuSize{}
+	for _, v := range cons.TypeMenu {
+		res = append(res, v)
+	}
+	for i := 0; i < len(res); i++ {
+		res[i].SizeStr = utils.GetSizeStr(res[i].Size)
+	}
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].Size > res[j].Size
+	})
+	c.JSON(http.StatusOK, res)
 }
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.Movie{}

@@ -3,11 +3,12 @@
     <!-- <h2>This is Home</h2> -->
     <el-table
       :data="tableData"
-      style="text-algin: center; align: center"
+      style="width:1000px;height:800px"
+      :stripe = "true"
     >
-      <el-table-column prop="name" label="结果集"> </el-table-column>
-      <el-table-column prop="size" label="大小"> </el-table-column>
-      <el-table-column prop="cnt" label="数量"> </el-table-column>
+      <el-table-column prop="name" label="结果集" header-align="right" align="right"> </el-table-column>
+      <el-table-column prop="size" label="大小" header-align="right" align="right"> </el-table-column>
+      <el-table-column prop="cnt" label="数量" header-align="right" align="right"> </el-table-column>
     </el-table>
   </div>
 </template>
@@ -27,18 +28,15 @@ export default {
   },
   methods: {
     loadData() {
-      let data = new FormData();
-      data.append("pageNo", this.pageNo);
-      data.append("pageSize", this.pageSize);
-      axios.post("api/movieList", data).then((res) => {
+      axios.get("api/typeSizeMap").then((res) => {
         if (res.status === 200) {
-          this.tableData = [
-            {
-              name: "扫描库",
-              cnt: res.data.TotalCnt,
-              size: res.data.TotalSize,
-            },
-          ];
+          const {data}=res
+          if(data.length>0){
+            for (let index = 0; index <data.length; index++) {
+              const element = data[index];
+              this.tableData.push({"name":element.Name,"cnt":element.Cnt,"size":element.SizeStr})
+            }
+          }
         }
       });
     },
