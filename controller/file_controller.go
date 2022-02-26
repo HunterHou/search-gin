@@ -212,6 +212,7 @@ func GetInfo(c *gin.Context) {
 func GetTypeSize(c *gin.Context) {
 	service := service.CreateFileService()
 	if len(datasource.FileList) == 0 {
+		cons.TypeMenu = make(map[string]cons.MenuSize)
 		service.ScanAll()
 		service.SortAct(datasource.ActressList, "desc")
 	}
