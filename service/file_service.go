@@ -576,7 +576,7 @@ func (fs FileService) Delete(id int64) {
 // }
 
 func (fs FileService) ScanDisk(baseDir []string, types []string) {
-	utils.PKIdRest()
+	// utils.PKIdRest()
 	datasource.FileLib = make(map[int64]datamodels.Movie)
 	files := Walks(baseDir, types)
 	fileMap, actressMap, _, fileSize := ArrayToMap(files)
