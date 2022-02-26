@@ -539,6 +539,7 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 }
 
 func (fs FileService) ScanAll() {
+	cons.TypeMenu = make(map[string]cons.MenuSize)
 	dirList := []string{}
 	setting := cons.OSSetting
 	dirList = append(dirList, setting.Dirs...)
