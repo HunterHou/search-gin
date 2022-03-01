@@ -539,7 +539,9 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 }
 
 func (fs FileService) ScanAll() {
+	//统计初始化
 	cons.TypeMenu = make(map[string]cons.MenuSize)
+	//初始化查询条件
 	dirList := []string{}
 	setting := cons.OSSetting
 	dirList = append(dirList, setting.Dirs...)
@@ -551,30 +553,47 @@ func (fs FileService) ScanAll() {
 }
 func (fs FileService) Delete(id int64) {
 	file := fs.FindOne(id)
-	list := []string{file.Path, file.Png, file.Jpg, file.Nfo}
-	for i := 0; i < len(list); i++ {
-		err := os.Remove(list[i])
+	DeleteOne(file.DirPath, file.Name)
+
+}
+func DeleteOne(dirName string, fileName string) {
+	files, _ := ioutil.ReadDir(dirName)
+	for _, f := range files {
+		if strings.Contains(f.Name(), fileName) {
+			path := dirName + "\\" + f.Name()
+			err := os.Remove(path)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}
+	// 删除父文件夹
+	filesThen, _ := ioutil.ReadDir(dirName)
+	if len(filesThen) == 0 {
+		// err := os.Remove(dirName)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// }
+		DeleteDir(dirName)
+	}
+	// dirname := path.Dir(file.Path)
+	// fmt.Println(dirname)
+	// deleteDir(dirname)
+}
+func DeleteDir(dirname string) {
+	files2, _ := ioutil.ReadDir(dirname)
+	if len(files2) == 0 {
+		err := os.Remove(dirname)
 		if err != nil {
 			fmt.Println(err)
 		}
+		newpath := dirname[0:strings.LastIndex(dirname, "\\")]
+		DeleteDir(newpath)
+	} else {
+		return
 	}
-	//TODO 删除父文件夹
-	//dirname := path.Dir(file.Path)
-	//fmt.Println(dirname)
-	//deleteDir(dirname)
 
 }
-
-// func deleteDir(filename string) {
-// 	dirname, _ := path.Split(filename)
-// 	files2, _ := ioutil.ReadDir(dirname)
-// 	if len(files2) == 0 {
-// 		os.Remove(dirname)
-// 		return
-// 	}
-// 	dirname2, _ := path.Split(dirname)
-// 	deleteDir(dirname2)
-// }
 
 func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	// utils.PKIdRest()
@@ -800,23 +819,28 @@ func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []dat
 func Walk(baseDir string, types []string) []datamodels.Movie {
 	var result []datamodels.Movie
 	files, _ := ioutil.ReadDir(baseDir)
-	for _, path := range files {
+	if len(files) > 0 {
+		for _, path := range files {
 
-		pathAbs := filepath.Join(baseDir, path.Name())
-		if path.IsDir() {
-			childResult := Walk(pathAbs, types)
-			result = ExpandsMovie(result, childResult)
-		} else {
-			name := path.Name()
-			suffix := utils.GetSuffux(name)
-			movieType := utils.GetMovieType(name)
-			if utils.HasItem(types, suffix) {
-				file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType)
-				result = append(result, file)
+			pathAbs := filepath.Join(baseDir, path.Name())
+			if path.IsDir() {
+				childResult := Walk(pathAbs, types)
+				result = ExpandsMovie(result, childResult)
+			} else {
+				name := path.Name()
+				suffix := utils.GetSuffux(name)
+				movieType := utils.GetMovieType(name)
+				if utils.HasItem(types, suffix) {
+					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType)
+					result = append(result, file)
+				}
+
 			}
-
 		}
+	} else {
+		os.Remove(baseDir)
 	}
+
 	return result
 }
 
