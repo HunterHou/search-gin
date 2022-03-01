@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"search-gin/cons"
 	"search-gin/service"
+	"search-gin/utils"
 	"testing"
 )
 
@@ -20,8 +21,7 @@ func TestWalk(t *testing.T) {
 func TestWalkInnter(t *testing.T) {
 	service.WalkInnter("D:\\emby\\emby", []string{"jpg"}, 0)
 	for _, dir := range cons.SmallDir {
-		fmt.Println(dir.Name)
-		fmt.Println(dir.SizeStr)
+		fmt.Println(dir.Name, utils.GetSizeStr(dir.Size))
 	}
 }
 
