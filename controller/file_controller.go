@@ -226,6 +226,10 @@ func GetTypeSize(c *gin.Context) {
 	sort.Slice(res, func(i, j int) bool {
 		return res[i].Size > res[j].Size
 	})
+	for i := 0; i < len(cons.SmallDir); i++ {
+		cons.SmallDir[i].SizeStr = utils.GetSizeStr(cons.SmallDir[i].Size)
+		res = append(res, cons.SmallDir[i])
+	}
 	c.JSON(http.StatusOK, res)
 }
 func PostRename(c *gin.Context) {

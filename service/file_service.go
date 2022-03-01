@@ -810,7 +810,7 @@ func Walks(baseDir []string, types []string) []datamodels.Movie {
 
 func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie) {
 	defer wg.Done()
-	files := Walk(baseDir, types)
+	files, _ := WalkInnter(baseDir, types, 0)
 	datas <- files
 
 }
@@ -870,7 +870,9 @@ func WalkInnter(baseDir string, types []string, totalSize int64) ([]datamodels.M
 		os.Remove(baseDir)
 	}
 	totalSize += currentSize
-	cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(baseDir, int64(currentSize), true))
+	if currentSize <= 20000000 {
+		cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(baseDir, int64(currentSize), true))
+	}
 	return result, currentSize
 }
 
