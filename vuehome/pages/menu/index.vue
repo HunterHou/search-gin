@@ -472,7 +472,7 @@ export default {
       dialogFormItemVisible: false,
       sortField: "MTime",
       sortType: "desc",
-      movieType: movieType,
+      movieType: movieType||"",
       dataList: "",
       dataCnt: 0,
       errorMsg: "",
