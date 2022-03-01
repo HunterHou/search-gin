@@ -38,6 +38,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/delete/:id", controller.GetDelete)
 	router.GET("/api/sync/:id", controller.GetSync)
 	router.GET("/api/openFolder/:id", controller.GetOpenFoler)
+	router.POST("/api/OpenFolerByPath", controller.PostOpenFolerByPath)
 
 	router.GET("/api/infoNext/:id", controller.GetNextInfo)
 	router.GET("/api/infoLast/:id", controller.GetLastInfo)

@@ -5,26 +5,14 @@
     </el-backtop>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
-      style="
-        position: fixed;
-        top: 600px;
-        overflow: auto;
-        z-index: 999;
-        left: 20px;
-      "
+      style="position: fixed; top: 600px; overflow: auto; z-index: 999; left: 20px"
       round
       @click="pageLoading(-1)"
       >上一页
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
-      style="
-        position: fixed;
-        top: 600px;
-        overflow: auto;
-        z-index: 999;
-        right: 80px;
-      "
+      style="position: fixed; top: 600px; overflow: auto; z-index: 999; right: 80px"
       round
       @click="pageLoading(1)"
       >下一页
@@ -124,11 +112,7 @@
       </el-col>
     </el-row>
 
-    <v-contextmenu
-      ref="contextmenu"
-      :theme="theme"
-      @contextmenu="handleContextmenu"
-    >
+    <v-contextmenu ref="contextmenu" :theme="theme" @contextmenu="handleContextmenu">
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
@@ -205,12 +189,7 @@
         v-for="item in dataList"
         :key="item.Id"
       >
-        <div
-          :class="[theme]"
-          v-contextmenu:contextmenu
-          :key="item.Id"
-          :code="item.Code"
-        >
+        <div :class="[theme]" v-contextmenu:contextmenu :key="item.Id" :code="item.Code">
           <div
             v-if="item"
             @click="openWin(item.Id)"
@@ -253,11 +232,7 @@
             ></i
           ></el-link>
           <el-link>
-            <i
-              class="el-icon-edit icon-style"
-              title="编辑"
-              @click="editItem(item)"
-            ></i
+            <i class="el-icon-edit icon-style" title="编辑" @click="editItem(item)"></i
           ></el-link>
           <el-link>
             <i
@@ -348,7 +323,7 @@
               </el-dropdown-menu>
             </el-dropdown>
           </el-link>
-          <div class="context-text"  :class="item.MovieType ? '' : 'redbackground'">
+          <div class="context-text" :class="item.MovieType ? '' : 'redbackground'">
             <el-tooltip placement="bottom" effect="dark">
               <div slot="content">{{ item.name }}</div>
               <span>
@@ -460,12 +435,7 @@
       :close-on-press-escape="false"
       :close-on-click-modal="false"
     >
-      <el-form
-        label-position="right"
-        :model="formItem"
-        size="small"
-        label-width="20%"
-      >
+      <el-form label-position="right" :model="formItem" size="small" label-width="20%">
         <el-form-item label="脸谱">
           <el-input v-model="formItem.Actress" autocomplete="off"></el-input>
         </el-form-item>
@@ -639,16 +609,10 @@ export default {
         if (idx == arrLength - 1) {
           name += "." + str;
         } else if (idx == 0) {
-          const strNew = str.replace(
-            str.charAt(0),
-            str.charAt(0).toUpperCase()
-          );
+          const strNew = str.replace(str.charAt(0), str.charAt(0).toUpperCase());
           name += strNew;
         } else {
-          const strNew = str.replace(
-            str.charAt(0),
-            str.charAt(0).toUpperCase()
-          );
+          const strNew = str.replace(str.charAt(0), str.charAt(0).toUpperCase());
           name += " " + strNew;
         }
       }
@@ -789,8 +753,7 @@ export default {
       });
     },
     setMovieType(id, movieType) {
-      movieType =
-        movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
+      movieType = movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
       axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
         if (res.status === 200) {
           // this.alertSuccess(res.data.Message);
@@ -1027,7 +990,7 @@ export default {
   margin-top: 2px;
   margin-bottom: 2px;
 }
-.redbackground{
+.redbackground {
   background-color: yellowgreen;
 }
 .icon-style {

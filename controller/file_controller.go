@@ -264,6 +264,17 @@ func GetOpenFoler(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+func PostOpenFolerByPath(c *gin.Context) {
+
+	forms := make(map[string]string)
+	c.ShouldBindJSON(&forms)
+	dirpath := forms["dirpath"]
+	dirpath = strings.ReplaceAll(dirpath, "\\\\", "\\")
+	utils.ExecCmdExplorer(dirpath)
+	res := utils.NewSuccessByMsg("打开成功")
+	c.JSON(http.StatusOK, res)
+}
+
 func GetDelete(c *gin.Context) {
 	idInt, _ := strconv.Atoi(c.Param("id"))
 	id := int64(idInt)
