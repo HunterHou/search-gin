@@ -181,7 +181,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 10px; padding-buttom: 40px"
+      style="margin-top: 10px;"
     >
       <li
         style="overflow: auto"
