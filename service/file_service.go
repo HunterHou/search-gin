@@ -821,7 +821,6 @@ func Walk(baseDir string, types []string) []datamodels.Movie {
 	files, _ := ioutil.ReadDir(baseDir)
 	if len(files) > 0 {
 		for _, path := range files {
-
 			pathAbs := filepath.Join(baseDir, path.Name())
 			if path.IsDir() {
 				childResult := Walk(pathAbs, types)
@@ -842,6 +841,37 @@ func Walk(baseDir string, types []string) []datamodels.Movie {
 	}
 
 	return result
+}
+func WalkInnter(baseDir string, types []string, totalSize int64) ([]datamodels.Movie, int64) {
+	var result []datamodels.Movie
+	currentSize := int64(0)
+	files, _ := ioutil.ReadDir(baseDir)
+	if len(files) > 0 {
+		for _, path := range files {
+
+			pathAbs := filepath.Join(baseDir, path.Name())
+			if path.IsDir() {
+				childResult, innerSize := WalkInnter(pathAbs, types, currentSize)
+				result = ExpandsMovie(result, childResult)
+				currentSize += innerSize
+			} else {
+				name := path.Name()
+				currentSize += path.Size()
+				suffix := utils.GetSuffux(name)
+				movieType := utils.GetMovieType(name)
+				if utils.HasItem(types, suffix) {
+					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType)
+					result = append(result, file)
+				}
+
+			}
+		}
+	} else {
+		os.Remove(baseDir)
+	}
+	totalSize += currentSize
+	cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(baseDir, int64(currentSize), true))
+	return result, currentSize
 }
 
 func ExpandsMovie(originArr []datamodels.Movie, insertArr []datamodels.Movie) []datamodels.Movie {

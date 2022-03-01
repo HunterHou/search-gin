@@ -2,6 +2,7 @@ package debugTest
 
 import (
 	"fmt"
+	"search-gin/cons"
 	"search-gin/service"
 	"testing"
 )
@@ -16,6 +17,14 @@ func TestWalk(t *testing.T) {
 		fmt.Println(file.Name)
 	}
 }
+func TestWalkInnter(t *testing.T) {
+	service.WalkInnter("D:\\emby\\emby", []string{"jpg"}, 0)
+	for _, dir := range cons.SmallDir {
+		fmt.Println(dir.Name)
+		fmt.Println(dir.SizeStr)
+	}
+}
+
 func TestRemove(t *testing.T) {
 	service.DeleteOne(targetDir, target)
 }

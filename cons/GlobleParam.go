@@ -22,6 +22,32 @@ type MenuSize struct {
 	Cnt     int64
 	Size    int64
 	SizeStr string
+	IsDir   bool
+}
+
+func NewMenuSize(name string, size int64) MenuSize {
+	cnt := int64(0)
+	if size > 0 {
+		cnt = int64(1)
+	}
+	return MenuSize{
+		Name: name,
+		Cnt:  cnt,
+		Size: size,
+	}
+}
+
+func NewMenuSizeFold(name string, size int64, isFold bool) MenuSize {
+	cnt := int64(0)
+	if size > 0 {
+		cnt = int64(1)
+	}
+	return MenuSize{
+		Name:  name,
+		Cnt:   cnt,
+		Size:  size,
+		IsDir: isFold,
+	}
 }
 
 func (m MenuSize) Plus(size int64) MenuSize {
@@ -31,6 +57,7 @@ func (m MenuSize) Plus(size int64) MenuSize {
 }
 
 var TypeMenu map[string]MenuSize
+var SmallDir []MenuSize
 
 func TypeSizePlus(targetType string, targetSize int64) {
 	if targetType == "" {
