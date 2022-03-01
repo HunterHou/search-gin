@@ -1,6 +1,6 @@
 <template>
   <div align="center">
-    <h2>This is Home</h2>
+    <h2>掃描結果分析</h2>
 
     <el-table
       :data="tableData"
