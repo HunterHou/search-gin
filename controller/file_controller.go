@@ -226,10 +226,17 @@ func GetTypeSize(c *gin.Context) {
 	sort.Slice(res, func(i, j int) bool {
 		return res[i].Size > res[j].Size
 	})
-	for i := 0; i < len(cons.SmallDir); i++ {
-		cons.SmallDir[i].SizeStr = utils.GetSizeStr(cons.SmallDir[i].Size)
-		res = append(res, cons.SmallDir[i])
+	smallCount := len(cons.SmallDir)
+	if smallCount > 0 {
+		smallSize := cons.NewMenuSize("小文件数量", int64(smallCount))
+		smallSize.SizeStr = utils.GetSizeStr(smallSize.Size)
+		res = append(res, smallSize)
+		for i := 0; i < len(cons.SmallDir); i++ {
+			cons.SmallDir[i].SizeStr = utils.GetSizeStr(cons.SmallDir[i].Size)
+			res = append(res, cons.SmallDir[i])
+		}
 	}
+
 	c.JSON(http.StatusOK, res)
 }
 func PostRename(c *gin.Context) {
@@ -271,6 +278,17 @@ func PostOpenFolerByPath(c *gin.Context) {
 	dirpath := forms["dirpath"]
 	dirpath = strings.ReplaceAll(dirpath, "\\\\", "\\")
 	utils.ExecCmdExplorer(dirpath)
+	res := utils.NewSuccessByMsg("打开成功")
+	c.JSON(http.StatusOK, res)
+}
+
+func PostDeleteFolerByPath(c *gin.Context) {
+
+	forms := make(map[string]string)
+	c.ShouldBindJSON(&forms)
+	dirpath := forms["dirpath"]
+	dirpath = strings.ReplaceAll(dirpath, "\\\\", "\\")
+	service.DownDeleteDir(dirpath)
 	res := utils.NewSuccessByMsg("打开成功")
 	c.JSON(http.StatusOK, res)
 }

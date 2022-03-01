@@ -541,6 +541,7 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 func (fs FileService) ScanAll() {
 	//统计初始化
 	cons.TypeMenu = make(map[string]cons.MenuSize)
+	cons.SmallDir = []cons.MenuSize{}
 	//初始化查询条件
 	dirList := []string{}
 	setting := cons.OSSetting
@@ -553,10 +554,13 @@ func (fs FileService) ScanAll() {
 }
 func (fs FileService) Delete(id int64) {
 	file := fs.FindOne(id)
-	DeleteOne(file.DirPath, file.Name)
+	DeleteOne(file.DirPath, file.Title)
 
 }
 func DeleteOne(dirName string, fileName string) {
+	if len(fileName) == 0 {
+		return
+	}
 	files, _ := ioutil.ReadDir(dirName)
 	for _, f := range files {
 		if strings.Contains(f.Name(), fileName) {
@@ -570,17 +574,26 @@ func DeleteOne(dirName string, fileName string) {
 	// 删除父文件夹
 	filesThen, _ := ioutil.ReadDir(dirName)
 	if len(filesThen) == 0 {
-		// err := os.Remove(dirName)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
-		DeleteDir(dirName)
+		UpDeleteDir(dirName)
 	}
-	// dirname := path.Dir(file.Path)
-	// fmt.Println(dirname)
-	// deleteDir(dirname)
+
 }
-func DeleteDir(dirname string) {
+func DownDeleteDir(dirname string) {
+	files2, _ := ioutil.ReadDir(dirname)
+	if len(files2) > 0 {
+		for _, ff := range files2 {
+			path := dirname + "\\" + ff.Name()
+			if ff.IsDir() {
+				DownDeleteDir(path)
+			} else {
+				os.Remove(path)
+			}
+		}
+	}
+	UpDeleteDir(dirname)
+
+}
+func UpDeleteDir(dirname string) {
 	files2, _ := ioutil.ReadDir(dirname)
 	if len(files2) == 0 {
 		err := os.Remove(dirname)
@@ -588,9 +601,10 @@ func DeleteDir(dirname string) {
 			fmt.Println(err)
 		}
 		newpath := dirname[0:strings.LastIndex(dirname, "\\")]
-		DeleteDir(newpath)
+		UpDeleteDir(newpath)
 	} else {
 		return
+
 	}
 
 }

@@ -458,7 +458,7 @@ import axios from "axios";
 
 export default {
   data() {
-    const { searchWords, no } = this.$route.query;
+    const { searchWords, no,movieType } = this.$route.query;
     var searchPage = new Map();
 
     return {
@@ -472,7 +472,7 @@ export default {
       dialogFormItemVisible: false,
       sortField: "MTime",
       sortType: "desc",
-      movieType: "",
+      movieType: movieType,
       dataList: "",
       dataCnt: 0,
       errorMsg: "",

@@ -46,6 +46,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 	result := Movie{
 		Id:        utils.PKId(),
 		Code:      utils.GetCode(name),
+		Title:     utils.GetTitle(name),
 		Name:      name,
 		Path:      path,
 		Png:       utils.GetPng(path, "png"),
