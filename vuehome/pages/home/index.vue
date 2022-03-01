@@ -89,7 +89,7 @@ export default {
         path:"/menu",
         query: {
           searchWords: !IsDir?"":Name,
-          movieType: !IsDir?Name:"",
+          movieType: !IsDir&&Name!="全部"?Name:"",
           no: 1,
         },
       });
