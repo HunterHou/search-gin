@@ -21,18 +21,26 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="SizeStr"
         label="大小"
         header-align="right"
         align="right"
       >
+       <template slot-scope="scope">
+          <el-link :title="scope.row.Name" @click="gotoMenu(scope.row)">
+            {{ scope.row.SizeStr }}
+          </el-link>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="Cnt"
         label="数量"
         header-align="right"
         align="right"
       >
+       <template slot-scope="scope">
+          <el-link :title="scope.row.Name" @click="gotoMenu(scope.row)">
+            {{ scope.row.Cnt }}
+          </el-link>
+        </template>
       </el-table-column>
       <el-table-column
         prop="Name"

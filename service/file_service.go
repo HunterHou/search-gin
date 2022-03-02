@@ -884,7 +884,8 @@ func WalkInnter(baseDir string, types []string, totalSize int64) ([]datamodels.M
 		os.Remove(baseDir)
 	}
 	totalSize += currentSize
-	if currentSize <= 20000000 {
+	if currentSize <= 20000000 && utils.IndexOf(cons.OSSetting.Dirs, baseDir) < 0 {
+
 		cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(baseDir, int64(currentSize), true))
 	}
 	return result, currentSize
