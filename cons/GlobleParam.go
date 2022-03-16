@@ -105,6 +105,9 @@ var OSSetting = datamodels.Setting{
 		"e://emby",
 		"e://code",
 	},
+	Tags: []string{
+		"東京熱",
+	},
 	ImageTypes: []string{GIF, PNG, JPG},
 	DocsTypes:  []string{TXT, XLSX},
 	VideoTypes: []string{AVI, MKV, WMV, MP4},

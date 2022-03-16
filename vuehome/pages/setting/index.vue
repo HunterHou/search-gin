@@ -76,6 +76,25 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="标签">
+        <el-select
+          v-model="form.Tags"
+          multiple
+          filterable
+          allow-create
+          default-first-option
+          placeholder="请添加标签"
+          style="width: 80%"
+        >
+          <el-option
+            v-for="item in form.Tags"
+            :key="item"
+            :label="item"
+            :value="item"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
 
       <el-form-item label="文件路徑">
         <!-- <el-tag
@@ -168,6 +187,7 @@ export default {
         VideoTypes: [],
         Types: [],
         Dirs: [],
+        Tags: [],
       },
     };
   },
@@ -238,6 +258,7 @@ export default {
           this.form.VideoTypes = res.data.VideoTypes;
           this.form.Types = res.data.Types;
           this.form.Dirs = res.data.Dirs;
+          this.form.Tags = res.data.Tags;
           console.log(this.form);
           console.log(res.data);
         }

@@ -33,6 +33,8 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/setMovieType/:id/:movieType", controller.SetMovieType)
 	router.GET("/api/info/:id", controller.GetInfo)
 	router.POST("/api/file/rename", controller.PostRename)
+	router.GET("/api/file/addTag/:id/:tag", controller.GetAddTag)
+	router.GET("/api/file/clearTag/:id/:tag", controller.GetClearTag)
 	router.GET("/api/imageList/:id", controller.GetImageList)
 	router.GET("/api/dir/:id", controller.GetDirInfo)
 	router.GET("/api/delete/:id", controller.GetDelete)

@@ -132,6 +132,27 @@ func GetActress(fileName string) string {
 	return code
 }
 
+func GetTags(fileName string, movieType string) []string {
+	res := []string{movieType}
+	rights := strings.Split(fileName, "《")
+	if len(rights) <= 1 {
+		return nil
+	}
+	for index, value := range rights {
+		if index == 0 {
+			continue
+		}
+		right := value
+		lefts := strings.Split(right, "》")
+		for _, left := range lefts {
+			if !strings.Contains(left, "-") {
+				res = ExtandsItems(res, strings.Split(left, ","))
+			}
+		}
+	}
+	return res
+}
+
 // 根据 文件名称  分析番号 [] 中包含 '-'符号...
 func GetCode(fileName string) string {
 	code := ""

@@ -179,6 +179,7 @@ func GetFresh(c *gin.Context) {
 func GetButtom(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"baseUrl": cons.OSSetting.BaseUrl,
+		"Tags":    cons.OSSetting.Tags,
 	})
 }
 func GetPlay(c *gin.Context) {
@@ -244,6 +245,21 @@ func PostRename(c *gin.Context) {
 	c.ShouldBindJSON(&currentFile)
 	service := service.CreateFileService()
 	res := service.Rename(currentFile)
+	c.JSON(http.StatusOK, res)
+}
+
+func GetAddTag(c *gin.Context) {
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	tag := c.Param("tag")
+	service := service.CreateFileService()
+	res := service.AddTag(idInt, tag)
+	c.JSON(http.StatusOK, res)
+}
+func GetClearTag(c *gin.Context) {
+	idInt, _ := strconv.Atoi(c.Param("id"))
+	tag := c.Param("tag")
+	service := service.CreateFileService()
+	res := service.ClearTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
 

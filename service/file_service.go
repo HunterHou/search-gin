@@ -510,6 +510,13 @@ func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 	return res
 }
 
+func (fs FileService) AddTag(id int, tag string) utils.Result {
+	return utils.NewSuccess()
+}
+func (fs FileService) ClearTag(id int, tag string) utils.Result {
+	return utils.NewSuccess()
+}
+
 func (fs FileService) FindNext(Id int64, sourceLib []datamodels.Movie, offset int) datamodels.Movie {
 
 	length := len(sourceLib)

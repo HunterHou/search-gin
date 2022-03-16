@@ -5,14 +5,26 @@
     </el-backtop>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
-      style="position: fixed; top: 600px; overflow: auto; z-index: 999; left: 20px"
+      style="
+        position: fixed;
+        top: 600px;
+        overflow: auto;
+        z-index: 999;
+        left: 20px;
+      "
       round
       @click="pageLoading(-1)"
       >上一页
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
-      style="position: fixed; top: 600px; overflow: auto; z-index: 999; right: 80px"
+      style="
+        position: fixed;
+        top: 600px;
+        overflow: auto;
+        z-index: 999;
+        right: 80px;
+      "
       round
       @click="pageLoading(1)"
       >下一页
@@ -112,7 +124,11 @@
       </el-col>
     </el-row>
 
-    <v-contextmenu ref="contextmenu" :theme="theme" @contextmenu="handleContextmenu">
+    <v-contextmenu
+      ref="contextmenu"
+      :theme="theme"
+      @contextmenu="handleContextmenu"
+    >
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
@@ -175,13 +191,25 @@
           >删除</i
         >
       </v-contextmenu-item>
-    </v-contextmenu>
 
+      <v-contextmenu-item @click="handleClick">
+        <li v-for="tag in this.Tags" :key="tag">
+          <i
+            :underline="false"
+            class="el-icon-success"
+            style="margin: 0 4px"
+            :title="tag"
+            :action="tag"
+            >{{tag}}</i
+          >
+        </li>
+      </v-contextmenu-item>
+    </v-contextmenu>
     <div
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 10px;"
+      style="margin-top: 10px"
     >
       <li
         style="overflow: auto"
@@ -189,7 +217,12 @@
         v-for="item in dataList"
         :key="item.Id"
       >
-        <div :class="[theme]" v-contextmenu:contextmenu :key="item.Id" :code="item.Code">
+        <div
+          :class="[theme]"
+          v-contextmenu:contextmenu
+          :key="item.Id"
+          :code="item.Code"
+        >
           <div
             v-if="item"
             @click="openWin(item.Id)"
@@ -198,16 +231,21 @@
             <el-tag v-if="item.MovieType" type="danger" effect="dark"
               >{{ item.MovieType }}
             </el-tag>
+          
             <el-image
               style="width: 100%; height: 100%"
               :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
               fit="contain"
               lazy
             />
+          
           </div>
         </div>
 
         <div class="image-tool">
+            <!-- <el-tag v-for="tag in item.Tags" :key="tag" closable type="info" style="margin-left:-0px">
+              {{ tag }}
+            </el-tag> -->
           <el-link
             ><i
               :underline="false"
@@ -232,7 +270,11 @@
             ></i
           ></el-link>
           <el-link>
-            <i class="el-icon-edit icon-style" title="编辑" @click="editItem(item)"></i
+            <i
+              class="el-icon-edit icon-style"
+              title="编辑"
+              @click="editItem(item)"
+            ></i
           ></el-link>
           <el-link>
             <i
@@ -323,7 +365,10 @@
               </el-dropdown-menu>
             </el-dropdown>
           </el-link>
-          <div class="context-text" :class="item.MovieType ? '' : 'redbackground'">
+          <div
+            class="context-text"
+            :class="item.MovieType ? '' : 'redbackground'"
+          >
             <el-tooltip placement="bottom" effect="dark">
               <div slot="content">{{ item.name }}</div>
               <span>
@@ -435,7 +480,12 @@
       :close-on-press-escape="false"
       :close-on-click-modal="false"
     >
-      <el-form label-position="right" :model="formItem" size="small" label-width="20%">
+      <el-form
+        label-position="right"
+        :model="formItem"
+        size="small"
+        label-width="20%"
+      >
         <el-form-item label="脸谱">
           <el-input v-model="formItem.Actress" autocomplete="off"></el-input>
         </el-form-item>
@@ -458,7 +508,7 @@ import axios from "axios";
 
 export default {
   data() {
-    const { searchWords, no,movieType } = this.$route.query;
+    const { searchWords, no, movieType } = this.$route.query;
     var searchPage = new Map();
 
     return {
@@ -467,12 +517,13 @@ export default {
       showStyle: "post",
       file: "",
       baseUrl: "",
+      Tags: [],
       onlyRepeat: false, //是否查重
       dialogVisible: false, //是否弹窗
       dialogFormItemVisible: false,
       sortField: "MTime",
       sortType: "desc",
-      movieType: movieType||"",
+      movieType: movieType || "",
       dataList: "",
       dataCnt: 0,
       errorMsg: "",
@@ -570,7 +621,31 @@ export default {
         this.deleteThis(clickId, 2);
       } else if ("sourceLink" == title) {
         window.open(`${this.baseUrl}/${clickCode}`, "_blank");
+      }else if (this.Tags.indexOf(title)>=0) {
+        this.addTag(clickId,title)
       }
+    },
+    addTag(clickId,title){
+      axios.post("api/file/addTag/"+clickId+"/"+ title).then((res) => {
+        if (res.status === 200) {
+          if (res.data.Code == 200) {
+            this.alertSuccess(res.data.Message);
+          } else {
+            this.alertFail(res.data.Message);
+          }
+        }
+      });
+    },
+    closeTag(clickId,title){
+      axios.get("api/file/closeTag/"+clickId+"/"+ title).then((res) => {
+        if (res.status === 200) {
+          if (res.data.Code == 200) {
+            this.alertSuccess(res.data.Message);
+          } else {
+            this.alertFail(res.data.Message);
+          }
+        }
+      });
     },
     //确定点击的区域Id
     handleContextmenu(vnode) {
@@ -609,10 +684,16 @@ export default {
         if (idx == arrLength - 1) {
           name += "." + str;
         } else if (idx == 0) {
-          const strNew = str.replace(str.charAt(0), str.charAt(0).toUpperCase());
+          const strNew = str.replace(
+            str.charAt(0),
+            str.charAt(0).toUpperCase()
+          );
           name += strNew;
         } else {
-          const strNew = str.replace(str.charAt(0), str.charAt(0).toUpperCase());
+          const strNew = str.replace(
+            str.charAt(0),
+            str.charAt(0).toUpperCase()
+          );
           name += " " + strNew;
         }
       }
@@ -661,6 +742,7 @@ export default {
       axios.get("api/buttoms").then((res) => {
         if (res.status == 200) {
           this.baseUrl = res.data.baseUrl;
+          this.Tags = res.data.Tags;
         }
 
         // store.commit('setStars', res.data)
@@ -753,7 +835,8 @@ export default {
       });
     },
     setMovieType(id, movieType) {
-      movieType = movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
+      movieType =
+        movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
       axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
         if (res.status === 200) {
           // this.alertSuccess(res.data.Message);
@@ -856,6 +939,9 @@ export default {
               if (item.Code == item.Actress) {
                 item.Code = "";
                 item.Actress = "";
+              }
+              if (item.Code.lastIndexOf("-") == item.Code.length - 1) {
+                item.Code = item.Code.substring(0, item.Code.length - 1);
               }
               item.name = item.Name.trim();
               item.Name = item.Name.replace("[" + item.Code + "]", "");

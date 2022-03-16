@@ -77,18 +77,20 @@
           :key="item.Id"
         >
           <div v-if="item" class="img-list-item">
-            <span >{{ item.Name }}</span>
-            <span >{{ item.SizeStr }}</span>
-            <el-badge :value="item.Cnt  ">
-              <el-image
-                :src="item.JpgUrl"
-                :fit="fit"
-                lazy
-                round
-                @click="open(item.Name)"
-              >
-              </el-image
-            ></el-badge>
+            <el-link   @click="open(item.Name)">
+              <span >{{ item.Name }}</span>
+              <span >{{ item.SizeStr }}</span>
+              <el-badge :value="item.Cnt  ">
+                <el-image
+                  :src="item.JpgUrl"
+                  :fit="fit"
+                  lazy
+                  round
+                >
+                </el-image
+              ></el-badge>
+            </el-link>
+            
           </div>
           
         </li>
