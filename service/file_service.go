@@ -109,13 +109,79 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) uti
 		os.Rename(movie.Png, newName)
 	}
 
-	//ssr
-	// if utils.ExistsFiles(movie.Png) {
-	// 	suffix = "." + utils.GetSuffux(movie.Png)
-	// newSuffix = newMovieType + suffix
-	// newName = strings.ReplaceAll(movie.Png, suffix, newSuffix)
-	// os.Rename(movie.Png, newName)
-	// }
+	//jpg
+	if utils.ExistsFiles(movie.Jpg) {
+		suffix = "." + utils.GetSuffux(movie.Jpg)
+		newSuffix = newMovieType + suffix
+		newName = strings.ReplaceAll(movie.Jpg, suffix, newSuffix)
+		os.Rename(movie.Jpg, newName)
+	}
+
+	//nfo
+	if utils.ExistsFiles(movie.Nfo) {
+		suffix = "." + utils.GetSuffux(movie.Nfo)
+		newSuffix = newMovieType + suffix
+		newName = strings.ReplaceAll(movie.Nfo, suffix, newSuffix)
+		os.Rename(movie.Nfo, newName)
+
+	}
+	return utils.NewSuccessByMsg("执行成功")
+}
+
+func (fs FileService) AddTag(id int64, tag string) utils.Result {
+	movie := fs.FindOne(id)
+	//video
+	if len(movie.Tags) > 0 {
+		originTagStr := utils.GetTagStr(movie.Path)
+		if originTagStr == tag {
+			return utils.NewSuccessByMsg("执行成功")
+		}
+		newTagStr := "《" + originTagStr + "," + tag + "》"
+		originTagStr = "《" + utils.GetTagStr(movie.Path) + "》"
+		path := strings.ReplaceAll(movie.Path, originTagStr, newTagStr)
+		err := os.Rename(movie.Path, path)
+		if err != nil {
+			fmt.Println(err)
+		}
+		path = strings.ReplaceAll(movie.Jpg, originTagStr, newTagStr)
+		err = os.Rename(movie.Jpg, path)
+		if err != nil {
+			fmt.Println(err)
+		}
+		path = strings.ReplaceAll(movie.Png, originTagStr, newTagStr)
+		err = os.Rename(movie.Png, path)
+		if err != nil {
+			fmt.Println(err)
+		}
+		path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
+		err = os.Rename(movie.Nfo, path)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return utils.NewSuccessByMsg("执行成功")
+	}
+
+	newMovieType := "《" + tag + "》"
+	fmt.Println(tag)
+	suffix := "." + utils.GetSuffux(movie.Path)
+	newSuffix := newMovieType + suffix
+	newName := strings.ReplaceAll(movie.Path, suffix, newSuffix)
+	if strings.Contains(newName, "《") && strings.Contains(newName, "》") {
+		newName = strings.ReplaceAll(newName, ",", "")
+		newName = strings.ReplaceAll(newName, "《》", "")
+	}
+	err := os.Rename(movie.Path, newName)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fs.UpdateOne(id, newName)
+	//png
+	if utils.ExistsFiles(movie.Png) {
+		suffix = "." + utils.GetSuffux(movie.Png)
+		newSuffix = newMovieType + suffix
+		newName = strings.ReplaceAll(movie.Png, suffix, newSuffix)
+		os.Rename(movie.Png, newName)
+	}
 
 	//jpg
 	if utils.ExistsFiles(movie.Jpg) {
@@ -133,6 +199,38 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) uti
 		os.Rename(movie.Nfo, newName)
 
 	}
+
+	return utils.NewSuccessByMsg("执行成功")
+}
+func (fs FileService) ClearTag(id int64, tag string) utils.Result {
+	movie := fs.FindOne(id)
+	//video
+	if len(movie.Tags) == 0 {
+		return utils.NewSuccessByMsg("执行成功")
+	}
+
+	originTagStr := utils.GetTagStr(movie.Path)
+
+	newTagStr := strings.ReplaceAll(originTagStr, tag, "")
+	if len(movie.Tags) == 1 {
+		newTagStr = strings.ReplaceAll(newTagStr, "《", "")
+		newTagStr = strings.ReplaceAll(newTagStr, "》", "")
+		newTagStr = strings.ReplaceAll(newTagStr, ",", "")
+	}
+	for i := 0; i < len(movie.Tags); i++ {
+		if movie.Tags[i] == tag {
+			movie.Tags[i] = ""
+		}
+	}
+	path := strings.ReplaceAll(movie.Path, originTagStr, newTagStr)
+	os.Rename(movie.Path, path)
+	fs.UpdateOne(id, path)
+	path = strings.ReplaceAll(movie.Jpg, originTagStr, newTagStr)
+	os.Rename(movie.Jpg, path)
+	path = strings.ReplaceAll(movie.Png, originTagStr, newTagStr)
+	os.Rename(movie.Png, path)
+	path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
+	os.Rename(movie.Nfo, path)
 	return utils.NewSuccessByMsg("执行成功")
 }
 
@@ -414,6 +512,13 @@ func (fs FileService) FindOne(Id int64) datamodels.Movie {
 	return curFile
 }
 
+func (fs FileService) UpdateOne(Id int64, path string) {
+	if cons.IndexOver {
+		db := CreateOrmService()
+		db.UpdateOne(Id, path)
+	}
+}
+
 func (fs FileService) GetPng(c *gin.Context) {
 	//path := c.Param("path")
 	id, _ := strconv.Atoi(c.Param("path"))
@@ -508,13 +613,6 @@ func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 	}
 
 	return res
-}
-
-func (fs FileService) AddTag(id int, tag string) utils.Result {
-	return utils.NewSuccess()
-}
-func (fs FileService) ClearTag(id int, tag string) utils.Result {
-	return utils.NewSuccess()
 }
 
 func (fs FileService) FindNext(Id int64, sourceLib []datamodels.Movie, offset int) datamodels.Movie {

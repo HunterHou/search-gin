@@ -51,6 +51,17 @@ func (o *OrmService) Find(Id int64) datamodels.Movie {
 	return res
 
 }
+func (o *OrmService) UpdateOne(Id int64, path string) datamodels.Movie {
+	var res datamodels.Movie
+	res.Id = Id
+	res.Path = path
+	_, err := dbEngine.ID(Id).Update(&res)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return res
+
+}
 
 func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, int64) {
 

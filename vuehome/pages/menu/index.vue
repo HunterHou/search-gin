@@ -192,24 +192,26 @@
         >
       </v-contextmenu-item>
 
-      <v-contextmenu-item @click="handleClick">
-        <li v-for="tag in this.Tags" :key="tag">
-          <i
-            :underline="false"
-            class="el-icon-success"
-            style="margin: 0 4px"
-            :title="tag"
-            :action="tag"
-            >{{tag}}</i
-          >
-        </li>
+      <v-contextmenu-item
+        v-for="tag in this.Tags"
+        :key="tag"
+        @click="handleClick"
+      >
+        <i
+          :underline="false"
+          class="el-icon-success"
+          style="margin: 0 4px"
+          :title="tag"
+          :action="tag"
+          >{{ tag }}</i
+        >
       </v-contextmenu-item>
     </v-contextmenu>
     <div
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 10px"
+      style="margin-top: 10px; min-height: 800px"
     >
       <li
         style="overflow: auto"
@@ -231,21 +233,16 @@
             <el-tag v-if="item.MovieType" type="danger" effect="dark"
               >{{ item.MovieType }}
             </el-tag>
-          
             <el-image
               style="width: 100%; height: 100%"
               :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
               fit="contain"
               lazy
             />
-          
           </div>
         </div>
 
         <div class="image-tool">
-            <!-- <el-tag v-for="tag in item.Tags" :key="tag" closable type="info" style="margin-left:-0px">
-              {{ tag }}
-            </el-tag> -->
           <el-link
             ><i
               :underline="false"
@@ -365,6 +362,7 @@
               </el-dropdown-menu>
             </el-dropdown>
           </el-link>
+
           <div
             class="context-text"
             :class="item.MovieType ? '' : 'redbackground'"
@@ -382,6 +380,27 @@
                 【{{ item.SizeStr }}】 {{ item.Name }}
               </span>
             </el-tooltip>
+          </div>
+          <div style="overflow: left; position: absolute">
+            <el-tag
+              closable
+              type=""
+              effect="dark"
+              style="
+                background: #409eff;
+                float: left;
+                z-index: 999;
+                margin-top: -25px;
+                margin-left: 2px;
+                height: 30px;
+                opacity: 1;
+              "
+              v-for="tag in item.Tags"
+              :key="tag"
+              @close="closeTag(item.Id, tag)"
+            >
+              {{ tag }}
+            </el-tag>
           </div>
         </div>
       </li>
@@ -621,26 +640,41 @@ export default {
         this.deleteThis(clickId, 2);
       } else if ("sourceLink" == title) {
         window.open(`${this.baseUrl}/${clickCode}`, "_blank");
-      }else if (this.Tags.indexOf(title)>=0) {
-        this.addTag(clickId,title)
+      } else if (this.Tags.indexOf(title) >= 0) {
+        this.addTag(clickId, title);
       }
     },
-    addTag(clickId,title){
-      axios.post("api/file/addTag/"+clickId+"/"+ title).then((res) => {
+    addTag(clickId, title) {
+      const url = "api/file/addTag/" + clickId + "/" + title;
+      axios.get(url).then((res) => {
         if (res.status === 200) {
           if (res.data.Code == 200) {
             this.alertSuccess(res.data.Message);
+            for (var i = 0; i < this.dataList.length; i++) {
+              if (this.dataList[i].Id == clickId) {
+                this.dataList[i].Tags.push(title);
+              }
+              return;
+            }
           } else {
             this.alertFail(res.data.Message);
           }
         }
       });
     },
-    closeTag(clickId,title){
-      axios.get("api/file/closeTag/"+clickId+"/"+ title).then((res) => {
+    closeTag(clickId, title) {
+      const url = "api/file/clearTag/" + clickId + "/" + title;
+      axios.get(url).then((res) => {
         if (res.status === 200) {
           if (res.data.Code == 200) {
             this.alertSuccess(res.data.Message);
+            for (var i = 0; i < this.dataList.length; i++) {
+              if (this.dataList[i].Id == clickId) {
+                const idx = this.dataList[i].Tags.indexOf(title);
+                this.dataList[i].Tags.splice(idx, 1);
+              }
+              return;
+            }
           } else {
             this.alertFail(res.data.Message);
           }
@@ -1088,9 +1122,10 @@ export default {
 .context-text {
   font-size: 14px;
   font-size-adjust: inherit;
-  margin-right: 2px;
+  margin-right: 4px;
+  margin-left: 4px;
   position: relative;
-  height: 40px;
+  height: 60px;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 2;
@@ -1108,7 +1143,10 @@ export default {
   float: left;
   list-style: none;
 }
-
+.image-tag {
+  /* margin-bottom: -180px; */
+  position: fixed;
+}
 .img-list-item {
   width: 220px;
   height: 280px;
@@ -1163,14 +1201,6 @@ export default {
   z-index: 999;
   margin-bottom: 8px;
 }
-
-/*.pagination {*/
-/*  align-content: center;*/
-/*  position: absolute;*/
-/*  bottom: 0px;*/
-/*  overflow: auto;*/
-/*  z-index: 999;*/
-/*}*/
 
 .up {
   height: 100%;

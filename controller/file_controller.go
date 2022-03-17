@@ -252,14 +252,14 @@ func GetAddTag(c *gin.Context) {
 	idInt, _ := strconv.Atoi(c.Param("id"))
 	tag := c.Param("tag")
 	service := service.CreateFileService()
-	res := service.AddTag(idInt, tag)
+	res := service.AddTag(int64(idInt), tag)
 	c.JSON(http.StatusOK, res)
 }
 func GetClearTag(c *gin.Context) {
 	idInt, _ := strconv.Atoi(c.Param("id"))
 	tag := c.Param("tag")
 	service := service.CreateFileService()
-	res := service.ClearTag(idInt, tag)
+	res := service.ClearTag(int64(idInt), tag)
 	c.JSON(http.StatusOK, res)
 }
 

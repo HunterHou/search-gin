@@ -133,7 +133,10 @@ func GetActress(fileName string) string {
 }
 
 func GetTags(fileName string, movieType string) []string {
-	res := []string{movieType}
+	res := []string{}
+	if movieType != "" {
+		res = append(res, movieType)
+	}
 	rights := strings.Split(fileName, "《")
 	if len(rights) <= 1 {
 		return nil
@@ -144,13 +147,31 @@ func GetTags(fileName string, movieType string) []string {
 		}
 		right := value
 		lefts := strings.Split(right, "》")
-		for _, left := range lefts {
-			if !strings.Contains(left, "-") {
-				res = ExtandsItems(res, strings.Split(left, ","))
+		arr := strings.Split(lefts[0], ",")
+		for i := 0; i < len(arr); i++ {
+			if arr[i] != "" {
+				res = append(res, arr[i])
 			}
 		}
 	}
+
 	return res
+}
+func GetTagStr(fileName string) string {
+
+	rights := strings.Split(fileName, "《")
+	if len(rights) <= 1 {
+		return ""
+	}
+	for index, value := range rights {
+		if index == 0 {
+			continue
+		}
+		right := value
+		lefts := strings.Split(right, "》")
+		return lefts[0]
+	}
+	return ""
 }
 
 // 根据 文件名称  分析番号 [] 中包含 '-'符号...
