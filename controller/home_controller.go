@@ -18,7 +18,6 @@ func Index(c *gin.Context) {
 func GetTypeSize(c *gin.Context) {
 	service := service.CreateFileService()
 	if len(datasource.FileList) == 0 {
-
 		service.ScanAll()
 		service.SortAct(datasource.ActressList, "desc")
 	}
@@ -47,12 +46,6 @@ func GetTypeSize(c *gin.Context) {
 }
 
 func GetTagSize(c *gin.Context) {
-	service := service.CreateFileService()
-	if len(datasource.FileList) == 0 {
-
-		service.ScanAll()
-		service.SortAct(datasource.ActressList, "desc")
-	}
 	res := []cons.MenuSize{}
 	for _, v := range cons.TagMenu {
 		res = append(res, v)

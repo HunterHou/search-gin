@@ -3,11 +3,12 @@
     <el-badge
       v-for="tag in tagData"
       :key="tag"
-     
-      style="margin-left: 18px;margin-top:8px;"
+      style="margin-left: 18px; margin-top: 8px"
       :value="tag.Cnt"
     >
-      <el-tag  @click="gotoMenu(tag)"> {{ tag.Name }}【{{ tag.SizeStr }}】 </el-tag>
+      <el-tag @click="gotoMenu(tag)">
+        {{ tag.Name }}【{{ tag.SizeStr }}】
+      </el-tag>
     </el-badge>
 
     <h2>掃描結果分析</h2>
@@ -105,18 +106,22 @@ export default {
       });
     },
     loadData() {
-      axios.get("api/typeSizeMap").then((res) => {
-        if (res.status === 200) {
-          const { data } = res;
-          this.tableData = data;
-        }
-      });
-      axios.get("api/tagSizeMap").then((res) => {
-        if (res.status === 200) {
-          const { data } = res;
-          this.tagData = data;
-        }
-      });
+      axios
+        .get("api/typeSizeMap")
+        .then((res) => {
+          if (res.status === 200) {
+            const { data } = res;
+            this.tableData = data;
+          }
+        })
+        .then(
+          axios.get("api/tagSizeMap").then((res) => {
+            if (res.status === 200) {
+              const { data } = res;
+              this.tagData = data;
+            }
+          })
+        );
     },
     openThis(index, data) {
       const { Name } = data;
