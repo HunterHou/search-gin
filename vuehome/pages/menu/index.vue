@@ -129,6 +129,20 @@
       :theme="theme"
       @contextmenu="handleContextmenu"
     >
+      <v-contextmenu-item
+        v-for="tag in this.Tags"
+        :key="tag"
+        @click="handleClick"
+      >
+        <i
+          :underline="false"
+          class="el-icon-success"
+          style="margin: 0 4px"
+          :title="tag"
+          :action="tag"
+          >{{ tag }}</i
+        >
+      </v-contextmenu-item>
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
@@ -189,21 +203,6 @@
           title="删除"
           action="delete"
           >删除</i
-        >
-      </v-contextmenu-item>
-
-      <v-contextmenu-item
-        v-for="tag in this.Tags"
-        :key="tag"
-        @click="handleClick"
-      >
-        <i
-          :underline="false"
-          class="el-icon-success"
-          style="margin: 0 4px"
-          :title="tag"
-          :action="tag"
-          >{{ tag }}</i
         >
       </v-contextmenu-item>
     </v-contextmenu>
