@@ -211,7 +211,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 10px; min-height: 800px"
+      style="margin-top: 10px; min-height: 600px"
     >
       <li
         style="overflow: auto"

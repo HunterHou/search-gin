@@ -58,6 +58,7 @@ func (m MenuSize) Plus(size int64) MenuSize {
 
 var TypeMenu map[string]MenuSize
 var TagMenu map[string]MenuSize
+
 var SmallDir []MenuSize
 
 func TypeSizePlus(targetType string, targetSize int64) {
