@@ -137,28 +137,38 @@
         <i
           :underline="false"
           class="el-icon-success"
-          style="margin: 0 4px"
+          style="margin: 2 4px; color: red"
           :title="tag"
           :action="tag"
-          >{{ tag }}</i
+          ><b>{{ tag }}</b></i
         >
       </v-contextmenu-item>
-      <v-contextmenu-item @click="handleClick"
-        ><i
-          :underline="false"
-          class="el-icon-video-play"
-          style="margin: 0 4px"
-          title="播放"
-          action="play"
-          >播放</i
-        ></v-contextmenu-item
-      >
 
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
+          class="el-icon-video-play"
+          style="margin: 2 8px; color: green"
+          title="播放"
+          action="play"
+          ><b>播放</b></i
+        ></v-contextmenu-item
+      >
+      <v-contextmenu-item @click="handleClick"
+        ><i
+          :underline="false"
+          class="el-icon-refresh"
+          style="margin: 2 8px; color: green"
+          title="同步"
+          action="sync"
+          ><b>同步</b></i
+        ></v-contextmenu-item
+      >
+      <v-contextmenu-item @click="handleClick"
+        ><i
+          :underline="false"
           class="el-icon-share"
-          style="margin: 0 4px"
+          style="margin: 2 8px"
           title="链接"
           action="sourceLink"
           >链接</i
@@ -169,27 +179,18 @@
         ><i
           :underline="false"
           class="el-icon-folder-opened"
-          style="margin: 0 4px"
+          style="margin: 0 8px"
           title="文件夹"
           action="fold"
           >文夹</i
         ></v-contextmenu-item
       >
-      <v-contextmenu-item @click="handleClick"
-        ><i
-          :underline="false"
-          class="el-icon-refresh"
-          style="margin: 0 4px"
-          title="同步"
-          action="sync"
-          >同步</i
-        ></v-contextmenu-item
-      >
+
       <v-contextmenu-item @click="handleClick">
         <i
           :underline="false"
           class="el-icon-download"
-          style="margin: 0 4px"
+          style="margin: 0 8px"
           title="刮图"
           action="downImage"
           >刮图</i
@@ -199,7 +200,7 @@
         <i
           :underline="false"
           class="el-icon-delete"
-          style="margin: 0 4px"
+          style="margin: 2 8px"
           title="删除"
           action="delete"
           >删除</i
