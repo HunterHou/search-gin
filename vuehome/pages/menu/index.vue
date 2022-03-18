@@ -219,6 +219,19 @@
         v-for="item in dataList"
         :key="item.Id"
       >
+        <div class="tag-area">
+          <li style="overflow: auto" v-for="tag in item.Tags" :key="tag">
+            <el-tag
+              class="tag-line"
+              closable
+              type="success"
+              effect=""
+              @close="closeTag(item.Id, tag)"
+            >
+              {{ tag }}
+            </el-tag>
+          </li>
+        </div>
         <div
           :class="[theme]"
           v-contextmenu:contextmenu
@@ -380,27 +393,6 @@
                 【{{ item.SizeStr }}】 {{ item.Name }}
               </span>
             </el-tooltip>
-          </div>
-          <div style="overflow: left; position: absolute">
-            <el-tag
-              closable
-              type=""
-              effect="dark"
-              style="
-                background: #409eff;
-                float: left;
-                z-index: 999;
-                margin-top: -25px;
-                margin-left: 2px;
-                height: 30px;
-                opacity: 1;
-              "
-              v-for="tag in item.Tags"
-              :key="tag"
-              @close="closeTag(item.Id, tag)"
-            >
-              {{ tag }}
-            </el-tag>
           </div>
         </div>
       </li>
@@ -1125,7 +1117,7 @@ export default {
   margin-right: 4px;
   margin-left: 4px;
   position: relative;
-  height: 60px;
+  height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 2;
@@ -1158,7 +1150,7 @@ export default {
   background: #e01616;
   position: absolute;
   z-index: 99;
-  margin-top: 4px;
+  margin-bottom: 30px;
   margin-left: 4px;
   text-align: justify;
   text-align-last: justify;
@@ -1211,7 +1203,23 @@ export default {
   line-height: 40px;
   color: #1989fa;
 }
-
+.tag-area {
+  position: absolute;
+  margin-right: 0px;
+  z-index: 999;
+  opacity: 1;
+}
+.tag-area span {
+  filter: alpha(opacity=90);
+  opacity: 0.9;
+  background: #38bb38;
+  z-index: 99;
+  margin-top: 36px;
+  margin-right: 4px;
+  color: #ffffff;
+  height: 26px;
+  line-height: 22px;
+}
 v-deep .el-tooltip__popper {
   width: 300px;
   height: 40px;

@@ -57,6 +57,7 @@ func (m MenuSize) Plus(size int64) MenuSize {
 }
 
 var TypeMenu map[string]MenuSize
+var TagMenu map[string]MenuSize
 var SmallDir []MenuSize
 
 func TypeSizePlus(targetType string, targetSize int64) {
@@ -84,6 +85,23 @@ func TypeSizePlus(targetType string, targetSize int64) {
 	TypeMenu["全部"] = TypeMenu["全部"].Plus(targetSize)
 }
 
+func TagSizePlus(targetType string, targetSize int64) {
+	if len(TagMenu) == 0 {
+		TagMenu = make(map[string]MenuSize)
+	}
+	target, ok := TagMenu[targetType]
+	if ok {
+		TagMenu[targetType] = target.Plus(targetSize)
+	} else {
+		TagMenu[targetType] = MenuSize{
+			Name:  targetType,
+			Cnt:   1,
+			IsDir: true,
+			Size:  targetSize,
+		}
+	}
+}
+
 func OverIndex() bool {
 	libSize := len(datasource.FileList)
 	// if libSize == 0 {
@@ -101,6 +119,7 @@ var OSSetting = datamodels.Setting{
 	SelfPath: "setting.json",
 	BaseUrl:  "https://www.busjav.blog/",
 	OMUrl:    "https://www.busjav.blog/",
+	Remark:   "",
 	Dirs: []string{
 		"e://emby",
 		"e://code",

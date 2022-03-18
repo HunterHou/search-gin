@@ -1,5 +1,15 @@
 <template>
   <div align="center">
+    <el-badge
+      v-for="tag in tagData"
+      :key="tag"
+     
+      style="margin-left: 18px;margin-top:8px;"
+      :value="tag.Cnt"
+    >
+      <el-tag  @click="gotoMenu(tag)"> {{ tag.Name }}【{{ tag.SizeStr }}】 </el-tag>
+    </el-badge>
+
     <h2>掃描結果分析</h2>
 
     <el-table
@@ -20,23 +30,15 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column
-        label="大小"
-        header-align="right"
-        align="right"
-      >
-       <template slot-scope="scope">
+      <el-table-column label="大小" header-align="right" align="right">
+        <template slot-scope="scope">
           <el-link :title="scope.row.Name" @click="gotoMenu(scope.row)">
             {{ scope.row.SizeStr }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column
-        label="数量"
-        header-align="right"
-        align="right"
-      >
-       <template slot-scope="scope">
+      <el-table-column label="数量" header-align="right" align="right">
+        <template slot-scope="scope">
           <el-link :title="scope.row.Name" @click="gotoMenu(scope.row)">
             {{ scope.row.Cnt }}
           </el-link>
@@ -80,6 +82,7 @@ export default {
   data() {
     return {
       tableData: [],
+      tagData: [],
       refreshIndexFlag: false,
     };
   },
@@ -90,14 +93,13 @@ export default {
     this.loadData();
   },
   methods: {
-   
     gotoMenu(data) {
-       const {IsDir,Name}=data
+      const { IsDir, Name } = data;
       this.$router.push({
-        path:"/menu",
+        path: "/menu",
         query: {
-          searchWords: !IsDir?"":Name,
-          movieType: !IsDir&&Name!="全部"?Name:"",
+          searchWords: !IsDir ? "" : Name,
+          movieType: !IsDir && Name != "全部" ? Name : "",
           no: 1,
         },
       });
@@ -107,6 +109,12 @@ export default {
         if (res.status === 200) {
           const { data } = res;
           this.tableData = data;
+        }
+      });
+      axios.get("api/tagSizeMap").then((res) => {
+        if (res.status === 200) {
+          const { data } = res;
+          this.tagData = data;
         }
       });
     },

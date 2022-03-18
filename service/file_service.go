@@ -875,6 +875,12 @@ func ArrayToMap(files []datamodels.Movie) (map[int64]datamodels.Movie, map[strin
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
 		cons.TypeSizePlus(curFile.MovieType, curFile.Size)
+		if len(curFile.Tags) > 0 {
+			for i := 0; i < len(curFile.Tags); i++ {
+				cons.TagSizePlus(curFile.Tags[i], curFile.Size)
+			}
+
+		}
 		//curFile.SetId("pk" + string(i))
 		size = size + curFile.Size
 		existMoive, ok := filemap[curFile.Id]
