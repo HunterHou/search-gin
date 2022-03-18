@@ -646,6 +646,7 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 func (fs FileService) ScanAll() {
 	//统计初始化
 	cons.TypeMenu = make(map[string]cons.MenuSize)
+	cons.TagMenu = make(map[string]cons.MenuSize)
 	cons.SmallDir = []cons.MenuSize{}
 	//初始化查询条件
 	dirList := []string{}
