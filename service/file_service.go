@@ -142,6 +142,7 @@ func (fs FileService) AddTag(id int64, tag string) utils.Result {
 		err := os.Rename(movie.Path, path)
 		if err != nil {
 			fmt.Println(err)
+			return utils.NewFailByMsg(err.Error())
 		}
 		path = strings.ReplaceAll(movie.Jpg, originTagStr, newTagStr)
 		err = os.Rename(movie.Jpg, path)
@@ -173,6 +174,7 @@ func (fs FileService) AddTag(id int64, tag string) utils.Result {
 	err := os.Rename(movie.Path, newName)
 	if err != nil {
 		fmt.Println(err)
+		return utils.NewFailByMsg(err.Error())
 	}
 	fs.UpdateOne(id, newName)
 	//png
