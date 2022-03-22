@@ -7,10 +7,10 @@
     <el-button
       style="
         position: fixed;
-        top: 100px;
+        top: 680px;
         overflow: auto;
         z-index: 999;
-        left: 10px;
+        left: 5px;
       "
       round
       @click="pageLoading(-1)"
@@ -20,10 +20,10 @@
     <el-button
       style="
         position: fixed;
-        top: 100px;
+        top: 680px;
         overflow: auto;
         z-index: 999;
-        right: 80px;
+        right: 5px;
       "
       round
       @click="pageLoading(1)"
