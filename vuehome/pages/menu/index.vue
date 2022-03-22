@@ -7,30 +7,30 @@
     <el-button
       style="
         position: fixed;
-        top: 600px;
+        top: 100px;
         overflow: auto;
         z-index: 999;
-        left: 20px;
+        left: 10px;
       "
       round
       @click="pageLoading(-1)"
-      >上一页
+      ><i class="el-icon-back"></i>
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
       style="
         position: fixed;
-        top: 600px;
+        top: 100px;
         overflow: auto;
         z-index: 999;
         right: 80px;
       "
       round
       @click="pageLoading(1)"
-      >下一页
+      ><i class="el-icon-right"></i>
     </el-button>
     <el-row>
-      <el-col :span="2" :offset="1">
+      <el-col :span="2" :offset="2">
         <el-button
           type="success"
           size="mini"
@@ -95,7 +95,7 @@
     </el-row>
 
     <el-row style="margin-top: 4px">
-      <el-col :span="3" :offset="1">
+      <el-col :span="3" :offset="2">
         <el-radio-group v-model="showStyle" size="mini">
           <el-radio-button label="cover">封面</el-radio-button>
           <el-radio-button label="post">海报</el-radio-button>
@@ -228,7 +228,7 @@
               effect=""
               @close="closeTag(item.Id, tag)"
             >
-              {{ tag }}
+              <el-link underline="false" type="danger" @click="gotoSearch(tag)"><b>{{ tag }}</b></el-link>
             </el-tag>
           </li>
         </div>
@@ -614,6 +614,10 @@ export default {
     },
   },
   methods: {
+     gotoSearch(tag) {
+      this.searchWords = tag;
+      this.queryList()
+    },
     //确认点击事件 并执行
     handleClick(vm, event) {
       var buttom = vm.$slots.default[0];
@@ -1028,7 +1032,7 @@ export default {
       const url = this.baseUrl + "search/" + actress;
       window.open(url, "_blank");
     },
-
+   
     openWin(id) {
       axios.get("api/info/" + id).then((res) => {
         this.sourceList = [];
@@ -1205,20 +1209,18 @@ export default {
 }
 .tag-area {
   position: absolute;
-  margin-right: 0px;
   z-index: 999;
   opacity: 1;
 }
 .tag-area span {
   filter: alpha(opacity=90);
   opacity: 0.9;
-  background: #38bb38;
+  background: #c0d12a;
   z-index: 99;
   margin-top: 36px;
-  margin-right: 4px;
   color: #ffffff;
-  height: 26px;
-  line-height: 22px;
+  height: 23px;
+  line-height: 20px;
 }
 v-deep .el-tooltip__popper {
   width: 300px;
