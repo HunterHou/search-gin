@@ -1215,7 +1215,7 @@ export default {
 .tag-area span {
   filter: alpha(opacity=90);
   opacity: 0.9;
-  background: #c0d12a;
+  background: #94df71;
   z-index: 99;
   margin-top: 36px;
   color: #ffffff;

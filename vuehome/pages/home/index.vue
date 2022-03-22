@@ -1,17 +1,21 @@
 <template>
   <div align="center">
-    <el-badge
-      v-for="tag in tagData"
-      :key="tag"
-      style="margin-left: 18px; margin-top: 8px"
-      :value="tag.Cnt"
-    >
-      <el-tag @click="gotoMenu(tag)">
-        {{ tag.Name }}【{{ tag.SizeStr }}】
-      </el-tag>
-    </el-badge>
-
-    <h2>掃描結果分析</h2>
+    <div style="align: center; margin-left: 150px; margin-right: 150px">
+      <el-badge
+        v-for="tag in tagData"
+        :key="tag"
+        style="margin-right: 26px; margin-top: 10px"
+        :value="tag.Cnt"
+      >
+        <el-tag @click="gotoMenu(tag)">
+          <h4>
+            <b> {{ tag.Name }} </b> 【{{ tag.SizeStr }}】
+          </h4>
+        </el-tag>
+      </el-badge>
+    </div>
+    <el-divider></el-divider>
+    <h2 style="margin-top: 20px">掃描結果分析</h2>
 
     <el-table
       :data="tableData"
