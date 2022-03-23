@@ -129,7 +129,7 @@
       :theme="theme"
       @contextmenu="handleContextmenu"
     >
-      <v-contextmenu-item
+      <!-- <v-contextmenu-item
         v-for="tag in this.Tags"
         :key="tag"
         @click="handleClick"
@@ -142,33 +142,23 @@
           :action="tag"
           ><b>{{ tag }}</b></i
         >
-      </v-contextmenu-item>
-
-      <v-contextmenu-item @click="handleClick"
-        ><i
-          :underline="false"
-          class="el-icon-video-play"
-          style="margin: 2 8px; color: green"
-          title="播放"
-          action="play"
-          ><b>播放</b></i
-        ></v-contextmenu-item
-      >
+      </v-contextmenu-item> -->
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
           class="el-icon-refresh"
-          style="margin: 2 8px; color: green"
+          style="margin: 0 8px; color: green"
           title="同步"
           action="sync"
           ><b>同步</b></i
         ></v-contextmenu-item
       >
+
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
           class="el-icon-share"
-          style="margin: 2 8px"
+          style="margin: 0 16px; color: green"
           title="链接"
           action="sourceLink"
           >链接</i
@@ -179,13 +169,22 @@
         ><i
           :underline="false"
           class="el-icon-folder-opened"
-          style="margin: 0 8px"
+          style="margin: 0 24px"
           title="文件夹"
           action="fold"
           >文夹</i
         ></v-contextmenu-item
       >
-
+      <v-contextmenu-item @click="handleClick"
+        ><i
+          :underline="false"
+          class="el-icon-video-play"
+          style="margin: 0 16px; color: green"
+          title="播放"
+          action="play"
+          ><b>播放</b></i
+        ></v-contextmenu-item
+      >
       <v-contextmenu-item @click="handleClick">
         <i
           :underline="false"
@@ -225,10 +224,11 @@
               class="tag-line"
               closable
               type="success"
-              effect=""
               @close="closeTag(item.Id, tag)"
             >
-              <el-link underline="false" type="danger" @click="gotoSearch(tag)"><b>{{ tag }}</b></el-link>
+              <el-link :underline="false" type="danger" @click="gotoSearch(tag)"
+                ><b>{{ tag }}</b></el-link
+              >
             </el-tag>
           </li>
         </div>
@@ -240,15 +240,30 @@
         >
           <div
             v-if="item"
-            @click="openWin(item.Id)"
             :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
           >
-            <el-tag v-if="item.MovieType" type="danger" effect="dark"
-              >{{ item.MovieType }}
-            </el-tag>
+            <el-popover placement="bottom" width="auto" trigger="hover">
+              <div style="max-width: 600px">
+                <el-link v-for="tag in Tags" :key="tag"
+                  ><i
+                    v-if="notContainTag(item.Tags, tag)"
+                    class="el-icon-circle-plus"
+                    style="margin-right: 12px; color: green"
+                    @click="addTag(item.Id, tag)"
+                  >
+                    {{ tag }}</i
+                  ></el-link
+                >
+              </div>
+
+              <el-button class="tag-buttom" type="danger" slot="reference">{{
+                item.MovieType ? item.MovieType : "无"
+              }}</el-button>
+            </el-popover>
             <el-image
               style="width: 100%; height: 100%"
               :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
+              @click="openWin(item.Id)"
               fit="contain"
               lazy
             />
@@ -614,9 +629,9 @@ export default {
     },
   },
   methods: {
-     gotoSearch(tag) {
+    gotoSearch(tag) {
       this.searchWords = tag;
-      this.queryList()
+      this.queryList();
     },
     //确认点击事件 并执行
     handleClick(vm, event) {
@@ -639,6 +654,15 @@ export default {
       } else if (this.Tags.indexOf(title) >= 0) {
         this.addTag(clickId, title);
       }
+    },
+    notContainTag(tags, tag) {
+      if (!tags || !tag) {
+        return true;
+      }
+      if (tags.indexOf(tag) < 0) {
+        return true;
+      }
+      return false;
     },
     addTag(clickId, title) {
       const url = "api/file/addTag/" + clickId + "/" + title;
@@ -1032,7 +1056,7 @@ export default {
       const url = this.baseUrl + "search/" + actress;
       window.open(url, "_blank");
     },
-   
+
     openWin(id) {
       axios.get("api/info/" + id).then((res) => {
         this.sourceList = [];
@@ -1148,20 +1172,19 @@ export default {
   height: 280px;
 }
 
-.img-list-item span {
-  filter: alpha(opacity=80);
-  opacity: 0.8;
+.tag-buttom {
+  filter: alpha(opacity=100);
+  opacity: 1;
   background: #e01616;
   position: absolute;
-  z-index: 99;
+  z-index: 999;
   margin-bottom: 30px;
-  margin-left: 4px;
+  margin-left: -16px;
   text-align: justify;
   text-align-last: justify;
-  width: 54px;
+  height: 34px;
   color: #ffffff;
 }
-
 .list-item-cover {
   width: 476px;
   /* min-height: 300px; */
