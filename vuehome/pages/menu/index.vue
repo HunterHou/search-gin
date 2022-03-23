@@ -220,12 +220,7 @@
       >
         <div class="tag-area">
           <li style="overflow: auto" v-for="tag in item.Tags" :key="tag">
-            <el-tag
-              class="tag-line"
-              closable
-              type="success"
-              @close="closeTag(item.Id, tag)"
-            >
+            <el-tag closable type="success" @close="closeTag(item.Id, tag)">
               <el-link :underline="false" type="danger" @click="gotoSearch(tag)"
                 ><b>{{ tag }}</b></el-link
               >
@@ -256,9 +251,11 @@
                 >
               </div>
 
-              <el-button class="tag-buttom" type="danger" slot="reference">{{
-                item.MovieType ? item.MovieType : "无"
-              }}</el-button>
+              <el-button class="tag-buttom" size="mini" type="warning" slot="reference">
+                <b>
+                  {{ item.MovieType ? item.MovieType : "无" }}
+                </b>
+              </el-button>
             </el-popover>
             <el-image
               style="width: 100%; height: 100%"
@@ -673,8 +670,8 @@ export default {
             for (var i = 0; i < this.dataList.length; i++) {
               if (this.dataList[i].Id == clickId) {
                 this.dataList[i].Tags.push(title);
+                return;
               }
-              return;
             }
           } else {
             this.alertFail(res.data.Message);
@@ -1172,19 +1169,6 @@ export default {
   height: 280px;
 }
 
-.tag-buttom {
-  filter: alpha(opacity=100);
-  opacity: 1;
-  background: #e01616;
-  position: absolute;
-  z-index: 999;
-  margin-bottom: 30px;
-  margin-left: -16px;
-  text-align: justify;
-  text-align-last: justify;
-  height: 34px;
-  color: #ffffff;
-}
 .list-item-cover {
   width: 476px;
   /* min-height: 300px; */
@@ -1199,19 +1183,6 @@ export default {
   height: 280px;
 }
 
-.img-list-item-cover span {
-  filter: alpha(opacity=80);
-  opacity: 0.8;
-  background: #e01616;
-  position: absolute;
-  z-index: 99;
-  margin-top: 4px;
-  margin-left: 4px;
-  text-align: justify;
-  text-align-last: justify;
-  width: 54px;
-  color: #ffffff;
-}
 
 .pageTool {
   position: fixed;
@@ -1235,12 +1206,23 @@ export default {
   z-index: 999;
   opacity: 1;
 }
+.tag-buttom {
+  filter: alpha(opacity=100);
+  opacity: 1;
+  /* background: #e01616; */
+  position: absolute;
+  z-index: 999;
+  margin-left: 150px;
+  margin-top: 0px;
+  text-align: justify;
+  text-align-last: justify;
+  /* color: #ffffff; */
+}
 .tag-area span {
   filter: alpha(opacity=90);
   opacity: 0.9;
   background: #94df71;
   z-index: 99;
-  margin-top: 36px;
   color: #ffffff;
   height: 23px;
   line-height: 20px;
