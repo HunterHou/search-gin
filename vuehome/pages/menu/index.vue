@@ -14,7 +14,7 @@
       "
       round
       @click="pageLoading(-1)"
-      ><i class="el-icon-back"></i>
+      ><i class="el-icon-back"></i>上一頁
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
@@ -27,7 +27,7 @@
       "
       round
       @click="pageLoading(1)"
-      ><i class="el-icon-right"></i>
+      >下一頁<i class="el-icon-right"></i>
     </el-button>
     <el-row>
       <el-col :span="2" :offset="2">
@@ -1222,6 +1222,7 @@ export default {
   filter: alpha(opacity=90);
   opacity: 0.9;
   background: #94df71;
+  margin-bottom: 8px;
   z-index: 99;
   color: #ffffff;
   height: 23px;
