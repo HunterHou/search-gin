@@ -238,7 +238,7 @@
             :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
           >
             <el-popover placement="bottom" width="auto" trigger="hover">
-              <div style="max-width: 600px">
+              <div v-if="item.MovieType != ''" style="max-width: 600px">
                 <el-link v-for="tag in Tags" :key="tag"
                   ><i
                     v-if="notContainTag(item.Tags, tag)"
@@ -250,8 +250,39 @@
                   ></el-link
                 >
               </div>
+              <div v-if="item.MovieType == ''" style="max-width: 600px">
+                <el-link style="margin-right:10px">
+                  <i
+                    v-if="notQiBing(item.MovieType)"
+                    class="el-icon-bicycle icon-style"
+                    title="骑兵"
+                    @click="setMovieType(item.Id, 2)"
+                  >骑兵</i
+                ></el-link>
+                <el-link style="margin-right:10px">
+                  <i
+                    v-if="notBuBing(item.MovieType)"
+                    class="el-icon-sunny icon-style"
+                    title="步兵"
+                    @click="setMovieType(item.Id, 1)"
+                  >步兵</i
+                ></el-link>
+                <el-link style="margin-right:10px">
+                  <i
+                    v-if="notSiBaDa(item.MovieType)"
+                    class="el-icon-ship icon-style"
+                    title="欧美"
+                    @click="setMovieType(item.Id, 3)"
+                  >欧美</i
+                ></el-link>
+              </div>
 
-              <el-button class="tag-buttom" size="mini" type="warning" slot="reference">
+              <el-button
+                class="tag-buttom"
+                size="mini"
+                type="warning"
+                slot="reference"
+              >
                 <b>
                   {{ item.MovieType ? item.MovieType : "无" }}
                 </b>
@@ -1182,7 +1213,6 @@ export default {
   width: 460px;
   height: 280px;
 }
-
 
 .pageTool {
   position: fixed;
