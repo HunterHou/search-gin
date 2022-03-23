@@ -27,8 +27,8 @@
 </template>
 <style>
 .header-style {
-  height: 36px;
-  line-height: 36px;
+  height: 30px;
+  line-height: 30px;
 }
 </style>
 
