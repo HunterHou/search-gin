@@ -103,7 +103,7 @@ func GetNextInfo(c *gin.Context) {
 
 func GetLastInfo(c *gin.Context) {
 	id, _ := strconv.Atoi(c.DefaultQuery("id", "1"))
-	keywords := c.DefaultQuery("keywords")
+	keywords := c.DefaultQuery("keywords", "")
 	pageNo, _ := strconv.Atoi(c.DefaultQuery("pageNo", "1"))
 	if pageNo < 1 {
 		pageNo = 1
