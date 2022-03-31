@@ -225,7 +225,6 @@
               effect="dark"
               type=""
               size="small"
-              hit="true"
               @close="closeTag(item.Id, tag)"
             >
               <el-link :underline="false" plain @click="gotoSearch(tag)">
@@ -765,13 +764,14 @@ export default {
         if (res.status === 200) {
           if (res.data.Code == 200) {
             this.alertSuccess(res.data.Message);
+            this.refreshIndex();
             for (var i = 0; i < this.dataList.length; i++) {
               if (this.dataList[i].Id == clickId) {
                 this.dataList[i].Tags.push(title);
                 return;
               }
             }
-            this.refreshIndex();
+            
           } else {
             this.alertFail(res.data.Message);
           }
