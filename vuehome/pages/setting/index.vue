@@ -117,6 +117,8 @@
       </el-form-item>
       <el-form-item label="备注">
         <el-input
+          type="textarea"
+          :rows="4"
           v-model="form.Remark"
           style="width: 80%"
         ></el-input>

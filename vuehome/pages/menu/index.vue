@@ -219,11 +219,18 @@
         :key="item.Id"
       >
         <div class="tag-area">
-          <li style="overflow: auto;color:white" v-for="tag in item.Tags" :key="tag">
-            <el-tag closable  @close="closeTag(item.Id, tag)">
-              <el-link :underline="false" plain @click="gotoSearch(tag)">{{
-                tag
-              }}</el-link>
+          <li style="overflow: auto" v-for="tag in item.Tags" :key="tag">
+            <el-tag
+              closable
+              effect="dark"
+              type=""
+              size="small"
+              hit="true"
+              @close="closeTag(item.Id, tag)"
+            >
+              <el-link :underline="false" plain @click="gotoSearch(tag)">
+                <span> {{ tag }}</span>
+              </el-link>
             </el-tag>
           </li>
         </div>
@@ -237,10 +244,11 @@
             v-if="item"
             :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
           >
-            <el-popover placement="bottom" width="auto" trigger="hover">
-              <div v-if="item.MovieType != ''" style="max-width: 400px">
+            <el-popover placement="bottom-start" width="auto" trigger="click">
+              <div v-if="item.MovieType != ''" style="max-width: 220px">
                 <el-button
                   size="mini"
+                  type="primary"
                   plain
                   v-for="tag in Tags"
                   :key="tag"
@@ -250,6 +258,21 @@
                 >
                   {{ tag }}</el-button
                 >
+                <el-input
+                  placeholder="新标签"
+                  v-model="customerTag"
+                  size="mini"
+                  style="width: 200px"
+                >
+                  <el-button
+                    slot="append"
+                    size="mini"
+                    :disabled="customerTagEmpty()"
+                    @click="addCustomerTag(item.Id)"
+                    icon="el-icon-circle-plus"
+                    >加</el-button
+                  >
+                </el-input>
               </div>
               <div v-if="item.MovieType == ''" style="max-width: 600px">
                 <el-button
@@ -298,6 +321,7 @@
                 size="mini"
                 type="danger"
                 slot="reference"
+                icon="el-icon-circle-plus"
                 round
               >
                 <b>
@@ -599,6 +623,7 @@ export default {
 
     return {
       showIconNum: 5,
+      customerTag: "",
       sourceList: [],
       showStyle: "post",
       file: "",
@@ -723,6 +748,16 @@ export default {
         return true;
       }
       return false;
+    },
+    customerTagEmpty() {
+      if (this.customerTag) {
+        return false;
+      }
+      return true;
+    },
+    addCustomerTag(clickId) {
+      this.addTag(clickId, this.customerTag);
+      this.customerTag = "";
     },
     addTag(clickId, title) {
       const url = "api/file/addTag/" + clickId + "/" + title;
@@ -1276,8 +1311,8 @@ export default {
   /* background: #e01616; */
   position: absolute;
   z-index: 999;
-  margin-left: 150px;
-  margin-top: 0px;
+  margin-left: 130px;
+  margin-top: 5px;
   text-align: justify;
   text-align-last: justify;
   /* color: #ffffff; */
@@ -1288,8 +1323,8 @@ export default {
   background: #94df71;
   margin-bottom: 8px;
   z-index: 99;
-  color: #ffffff;
   height: 23px;
+  color: #000;
   line-height: 20px;
 }
 v-deep .el-tooltip__popper {
