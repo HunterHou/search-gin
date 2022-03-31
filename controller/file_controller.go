@@ -78,65 +78,69 @@ func PostSearchMovie(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func PostMovies(c *gin.Context) {
-	keywords := c.PostForm("keywords")
-	pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
+func GetNextInfo(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	keywords := c.DefaultQuery("keywords", "")
+	pageNo, _ := strconv.Atoi(c.DefaultQuery("pageNo", "1"))
 	if pageNo < 1 {
 		pageNo = 1
 	}
-	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "14"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "14"))
 	if pageSize < 1 {
 		pageSize = 14
 	}
-	sortType := c.DefaultPostForm("sortType", "code")
-	sortField := c.DefaultPostForm("sortField", "desc")
-	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
-	movieType := c.DefaultPostForm("movieType", "")
-
-	fileService := service.CreateFileService()
-
+	sortType := c.DefaultQuery("sortType", "desc")
+	sortField := c.DefaultQuery("sortField", "MTime")
+	movieType := c.DefaultQuery("movieType", "")
 	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
-	searchParam.SetOnlyRepeat(strings.EqualFold("true", onlyRepeat))
-	result := fileService.SearchDataSource(searchParam)
-	result.PageSize = pageSize
-	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
-	result.SetResultCnt(result.TotalCnt, pageNo)
-	result.IndexProgress = cons.IndexOver
-	c.JSON(http.StatusOK, result)
-}
-func GetLastInfo(c *gin.Context) {
-	//id := c.Param("id")
-	keywords := c.DefaultQuery("keywords", "")
-	sortType := c.DefaultQuery("sortType", "")
-	sortField := c.DefaultQuery("sortField", "desc")
-	movieType := c.DefaultQuery("movieType", "")
-	service := service.CreateFileService()
-	if len(datasource.FileList) == 0 {
-		service.ScanAll()
+	res := getNextOne(searchParam, 1, id)
+	if res.Id == 0 {
+		searchParam.Page = searchParam.Page + 1
+		res = getNextOne(searchParam, +1, id)
 	}
-	datasource.SortDataSourceMovies(sortField, sortType, false)
-	list, _ := service.SearchByKeyWord(datasource.FileList, datasource.FileSize, keywords, movieType)
+	c.JSON(http.StatusOK, res)
+}
 
-	id, _ := strconv.Atoi(c.Param("path"))
-	file := service.FindNext(int64(id), list, -1)
-	//file.Jpg = "/jpg/" + file.Id
-	c.JSON(http.StatusOK, file)
-}
-func GetNextInfo(c *gin.Context) {
-	//id := c.Param("id")
-	keywords := c.DefaultQuery("keywords", "")
-	sortType := c.DefaultQuery("sortType", "")
-	sortField := c.DefaultQuery("sortField", "desc")
-	movieType := c.DefaultQuery("movieType", "")
-	service := service.CreateFileService()
-	if len(datasource.FileList) == 0 {
-		service.ScanAll()
+func GetLastInfo(c *gin.Context) {
+	id, _ := strconv.Atoi(c.DefaultQuery("id", "1"))
+	keywords := c.DefaultQuery("keywords")
+	pageNo, _ := strconv.Atoi(c.DefaultQuery("pageNo", "1"))
+	if pageNo < 1 {
+		pageNo = 1
 	}
-	datasource.SortDataSourceMovies(sortField, sortType, false)
-	list, _ := service.SearchByKeyWord(datasource.FileList, datasource.FileSize, keywords, movieType)
-	id, _ := strconv.Atoi(c.Param("path"))
-	file := service.FindNext(int64(id), list, -1)
-	c.JSON(http.StatusOK, file)
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "14"))
+	if pageSize < 1 {
+		pageSize = 14
+	}
+	sortType := c.DefaultQuery("sortType", "desc")
+	sortField := c.DefaultQuery("sortField", "code")
+	movieType := c.DefaultQuery("movieType", "")
+	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
+	res := getNextOne(searchParam, -1, id)
+	if res.Id == 0 {
+		searchParam.Page = searchParam.Page - 1
+		res = getNextOne(searchParam, -1, id)
+	}
+	c.JSON(http.StatusOK, res)
+
+}
+
+func getNextOne(searchParam datamodels.SearchParam, offset int, currentId int) datamodels.Movie {
+	var res datamodels.Movie
+	fileService := service.CreateFileService()
+	result := fileService.SearchIndex(searchParam)
+	datas := result.Data.([]datamodels.Movie)
+	for i := 0; i < len(datas); i++ {
+		if datas[i].Id == int64(currentId) {
+			if i == 0 {
+				res = datas[i]
+			} else {
+				res = datas[i+1]
+			}
+
+		}
+	}
+	return res
 }
 func PostActess(c *gin.Context) {
 
@@ -329,4 +333,30 @@ func GetRefresIndex(c *gin.Context) {
 	datasource.SortMovieForce()
 	res := utils.NewSuccessByMsg("扫描结束！")
 	c.JSON(http.StatusOK, res)
+}
+func PostMovies(c *gin.Context) {
+	keywords := c.PostForm("keywords")
+	pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
+	if pageNo < 1 {
+		pageNo = 1
+	}
+	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "14"))
+	if pageSize < 1 {
+		pageSize = 14
+	}
+	sortType := c.DefaultPostForm("sortType", "code")
+	sortField := c.DefaultPostForm("sortField", "desc")
+	onlyRepeat := c.DefaultPostForm("onlyRepeat", "false")
+	movieType := c.DefaultPostForm("movieType", "")
+
+	fileService := service.CreateFileService()
+
+	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
+	searchParam.SetOnlyRepeat(strings.EqualFold("true", onlyRepeat))
+	result := fileService.SearchDataSource(searchParam)
+	result.PageSize = pageSize
+	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
+	result.SetResultCnt(result.TotalCnt, pageNo)
+	result.IndexProgress = cons.IndexOver
+	c.JSON(http.StatusOK, result)
 }

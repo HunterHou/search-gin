@@ -245,9 +245,9 @@
                   :key="tag"
                   style="margin: 1px 2px"
                   :disabled="!notContainTag(item.Tags, tag)"
-                  ><i class="el-icon-circle-plus" @click="addTag(item.Id, tag)">
-                    {{ tag }}</i
-                  ></el-button
+		@click="addTag(item.Id, tag)"
+                  >
+                    {{ tag }}</el-button
                 >
               </div>
               <div v-if="item.MovieType == ''" style="max-width: 600px">

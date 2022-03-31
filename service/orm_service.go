@@ -51,6 +51,7 @@ func (o *OrmService) Find(Id int64) datamodels.Movie {
 	return res
 
 }
+
 func (o *OrmService) UpdateOne(Id int64, path string) datamodels.Movie {
 	var res datamodels.Movie
 	res.Id = Id
@@ -69,6 +70,9 @@ func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, in
 	orderBy := strings.Join(param.GetSort(), ",")
 	orderBy = utils.Camel2Case(orderBy)
 	session := o.NewSessionBySearchParam(param)
+	if param.Sql != "" {
+		session.And(param.Sql)
+	}
 	err := session.OrderBy(orderBy).Limit(param.GetPageSize(), param.StartNum()).Find(&res)
 	if err != nil {
 		fmt.Println(err)

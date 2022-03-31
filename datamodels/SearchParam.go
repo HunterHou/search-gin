@@ -11,6 +11,7 @@ type SearchParam struct {
 	PageSize   int
 	SortField  string
 	SortType   string
+	Sql        string
 }
 
 func NewSearchParam(keyword string, page int, pageSize int, sortField string, sortType string, moiveType string) SearchParam {
@@ -29,6 +30,9 @@ func NewSearchParam(keyword string, page int, pageSize int, sortField string, so
 func (p *SearchParam) GetKeywords() string {
 	p.Keyword = strings.TrimSpace(p.Keyword)
 	return p.Keyword
+}
+func (p *SearchParam) SetSql(sql string) {
+	p.Sql = sql
 }
 func (p *SearchParam) GetFuzzyKeywords() string {
 	p.Keyword = strings.TrimSpace(p.Keyword)
