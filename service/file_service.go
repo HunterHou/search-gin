@@ -246,6 +246,7 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 	title := toFile.Title
 	title = strings.ReplaceAll(title, ":", "~")
 	title = strings.ReplaceAll(title, ".", "~")
+	title = strings.ReplaceAll(title, "!", "~")
 
 	dirname := "[" + toFile.Actress + "][" + toFile.Code + "]" + title
 	dirpath := path + "\\" + dirname

@@ -238,43 +238,47 @@
             :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
           >
             <el-popover placement="bottom" width="auto" trigger="hover">
-              <div v-if="item.MovieType != ''" style="max-width: 600px">
-                <el-link v-for="tag in Tags" :key="tag"
-                  ><i
-                    v-if="notContainTag(item.Tags, tag)"
-                    class="el-icon-circle-plus"
-                    style="margin-right: 12px; color: green"
-                    @click="addTag(item.Id, tag)"
-                  >
+              <div v-if="item.MovieType != ''" style="max-width: 400px">
+                <el-button
+                  size="mini"
+                  v-for="tag in Tags"
+                  :key="tag"
+                  type="success"
+                  style="margin: 1px 2px"
+                  :disabled="!notContainTag(item.Tags, tag)"
+                  ><i class="el-icon-circle-plus" @click="addTag(item.Id, tag)">
                     {{ tag }}</i
-                  ></el-link
+                  ></el-button
                 >
               </div>
               <div v-if="item.MovieType == ''" style="max-width: 600px">
-                <el-link style="margin-right:10px">
+                <el-link style="margin-right: 10px">
                   <i
                     v-if="notQiBing(item.MovieType)"
                     class="el-icon-bicycle icon-style"
                     title="骑兵"
                     @click="setMovieType(item.Id, 2)"
-                  >骑兵</i
-                ></el-link>
-                <el-link style="margin-right:10px">
+                    >骑兵</i
+                  ></el-link
+                >
+                <el-link style="margin-right: 10px">
                   <i
                     v-if="notBuBing(item.MovieType)"
                     class="el-icon-sunny icon-style"
                     title="步兵"
                     @click="setMovieType(item.Id, 1)"
-                  >步兵</i
-                ></el-link>
-                <el-link style="margin-right:10px">
+                    >步兵</i
+                  ></el-link
+                >
+                <el-link style="margin-right: 10px">
                   <i
                     v-if="notSiBaDa(item.MovieType)"
                     class="el-icon-ship icon-style"
                     title="欧美"
                     @click="setMovieType(item.Id, 3)"
-                  >欧美</i
-                ></el-link>
+                    >欧美</i
+                  ></el-link
+                >
               </div>
 
               <el-button
@@ -704,6 +708,7 @@ export default {
                 return;
               }
             }
+            this.refreshIndex()
           } else {
             this.alertFail(res.data.Message);
           }
@@ -723,6 +728,7 @@ export default {
               }
               return;
             }
+            this.refreshIndex()
           } else {
             this.alertFail(res.data.Message);
           }
