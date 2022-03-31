@@ -78,8 +78,8 @@
         >
           <div v-if="item" class="img-list-item">
             <el-link   @click="open(item.Name)">
-              <span >{{ item.Name }}</span>
-              <span >{{ item.SizeStr }}</span>
+              <span >{{ item.Name?item.Name:"" }} 【{{ item.SizeStr }}】</span>
+              <br>
               <el-badge :value="item.Cnt  ">
                 <el-image
                   :src="item.JpgUrl"
@@ -247,11 +247,11 @@ export default {
 }
 
 .list-item {
+  margin-top: 5px;
   width: 200px;
-  height: 350px;
+  height: 290px;
   float: left;
   list-style: none;
-  margin-top: 10px;
 }
 
 .img-list-item {
