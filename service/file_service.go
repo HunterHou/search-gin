@@ -738,7 +738,10 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 
 	var newActress []datamodels.Actress
 	for _, item := range actressMap {
-		newActress = append(newActress, item)
+		if item.Cnt > 1 {
+			newActress = append(newActress, item)
+		}
+
 	}
 	datasource.ActressList = newActress
 	//datasource.SupplierLib = supplierMap

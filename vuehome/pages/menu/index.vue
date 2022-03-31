@@ -243,7 +243,6 @@
                   size="mini"
                   v-for="tag in Tags"
                   :key="tag"
-                  type="success"
                   style="margin: 1px 2px"
                   :disabled="!notContainTag(item.Tags, tag)"
                   ><i class="el-icon-circle-plus" @click="addTag(item.Id, tag)">
