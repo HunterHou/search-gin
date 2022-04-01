@@ -1,3 +1,9 @@
 export const state =() =>({
-    baseUrl:""
+    baseUrl:"",
+    activeMenu:"/home"
 })
+export const mutations = {
+    setStorePath(state,path) {
+        state.activeMenu=path
+    }
+  }

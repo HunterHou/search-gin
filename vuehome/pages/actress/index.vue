@@ -77,22 +77,16 @@
           :key="item.Id"
         >
           <div v-if="item" class="img-list-item">
-            <el-link   @click="open(item.Name)">
-              <span >{{ item.Name?item.Name:"" }} 【{{ item.SizeStr }}】</span>
-              <br>
-              <el-badge :value="item.Cnt  ">
-                <el-image
-                  :src="item.JpgUrl"
-                  :fit="fit"
-                  lazy
-                  round
-                >
-                </el-image
+            <el-link @click="open(item.Name)">
+              <span
+                >{{ item.Name ? item.Name : "" }} 【{{ item.SizeStr }}】</span
+              >
+              <br />
+              <el-badge :value="item.Cnt">
+                <el-image :src="item.JpgUrl" :fit="fit" lazy round> </el-image
               ></el-badge>
             </el-link>
-            
           </div>
-          
         </li>
       </ul>
     </div>
@@ -110,7 +104,9 @@
 </template>
 <script>
 import axios from "axios";
+import setStorePath from "@/mixin/setStorePath";
 export default {
+  mixins: [setStorePath],
   data() {
     return {
       baseUrl: "www.baidu.com",
@@ -119,7 +115,7 @@ export default {
       movieType: "",
       dataList: "",
       dataCnt: 0,
-      pageSize:30,
+      pageSize: 30,
       errorMsg: "",
       fit: "fit",
       searchWords: "",
@@ -133,7 +129,7 @@ export default {
     };
   },
   mounted() {
-    document.title="脸谱"
+    document.title = "脸谱";
     this.$nextTick(() => {
       this.$nuxt.$loading.start();
       this.fetch();
@@ -148,7 +144,6 @@ export default {
   methods: {
     fetch() {
       axios.get("api/buttoms").then((res) => {
-        console.log(res);
         if (res.status == 200) {
           this.BaseUrl = res.data.baseUrl;
         }
@@ -213,7 +208,7 @@ export default {
 
     open(filename) {
       const self = this;
-      self.$router.push("/menu?searchWords=" + filename);
+      self.$router.push("/fileList?searchWords=" + filename);
     },
     handleSizeChange(val) {
       this.pageSize = val;

@@ -5,6 +5,7 @@ type Setting struct {
 	BaseUrl    string
 	OMUrl      string
 	Remark     string
+	SystemInfo string
 	Tags       []string
 	Dirs       []string
 	ImageTypes []string

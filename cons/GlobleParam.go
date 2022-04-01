@@ -117,10 +117,11 @@ func OverIndex() bool {
 var MovieFields = utils.InterfaceFields(datamodels.Movie{})
 
 var OSSetting = datamodels.Setting{
-	SelfPath: "setting.json",
-	BaseUrl:  "https://www.busjav.blog/",
-	OMUrl:    "https://www.busjav.blog/",
-	Remark:   "",
+	SelfPath:   "setting.json",
+	BaseUrl:    "https://www.busjav.blog/",
+	OMUrl:      "https://www.busjav.blog/",
+	Remark:     "",
+	SystemInfo: "",
 	Dirs: []string{
 		"e://emby",
 		"e://code",

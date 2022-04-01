@@ -167,7 +167,9 @@
 </template>
 <script>
 import axios from "axios";
+import setStorePath from "@/mixin/setStorePath";
 export default {
+  mixins: [setStorePath],
   data: function () {
     return {
       tabIndex: "base",
@@ -213,13 +215,16 @@ export default {
     urlBack() {
       const query = this.$route.query;
       this.$router.push({
-        path: "/menu",
+        path: "/fileList",
         query: { ...query },
       });
     },
     openActress(actress) {
       this.searchWords = actress;
-      this.$router.push({ path: "/menu", query: { ...this.$router.query } });
+      this.$router.push({
+        path: "/fileList",
+        query: { ...this.$router.query },
+      });
     },
     settingBase() {
       axios.get("api/buttoms").then((res) => {
@@ -284,7 +289,6 @@ export default {
       const restApi = "/api/infoLast/" + this.id + this.getRouterParam();
       this.iframeSrc = "";
       const queryParam = this.$route.query;
-      console.log(queryParam);
       axios.get(restApi).then((res) => {
         if (res.status === 200) {
           const lastId = res.data.Id;
@@ -301,7 +305,6 @@ export default {
       const queryParam = this.$route.query;
       const restApi = "/api/infoNext/" + this.id + this.getRouterParam();
       this.iframeSrc = "";
-      console.log(queryParam);
       axios.get(restApi).then((res) => {
         if (res.status === 200) {
           const nextId = res.data.Id;

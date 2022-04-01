@@ -123,40 +123,42 @@
           style="width: 80%"
         ></el-input>
       </el-form-item>
-
-      <el-form-item>
-        <el-row>
-          <el-col :span="8" :offset="2"
-            ><div class="grid-content bg-purple-dark">
-              <el-button
-                type="warning"
-                align-text="center"
-                style="width: 120px"
-                @click="goMenu()"
-                >返回</el-button
-              >
-            </div></el-col
-          >
-          <el-col :span="8" :offset="-6"
-            ><div class="grid-content bg-purple-dark">
-              <el-button
-                type="primary"
-                align-text="center"
-                style="width: 120px"
-                @click="submitForm('form')"
-                >提交</el-button
-              >
-            </div></el-col
-          >
-        </el-row>
+      <el-form-item label="系統信息">
+        <el-input
+          type="textarea"
+          :rows="4"
+          v-model="form.SystemInfo"
+          style="width: 80%"
+        ></el-input>
       </el-form-item>
+
+      <div>
+        <el-button
+          class="return"
+          type="warning"
+          align-text="center"
+          @click="goMenu()"
+          >返回</el-button
+        >
+      </div>
+      <div>
+        <el-button
+          class="submit"
+          type="primary"
+          align-text="center"
+          @click="submitForm('form')"
+          >提交</el-button
+        >
+      </div>
     </el-form>
   </div>
 </template>
 <script>
 import axios from "axios";
+import setStorePath from "@/mixin/setStorePath";
 
 export default {
+  mixins: [setStorePath],
   data: function () {
     return {
       inputVisible: false,
@@ -169,6 +171,7 @@ export default {
         BaseUrl: "",
         OMUrl: "",
         Remark: "",
+        SystemInfo: "",
         ImageTypes: [],
         DocsTypes: [],
         VideoTypes: [],
@@ -183,7 +186,7 @@ export default {
   },
   methods: {
     goMenu() {
-      this.$router.push("/menu");
+      this.$router.push("/fileList");
     },
     submitForm() {
       const postForm = { ...this.form, BaseDir: this.form.Dirs };
@@ -245,3 +248,21 @@ export default {
   },
 };
 </script>
+<style scoped>
+.return {
+  width: 9%;
+  position: fixed;
+  bottom: 10px;
+  overflow: auto;
+  z-index: 999;
+  left: 40%;
+}
+.submit {
+  width: 9%;
+  position: fixed;
+  bottom: 10px;
+  overflow: auto;
+  z-index: 999;
+  right: 40%;
+}
+</style>

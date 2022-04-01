@@ -1,7 +1,7 @@
 <template>
   <el-menu
     router
-    :default-active="'/home'"
+    :default-active="activePath"
     class="el-menu-demo"
     mode="horizontal"
     background-color="#545c64"
@@ -10,9 +10,9 @@
   >
     <el-menu-item index="/home">
       <i class="el-icon-document"></i>
-      <span slot="title"></span>
+      <span slot="title">首頁</span>
     </el-menu-item>
-    <el-menu-item index="/menu">
+    <el-menu-item index="/fileList">
       <i class="el-icon-menu"></i>
       <span slot="title">目录</span>
     </el-menu-item>
@@ -23,12 +23,44 @@
       <i class="el-icon-setting"></i>
       <span slot="title">设置</span>
     </el-menu-item>
+    <el-menu-item index="/systemInfo">
+      <i class="el-icon-setting"></i>
+      <span slot="title">系統信息/{{ activePath }}</span>
+    </el-menu-item>
   </el-menu>
 </template>
+<script>
+export default {
+  data: function () {
+    let { path } = this.$route;
+    return {
+      activePath: path,
+      isCollapse: true,
+    };
+  },
+  computed: {
+    listenStorePath() {
+      const { activeMenu } = this.$store.state;
+      this.activePath = activeMenu;
+      return;
+    },
+  },
+  watch: {
+    
+  },
+};
+</script>
 <style>
-.header-style {
-  height: 25px;
-  line-height: 25px;
+.el-menu-demo {
+  margin-top: 1px;
+}
+.el-menu--horizontal > .el-menu-item {
+  height: 44px;
+  line-height: 44px;
+}
+.el-menu-item {
+  text-align: center;
+  width: 20%;
 }
 </style>
 

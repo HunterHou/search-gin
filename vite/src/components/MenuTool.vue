@@ -12,7 +12,7 @@
       <i class="el-icon-document"></i>
       <span slot="title"></span>
     </el-menu-item>
-    <el-menu-item index="/menu">
+    <el-menu-item index="/fileList">
       <i class="el-icon-menu"></i>
       <span slot="title">目录</span>
     </el-menu-item>

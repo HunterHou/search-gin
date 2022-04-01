@@ -509,7 +509,7 @@
           style="margin: 0px auto; width: 86%; height: auto"
         >
           <el-image :src="getJpg(file.Id)" style="width: 100%; width: auto" />
-          <br>
+          <br />
           <el-row :gutter="24">
             <el-col :span="4" tyle="text-align:right">
               YY：
@@ -582,8 +582,10 @@
 </template>
 <script>
 import axios from "axios";
+import setStorePath from "@/mixin/setStorePath";
 
 export default {
+  mixins: [setStorePath],
   data() {
     const { searchWords, no, movieType } = this.$route.query;
     var searchPage = new Map();
@@ -677,7 +679,7 @@ export default {
   },
   watch: {
     searchWords: (a) => {
-      console.log(a);
+      // console.log(a);
     },
   },
   methods: {
@@ -780,7 +782,6 @@ export default {
       return "api/jpg/" + Id;
     },
     editItem(item) {
-      console.log(item);
       this.formItem = item;
       this.dialogFormItemVisible = true;
     },
@@ -830,7 +831,6 @@ export default {
       });
     },
     clearWords() {
-      console.log("clear:", this.searchPage);
       this.pageNo = this.searchPage.get("");
       this.queryList();
     },
@@ -1014,7 +1014,6 @@ export default {
       let data = new FormData();
       const keywords = this.searchWords ? this.searchWords : "";
       this.searchPage.set(keywords, this.pageNo);
-      console.log("query:", this.searchPage);
       data.append("pageNo", this.pageNo);
       data.append("pageSize", this.pageSize);
       data.append("keywords", keywords);
