@@ -7,7 +7,7 @@
     <el-button
       style="
         position: fixed;
-        top: 680px;
+        top: 640px;
         overflow: auto;
         z-index: 999;
         left: 5px;
@@ -20,7 +20,7 @@
     <el-button
       style="
         position: fixed;
-        top: 680px;
+        top: 640px;
         overflow: auto;
         z-index: 999;
         right: 5px;
@@ -30,7 +30,7 @@
       >下一頁<i class="el-icon-right"></i>
     </el-button>
     <el-row>
-      <el-col :span="2" :offset="2">
+      <el-col :span="2" :offset="1">
         <el-button
           type="success"
           size="mini"
@@ -47,7 +47,7 @@
           <el-radio-button label="Size">容</el-radio-button>
         </el-radio-group>
       </el-col>
-      <el-col :span="3">
+      <el-col :span="2">
         <el-radio-group v-model="sortType" @change="queryList()" size="mini">
           <el-radio-button label="desc">倒</el-radio-button>
           <el-radio-button label="asc">正</el-radio-button>
@@ -62,9 +62,10 @@
         </el-radio-group>
       </el-col>
 
-      <el-col :span="6">
+      <el-col :span="10">
         <el-autocomplete
           id="searchInput"
+          style="min-width:80px;width:auto;"
           placeholder="请输入关键词"
           v-model="searchWords"
           clearable
@@ -85,7 +86,7 @@
                 queryList();
               }
             "
-            >Go
+            >Enter
           </el-button>
           <template slot-scope="{ item }">
             <div v-if="item" class="name">{{ item }}</div>
@@ -95,32 +96,33 @@
     </el-row>
 
     <el-row style="margin-top: 4px">
-      <el-col :span="3" :offset="2">
+      <el-col :span="3" :offset="1">
         <el-radio-group v-model="showStyle" size="mini">
           <el-radio-button label="cover">封面</el-radio-button>
           <el-radio-button label="post">海报</el-radio-button>
         </el-radio-group>
+      </el-col>
+      <el-col :span="12">
+        <el-divider direction="vertical"></el-divider>
+        <span> 进度：{{ IndexProgress ? "完成" : "进行中" }} </span>
+        <el-divider direction="vertical"></el-divider>
+        <span> 扫描：{{ TotalSize }}({{ TotalCnt }}) </span>
+        <el-divider direction="vertical"></el-divider>
+        <span> 搜：{{ ResultSize }}({{ ResultCnt }}) </span>
+        <el-divider direction="vertical"></el-divider>
+        <span> 页：{{ CurSize }}({{ CurCnt }})</span>
+        <el-divider direction="vertical"></el-divider>
       </el-col>
       <el-col :span="1">
         <el-link style="color: green">
           <i
             :underline="true"
             class="el-icon-zoom-out"
-            title="播放"
+            title="重复"
             @click="onlyRepeatQuery()"
-            >查重</i
+            >重复</i
           ></el-link
         >
-      </el-col>
-      <el-col :span="12">
-        <el-divider direction="vertical"></el-divider>
-        <span> 扫描库：{{ TotalSize }}({{ TotalCnt }}) </span>
-        <span> 更新：{{ IndexProgress ? "完成" : "进行中" }} </span>
-        <el-divider direction="vertical"></el-divider>
-        <span> 搜索：{{ ResultSize }}({{ ResultCnt }}) </span>
-        <el-divider direction="vertical"></el-divider>
-        <span> 当前：{{ CurSize }}({{ CurCnt }})</span>
-        <el-divider direction="vertical"></el-divider>
       </el-col>
     </el-row>
 
@@ -129,20 +131,6 @@
       :theme="theme"
       @contextmenu="handleContextmenu"
     >
-      <!-- <v-contextmenu-item
-        v-for="tag in this.Tags"
-        :key="tag"
-        @click="handleClick"
-      >
-        <i
-          :underline="false"
-          class="el-icon-success"
-          style="margin: 2 4px; color: red"
-          :title="tag"
-          :action="tag"
-          ><b>{{ tag }}</b></i
-        >
-      </v-contextmenu-item> -->
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
@@ -213,13 +201,12 @@
       style="margin-top: 10px; min-height: 600px"
     >
       <li
-        style="overflow: auto"
         :class="isShowCover() ? 'list-item-cover' : 'list-item'"
         v-for="item in dataList"
         :key="item.Id"
       >
         <div class="tag-area">
-          <li style="overflow: auto" v-for="tag in item.Tags" :key="tag">
+          <li v-for="tag in item.Tags" :key="tag">
             <el-tag
               closable
               effect="dark"
@@ -497,18 +484,19 @@
     </div>
     <el-pagination
       class="pageTool"
+      style="align:center;"
       background
       :page-sizes="pageSizes"
       :page-size="pageSize"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      layout="total,prev, pager, next, sizes, jumper"
+      layout="prev, pager, next, sizes, jumper"
       :current-page="pageNo"
       :total="ResultCnt"
     ></el-pagination>
     <!-- 弹窗 -->
     <el-dialog
-      width="70%"
+      width="72%"
       :modal="true"
       :lock-scroll="true"
       :title="file.Name"
@@ -517,7 +505,7 @@
       <div v-if="file">
         <div
           @click="gotoContext(file.Id)"
-          style="margin: 10px auto; width: 90%; height: auto"
+          style="margin: 0px auto; width: 80%; height: auto"
         >
           <el-image :src="getJpg(file.Id)" />
           <el-divider></el-divider>
@@ -771,7 +759,6 @@ export default {
                 return;
               }
             }
-            
           } else {
             this.alertFail(res.data.Message);
           }
@@ -1261,19 +1248,16 @@ export default {
   list-style: none;
 }
 .image-tag {
-  /* margin-bottom: -180px; */
   position: fixed;
 }
 .img-list-item {
-  width: 220px;
-  height: 280px;
+  width: 200px;
+  height: 288px;
 }
 
 .list-item-cover {
-  width: 476px;
-  /* min-height: 300px; */
+  width: 470px;
   height: auto;
-  /* height: auto; */
   float: left;
   list-style: none;
 }

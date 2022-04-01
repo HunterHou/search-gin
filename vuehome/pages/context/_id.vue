@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; background: white; border: 1px">
+  <div style="width: 100%; background: white; border: 1px" align="center">
     <div
       style="
         position: flex;
@@ -84,7 +84,7 @@
     <el-tabs
       style="margin-top: 10px"
       type="card"
-      tab-position="top"
+      tab-position="top-center"
       @tab-click="tabChange()"
       v-model="tabIndex"
     >
