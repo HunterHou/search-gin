@@ -102,6 +102,17 @@
           <el-radio-button label="post">海报</el-radio-button>
         </el-radio-group>
       </el-col>
+       <el-col :span="1">
+        <el-link style="color: green">
+          <i
+            :underline="true"
+            class="el-icon-zoom-out"
+            title="重复"
+            @click="onlyRepeatQuery()"
+            >重复</i
+          ></el-link
+        >
+      </el-col>
       <el-col :span="12">
         <el-divider direction="vertical"></el-divider>
         <span> 进度：{{ IndexProgress ? "完成" : "进行中" }} </span>
@@ -113,17 +124,7 @@
         <span> 页：{{ CurSize }}({{ CurCnt }})</span>
         <el-divider direction="vertical"></el-divider>
       </el-col>
-      <el-col :span="1">
-        <el-link style="color: green">
-          <i
-            :underline="true"
-            class="el-icon-zoom-out"
-            title="重复"
-            @click="onlyRepeatQuery()"
-            >重复</i
-          ></el-link
-        >
-      </el-col>
+     
     </el-row>
 
     <v-contextmenu

@@ -12,17 +12,21 @@
       <i class="el-icon-document"></i>
       <span slot="title">首頁</span>
     </el-menu-item>
+
     <el-menu-item index="/fileList">
       <i class="el-icon-menu"></i>
       <span slot="title">目录</span>
     </el-menu-item>
+
     <el-menu-item index="/actress">
       <i class="el-icon-location"></i><span slot="title">脸谱</span>
     </el-menu-item>
+
     <el-menu-item index="/setting">
       <i class="el-icon-setting"></i>
       <span slot="title">设置</span>
     </el-menu-item>
+
     <el-menu-item index="/systemInfo">
       <i class="el-icon-setting"></i>
       <span slot="title">系統信息</span>
@@ -45,9 +49,7 @@ export default {
       return;
     },
   },
-  watch: {
-    
-  },
+  watch: {},
 };
 </script>
 <style>
