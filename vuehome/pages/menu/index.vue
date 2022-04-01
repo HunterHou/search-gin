@@ -65,7 +65,7 @@
       <el-col :span="10">
         <el-autocomplete
           id="searchInput"
-          style="min-width:80px;width:auto;"
+          style="min-width: 80px; width: auto"
           placeholder="请输入关键词"
           v-model="searchWords"
           clearable
@@ -484,7 +484,7 @@
     </div>
     <el-pagination
       class="pageTool"
-      style="align:center;"
+      style="align: center"
       background
       :page-sizes="pageSizes"
       :page-size="pageSize"
@@ -496,61 +496,41 @@
     ></el-pagination>
     <!-- 弹窗 -->
     <el-dialog
-      width="72%"
+      width="60%"
       :modal="true"
       :lock-scroll="true"
-      :title="file.Name"
+      :title="file.Title"
       :visible.sync="dialogVisible"
     >
       <div v-if="file">
         <div
+          border="1"
           @click="gotoContext(file.Id)"
-          style="margin: 0px auto; width: 80%; height: auto"
+          style="margin: 0px auto; width: 86%; height: auto"
         >
-          <el-image :src="getJpg(file.Id)" />
-          <el-divider></el-divider>
-          <el-row :gutter="24"></el-row>
-          <el-row :gutter="20">
-            <el-col :span="4">
-              <span>番:</span>
-            </el-col>
-            <el-col :span="16">
-              <a href="javascript:void(0);" @click="openLick(file.Code)"
-                ><span>{{ file.Code }}</span></a
-              >
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="4">
-              <span>脸谱:</span>
-            </el-col>
-            <el-col :span="16">
+          <el-image :src="getJpg(file.Id)" style="width: 100%; width: auto" />
+          <br>
+          <el-row :gutter="24">
+            <el-col :span="4" tyle="text-align:right">
+              YY：
               <a href="javascript:void(0);" @click="openSearch(file.Actress)">
                 <span>{{ file.Actress }}</span></a
               >
             </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="4"><span>时间:</span></el-col>
-            '
-            <el-col :span="16">
-              <span>{{ file.MTime }}</span>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
             <el-col :span="4">
-              <span>大小:</span>
+              Code：
+              <a href="javascript:void(0);" @click="openLick(file.Code)"
+                ><span>{{ file.Code }}</span></a
+              >
             </el-col>
             <el-col :span="16">
-              <span>{{ file.SizeStr }}</span>
+              <span>大小：【{{ file.SizeStr }}】</span>
+              <span>时间：{{ file.MTime }}</span>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="4">
-              <span>源:</span>
-            </el-col>
-            <el-col :span="16">
-              <span>{{ file.Path }}</span>
+            <el-col :span="20">
+              <span>源：</span> <span>{{ file.Path }}</span>
             </el-col>
           </el-row>
           <el-divider></el-divider>
@@ -562,7 +542,7 @@
         style="display: flex; margin: 10px auto"
       >
         <el-image
-          style="width: 80%; min-width: 800px; height: auto; margin: 0 auto"
+          style="min-width: 800px; margin: 0 auto"
           :src="item"
           :preview-src-list="sourceList"
           lazy
@@ -752,7 +732,7 @@ export default {
         if (res.status === 200) {
           if (res.data.Code == 200) {
             this.alertSuccess(res.data.Message);
-            this.refreshIndex();
+            // this.refreshIndex();
             for (var i = 0; i < this.dataList.length; i++) {
               if (this.dataList[i].Id == clickId) {
                 this.dataList[i].Tags.push(title);
@@ -1242,8 +1222,8 @@ export default {
 }
 
 .list-item {
-  width: 240px;
-  height: auto;
+  width: 238px;
+  height: 350px;
   float: left;
   list-style: none;
 }
@@ -1252,7 +1232,7 @@ export default {
 }
 .img-list-item {
   width: 200px;
-  height: 288px;
+  height: 280px;
 }
 
 .list-item-cover {
