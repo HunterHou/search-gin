@@ -29,72 +29,84 @@
       @click="pageLoading(1)"
       >下一頁<i class="el-icon-right"></i>
     </el-button>
-    <el-row>
-      <el-col :span="2" :offset="1">
-        <el-button
-          type="success"
-          size="mini"
-          icon="el-icon-location"
-          :loading="refreshIndexFlag"
-          @click="refreshIndex()"
-          >索引
-        </el-button>
-      </el-col>
-      <el-col :span="4">
-        <el-radio-group v-model="sortField" @change="queryList()" size="mini">
-          <el-radio-button label="Code">名</el-radio-button>
-          <el-radio-button label="MTime">时</el-radio-button>
-          <el-radio-button label="Size">容</el-radio-button>
-        </el-radio-group>
-      </el-col>
-      <el-col :span="2">
-        <el-radio-group v-model="sortType" @change="queryList()" size="mini">
-          <el-radio-button label="desc">倒</el-radio-button>
-          <el-radio-button label="asc">正</el-radio-button>
-        </el-radio-group>
-      </el-col>
-      <el-col :span="4">
-        <el-radio-group v-model="movieType" @change="queryList()" size="mini">
-          <el-radio-button label="">全</el-radio-button>
-          <el-radio-button label="骑兵">骑</el-radio-button>
-          <el-radio-button label="步兵">步</el-radio-button>
-          <el-radio-button label="斯巴达">欧</el-radio-button>
-        </el-radio-group>
-      </el-col>
-
-      <el-col :span="10">
-        <el-autocomplete
-          id="searchInput"
-          style="min-width: 80px; width: auto"
-          placeholder="请输入关键词"
-          v-model="searchWords"
-          clearable
-          :fetch-suggestions="fetchSuggestion"
-          @select="handleSelect"
-          @clear="clearWords"
-          size="mini"
-          @keyup.enter.native="queryList()"
-        >
+    <div id="mainButtom">
+      <el-row id="mainButtomRow">
+        <el-col :span="2" :offset="1">
           <el-button
-            slot="append"
-            type="primary"
+            type="success"
             size="mini"
-            icon="el-icon-search"
-            @click="
-              (e) => {
-                this.pageNo = 1;
-                queryList();
-              }
-            "
-            >Enter
+            icon="el-icon-location"
+            :loading="refreshIndexFlag"
+            @click="refreshIndex()"
+            >索引
           </el-button>
-          <template slot-scope="{ item }">
-            <div v-if="item" class="name">{{ item }}</div>
-          </template>
-        </el-autocomplete>
-      </el-col>
-    </el-row>
+        </el-col>
+        <el-col :span="1">
+          <el-link style="color: green">
+            <i
+              :underline="true"
+              class="el-icon-zoom-out"
+              title="重复"
+              @click="onlyRepeatQuery()"
+              >重</i
+            ></el-link
+          >
+        </el-col>
+        <el-col :span="4">
+          <el-radio-group v-model="sortField" @change="queryList()" size="mini">
+            <el-radio-button label="Code">名</el-radio-button>
+            <el-radio-button label="MTime">时</el-radio-button>
+            <el-radio-button label="Size">容</el-radio-button>
+          </el-radio-group>
+        </el-col>
+        <el-col :span="2">
+          <el-radio-group v-model="sortType" @change="queryList()" size="mini">
+            <el-radio-button label="desc">倒</el-radio-button>
+            <el-radio-button label="asc">正</el-radio-button>
+          </el-radio-group>
+        </el-col>
+        <el-col :span="4">
+          <el-radio-group v-model="movieType" @change="queryList()" size="mini">
+            <el-radio-button label="">全</el-radio-button>
+            <el-radio-button label="骑兵">骑</el-radio-button>
+            <el-radio-button label="步兵">步</el-radio-button>
+            <el-radio-button label="斯巴达">欧</el-radio-button>
+          </el-radio-group>
+        </el-col>
 
+        <el-col :span="10">
+          <el-autocomplete
+            id="searchInput"
+            style="min-width: 80px; width: auto"
+            placeholder="请输入关键词"
+            v-model="searchWords"
+            clearable
+            :fetch-suggestions="fetchSuggestion"
+            @select="handleSelect"
+            @clear="clearWords"
+            size="mini"
+            @keyup.enter.native="queryList()"
+          >
+            <el-button
+              slot="append"
+              type="primary"
+              size="mini"
+              icon="el-icon-search"
+              @click="
+                (e) => {
+                  this.pageNo = 1;
+                  queryList();
+                }
+              "
+              >Enter
+            </el-button>
+            <template slot-scope="{ item }">
+              <div v-if="item" class="name">{{ item }}</div>
+            </template>
+          </el-autocomplete>
+        </el-col>
+      </el-row>
+    </div>
     <el-row style="margin-top: 4px">
       <el-col :span="3" :offset="1">
         <el-radio-group v-model="showStyle" size="mini">
@@ -102,17 +114,7 @@
           <el-radio-button label="post">海报</el-radio-button>
         </el-radio-group>
       </el-col>
-       <el-col :span="1">
-        <el-link style="color: green">
-          <i
-            :underline="true"
-            class="el-icon-zoom-out"
-            title="重复"
-            @click="onlyRepeatQuery()"
-            >重复</i
-          ></el-link
-        >
-      </el-col>
+
       <el-col :span="12">
         <el-divider direction="vertical"></el-divider>
         <span> 进度：{{ IndexProgress ? "完成" : "进行中" }} </span>
@@ -124,9 +126,7 @@
         <span> 页：{{ CurSize }}({{ CurCnt }})</span>
         <el-divider direction="vertical"></el-divider>
       </el-col>
-     
     </el-row>
-
     <v-contextmenu
       ref="contextmenu"
       :theme="theme"
@@ -631,7 +631,7 @@ export default {
         clickId: "",
         clickCode: "",
       },
-
+      pressCtrl: false,
       refreshIndexFlag: false,
     };
   },
@@ -652,14 +652,23 @@ export default {
     });
   },
   mounted() {
+    var pressCtrl = false;
     document.onkeydown = () => {
       let key = window.event.keyCode;
-      if (key === 37) {
+
+      if (key == 17) {
+        pressCtrl = true;
+        setTimeout(() => {
+          pressCtrl = false;
+        }, 2000);
+      }
+      console.log(key, pressCtrl);
+      if (key === 37 && pressCtrl) {
         //left
-        // this.pageLoading(-1);
-      } else if (key === 39) {
+        this.pageLoading(-1);
+      } else if (key === 39 && pressCtrl) {
         //right
-        // this.pageLoading(1);
+        this.pageLoading(1);
       } else if (key == 45) {
         //insert
         document.getElementById("searchInput").focus();
@@ -677,6 +686,7 @@ export default {
         // this.queryList();
       }
     };
+    this.listenScroll();
   },
   watch: {
     searchWords: (a) => {
@@ -684,6 +694,24 @@ export default {
     },
   },
   methods: {
+    listenScroll() {
+      document.addEventListener(
+        "scroll",
+        () => {
+          let ele = document.documentElement.scrollTop;
+          let main = document.getElementById("mainButtom");
+          let mainButtomRow = document.getElementById("mainButtomRow");
+          if (ele > 60) {
+            main.classList.add("mainButtomFloat");
+            mainButtomRow.classList.add("mainButtomRowFloat");
+          } else {
+            main.classList.remove("mainButtomFloat");
+            mainButtomRow.classList.add("mainButtomRowFloat");
+          }
+        },
+        true
+      );
+    },
     gotoSearch(tag) {
       this.searchWords = tag;
       this.queryList();
@@ -1303,5 +1331,16 @@ v-deep .el-tooltip__popper {
   font-size: 18px;
   /* color: red; */
   text-align: center;
+}
+.mainButtomFloat {
+  top: 0px;
+  opacity: 1;
+  position: fixed;
+  z-index: 9999;
+  width: 100%;
+  background: #ffffff;
+}
+.mainButtomRowFloat {
+  margin: 8px auto;
 }
 </style>

@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"xorm.io/xorm/internal/utils"
 )
 
 var rootId = int64(0)
@@ -149,7 +151,7 @@ func GetTags(fileName string, movieType string) []string {
 		lefts := strings.Split(right, "》")
 		arr := strings.Split(lefts[0], ",")
 		for i := 0; i < len(arr); i++ {
-			if arr[i] != "" {
+			if arr[i] != "" && utils.IndexOf(arr[i]) == -1 {
 				res = append(res, arr[i])
 			}
 		}
