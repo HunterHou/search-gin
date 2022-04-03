@@ -133,7 +133,7 @@ export default {
     this.$nextTick(() => {
       this.$nuxt.$loading.start();
       this.fetch();
-      document.title = "目录";
+      document.title = "脸谱";
       const no = this.$route.params.no;
       this.pageNo = no ? parseInt(no) : 1;
       this.queryButtom();

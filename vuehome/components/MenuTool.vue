@@ -15,7 +15,7 @@
 
     <el-menu-item index="/fileList">
       <i class="el-icon-menu"></i>
-      <span slot="title">目录</span>
+      <span slot="title">文件</span>
     </el-menu-item>
 
     <el-menu-item index="/actress">

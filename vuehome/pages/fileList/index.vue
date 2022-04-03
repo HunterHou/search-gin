@@ -232,7 +232,7 @@
             :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
           >
             <el-popover placement="bottom-start" width="auto" trigger="click">
-              <div v-if="item.MovieType != ''" style="max-width: 220px">
+              <div v-if="item.MovieType != ''" style="max-width: 420px">
                 <el-button
                   size="mini"
                   type="primary"
@@ -1080,7 +1080,7 @@ export default {
         }
         localStorage.setItem("searchSuggestions", this.suggestions);
       } else {
-        title = "目录";
+        title = "文件";
       }
 
       this.loading = true;

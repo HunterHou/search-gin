@@ -194,11 +194,11 @@ export default {
 }
 .d-tag {
   float: right;
-  width: 28%;
+  width: 38%;
 }
 .d-table {
   float: left;
-  width: 70%;
+  width: 60%;
 }
 .e-tag {
   margin-right: 24px;
