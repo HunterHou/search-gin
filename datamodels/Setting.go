@@ -7,6 +7,7 @@ type Setting struct {
 	Remark     string
 	SystemInfo string
 	Tags       []string
+	TagsLib    []string
 	Dirs       []string
 	ImageTypes []string
 	DocsTypes  []string

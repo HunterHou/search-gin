@@ -29,7 +29,7 @@
 
     <el-menu-item index="/systemInfo">
       <i class="el-icon-setting"></i>
-      <span slot="title">系統信息</span>
+      <span slot="title">系統信息{{activePath}}</span>
     </el-menu-item>
   </el-menu>
 </template>
@@ -44,12 +44,16 @@ export default {
   },
   computed: {
     listenStorePath() {
-      const { activeMenu } = this.$store.state;
-      this.activePath = activeMenu;
+      const { activePage } = this.$store.state;
+      this.activePath = activePage;
       return;
     },
   },
-  watch: {},
+  watch: {
+    listenStorePath:()=>{
+      //代码可以不同写的  主要是触发监听事件
+    }
+  },
 };
 </script>
 <style>

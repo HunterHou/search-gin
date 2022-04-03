@@ -76,9 +76,17 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="标签">
-        <el-select
+      <el-form-item label="可用标签">
+        <el-transfer
+          :titles="tagTitles"
           v-model="form.Tags"
+          target-order="push"
+          :data="form.tagLibData"
+        ></el-transfer>
+      </el-form-item>
+      <el-form-item label="标签库">
+        <el-select
+          v-model="form.TagsLib"
           multiple
           filterable
           allow-create
@@ -166,6 +174,7 @@ export default {
 
       inputVisibleFile: false,
       inputValueFile: "",
+      tagTitles: ["可选", "已选"],
 
       form: {
         BaseUrl: "",
@@ -178,11 +187,19 @@ export default {
         Types: [],
         Dirs: [],
         Tags: [],
+        TagsLib: [],
+        tagLibData: [],
       },
     };
   },
   mounted: function () {
     this.loadData();
+  },
+  watch: {
+    form: (a) => {
+      // console.log(this.form)
+      // this.makeTabLibData();
+    },
   },
   methods: {
     goMenu() {
@@ -191,6 +208,7 @@ export default {
     submitForm() {
       const postForm = { ...this.form, BaseDir: this.form.Dirs };
       this.loading = true;
+      console.log(postForm);
       axios.post("api/setting", postForm).then((res) => {
         if (res.status === 200) {
           this.$message({
@@ -238,10 +256,19 @@ export default {
       this.inputVisibleFile = false;
       this.inputValueFile = "";
     },
+    makeTabLibData() {
+      const dataLib = [];
+      const { TagsLib } = this.form;
+      for (var i = 0; i < TagsLib.length; i++) {
+        dataLib.push({ key: TagsLib[i], label: TagsLib[i] });
+      }
+      this.form.tagLibData = dataLib;
+    },
     loadData() {
       axios.get("api/settingInfo").then((res) => {
         if (res.status == 200) {
           this.form = res.data;
+          this.makeTabLibData();
         }
       });
     },
@@ -264,5 +291,9 @@ export default {
   overflow: auto;
   z-index: 999;
   right: 40%;
+}
+.el-transfer {
+  margin-left: 120px;
+  text-align: left;
 }
 </style>

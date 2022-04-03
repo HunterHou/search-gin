@@ -652,9 +652,9 @@ export default {
     });
   },
   mounted() {
-    var pressCtrl = false;
-    document.onkeydown = () => {
-      let key = window.event.keyCode;
+    document.onkeydown = (e) => {
+      var key = e.keyCode || e.keyCode || e.keyCode;
+      var pressCtrl = e.ctrlKey || e.metaKey;
 
       if (key == 17) {
         pressCtrl = true;
