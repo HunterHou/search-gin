@@ -29,7 +29,7 @@
 
     <el-menu-item index="/systemInfo">
       <i class="el-icon-setting"></i>
-      <span slot="title">系統信息{{activePath}}</span>
+      <span slot="title">系統信息</span>
     </el-menu-item>
   </el-menu>
 </template>

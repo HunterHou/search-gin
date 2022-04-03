@@ -245,9 +245,11 @@
                 >
                   {{ tag }}</el-button
                 >
-                <el-input
+                <el-autocomplete
                   placeholder="新标签"
                   v-model="customerTag"
+                  :fetch-suggestions="fetchTagsLib"
+                  @select="handleSelectTag"
                   size="mini"
                   style="width: 200px"
                 >
@@ -259,7 +261,10 @@
                     icon="el-icon-circle-plus"
                     >加</el-button
                   >
-                </el-input>
+                  <template slot-scope="{ item }">
+                    <div v-if="item" class="name">{{ item }}</div>
+                  </template>
+                </el-autocomplete>
               </div>
               <div v-if="item.MovieType == ''" style="max-width: 600px">
                 <el-button
@@ -599,6 +604,7 @@ export default {
       file: "",
       baseUrl: "",
       Tags: [],
+      TagsLib: [],
       onlyRepeat: false, //是否查重
       dialogVisible: false, //是否弹窗
       dialogFormItemVisible: false,
@@ -890,6 +896,7 @@ export default {
         if (res.status == 200) {
           this.baseUrl = res.data.baseUrl;
           this.Tags = res.data.Tags;
+          this.TagsLib = res.data.TagsLib;
         }
 
         // store.commit('setStars', res.data)
@@ -1023,6 +1030,17 @@ export default {
 
     handleSelect(item) {
       this.searchWords = item;
+    },
+    handleSelectTag(item) {
+      this.customerTag = item;
+    },
+    fetchTagsLib(queryString, callback) {
+      const suggrestTagsLib = this.TagsLib;
+      console.log(suggrestTagsLib);
+      const results = queryString
+        ? suggrestTagsLib.filter(this.createFilter(queryString))
+        : suggrestTagsLib;
+      callback(results);
     },
     fetchSuggestion(queryString, callback) {
       const sourceSuggestions = this.suggestions;

@@ -183,6 +183,7 @@ func GetButtom(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"baseUrl": cons.OSSetting.BaseUrl,
 		"Tags":    cons.OSSetting.Tags,
+		"TagsLib": cons.OSSetting.TagsLib,
 	})
 }
 func GetPlay(c *gin.Context) {

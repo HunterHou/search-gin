@@ -76,7 +76,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="可用标签">
+      <el-form-item label="热门标签">
         <el-transfer
           :titles="tagTitles"
           v-model="form.Tags"
@@ -174,7 +174,7 @@ export default {
 
       inputVisibleFile: false,
       inputValueFile: "",
-      tagTitles: ["可选", "已选"],
+      tagTitles: ["标签库", "已选"],
 
       form: {
         BaseUrl: "",
