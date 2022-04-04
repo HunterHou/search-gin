@@ -135,8 +135,8 @@
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
-          class="el-icon-refresh"
-          style="margin: 0 8px; color: green"
+          class="el-icon-refresh right-font"
+          style="margin: 0 8px; color: green;"
           title="同步"
           action="sync"
           ><b>同步</b></i
@@ -146,7 +146,7 @@
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
-          class="el-icon-share"
+          class="el-icon-share right-font"
           style="margin: 0 16px; color: green"
           title="链接"
           action="sourceLink"
@@ -157,7 +157,7 @@
       <v-contextmenu-item @click="handleClick"
         ><i
           :underline="false"
-          class="el-icon-folder-opened"
+          class="el-icon-folder-opened right-font"
           style="margin: 0 24px"
           title="文件夹"
           action="fold"
@@ -168,7 +168,7 @@
         ><i
           :underline="false"
           class="el-icon-video-play"
-          style="margin: 0 16px; color: green"
+          style="margin: 0 16px; color: green right-font"
           title="播放"
           action="play"
           ><b>播放</b></i
@@ -176,8 +176,17 @@
       >
       <v-contextmenu-item @click="handleClick">
         <i
+          class="el-icon-question right-font"
+          style="margin: 0 14px"
+          title="详情"
+          action="info"
+          >详情</i
+        >
+      </v-contextmenu-item>
+      <v-contextmenu-item @click="handleClick">
+        <i
           :underline="false"
-          class="el-icon-download"
+          class="el-icon-download right-font"
           style="margin: 0 8px"
           title="刮图"
           action="downImage"
@@ -187,7 +196,7 @@
       <v-contextmenu-item @click="handleClick">
         <i
           :underline="false"
-          class="el-icon-delete"
+          class="el-icon-delete right-font"
           style="margin: 2 8px"
           title="删除"
           action="delete"
@@ -738,6 +747,8 @@ export default {
         this.getImageList(clickId, 2);
       } else if ("delete" == title) {
         this.deleteThis(clickId, 2);
+      } else if ("info" == title) {
+        this.gotoContext(clickId);
       } else if ("sourceLink" == title) {
         window.open(`${this.baseUrl}/${clickCode}`, "_blank");
       } else if (this.Tags.indexOf(title) >= 0) {
@@ -1360,5 +1371,8 @@ v-deep .el-tooltip__popper {
 }
 .mainButtomRowFloat {
   margin: 8px auto;
+}
+.right-font{
+  font-size: 16px;
 }
 </style>
