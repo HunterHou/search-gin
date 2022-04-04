@@ -101,7 +101,7 @@ export default {
     };
   },
   mounted() {
-    document.title = "首页";
+    document.title = "系統信息";
   },
   created() {
     this.loadData();

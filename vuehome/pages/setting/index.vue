@@ -193,6 +193,7 @@ export default {
     };
   },
   mounted: function () {
+    document.title="設置"
     this.loadData();
   },
   watch: {

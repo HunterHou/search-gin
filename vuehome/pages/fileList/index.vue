@@ -241,10 +241,10 @@
             :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
           >
             <el-popover placement="bottom-start" width="auto" trigger="click">
-              <div v-if="item.MovieType != ''" style="max-width: 420px">
+              <div v-if="item.MovieType != ''" style="max-width: 300px;">
                 <el-button
                   size="mini"
-                  type="primary"
+                  type="warning"
                   plain
                   v-for="tag in Tags"
                   :key="tag"
@@ -252,30 +252,33 @@
                   :disabled="!notContainTag(item.Tags, tag)"
                   @click="addTag(item.Id, tag)"
                 >
-                  {{ tag }}</el-button
+                  <span style="font-size:14px;">{{ tag }}</span></el-button
                 >
+                <br><br>
                 <el-autocomplete
                   placeholder="新标签"
                   v-model="customerTag"
                   :fetch-suggestions="fetchTagsLib"
                   @select="handleSelectTag"
                   size="mini"
-                  style="width: 200px"
+                  style="width: 240px"
                 >
                   <el-button
                     slot="append"
                     size="mini"
+                    type="primary"
                     :disabled="customerTagEmpty()"
                     @click="addCustomerTag(item.Id)"
                     icon="el-icon-circle-plus"
+                    style="font-size:14px;"
                     >加</el-button
                   >
                   <template slot-scope="{ item }">
-                    <div v-if="item" class="name">{{ item }}</div>
+                    <div v-if="item" style="font-size:14px;" class="name">{{ item }}</div>
                   </template>
                 </el-autocomplete>
               </div>
-              <div v-if="item.MovieType == ''" style="max-width: 600px">
+              <div v-if="item.MovieType == ''" style="max-width: 380px">
                 <el-button
                   style="margin-right: 10px"
                   plain
@@ -520,10 +523,10 @@
       <div v-if="file">
         <div
           border="1"
-          @click="gotoContext(file.Id)"
+       
           style="margin: 0px auto; width: 86%; height: auto"
         >
-          <el-image :src="getJpg(file.Id)" style="width: 100%; width: auto" />
+          <el-image :src="getJpg(file.Id)" style="width: 100%; width: auto"    @click="gotoContext(file.Id)" />
           <br />
           <el-row :gutter="24">
             <el-col :span="4" tyle="text-align:right">
@@ -532,14 +535,14 @@
                 <span>{{ file.Actress }}</span></a
               >
             </el-col>
-            <el-col :span="4">
+            <el-col :span="8">
               Code：
               <a href="javascript:void(0);" @click="openLick(file.Code)"
                 ><span>{{ file.Code }}</span></a
               >
             </el-col>
-            <el-col :span="16">
-              <span>大小：【{{ file.SizeStr }}】</span>
+            <el-col :span="12"   >
+              <span  @click="gotoContext(file.Id)">大小：【{{ file.SizeStr }}】</span>
               <span>时间：{{ file.MTime }}</span>
             </el-col>
           </el-row>
