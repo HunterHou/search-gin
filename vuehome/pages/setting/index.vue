@@ -216,8 +216,7 @@ export default {
             message: res.data.Message,
             type: "success",
           });
-          this.loadData();
-          this.loading = false;
+           this.$router.go(0)
         }
       });
     },

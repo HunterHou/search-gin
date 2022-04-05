@@ -1,7 +1,7 @@
 <template>
   <el-container>
-    <el-header> <MenuTool /></el-header>
-    <el-main style="overflow:hidden"> <Nuxt /></el-main>
+    <el-header class="headd"> <MenuTool /></el-header>
+    <el-main class="maind" style="overflow:hidden"> <Nuxt /></el-main>
   </el-container>
 </template>
 
@@ -45,12 +45,24 @@ html {
   border: 1px solid #35495e;
   color: #35495e;
   text-decoration: none;
-  padding: 10px 20px;
-  margin-left: 15px;
+  padding: 2px 4px;
+  margin-left: 10px;
 }
 
 .button--grey:hover {
   color: #fff;
   background-color: #35495e;
+}
+.headd{
+   /* background-color: antiquewhite; */
+}
+.maind{
+ margin-top: -32px;;
+  /* background-color: antiquewhite; */
+}
+</style>
+<style scoped>
+.el-header{
+  height: 44px;;
 }
 </style>

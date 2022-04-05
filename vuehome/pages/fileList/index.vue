@@ -12,6 +12,8 @@
         z-index: 999;
         left: 5px;
       "
+      size="small"
+      type="danger"
       round
       @click="pageLoading(-1)"
       ><i class="el-icon-back"></i>上一頁
@@ -25,6 +27,8 @@
         z-index: 999;
         right: 5px;
       "
+      size="small"
+      type="danger"
       round
       @click="pageLoading(1)"
       >下一頁<i class="el-icon-right"></i>
@@ -136,7 +140,7 @@
         ><i
           :underline="false"
           class="el-icon-refresh right-font"
-          style="margin: 0 8px; color: green;"
+          style="margin: 0 8px; color: green"
           title="同步"
           action="sync"
           ><b>同步</b></i
@@ -208,7 +212,7 @@
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
-      style="margin-top: 10px; min-height: 600px"
+      style="margin-top: 8px; min-height: 600px"
     >
       <li
         :class="isShowCover() ? 'list-item-cover' : 'list-item'"
@@ -221,7 +225,7 @@
               closable
               effect="dark"
               type=""
-              size="small"
+              :size="isShowCover() ? 'small' : 'mini'"
               @close="closeTag(item.Id, tag)"
             >
               <el-link :underline="false" plain @click="gotoSearch(tag)">
@@ -230,274 +234,296 @@
             </el-tag>
           </li>
         </div>
-        <div
-          :class="[theme]"
-          v-contextmenu:contextmenu
-          :key="item.Id"
-          :code="item.Code"
+        <el-popover placement="bottom-start" width="auto" trigger="click">
+          <div v-if="item.MovieType != ''" style="max-width: 300px">
+            <el-button
+              size="mini"
+              type="warning"
+              plain
+              v-for="tag in Tags"
+              :key="tag"
+              style="margin: 1px 2px"
+              :disabled="!notContainTag(item.Tags, tag)"
+              @click="addTag(item.Id, tag)"
+            >
+              <span style="font-size: 14px">{{ tag }}</span></el-button
+            >
+            <br /><br />
+            <el-autocomplete
+              placeholder="新标签"
+              v-model="customerTag"
+              :fetch-suggestions="fetchTagsLib"
+              @select="handleSelectTag"
+              size="mini"
+              style="width: 240px"
+            >
+              <el-button
+                slot="append"
+                size="mini"
+                type="primary"
+                :disabled="customerTagEmpty()"
+                @click="addCustomerTag(item.Id)"
+                icon="el-icon-circle-plus"
+                style="font-size: 14px"
+                >加</el-button
+              >
+              <template slot-scope="{ item }">
+                <div v-if="item" style="font-size: 14px" class="name">
+                  {{ item }}
+                </div>
+              </template>
+            </el-autocomplete>
+          </div>
+          <div
+            v-if="item.MovieType == ''"
+            style="max-width: 380px; float: right"
+          >
+            <el-button
+              style="margin-right: 10px"
+              plain
+              size="mini"
+              @click="setMovieType(item.Id, 2)"
+            >
+              <i
+                v-if="notQiBing(item.MovieType)"
+                class="el-icon-bicycle icon-style"
+                title="骑兵"
+                >骑兵</i
+              ></el-button
+            >
+            <el-button
+              style="margin-right: 10px"
+              plain
+              size="mini"
+              @click="setMovieType(item.Id, 1)"
+            >
+              <i
+                v-if="notBuBing(item.MovieType)"
+                class="el-icon-sunny icon-style"
+                title="步兵"
+                >步兵</i
+              ></el-button
+            >
+            <el-button
+              style="margin-right: 10px"
+              plain
+              size="mini"
+              @click="setMovieType(item.Id, 3)"
+            >
+              <i
+                v-if="notSiBaDa(item.MovieType)"
+                class="el-icon-ship icon-style"
+                title="欧美"
+                >斯巴达</i
+              ></el-button
+            >
+          </div>
+
+          <el-button
+            :class="isShowCover() ? 'tag-buttom-cover' : 'tag-buttom'"
+            :size="isShowCover() ? 'small' : 'mini'"
+            type="warning"
+            slot="reference"
+            icon="el-icon-circle-plus"
+            round
+          >
+            <b>
+              {{ item.MovieType ? item.MovieType : "无" }}
+            </b>
+          </el-button>
+        </el-popover>
+        <el-card
+          class="ecard"
+          shadow="always"
+          :body-style="{ padding: '0px', margin: '8px 4px',background:item.MovieType?'':'rgb(205, 138, 50)' }"
         >
           <div
-            v-if="item"
-            :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
+            :class="[theme]"
+            v-contextmenu:contextmenu
+            :key="item.Id"
+            :code="item.Code"
           >
-            <el-popover placement="bottom-start" width="auto" trigger="click">
-              <div v-if="item.MovieType != ''" style="max-width: 300px;">
-                <el-button
-                  size="mini"
-                  type="warning"
-                  plain
-                  v-for="tag in Tags"
-                  :key="tag"
-                  style="margin: 1px 2px"
-                  :disabled="!notContainTag(item.Tags, tag)"
-                  @click="addTag(item.Id, tag)"
-                >
-                  <span style="font-size:14px;">{{ tag }}</span></el-button
-                >
-                <br><br>
-                <el-autocomplete
-                  placeholder="新标签"
-                  v-model="customerTag"
-                  :fetch-suggestions="fetchTagsLib"
-                  @select="handleSelectTag"
-                  size="mini"
-                  style="width: 240px"
-                >
-                  <el-button
-                    slot="append"
-                    size="mini"
-                    type="primary"
-                    :disabled="customerTagEmpty()"
-                    @click="addCustomerTag(item.Id)"
-                    icon="el-icon-circle-plus"
-                    style="font-size:14px;"
-                    >加</el-button
-                  >
-                  <template slot-scope="{ item }">
-                    <div v-if="item" style="font-size:14px;" class="name">{{ item }}</div>
-                  </template>
-                </el-autocomplete>
-              </div>
-              <div v-if="item.MovieType == ''" style="max-width: 380px">
-                <el-button
-                  style="margin-right: 10px"
-                  plain
-                  size="mini"
-                  @click="setMovieType(item.Id, 2)"
-                >
-                  <i
-                    v-if="notQiBing(item.MovieType)"
-                    class="el-icon-bicycle icon-style"
-                    title="骑兵"
-                    >骑兵</i
-                  ></el-button
-                >
-                <el-button
-                  style="margin-right: 10px"
-                  plain
-                  size="mini"
-                  @click="setMovieType(item.Id, 1)"
-                >
-                  <i
-                    v-if="notBuBing(item.MovieType)"
-                    class="el-icon-sunny icon-style"
-                    title="步兵"
-                    >步兵</i
-                  ></el-button
-                >
-                <el-button
-                  style="margin-right: 10px"
-                  plain
-                  size="mini"
-                  @click="setMovieType(item.Id, 3)"
-                >
-                  <i
-                    v-if="notSiBaDa(item.MovieType)"
-                    class="el-icon-ship icon-style"
-                    title="欧美"
-                    >斯巴达</i
-                  ></el-button
-                >
-              </div>
-
-              <el-button
-                class="tag-buttom"
-                size="mini"
-                type="danger"
-                slot="reference"
-                icon="el-icon-circle-plus"
-                round
-              >
-                <b>
-                  {{ item.MovieType ? item.MovieType : "无" }}
-                </b>
-              </el-button>
-            </el-popover>
-            <el-image
-              style="width: 100%; height: 100%"
-              :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
-              @click="openWin(item.Id)"
-              fit="contain"
-              lazy
-            />
+            <div
+              v-if="item"
+              :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'"
+            >
+              <el-image
+                style="width: 100%; height: 100%"
+                :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
+                @click="openWin(item.Id)"
+                fit="contain"
+                lazy
+              />
+            </div>
           </div>
-        </div>
 
-        <div class="image-tool">
-          <el-button
-            type="primary"
-            plain
-            class="icon-button el-icon-video-play"
-            title="播放"
-            @click="playThis(item.Id)"
-          ></el-button>
-          <el-button
-            type="warning"
-            plain
-            class="icon-button el-icon-user-solid"
-            title="优优"
-            @click="thisActress(item.Actress)"
-          ></el-button>
-          <el-button
-            type="success"
-            plain
-            class="icon-button el-icon-folder-opened"
-            title="文件夹"
-            @click="openThisFolder(item.Id, 2)"
-          >
-          </el-button>
-          <el-button
-            plain
-            type="success"
-            class="icon-button el-icon-edit"
-            title="编辑"
-            @click="editItem(item)"
-          >
-          </el-button>
-          <el-button
-            type="info"
-            plain
-            class="icon-button el-icon-bicycle"
-            v-if="notQiBing(item.MovieType)"
-            title="骑兵"
-            @click="setMovieType(item.Id, 2)"
-          >
-          </el-button>
-          <el-button
-            plain
-            type="info"
-            class="icon-button el-icon-sunny"
-            v-if="notBuBing(item.MovieType)"
-            title="步兵"
-            @click="setMovieType(item.Id, 1)"
-          >
-          </el-button>
-          <el-button
-            plain
-            type="info"
-            class="icon-button"
-            v-if="notSiBaDa(item.MovieType)"
-            title="欧美"
-            @click="setMovieType(item.Id, 3)"
-          >
-            <i class="el-icon-ship"></i
-          ></el-button>
-          <el-button
-            type="danger"
-            plain
-            v-if="7 < showIconNum"
-            class="icon-button"
-            title="删除"
-            @click="deleteThis(item.Id, 2)"
-          >
-            <i class="el-icon-delete"></i
-          ></el-button>
-          <el-button
-            type="danger"
-            plain
-            v-if="8 < showIconNum"
-            class="icon-button"
-            title="刮图"
-            @click="getImageList(item.Id, 2)"
-          >
-            <i class="el-icon-download"></i
-          ></el-button>
-          <el-button
-            type="danger"
-            plain
-            v-if="9 < showIconNum"
-            class="icon-button"
-            title="同步"
-            @click="syncThis(item.Id)"
-          >
-            <i class="el-icon-refresh"></i
-          ></el-button>
+          <div class="image-tool">
+            <el-button
+              type="primary"
+              plain
+              class="icon-button el-icon-video-play"
+              title="播放"
+              @click="playThis(item.Id)"
+            ></el-button>
+            <el-button
+              type="warning"
+              plain
+              class="icon-button el-icon-user-solid"
+              title="优优"
+              @click="thisActress(item.Actress)"
+            ></el-button>
+            <el-button
+              type="success"
+              plain
+              class="icon-button el-icon-folder-opened"
+              title="文件夹"
+              @click="openThisFolder(item.Id, 2)"
+            >
+            </el-button>
+            <el-button
+              plain
+              type="success"
+              class="icon-button el-icon-edit"
+              title="编辑"
+              @click="editItem(item)"
+            >
+            </el-button>
+            <el-button
+              type="info"
+              plain
+              class="icon-button el-icon-bicycle"
+              v-if="notQiBing(item.MovieType)"
+              title="骑兵"
+              @click="setMovieType(item.Id, 2)"
+            >
+            </el-button>
+            <el-button
+              plain
+              type="info"
+              class="icon-button el-icon-sunny"
+              v-if="notBuBing(item.MovieType)"
+              title="步兵"
+              @click="setMovieType(item.Id, 1)"
+            >
+            </el-button>
+            <el-button
+              plain
+              type="info"
+              class="icon-button"
+              v-if="notSiBaDa(item.MovieType)"
+              title="欧美"
+              @click="setMovieType(item.Id, 3)"
+            >
+              <i class="el-icon-ship"></i
+            ></el-button>
+            <el-button
+              type="danger"
+              plain
+              v-if="7 < showIconNum"
+              class="icon-button"
+              title="删除"
+              @click="deleteThis(item.Id, 2)"
+            >
+              <i class="el-icon-delete"></i
+            ></el-button>
+            <el-button
+              type="danger"
+              plain
+              v-if="8 < showIconNum"
+              class="icon-button"
+              title="刮图"
+              @click="getImageList(item.Id, 2)"
+            >
+              <i class="el-icon-download"></i
+            ></el-button>
+            <el-button
+              type="danger"
+              plain
+              v-if="9 < showIconNum"
+              class="icon-button"
+              title="同步"
+              @click="syncThis(item.Id)"
+            >
+              <i class="el-icon-refresh"></i
+            ></el-button>
 
-          <el-link>
-            <el-dropdown placement="top-start" v-if="7 > showIconNum">
-              <i class="el-icon-more icon-style"></i>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="7 > showIconNum">
-                  <i
-                    class="el-icon-refresh-right icon-style"
-                    title="信息"
-                    @click="infoThis(item.Id, 2)"
-                    >信</i
-                  >
-                </el-dropdown-item>
-                <el-dropdown-item v-if="8 > showIconNum">
-                  <el-link>
+            <el-link>
+              <el-dropdown placement="top-start" v-if="7 > showIconNum">
+                <i class="el-icon-more icon-style"></i>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-if="7 > showIconNum">
                     <i
-                      class="el-icon-delete icon-style"
-                      title="删除"
-                      @click="deleteThis(item.Id, 2)"
-                      >删</i
-                    ></el-link
-                  >
-                </el-dropdown-item>
+                      class="el-icon-refresh-right icon-style"
+                      title="信息"
+                      @click="infoThis(item.Id, 2)"
+                      >信</i
+                    >
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="8 > showIconNum">
+                    <el-link>
+                      <i
+                        class="el-icon-delete icon-style"
+                        title="删除"
+                        @click="deleteThis(item.Id, 2)"
+                        >删</i
+                      ></el-link
+                    >
+                  </el-dropdown-item>
 
-                <el-dropdown-item v-if="9 > showIconNum">
-                  <i
-                    class="el-icon-download icon-style"
-                    title="刮图"
-                    @click="getImageList(item.Id, 2)"
-                    >刮</i
-                  >
-                </el-dropdown-item>
-                <el-dropdown-item v-if="10 > showIconNum">
-                  <el-link>
+                  <el-dropdown-item v-if="9 > showIconNum">
                     <i
-                      :underline="false"
-                      class="el-icon-refresh icon-style"
-                      title="同步"
-                      @click="syncThis(item.Id)"
-                      >同</i
-                    ></el-link
-                  >
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-link>
+                      class="el-icon-download icon-style"
+                      title="刮图"
+                      @click="getImageList(item.Id, 2)"
+                      >刮</i
+                    >
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="10 > showIconNum">
+                    <el-link>
+                      <i
+                        :underline="false"
+                        class="el-icon-refresh icon-style"
+                        title="同步"
+                        @click="syncThis(item.Id)"
+                        >同</i
+                      ></el-link
+                    >
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-link>
 
-          <div
-            class="context-text"
-            :class="item.MovieType ? '' : 'redbackground'"
-          >
-            <el-tooltip placement="bottom" effect="dark">
-              <div slot="content">{{ item.name }}</div>
-              <span>
-                <el-link style="color: green" @click="copy(item.Actress)">{{
-                  item.Actress
-                }}</el-link>
-                <el-divider direction="vertical"></el-divider>
-                <el-link style="color: orange" @click="copy(item.Code)">{{
-                  item.Code
-                }}</el-link>
-                【{{ item.SizeStr }}】 {{ item.Name }}
-              </span>
-            </el-tooltip>
+            <div
+              class="context-text"
+            >
+              <el-popover placement="top" width="400" trigger="hover">
+                <el-link
+                  v-if="item.Actress"
+                  style="color: green"
+                  @click="copy(item.Actress)"
+                  >{{ item.Actress }}</el-link
+                >
+                <el-divider
+                  v-if="item.Actress"
+                  direction="vertical"
+                ></el-divider>
+                <el-link
+                  v-if="item.Code"
+                  style="color: orange"
+                  @click="copy(item.Code)"
+                  >{{ item.Code }}</el-link
+                >
+                <el-divider v-if="item.Code" direction="vertical"></el-divider>
+                【{{ item.SizeStr }}】 <br />
+                <hr />
+                <span style="margin-buttom: 30px"> {{ item.Name }}</span>
+                <span slot="reference">
+                  【{{ item.SizeStr }}】 {{ item.Name }}</span
+                >
+              </el-popover>
+            </div>
           </div>
-        </div>
+        </el-card>
       </li>
     </div>
     <el-pagination
@@ -514,19 +540,19 @@
     ></el-pagination>
     <!-- 弹窗 -->
     <el-dialog
-      width="60%"
+      width="70%"
       :modal="true"
       :lock-scroll="true"
       :title="file.Title"
       :visible.sync="dialogVisible"
     >
       <div v-if="file">
-        <div
-          border="1"
-       
-          style="margin: 0px auto; width: 86%; height: auto"
-        >
-          <el-image :src="getJpg(file.Id)" style="width: 100%; width: auto"    @click="gotoContext(file.Id)" />
+        <div border="1" style="margin: 0px auto; width: 86%; height: auto">
+          <el-image
+            :src="getJpg(file.Id)"
+            style="width: 100%; width: auto"
+            @click="gotoContext(file.Id)"
+          />
           <br />
           <el-row :gutter="24">
             <el-col :span="4" tyle="text-align:right">
@@ -541,8 +567,10 @@
                 ><span>{{ file.Code }}</span></a
               >
             </el-col>
-            <el-col :span="12"   >
-              <span  @click="gotoContext(file.Id)">大小：【{{ file.SizeStr }}】</span>
+            <el-col :span="12">
+              <span @click="gotoContext(file.Id)"
+                >大小：【{{ file.SizeStr }}】</span
+              >
               <span>时间：{{ file.MTime }}</span>
             </el-col>
           </el-row>
@@ -1238,24 +1266,24 @@ export default {
   min-height: 600px;
   height: 100%;
   padding: 1px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .floatButton {
   float: right;
   position: fixed;
-  width: 80px;
+  width: 90px;
   top: 320px;
   overflow: auto;
   z-index: 999;
 }
 
 .image-tool {
-  margin-top: 2px;
+  margin-top: 4px;
   margin-bottom: 2px;
 }
 .redbackground {
-  background-color: yellowgreen;
+  background-color: rgb(205, 138, 50);
 }
 .icon-style {
   font-size: 18px;
@@ -1280,10 +1308,13 @@ export default {
   height: auto;
   width: 400px;
 }
-
+.ecard {
+  margin-left: 8px;
+  background: #e4e6d1;
+}
 .list-item {
-  width: 238px;
-  height: 350px;
+  width: 232px;
+  height: 358px;
   float: left;
   list-style: none;
 }
@@ -1291,20 +1322,20 @@ export default {
   position: fixed;
 }
 .img-list-item {
-  width: 200px;
-  height: 280px;
+  width: auto;
+  height: 270px;
 }
 
 .list-item-cover {
-  width: 470px;
-  height: auto;
+  width: 420px;
+  height: 358px;
   float: left;
   list-style: none;
 }
 
 .img-list-item-cover {
-  width: 460px;
-  height: 280px;
+  width: auto;
+  height: 270px;
 }
 
 .pageTool {
@@ -1330,16 +1361,26 @@ export default {
   opacity: 1;
 }
 .tag-buttom {
+  margin-left: 144px;
   filter: alpha(opacity=100);
   opacity: 1;
-  /* background: #e01616; */
   position: absolute;
   z-index: 999;
-  margin-left: 130px;
-  margin-top: 5px;
+  margin-top: 2px;
+  float: right;
   text-align: justify;
   text-align-last: justify;
-  /* color: #ffffff; */
+}
+.tag-buttom-cover {
+  margin-left: 344px;
+  filter: alpha(opacity=100);
+  opacity: 1;
+  position: absolute;
+  z-index: 999;
+  margin-top: 2px;
+  float: right;
+  text-align: justify;
+  text-align-last: justify;
 }
 .tag-area span {
   filter: alpha(opacity=90);
@@ -1370,12 +1411,12 @@ v-deep .el-tooltip__popper {
   position: fixed;
   z-index: 9999;
   width: 100%;
-  background: #ffffff;
+  background: #b8aeae;
 }
 .mainButtomRowFloat {
   margin: 8px auto;
 }
-.right-font{
+.right-font {
   font-size: 16px;
 }
 </style>
