@@ -24,7 +24,9 @@ html {
   box-sizing: border-box;
   margin: 0;
 }
-
+body{
+  background: #e9ebee;
+}
 .button--green {
   display: inline-block;
   border-radius: 4px;
