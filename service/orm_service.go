@@ -39,7 +39,7 @@ func CreateOrmService() OrmService {
 	return service
 }
 
-func (o *OrmService) Find(Id int64) datamodels.Movie {
+func (o *OrmService) Find(Id string) datamodels.Movie {
 	var res datamodels.Movie
 	has, err := dbEngine.ID(Id).Get(&res)
 	if err != nil {
@@ -52,7 +52,7 @@ func (o *OrmService) Find(Id int64) datamodels.Movie {
 
 }
 
-func (o *OrmService) UpdateOne(Id int64, path string) datamodels.Movie {
+func (o *OrmService) UpdateOne(Id string, path string) datamodels.Movie {
 	var res datamodels.Movie
 	res.Id = Id
 	res.Path = path

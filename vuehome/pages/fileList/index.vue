@@ -15,11 +15,13 @@
       size="small"
       type="danger"
       round
+      v-if="!loading"
       @click="pageLoading(-1)"
       ><i class="el-icon-back"></i>上一頁
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
+      v-if="!loading"
       style="
         position: fixed;
         top: 640px;
@@ -246,7 +248,7 @@
               :disabled="!notContainTag(item.Tags, tag)"
               @click="addTag(item.Id, tag)"
             >
-              <span style="font-size: 14px">{{ tag }}</span></el-button
+              <span style="font-size: 12px">{{ tag }}</span></el-button
             >
             <br /><br />
             <el-autocomplete
@@ -335,7 +337,11 @@
         <el-card
           class="ecard"
           shadow="always"
-          :body-style="{ padding: '0px', margin: '8px 4px',background:item.MovieType?'':'rgb(205, 138, 50)' }"
+          :body-style="{
+            padding: '0px',
+            margin: '8px 4px',
+            background: item.MovieType ? '' : 'rgb(205, 138, 50)',
+          }"
         >
           <div
             :class="[theme]"
@@ -493,10 +499,25 @@
               </el-dropdown>
             </el-link>
 
-            <div
-              class="context-text"
-            >
-              <el-popover placement="top" width="400" trigger="hover">
+            <div class="context-text" style="font-size: 13px">
+              <el-link
+                v-if="item.Actress"
+                style="color: green"
+                @click="copy(item.Actress)"
+                >{{ item.Actress }}</el-link
+              >
+              <el-link
+                v-if="item.Code"
+                style="color: orange"
+                @click="copy(item.Code)"
+                >{{ item.Code }}</el-link
+              >
+              <el-popover
+                placement="top"
+                width="400"
+                trigger="hover"
+                close-delay="1"
+              >
                 <el-link
                   v-if="item.Actress"
                   style="color: green"
@@ -516,11 +537,21 @@
                 <el-divider v-if="item.Code" direction="vertical"></el-divider>
                 【{{ item.SizeStr }}】 <br />
                 <hr />
-                <span style="margin-buttom: 30px"> {{ item.Name }}</span>
-                <span slot="reference">
-                  【{{ item.SizeStr }}】 {{ item.Name }}</span
+                <span
+                  style="
+                    margin-buttom: 30px;
+                    margin-top: 30px;
+                    margin-left: 30px;
+                    margin-right: 30px;
+                  "
                 >
+                  {{ item.Name }}</span
+                >
+                <span slot="reference" style="color: red">
+                  【{{ item.SizeStr }}】
+                </span>
               </el-popover>
+              {{ item.Name }}
             </div>
           </div>
         </el-card>

@@ -13,15 +13,17 @@ import (
 	"unicode"
 )
 
-var rootId = int64(0)
+var rootId = 0
 
-func PKId() int64 {
-	res := rootId
-	rootId++
-	return res
+func GeneratInt() string {
+	rootId = rootId + 1
+	return fmt.Sprintf("a%d", rootId)
 }
-func PKIdRest() {
-	rootId = int64(0)
+
+func PKId(path string) string {
+	abbr, _ := DirpathForId(path)
+	return abbr
+	// return GeneratInt()
 }
 
 func DirpathForId(path string) (string, string) {
@@ -30,6 +32,11 @@ func DirpathForId(path string) (string, string) {
 	res = strings.ReplaceAll(res, "\\", "~")
 	res = strings.ReplaceAll(res, "\\", "~")
 	res = strings.ReplaceAll(res, ":", "")
+	res = strings.ReplaceAll(res, ".", "")
+	res = strings.ReplaceAll(res, ",", "")
+	res = strings.ReplaceAll(res, "!", "")
+	res = strings.ReplaceAll(res, "》", "")
+	res = strings.ReplaceAll(res, "《", "")
 	arr := strings.Split(res, "~")
 	newpath := ""
 	for i := 0; i < len(arr); i++ {
@@ -39,9 +46,16 @@ func DirpathForId(path string) (string, string) {
 			newpath += "~"
 		}
 		if length > 30 {
-			newpath += curArr[0:14]
-			newpath += "_" + fmt.Sprintf("%d", (length-30)) + "_"
-			newpath += curArr[length-15 : length]
+			// newpath += curArr[0:100]
+			// newpath += fmt.Sprintf("%d", (length))
+			// newpath += curArr[length-100 : length]
+			j := 0
+			for _, value := range curArr {
+				if j%2 == 0 {
+					newpath += string(value)
+				}
+				j++
+			}
 		} else {
 			newpath += curArr
 		}

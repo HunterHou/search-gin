@@ -13,7 +13,7 @@ var DefSortType = "desc"
 var CurSortField = ""
 var CurSortType = ""
 
-var FileLib = map[int64]datamodels.Movie{}
+var FileLib = map[string]datamodels.Movie{}
 var FileList []datamodels.Movie
 
 var FileSize int64

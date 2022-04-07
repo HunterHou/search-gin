@@ -79,7 +79,7 @@ func PostSearchMovie(c *gin.Context) {
 }
 
 func GetNextInfo(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id := c.Param("id")
 	keywords := c.DefaultQuery("keywords", "")
 	pageNo, _ := strconv.Atoi(c.DefaultQuery("pageNo", "1"))
 	if pageNo < 1 {
@@ -94,7 +94,7 @@ func GetNextInfo(c *gin.Context) {
 	movieType := c.DefaultQuery("movieType", "")
 	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
 	res := getNextOne(searchParam, 1, id)
-	if res.Id == 0 {
+	if res.Id == "" {
 		searchParam.Page = searchParam.Page + 1
 		res = getNextOne(searchParam, +1, id)
 	}
@@ -102,7 +102,7 @@ func GetNextInfo(c *gin.Context) {
 }
 
 func GetLastInfo(c *gin.Context) {
-	id, _ := strconv.Atoi(c.DefaultQuery("id", "1"))
+	id := c.Param("id")
 	keywords := c.DefaultQuery("keywords", "")
 	pageNo, _ := strconv.Atoi(c.DefaultQuery("pageNo", "1"))
 	if pageNo < 1 {
@@ -117,7 +117,7 @@ func GetLastInfo(c *gin.Context) {
 	movieType := c.DefaultQuery("movieType", "")
 	searchParam := datamodels.NewSearchParam(keywords, pageNo, pageSize, sortField, sortType, movieType)
 	res := getNextOne(searchParam, -1, id)
-	if res.Id == 0 {
+	if res.Id == "" {
 		searchParam.Page = searchParam.Page - 1
 		res = getNextOne(searchParam, -1, id)
 	}
@@ -125,13 +125,13 @@ func GetLastInfo(c *gin.Context) {
 
 }
 
-func getNextOne(searchParam datamodels.SearchParam, offset int, currentId int) datamodels.Movie {
+func getNextOne(searchParam datamodels.SearchParam, offset int, currentId string) datamodels.Movie {
 	var res datamodels.Movie
 	fileService := service.CreateFileService()
 	result := fileService.SearchIndex(searchParam)
 	datas := result.Data.([]datamodels.Movie)
 	for i := 0; i < len(datas); i++ {
-		if datas[i].Id == int64(currentId) {
+		if datas[i].Id == currentId {
 			if i == 0 {
 				res = datas[i]
 			} else {
@@ -188,8 +188,7 @@ func GetButtom(c *gin.Context) {
 }
 func GetPlay(c *gin.Context) {
 	//id := c.Param("id")
-	idInt, _ := strconv.Atoi(c.Param("id"))
-	id := int64(idInt)
+	id := c.Param("id")
 	service := service.CreateFileService()
 	file := service.FindOne(id)
 	//c.File(file.Path)
@@ -198,8 +197,7 @@ func GetPlay(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 func SetMovieType(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
-	id := int64(idInt)
+	id := c.Param("id")
 	movieType := c.Param("movieType")
 	service := service.CreateFileService()
 	file := service.FindOne(id)
@@ -207,8 +205,7 @@ func SetMovieType(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 func GetInfo(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
-	id := int64(idInt)
+	id := c.Param("id")
 	service := service.CreateFileService()
 	file := service.FindOne(id)
 	c.JSON(http.StatusOK, file)
@@ -223,23 +220,22 @@ func PostRename(c *gin.Context) {
 }
 
 func GetAddTag(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
+	idInt := c.Param("id")
 	tag := c.Param("tag")
 	service := service.CreateFileService()
-	res := service.AddTag(int64(idInt), tag)
+	res := service.AddTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
 func GetClearTag(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
+	idInt := c.Param("id")
 	tag := c.Param("tag")
 	service := service.CreateFileService()
-	res := service.ClearTag(int64(idInt), tag)
+	res := service.ClearTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
 
 func GetDirInfo(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
-	id := int64(idInt)
+	id := c.Param("id")
 	fileService := service.CreateFileService()
 	file := fileService.FindOne(id)
 
@@ -251,8 +247,7 @@ func GetDirInfo(c *gin.Context) {
 }
 
 func GetOpenFoler(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
-	id := int64(idInt)
+	id := c.Param("id")
 	service := service.CreateFileService()
 	file := service.FindOne(id)
 	fmt.Println(file.DirPath)
@@ -284,16 +279,14 @@ func PostDeleteFolerByPath(c *gin.Context) {
 }
 
 func GetDelete(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
-	id := int64(idInt)
+	id := c.Param("id")
 	service := service.CreateFileService()
 	service.Delete(id)
 	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
 }
 func GetSync(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
-	id := int64(idInt)
+	id := c.Param("id")
 	serviceFile := service.CreateFileService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestToFile(curFile)
@@ -306,8 +299,7 @@ func GetSync(c *gin.Context) {
 }
 
 func GetImageList(c *gin.Context) {
-	idInt, _ := strconv.Atoi(c.Param("id"))
-	id := int64(idInt)
+	id := c.Param("id")
 	serviceFile := service.CreateFileService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestToFile(curFile)

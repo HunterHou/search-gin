@@ -9,7 +9,7 @@ import (
 )
 
 // var curDir string
-var staticDir string
+// var staticDir string
 
 // 打包命令
 // 1 命令行UI 常规打包 go build
@@ -22,13 +22,15 @@ func init() {
 	dict := service.ReadDictionaryFromJson(settingPath)
 	dict.SelfPath = osSetting.SelfPath
 	cons.OSSetting = dict
-	staticDir = curDir + "/static"
+	// staticDir = curDir + "/static"
 }
 
 func main() {
 	app := router.BuildRouter()
 	url := "http://127.0.0.1" + cons.PortNo + "/"
 	//默认启动页面
+	go service.HeartBeat()
+
 	go utils.ExecCmdStart(url)
 	//启动服务
 	app.Run(cons.PortNo)

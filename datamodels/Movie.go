@@ -9,7 +9,7 @@ import (
 
 // Movie 声明一个File结构体 表示一个文件信息
 type Movie struct {
-	Id        int64  `xorm:"pk"  `
+	Id        string `xorm:"Varchar(255) pk"  `
 	Code      string `xorm:"Varchar(255)"`
 	Name      string `xorm:"Text"`
 	Path      string `xorm:"Text"`
@@ -43,10 +43,14 @@ type Movie struct {
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
-	//id, _ := utils.DirpathForId(path)
+	_, id := utils.DirpathForId(path)
+	code := utils.GetCode(name)
+	Actress := utils.GetActress(name)
+	_, name_1 := utils.DirpathForId(name)
+	id = id + name_1
 	result := Movie{
-		Id:        utils.PKId(),
-		Code:      utils.GetCode(name),
+		Id:        id,
+		Code:      code,
 		Title:     utils.GetTitle(name),
 		Name:      name,
 		Path:      path,
@@ -55,7 +59,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		Jpg:       utils.GetPng(path, "jpg"),
 		Srt:       utils.GetPng(path, "srt"),
 		Tags:      utils.GetTags(path, ""),
-		Actress:   utils.GetActress(name),
+		Actress:   Actress,
 		FileType:  fileType,
 		DirPath:   dir,
 		Size:      size,
@@ -68,7 +72,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 	return result
 }
 
-func (f Movie) SetId(id int64) Movie {
+func (f Movie) SetId(id string) Movie {
 	f.Id = id
 	return f
 }
@@ -82,7 +86,7 @@ func (f Movie) GetFileInfo() string {
 
 func (f Movie) IsNull() bool {
 	//
-	if f.Id == 0 || f.Path == "" {
+	if f.Id == "" || f.Path == "" {
 		return true
 	}
 	return false
