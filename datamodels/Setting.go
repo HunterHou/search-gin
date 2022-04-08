@@ -9,6 +9,7 @@ type Setting struct {
 	Tags       []string
 	TagsLib    []string
 	Dirs       []string
+	DirsLib    []string
 	ImageTypes []string
 	DocsTypes  []string
 	VideoTypes []string

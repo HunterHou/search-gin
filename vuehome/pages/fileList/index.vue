@@ -37,15 +37,38 @@
     </el-button>
     <div id="mainButtom">
       <el-row id="mainButtomRow">
-        <el-col :span="2" :offset="1">
+        <el-col :span="3" :offset="1">
           <el-button
             type="success"
             size="mini"
             icon="el-icon-location"
             :loading="refreshIndexFlag"
             @click="refreshIndex()"
-            >索引
+            >扫描
           </el-button>
+
+          <el-popover placement="left-top"  v-model="settingInfoShow" width="200px" trigger="click">
+            <div>
+              <el-row>
+                <el-col :span="21">
+                  <el-checkbox-group v-model="settingInfo.Dirs">
+                    <el-checkbox
+                      v-for="dir in settingInfo.DirsLib"
+                      :label="dir"
+                      :key="dir"
+                      >{{ dir }}</el-checkbox
+                    >
+                  </el-checkbox-group>
+                </el-col>
+                <el-col :span="3">
+                  <el-button style="margin-left: 20px" @click="settingSubmit"
+                    >提交</el-button
+                  >
+                </el-col>
+              </el-row>
+            </div>
+            <el-link slot="reference"> （{{ settingInfo.DirsCnt }}）</el-link>
+          </el-popover>
         </el-col>
         <el-col :span="1">
           <el-link style="color: green">
@@ -58,7 +81,7 @@
             ></el-link
           >
         </el-col>
-        <el-col :span="4">
+        <el-col :span="3">
           <el-radio-group v-model="sortField" @change="queryList()" size="mini">
             <el-radio-button label="Code">名</el-radio-button>
             <el-radio-button label="MTime">时</el-radio-button>
@@ -242,7 +265,7 @@
               size="mini"
               type="warning"
               plain
-              v-for="tag in Tags"
+              v-for="tag in settingInfo.Tags"
               :key="tag"
               style="margin: 1px 2px"
               :disabled="!notContainTag(item.Tags, tag)"
@@ -516,7 +539,7 @@
                 placement="top"
                 width="400"
                 trigger="hover"
-                close-delay="1"
+                :close-delay="1"
               >
                 <el-link
                   v-if="item.Actress"
@@ -668,14 +691,13 @@ export default {
     var searchPage = new Map();
 
     return {
+      settingInfo: {},
+      settingInfoShow:false,
       showIconNum: 5,
       customerTag: "",
       sourceList: [],
       showStyle: "post",
       file: "",
-      baseUrl: "",
-      Tags: [],
-      TagsLib: [],
       onlyRepeat: false, //是否查重
       dialogVisible: false, //是否弹窗
       dialogFormItemVisible: false,
@@ -771,6 +793,19 @@ export default {
     },
   },
   methods: {
+    settingSubmit() {
+      const postForm = { ...this.settingInfo };
+      axios.post("api/setting", postForm).then((res) => {
+        if (res.status === 200) {
+          this.settingInfoShow =false
+          this.$message({
+            message: res.data.Message,
+            type: "success",
+          });
+          this.fetchButtom()
+        }
+      });
+    },
     listenScroll() {
       document.addEventListener(
         "scroll",
@@ -812,8 +847,8 @@ export default {
       } else if ("info" == title) {
         this.gotoContext(clickId);
       } else if ("sourceLink" == title) {
-        window.open(`${this.baseUrl}/${clickCode}`, "_blank");
-      } else if (this.Tags.indexOf(title) >= 0) {
+        window.open(`${this.settingInfo.BaseUrl}/${clickCode}`, "_blank");
+      } else if (this.settingInfo.Tags.indexOf(title) >= 0) {
         this.addTag(clickId, title);
       }
     },
@@ -967,9 +1002,8 @@ export default {
     fetchButtom() {
       axios.get("api/buttoms").then((res) => {
         if (res.status == 200) {
-          this.baseUrl = res.data.baseUrl;
-          this.Tags = res.data.Tags;
-          this.TagsLib = res.data.TagsLib;
+          this.settingInfo = res.data;
+          this.settingInfo.DirsCnt = this.settingInfo.Dirs.length;
         }
 
         // store.commit('setStars', res.data)
@@ -1108,7 +1142,7 @@ export default {
       this.customerTag = item;
     },
     fetchTagsLib(queryString, callback) {
-      const suggrestTagsLib = this.TagsLib;
+      const suggrestTagsLib = this.settingInfo.TagsLib;
       console.log(suggrestTagsLib);
       const results = queryString
         ? suggrestTagsLib.filter(this.createFilter(queryString))
@@ -1232,11 +1266,11 @@ export default {
       // this.$router.push({path: `/context/${fileId}`  ,query:{...this.$router.query} });
     },
     openLick(code) {
-      const url = this.baseUrl + code;
+      const url = this.settingInfo.BaseUrl + code;
       window.open(url, "_blank");
     },
     openSearch(actress) {
-      const url = this.baseUrl + "search/" + actress;
+      const url = this.settingInfo.BaseUrl + "search/" + actress;
       window.open(url, "_blank");
     },
 

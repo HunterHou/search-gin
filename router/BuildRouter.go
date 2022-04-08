@@ -49,7 +49,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/png/:path", controller.GetPng)
 	router.GET("/api/jpg/:path", controller.GetJpg)
 
-	router.GET("/api/buttoms", controller.GetButtom)
+	router.GET("/api/buttoms", controller.GetSettingInfo)
 	router.GET("/api/refreshIndex", controller.GetRefresIndex)
 	router.GET("/api/settingInfo", controller.GetSettingInfo)
 	router.POST("/api/setting", controller.PostSetting)
