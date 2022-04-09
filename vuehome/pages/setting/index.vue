@@ -6,7 +6,7 @@
       :model="form"
       label-position="right"
     >
-      <h1 align="center">设置</h1>
+      <!-- <h1 align="center">设置</h1> -->
       <div
         style="
           margin: 8px 20px;
@@ -21,8 +21,7 @@
           type="card"
           @tab-click="handleClick"
         >
-          <el-tab-pane label="扫描设置" name="first"
-            >
+          <el-tab-pane label="扫描设置" name="first">
             <el-form-item label="图片类型">
               <el-select
                 v-model="form.ImageTypes"
@@ -88,7 +87,7 @@
                   {{ iteTag }}
                 </el-tag>
 
-                <el-popover placement="left-top" width="400px;" trigger="click">
+                <el-popover placement="left" width="400px;" trigger="click">
                   <el-transfer
                     :titles="tagTitles"
                     v-model="form.Tags"
@@ -133,15 +132,14 @@
             </el-form-item>
           </el-tab-pane>
 
-          <el-tab-pane label="基础配置" name="second"
-            >
+          <el-tab-pane label="基础配置" name="second">
             <el-form-item label="URL">
               <el-input v-model="form.BaseUrl" style="width: 90%"></el-input>
             </el-form-item>
             <el-form-item label="OM-URL">
               <el-input v-model="form.OMUrl" style="width: 90%"></el-input>
             </el-form-item>
-            
+
             <el-form-item label="枚举文件类型">
               <el-select
                 v-model="form.Types"
@@ -202,12 +200,13 @@
 
           <el-tab-pane label="系统信息" name="third">
             <el-form-item label="系統信息">
-              <el-input
+              <!-- <el-input
                 type="textarea"
                 :rows="20"
                 v-model="form.SystemInfo"
                 style="width: 90%"
-              ></el-input>
+              ></el-input> -->
+               <el-tiptap v-model="form.SystemInfo" :extensions="extensions"/>
             </el-form-item>
           </el-tab-pane>
         </el-tabs>
@@ -246,11 +245,38 @@
 <script>
 import axios from "axios";
 import setStorePath from "@/mixin/setStorePath";
+import {
+  // 需要的 extensions
+  Doc,
+  Text,
+  Paragraph,
+  Heading,
+  Bold,
+  Underline,
+  Italic,
+  Strike,
+  ListItem,
+  BulletList,
+  OrderedList,
+} from 'element-tiptap';
 
 export default {
   mixins: [setStorePath],
   data: function () {
     return {
+      extensions: [
+        new Doc(),
+        new Text(),
+        new Paragraph(),
+        new Heading({ level: 5 }),
+        new Bold({ bubble: true }), // 在气泡菜单中渲染菜单按钮
+        new Underline({ bubble: true, menubar: false }), // 在气泡菜单而不在菜单栏中渲染菜单按钮
+        new Italic(),
+        new Strike(),
+        new ListItem(),
+        new BulletList(),
+        new OrderedList(),
+      ],
       inputVisible: false,
       inputValue: "",
       activeName: "first",

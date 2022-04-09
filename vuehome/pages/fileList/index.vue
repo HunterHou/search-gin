@@ -47,27 +47,74 @@
             >扫描
           </el-button>
 
-          <el-popover placement="left-top"  v-model="settingInfoShow" width="200px" trigger="click">
-            <div>
+          <el-popover
+            placement="left-top"
+            v-model="settingInfoShow"
+            width="200px"
+            trigger="click"
+          >  <h1 align="center">索引配置</h1>
+            <div style="margin:30px 20px;">
+            
               <el-row>
-                <el-col :span="21">
-                  <el-checkbox-group v-model="settingInfo.Dirs">
-                    <el-checkbox
-                      v-for="dir in settingInfo.DirsLib"
-                      :label="dir"
-                      :key="dir"
-                      >{{ dir }}</el-checkbox
-                    >
-                  </el-checkbox-group>
+                <el-col :span="20">
+                  <el-row>
+                    <el-col :span="4">
+                      <span>视频类型：</span>
+                    </el-col>
+                    <el-col :span="20">
+                      <el-select
+                        v-model="settingInfo.VideoTypes"
+                        multiple
+                        placeholder="请选择"
+                        style="width: 90%"
+                      >
+                        <el-option
+                          v-for="item in settingInfo.Types"
+                          :key="item"
+                          :label="item"
+                          :value="item"
+                        >
+                        </el-option>
+                      </el-select>
+                    </el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col :span="4">
+                      <span>扫描路径：</span>
+                    </el-col>
+                    <el-col :span="20">
+                      <el-checkbox
+                        size="mini"
+                        :indeterminate="isIndeterminateDir"
+                        v-model="settingCheckAll"
+                        @change="handleCheckAllChange"
+                        >全选</el-checkbox
+                      >
+                      <el-checkbox-group
+                        v-model="settingInfo.Dirs"
+                        @change="handleCheckedCitiesChange"
+                      >
+                        <el-checkbox
+                          v-for="dir in settingInfo.DirsLib"
+                          :label="dir"
+                          :key="dir"
+                          >{{ dir }}</el-checkbox
+                        >
+                      </el-checkbox-group>
+                    </el-col>
+                  </el-row>
                 </el-col>
-                <el-col :span="3">
-                  <el-button style="margin-left: 20px" @click="settingSubmit"
-                    >提交</el-button
+                <el-col :span="4">
+                  <el-button
+                    type="primary"
+                    style="height: 100px; width: 140px"
+                    @click="settingSubmit"
+                    >提 交</el-button
                   >
                 </el-col>
               </el-row>
             </div>
-            <el-link slot="reference"> （{{ settingInfo.DirsCnt }}）</el-link>
+            <el-link slot="reference"> {{ getDirsCnt() }}</el-link>
           </el-popover>
         </el-col>
         <el-col :span="1">
@@ -692,7 +739,9 @@ export default {
 
     return {
       settingInfo: {},
-      settingInfoShow:false,
+      settingInfoShow: false,
+      settingCheckAll: false,
+      isIndeterminateDir: false,
       showIconNum: 5,
       customerTag: "",
       sourceList: [],
@@ -793,16 +842,33 @@ export default {
     },
   },
   methods: {
+    getDirsCnt() {
+      if (this.settingInfo.DirsCnt && this.settingInfo.DirsCnt > 0) {
+        return "(" + this.settingInfo.DirsCnt + ")";
+      }
+      return "請指定";
+    },
+    handleCheckAllChange(val) {
+      this.settingInfo.Dirs = val ? this.settingInfo.DirsLib : [];
+      this.isIndeterminateDir = false;
+    },
+    handleCheckedCitiesChange(value) {
+      let checkedCount = value.length;
+      this.settingCheckAll = checkedCount === this.settingInfo.Dirs.length;
+      this.isIndeterminateDir =
+        checkedCount > 0 && checkedCount < this.settingInfo.Dirs.length;
+    },
     settingSubmit() {
       const postForm = { ...this.settingInfo };
       axios.post("api/setting", postForm).then((res) => {
         if (res.status === 200) {
-          this.settingInfoShow =false
+          this.settingInfoShow = false;
           this.$message({
             message: res.data.Message,
             type: "success",
           });
-          this.fetchButtom()
+          this.refreshIndex();
+          this.fetchButtom();
         }
       });
     },
