@@ -107,7 +107,7 @@
                 <el-col :span="4">
                   <el-button
                     type="primary"
-                    style="height: 100px; width: 140px"
+                    style="height: 50px; width: 120px"
                     @click="settingSubmit"
                     >提 交</el-button
                   >

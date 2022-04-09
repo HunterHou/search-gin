@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p v-html=" form.SystemInfo"></p>
+    <p  style="width:80%;"  v-html=" form.SystemInfo"></p>
   </div>
 </template>
 <script>
