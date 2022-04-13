@@ -52,9 +52,9 @@
             v-model="settingInfoShow"
             width="200px"
             trigger="click"
-          >  <h1 align="center">索引配置</h1>
-            <div style="margin:30px 20px;">
-            
+          >
+            <h1 align="center">索引配置</h1>
+            <div style="margin: 30px 20px">
               <el-row>
                 <el-col :span="20">
                   <el-row>
@@ -192,10 +192,21 @@
       </el-col>
 
       <el-col :span="12">
-        <el-divider direction="vertical"></el-divider>
-        <span> 进度：{{ IndexProgress ? "完成" : "进行中" }} </span>
-        <el-divider direction="vertical"></el-divider>
-        <span> 扫描：{{ TotalSize }}({{ TotalCnt }}) </span>
+        <span v-if="!running" style="color: red">运行异常</span>
+        <el-divider v-if="!running" direction="vertical"></el-divider>
+        <el-link
+          :underline="false"
+          @click="
+            (e) => {
+              this.pageNo = 1;
+              this.searchWords = '';
+              queryList();
+            }
+          "
+        >
+          <span> 总：{{ TotalSize }}({{ TotalCnt }}) </span>
+        </el-link>
+
         <el-divider direction="vertical"></el-divider>
         <span> 搜：{{ ResultSize }}({{ ResultCnt }}) </span>
         <el-divider direction="vertical"></el-divider>
@@ -409,7 +420,7 @@
           shadow="always"
           :body-style="{
             padding: '0px',
-            margin: '8px 4px',
+            margin: '4px 2px',
             background: item.MovieType ? '' : 'rgb(205, 138, 50)',
           }"
         >
@@ -641,20 +652,19 @@
     ></el-pagination>
     <!-- 弹窗 -->
     <el-dialog
-      width="70%"
+      width="66%"
       :modal="true"
       :lock-scroll="true"
       :title="file.Title"
       :visible.sync="dialogVisible"
     >
       <div v-if="file">
-        <div border="1" style="margin: 0px auto; width: 86%; height: auto">
+        <div border="1">
           <el-image
             :src="getJpg(file.Id)"
-            style="width: 100%; width: auto"
+            style="margin: 1px 15%; width: 60%; height: auto"
             @click="gotoContext(file.Id)"
           />
-          <br />
           <el-row :gutter="24">
             <el-col :span="4" tyle="text-align:right">
               YY：
@@ -708,7 +718,7 @@
         label-position="right"
         :model="formItem"
         size="small"
-        label-width="20%"
+        label-width="18%"
       >
         <el-form-item label="脸谱">
           <el-input v-model="formItem.Actress" autocomplete="off"></el-input>
@@ -717,7 +727,23 @@
           <el-input v-model="formItem.Code" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="文件名称">
-          <el-input v-model="formItem.Name" autocomplete="off"></el-input>
+          <el-input
+            type="textarea"
+            v-model="formItem.Name"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="标签">
+          <el-tag
+            v-for="tag in formItem.Tags"
+            :key="tag"
+            effect="dark"
+            style="margin-right:8px;"
+            type=""
+            size="small"
+          >
+            {{ tag }}
+          </el-tag>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -738,6 +764,7 @@ export default {
     var searchPage = new Map();
 
     return {
+      running: true,
       settingInfo: {},
       settingInfoShow: false,
       settingCheckAll: false,
@@ -835,6 +862,7 @@ export default {
       }
     };
     this.listenScroll();
+    setInterval(this.heartBeat, 3000);
   },
   watch: {
     searchWords: (a) => {
@@ -1122,6 +1150,24 @@ export default {
           this.alertSuccess(res.data.Message);
         }
       });
+    },
+    heartBeat() {
+      if (this.running) {
+        axios
+          .get("api/heartBeat")
+          .then((res) => {
+            if (res.status === 200) {
+              this.running = true;
+            } else {
+              this.running = false;
+              this.alertFail("系统意外关闭，请重启");
+            }
+          })
+          .catch(() => {
+            this.running = false;
+            this.alertFail("系统意外关闭，请重启");
+          });
+      }
     },
     deleteThis(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
@@ -1440,11 +1486,12 @@ export default {
   width: 400px;
 }
 .ecard {
-  margin-left: 8px;
+  margin-left: 6px;
+  padding: 0;
   background: #e4e6d1;
 }
 .list-item {
-  width: 232px;
+  width: 230px;
   height: 358px;
   float: left;
   list-style: none;

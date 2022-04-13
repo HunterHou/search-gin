@@ -9,7 +9,7 @@
     active-text-color="#ffd04b"
   >
     <el-menu-item index="/home">
-      <i class="el-icon-document"></i>
+      <i class="el-icon-s-home"></i>
       <span slot="title">首頁</span>
     </el-menu-item>
 
@@ -28,7 +28,7 @@
     </el-menu-item>
 
     <el-menu-item index="/systemInfo">
-      <i class="el-icon-setting"></i>
+      <i class="el-icon-s-order"></i>
       <span slot="title">系統信息</span>
     </el-menu-item>
   </el-menu>

@@ -55,9 +55,7 @@ body{
   color: #fff;
   background-color: #35495e;
 }
-.headd{
-   /* background-color: antiquewhite; */
-}
+
 .maind{
  margin-top: -32px;;
   /* background-color: antiquewhite; */

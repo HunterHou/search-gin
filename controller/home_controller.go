@@ -58,3 +58,6 @@ func GetTagSize(c *gin.Context) {
 	})
 	c.JSON(http.StatusOK, res)
 }
+func GetHeartBeat(c *gin.Context) {
+	c.JSON(http.StatusOK, utils.NewSuccess())
+}

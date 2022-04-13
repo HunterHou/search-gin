@@ -6,7 +6,7 @@
       :model="form"
       label-position="right"
     >
-      <!-- <h1 align="center">设置</h1> -->
+      <h5 align="center">{{ new Date() }}</h5>
       <div
         style="
           margin: 8px 20px;
@@ -130,6 +130,14 @@
                 >
               </el-checkbox-group>
             </el-form-item>
+            <el-form-item label="备注">
+              <el-input
+                type="textarea"
+                :rows="4"
+                v-model="form.Remark"
+                style="width: 90%; margin-bottom: 20px"
+              ></el-input>
+            </el-form-item>
           </el-tab-pane>
 
           <el-tab-pane label="基础配置" name="second">
@@ -195,8 +203,18 @@
                   :value="item"
                 >
                 </el-option>
-              </el-select> </el-form-item
-          ></el-tab-pane>
+              </el-select>
+            </el-form-item>
+
+            <el-form-item label="备注">
+              <el-input
+                type="textarea"
+                :rows="4"
+                v-model="form.Remark"
+                style="width: 90%; margin-bottom: 20px"
+              ></el-input>
+            </el-form-item>
+          </el-tab-pane>
 
           <el-tab-pane label="系统信息" name="third">
             <el-form-item label="系統信息">
@@ -206,19 +224,10 @@
                 v-model="form.SystemInfo"
                 style="width: 90%"
               ></el-input> -->
-               <el-tiptap v-model="form.SystemInfo" :extensions="extensions"/>
+              <el-tiptap v-model="form.SystemInfo" :extensions="extensions" />
             </el-form-item>
           </el-tab-pane>
         </el-tabs>
-
-        <el-form-item label="备注">
-          <el-input
-            type="textarea"
-            :rows="4"
-            v-model="form.Remark"
-            style="width: 90%; margin-bottom: 20px"
-          ></el-input>
-        </el-form-item>
       </div>
 
       <div>
@@ -258,7 +267,7 @@ import {
   ListItem,
   BulletList,
   OrderedList,
-} from 'element-tiptap';
+} from "element-tiptap";
 
 export default {
   mixins: [setStorePath],
