@@ -58,6 +58,17 @@ func (m MenuSize) Plus(size int64) MenuSize {
 
 var TypeMenu map[string]MenuSize
 var TagMenu map[string]MenuSize
+var FolderTime []MenuSize
+
+func InitFolderTime() {
+	FolderTime = []MenuSize{}
+}
+func AddFolderTime(name string, time int64) {
+	FolderTime = append(FolderTime, MenuSize{
+		Name: name,
+		Cnt:  time,
+	})
+}
 
 var SmallDir []MenuSize
 

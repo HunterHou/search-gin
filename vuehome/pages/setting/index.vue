@@ -6,7 +6,7 @@
       :model="form"
       label-position="right"
     >
-      <h5 align="center">{{ new Date() }}</h5>
+      <h5 align="center">{{ loadingDate }}</h5>
       <div
         style="
           margin: 8px 20px;
@@ -273,6 +273,7 @@ export default {
   mixins: [setStorePath],
   data: function () {
     return {
+      loadingDate:new Date() ,
       extensions: [
         new Doc(),
         new Text(),

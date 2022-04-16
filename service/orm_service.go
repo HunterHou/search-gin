@@ -25,7 +25,7 @@ func init() {
 	}
 	movie := new(datamodels.Movie)
 	dbEngine.Sync2(movie)
-	//dbEngine.ShowSQL(true)
+	// dbEngine.ShowSQL(true)
 	dbEngine.SetMapper(names.SnakeMapper{})
 	total, _ := dbEngine.Count(movie)
 	fmt.Printf("movie total:%d", total)

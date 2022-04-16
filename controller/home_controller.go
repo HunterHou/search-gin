@@ -58,6 +58,9 @@ func GetTagSize(c *gin.Context) {
 	})
 	c.JSON(http.StatusOK, res)
 }
+func GetScanTime(c *gin.Context) {
+	c.JSON(http.StatusOK, cons.FolderTime)
+}
 func GetHeartBeat(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.NewSuccess())
 }

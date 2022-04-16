@@ -1,8 +1,7 @@
 <template>
   <div>
-    <h2 align="center" style="margin-top: 0px">掃描結果分析</h2>
-    <el-divider></el-divider>
-    <li class="d-tag d-li">
+    <h2 align="center" style="margin-top: 0px">掃描结果分析</h2>
+    <div class="d-tag" style="background: white">
       <el-link
         v-for="tag in tagData"
         :key="tag.Name"
@@ -25,9 +24,50 @@
           </el-badge>
         </el-tag>
       </el-link>
+    </div>
+    <li class="s-table d-li">
+      <el-table :data="scanTime" align="center" :stripe="true" border>
+        <el-table-column
+          label="文件夹"
+          header-align="left"
+          width="120px"
+          align="left"
+        >
+          <template slot-scope="scope">
+            <el-link
+              :title="scope.row.Name"
+              @click="folderGotoMenu(scope.row.Name)"
+            >
+              {{ scope.row.Name }}
+            </el-link>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="耗时"
+          width="120px"
+          header-align="right"
+          align="right"
+        >
+          <template slot-scope="scope">
+            <el-link
+              :title="scope.row.Cnt"
+              @click="folderGotoMenu(scope.row.Name)"
+            >
+              {{ scope.row.Cnt }}
+            </el-link>
+          </template>
+        </el-table-column>
+      </el-table>
     </li>
+
     <li class="d-table d-li">
-      <el-table :data="tableData" align="center" :stripe="true" border>
+      <el-table
+        :data="tableData"
+        align="center"
+        style="margin: 20px auto"
+        :stripe="true"
+        border
+      >
         <el-table-column
           label="结果集"
           header-align="left"
@@ -97,6 +137,7 @@ export default {
     return {
       tableData: [],
       tagData: [],
+      scanTime: [],
       refreshIndexFlag: false,
     };
   },
@@ -107,15 +148,30 @@ export default {
     this.loadData();
   },
   methods: {
-    gotoMenu(data) {
-      const { IsDir, Name } = data;
+    folderGotoMenu(Name) {
+      let keywords = Name.replaceAll(":", "");
+      keywords = keywords.replace("\\\\", "\\");
+      keywords = keywords.replace("\\", "~");
+      const queryParam = {
+        searchWords: Name,
+        movieType: "",
+        no: 1,
+      };
       this.$router.push({
         path: "/fileList",
-        query: {
-          searchWords: !IsDir ? "" : Name,
+        query: queryParam,
+      });
+    },
+    gotoMenu(data) {
+      const { IsDir, Name } = data;
+      const queryParam = {
+         searchWords: !IsDir ? "" : Name,
           movieType: !IsDir && Name != "全部" ? Name : "",
           no: 1,
-        },
+      };
+      this.$router.push({
+        path: "/fileList",
+        query:queryParam,
       });
     },
     loadData() {
@@ -132,6 +188,14 @@ export default {
             if (res.status === 200) {
               const { data } = res;
               this.tagData = data;
+            }
+          })
+        )
+        .then(
+          axios.get("api/scanTime").then((res) => {
+            if (res.status === 200) {
+              const { data } = res;
+              this.scanTime = data;
             }
           })
         );
@@ -190,15 +254,21 @@ export default {
 </script>
 <style >
 .d-li {
-  display: inline;
+  overflow: inherit;
+  display: block;
+  float: left;
 }
 .d-tag {
-  float: right;
-  width: 38%;
+  margin: 5px 0px;
+  padding: 18px 18px;
+}
+.s-table {
+  width: 250px;
+  width: 18%;
 }
 .d-table {
-  float: left;
-  width: 60%;
+  margin: 0 10px;
+  width: 80%;
 }
 .e-tag {
   margin-right: 24px;

@@ -36,6 +36,7 @@ func (p *SearchParam) SetSql(sql string) {
 }
 func (p *SearchParam) GetFuzzyKeywords() string {
 	p.Keyword = strings.TrimSpace(p.Keyword)
+	p.Keyword = strings.ReplaceAll(p.Keyword, "\\\\", "\\")
 	return "%" + p.Keyword + "%"
 }
 

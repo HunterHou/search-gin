@@ -56,6 +56,7 @@ func BuildRouter() *gin.Engine {
 
 	router.GET("/api/typeSizeMap", controller.GetTypeSize)
 	router.GET("/api/tagSizeMap", controller.GetTagSize)
+	router.GET("/api/scanTime", controller.GetScanTime)
 	router.GET("/api/heartBeat", controller.GetHeartBeat)
 	return router
 }
