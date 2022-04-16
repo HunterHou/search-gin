@@ -1,7 +1,21 @@
 <template>
   <div>
-    <h2 align="center" style="margin-top: 0px">掃描结果分析</h2>
-    <div class="d-tag" style="background: white">
+    <h2 align="center" style="margin-top: 0px">
+      掃描结果分析
+      <el-divider direction="vertical"></el-divider>
+      <el-button
+        type="primary"
+        :loading="indexLoading"
+        size="small"
+        @click="refreshIndex()"
+        >重建索引
+      </el-button>
+    </h2>
+    <div
+      class="d-tag"
+      style="background: white"
+      v-if="tagData && tagData.length > 0"
+    >
       <el-link
         v-for="tag in tagData"
         :key="tag.Name"
@@ -25,14 +39,9 @@
         </el-tag>
       </el-link>
     </div>
-    <li class="s-table d-li">
+    <li class="s-table d-li" v-if="scanTime && scanTime.length > 0">
       <el-table :data="scanTime" align="center" :stripe="true" border>
-        <el-table-column
-          label="文件夹"
-          header-align="left"
-          width="120px"
-          align="left"
-        >
+        <el-table-column label="文件夹" header-align="left" align="left">
           <template slot-scope="scope">
             <el-link
               :title="scope.row.Name"
@@ -42,9 +51,19 @@
             </el-link>
           </template>
         </el-table-column>
+        <el-table-column label="数量" header-align="right" align="right">
+          <template slot-scope="scope">
+            <el-link
+              :title="scope.row.Size"
+              @click="folderGotoMenu(scope.row.Size)"
+            >
+              {{ scope.row.Size }}
+            </el-link>
+          </template>
+        </el-table-column>
         <el-table-column
           label="耗时"
-          width="120px"
+          width="80px"
           header-align="right"
           align="right"
         >
@@ -53,7 +72,7 @@
               :title="scope.row.Cnt"
               @click="folderGotoMenu(scope.row.Name)"
             >
-              {{ scope.row.Cnt }}
+              {{ scope.row.Cnt }}&nbsp;ms
             </el-link>
           </template>
         </el-table-column>
@@ -105,8 +124,8 @@
             <el-button
               v-if="!scope.row.IsDir"
               type="success"
-              @click="refreshIndex()"
-              >索引
+              @click="gotoMenu(scope.row)"
+              >前往
             </el-button>
             <el-button
               size="small"
@@ -135,6 +154,7 @@ export default {
   mixins: [setStorePath],
   data() {
     return {
+      indexLoading: false,
       tableData: [],
       tagData: [],
       scanTime: [],
@@ -149,9 +169,6 @@ export default {
   },
   methods: {
     folderGotoMenu(Name) {
-      let keywords = Name.replaceAll(":", "");
-      keywords = keywords.replace("\\\\", "\\");
-      keywords = keywords.replace("\\", "~");
       const queryParam = {
         searchWords: Name,
         movieType: "",
@@ -165,13 +182,13 @@ export default {
     gotoMenu(data) {
       const { IsDir, Name } = data;
       const queryParam = {
-         searchWords: !IsDir ? "" : Name,
-          movieType: !IsDir && Name != "全部" ? Name : "",
-          no: 1,
+        searchWords: !IsDir ? "" : Name,
+        movieType: !IsDir && Name != "全部" ? Name : "",
+        no: 1,
       };
       this.$router.push({
         path: "/fileList",
-        query:queryParam,
+        query: queryParam,
       });
     },
     loadData() {
@@ -234,12 +251,14 @@ export default {
       });
     },
     refreshIndex() {
+      this.indexLoading = true;
       axios.get("api/refreshIndex").then((res) => {
         if (res.status === 200) {
-          this.$message({
-            message: res.data.Message,
-            type: "success",
-          });
+          // this.$message({
+          //   message: res.data.Message,
+          //   type: "success",
+          // });
+          this.indexLoading = false;
           this.loadData();
         } else {
           this.$message({
@@ -269,6 +288,7 @@ export default {
 .d-table {
   margin: 0 10px;
   width: 80%;
+  min-width: 350px;
 }
 .e-tag {
   margin-right: 24px;

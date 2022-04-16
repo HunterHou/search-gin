@@ -922,7 +922,7 @@ func Walks(baseDir []string, types []string) []datamodels.Movie {
 
 	var wg sync.WaitGroup
 	var dataMovie = make(chan []datamodels.Movie, 10000)
-	var scanTime = make(chan map[string]int64, 10000)
+	var scanTime = make(chan cons.MenuSize, 100)
 	var result []datamodels.Movie
 	wg.Add(len(baseDir))
 	for i := 0; i < len(baseDir); i++ {
@@ -944,25 +944,26 @@ func Walks(baseDir []string, types []string) []datamodels.Movie {
 		if !ok {
 			break
 		}
-		for key, value := range data {
-			if key != "" {
-				cons.AddFolderTime(key, value)
-			}
-
+		if data.Cnt > 0 {
+			cons.FolderTime = append(cons.FolderTime, data)
 		}
+
 	}
 	return result
 
 }
 
-func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan map[string]int64) {
+func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
 	files, _ := WalkInnter(baseDir, types, 0)
 	datas <- files
 	ti := time.Since(start)
-	thisTime := make(map[string]int64)
-	thisTime[baseDir] = int64(ti.Milliseconds())
+	thisTime := cons.MenuSize{
+		Name: baseDir,
+		Cnt:  int64(ti.Milliseconds()),
+		Size: int64(len(files)),
+	}
 	scanTime <- thisTime
 
 }

@@ -662,7 +662,7 @@
         <div border="1">
           <el-image
             :src="getJpg(file.Id)"
-            style="margin: 1px 15%; width: 60%; height: auto"
+            style="margin: 1px auto; width: 80%; height: auto;"
             @click="gotoContext(file.Id)"
           />
           <el-row :gutter="24">
@@ -830,14 +830,6 @@ export default {
     document.onkeydown = (e) => {
       var key = e.keyCode || e.keyCode || e.keyCode;
       var pressCtrl = e.ctrlKey || e.metaKey;
-
-      if (key == 17) {
-        pressCtrl = true;
-        setTimeout(() => {
-          pressCtrl = false;
-        }, 2000);
-      }
-      console.log(key, pressCtrl);
       if (key === 37 && pressCtrl) {
         //left
         this.pageLoading(-1);
@@ -862,7 +854,7 @@ export default {
       }
     };
     this.listenScroll();
-    setInterval(this.heartBeat, 3000);
+    setInterval(this.heartBeat, 20000);
   },
   watch: {
     searchWords: (a) => {
