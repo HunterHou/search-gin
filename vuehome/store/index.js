@@ -4,7 +4,7 @@ export const state =() =>({
 })
 export const mutations = {
     setStorePath(state,path) {
-        console.log("store",path)
+        // console.log("store",path)
         state.activePage=path
     }
   }

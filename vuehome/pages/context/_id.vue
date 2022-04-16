@@ -1,5 +1,11 @@
 <template>
   <div style="width: 100%; background: white; border: 1px" align="center">
+    <el-page-header
+      @back="urlBack()"
+      title="返回"
+      v-bind:content="file ? file.Name : ''"
+    >
+    </el-page-header>
     <div
       style="
         position: flex;
@@ -25,16 +31,10 @@
       <el-backtop :bottom="100" style="width: 50px; height: 50px">
         <div class="up">UP</div>
       </el-backtop>
-      <el-page-header
-        @back="urlBack()"
-        title="返回"
-        v-bind:content="file ? file.Name : ''"
-      >
-      </el-page-header>
     </div>
 
     <el-row :gutter="20" style="margin-top: 10px; margin-buttom: 10px">
-      <el-col :span="2">
+      <el-col :span="1">
         <el-link
           ><i
             :underline="false"
@@ -45,7 +45,7 @@
         ></el-link>
       </el-col>
 
-      <el-col :span="2">
+      <el-col :span="1">
         <el-link>
           <i
             class="el-icon-folder-opened icon-style"
@@ -54,7 +54,7 @@
           ></i
         ></el-link>
       </el-col>
-      <el-col :span="2">
+      <el-col :span="1">
         <el-link>
           <i
             class="el-icon-delete icon-style"
@@ -63,7 +63,7 @@
           ></i
         ></el-link>
       </el-col>
-      <el-col :span="2">
+      <el-col :span="1">
         <el-link>
           <i
             class="el-icon-download icon-style"
@@ -72,13 +72,13 @@
           ></i
         ></el-link>
       </el-col>
-      <el-col :span="3">
+      <!-- <el-col :span="2">
         <el-link>
           <i class="icon-style" title="刷新" @click="$router.go(0)"
             >F5</i
           ></el-link
         >
-      </el-col>
+      </el-col> -->
     </el-row>
 
     <el-tabs
@@ -229,13 +229,13 @@ export default {
     settingBase() {
       axios.get("api/buttoms").then((res) => {
         if (res.status === 200) {
-          this.baseUrl = res.data.baseUrl;
+          this.BaseUrl = res.data.BaseUrl;
         }
       });
     },
     makeIrameUrl(file) {
       setTimeout(() => {
-        this.iframeSrc = this.baseUrl + file.Code;
+        this.iframeSrc = this.BaseUrl + file.Code;
       }, 1);
     },
     loadInfo(id) {
@@ -378,9 +378,8 @@ export default {
 </script>
 <style>
 .icon-style {
-  font-size: 40px;
+  font-size: 30px;
   color: red;
-  margin-left: 10px;
 }
 .floatButton {
   float: right;
