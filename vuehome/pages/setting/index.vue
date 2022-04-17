@@ -234,7 +234,7 @@
         <el-button
           class="return"
           type="warning"
-          align-text="center"
+          align-text="center" 
           @click="goMenu()"
           >返回</el-button
         >

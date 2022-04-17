@@ -595,7 +595,7 @@
               >
               <el-popover
                 placement="top"
-                width="400"
+                width="460"
                 trigger="hover"
                 :close-delay="1"
               >
@@ -616,7 +616,8 @@
                   >{{ item.Code }}</el-link
                 >
                 <el-divider v-if="item.Code" direction="vertical"></el-divider>
-                【{{ item.SizeStr }}】 <br />
+                【{{ item.SizeStr }}】
+                {{ moment(item.MTime).format("yyyy-MM-DD HH:MM") }}
                 <hr />
                 <span
                   style="
@@ -662,7 +663,7 @@
         <div border="1">
           <el-image
             :src="getJpg(file.Id)"
-            style="margin: 1px auto; width: 80%; height: auto;"
+            style="margin: 1px auto; width: 80%; height: auto"
             @click="gotoContext(file.Id)"
           />
           <el-row :gutter="24">
@@ -682,7 +683,7 @@
               <span @click="gotoContext(file.Id)"
                 >大小：【{{ file.SizeStr }}】</span
               >
-              <span>时间：{{ file.MTime }}</span>
+              <span>时间：{{ moment(file.MTime).format("yyyy-MM-DD") }}</span>
             </el-col>
           </el-row>
           <el-row :gutter="20">
@@ -720,6 +721,18 @@
         size="small"
         label-width="18%"
       >
+        <el-form-item label="类型">
+          <el-radio-group
+            v-model="formItem.MovieType"
+            @change="formMovieTypeChange"
+            size="mini"
+          >
+            <el-radio-button label="">无</el-radio-button>
+            <el-radio-button label="骑兵">骑</el-radio-button>
+            <el-radio-button label="步兵">步</el-radio-button>
+            <el-radio-button label="斯巴达">欧</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="脸谱">
           <el-input v-model="formItem.Actress" autocomplete="off"></el-input>
         </el-form-item>
@@ -732,15 +745,18 @@
             v-model="formItem.Name"
             autocomplete="off"
           ></el-input>
+          <!-- {{formItem.Title}} -->
         </el-form-item>
         <el-form-item label="标签">
           <el-tag
             v-for="tag in formItem.Tags"
             :key="tag"
             effect="dark"
-            style="margin-right:8px;"
+            closable
+            style="margin-right: 8px"
             type=""
             size="small"
+            @close="removeFormTag(tag)"
           >
             {{ tag }}
           </el-tag>
@@ -862,6 +878,28 @@ export default {
     },
   },
   methods: {
+    removeFormTag(tag) {
+      const idx = this.formItem.Tags.indexOf(tag);
+      this.formItem.Tags.splice(idx, 1);
+      this.formItem.Name=this.formItem.Name.replaceAll(tag,"")
+    },
+    formMovieTypeChange() {
+      let { MovieType, Name, FileType } = this.formItem;
+      let newName = "";
+      if (Name.indexOf("{{") >= 0) {
+        const startC = Name.substr(0, Name.indexOf("{{"));
+        const endC = Name.substr(Name.indexOf("}}") + 2, Name.length);
+        newName = startC;
+        if (MovieType && MovieType !== "") {
+          newName += "{{" + MovieType + "}}";
+        }
+        newName += endC;
+      } else {
+        newName = Name.replaceAll("." + FileType, "");
+        newName = newName + "{{" + MovieType + "}}" + "." + FileType;
+      }
+      this.formItem.Name = newName;
+    },
     getDirsCnt() {
       if (this.settingInfo.DirsCnt && this.settingInfo.DirsCnt > 0) {
         return "(" + this.settingInfo.DirsCnt + ")";
