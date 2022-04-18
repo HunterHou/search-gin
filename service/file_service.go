@@ -968,12 +968,11 @@ func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []dat
 
 }
 
+var this = FileService{}
+
 func HeartBeat() {
-	dirs := cons.OSSetting.Dirs
-	for _, dir := range dirs {
-		ioutil.ReadDir(dir)
-	}
-	time.AfterFunc(30*time.Second, HeartBeat)
+	this.ScanAll()
+	time.AfterFunc(60*time.Second, HeartBeat)
 }
 
 //遍历目录 获取文件库

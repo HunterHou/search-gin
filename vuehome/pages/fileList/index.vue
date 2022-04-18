@@ -15,13 +15,13 @@
       size="small"
       type="danger"
       round
-      v-if="!loading"
+      v-if="!loading && TotalPage>1"
       @click="pageLoading(-1)"
       ><i class="el-icon-back"></i>上一頁
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
-      v-if="!loading"
+      v-if="!loading  && TotalPage>1"
       style="
         position: fixed;
         top: 640px;
@@ -881,7 +881,7 @@ export default {
     removeFormTag(tag) {
       const idx = this.formItem.Tags.indexOf(tag);
       this.formItem.Tags.splice(idx, 1);
-      this.formItem.Name=this.formItem.Name.replaceAll(tag,"")
+      this.formItem.Name = this.formItem.Name.replaceAll(tag, "");
     },
     formMovieTypeChange() {
       let { MovieType, Name, FileType } = this.formItem;
@@ -1228,11 +1228,11 @@ export default {
     syncThis(id) {
       axios.get("api/sync/" + id).then((res) => {
         if (res.status === 200) {
-          // this.alertSuccess(res.data.Message);
           this.$notify({
             title: "成功",
             message: res.data.Message,
             type: "success",
+            position: 'bottom-right'
           });
         }
       });
@@ -1242,11 +1242,11 @@ export default {
         movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
       axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
         if (res.status === 200) {
-          // this.alertSuccess(res.data.Message);
           this.$notify({
             title: "成功",
             message: res.data.Message,
             type: "success",
+            position: 'bottom-right'
           });
         }
       });
@@ -1270,7 +1270,6 @@ export default {
       this.refreshIndexFlag = true;
       axios.get("api/refreshIndex").then((res) => {
         if (res.status === 200) {
-          this.alertSuccess(res.data.Message);
           this.queryList();
           this.refreshIndexFlag = false;
         }
@@ -1381,6 +1380,8 @@ export default {
           });
           this.onlyRepeat = false;
           this.loading = false;
+          if (this.TotalPage !== 1) {
+          }
           document.title = title;
           this.$forceUpdate();
         }
