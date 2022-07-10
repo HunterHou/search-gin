@@ -971,6 +971,7 @@ func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []dat
 var this = FileService{}
 
 func HeartBeat() {
+	time.After(1 * time.Second)
 	this.ScanAll()
 	time.AfterFunc(60*time.Second, HeartBeat)
 }
