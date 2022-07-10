@@ -3,11 +3,11 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	"search-gin/cons"
-	"search-gin/datamodels"
-	"search-gin/datasource"
-	"search-gin/service"
-	"search-gin/utils"
+	"searchGin/cons"
+	"searchGin/datamodels"
+	"searchGin/datasource"
+	"searchGin/service"
+	"searchGin/utils"
 	"strconv"
 	"strings"
 

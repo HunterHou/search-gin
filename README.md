@@ -1,4 +1,4 @@
-# search-gin 
+# searchGin 
 
 功能:本地磁盘搜索系统 可剐JA
 

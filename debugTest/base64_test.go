@@ -2,7 +2,7 @@ package debugTest
 
 import (
 	"fmt"
-	"search-gin/utils"
+	"searchGin/utils"
 	"testing"
 )
 

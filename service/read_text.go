@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"search-gin/cons"
-	"search-gin/datamodels"
-	"search-gin/utils"
+	"searchGin/cons"
+	"searchGin/datamodels"
+	"searchGin/utils"
 	"strings"
 )
 

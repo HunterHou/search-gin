@@ -1,4 +1,4 @@
-module search-gin
+module searchGin
 
 go 1.16
 

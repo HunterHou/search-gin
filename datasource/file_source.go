@@ -3,7 +3,7 @@ package datasource
 import (
 	"sort"
 
-	"search-gin/datamodels"
+	"searchGin/datamodels"
 	// "github.com/huichen/sego"
 )
 

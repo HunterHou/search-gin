@@ -2,9 +2,9 @@ package debugTest
 
 import (
 	"fmt"
-	main2 "search-gin/cons"
-	"search-gin/service"
-	"search-gin/utils"
+	main2 "searchGin/cons"
+	"searchGin/service"
+	"searchGin/utils"
 	"testing"
 )
 

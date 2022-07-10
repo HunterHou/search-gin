@@ -1,9 +1,9 @@
 package cons
 
 import (
-	"search-gin/datamodels"
-	"search-gin/datasource"
-	"search-gin/utils"
+	"searchGin/datamodels"
+	"searchGin/datasource"
+	"searchGin/utils"
 )
 
 //环境引用

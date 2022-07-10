@@ -3,10 +3,10 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"search-gin/cons"
-	"search-gin/datamodels"
-	"search-gin/service"
-	"search-gin/utils"
+	"searchGin/cons"
+	"searchGin/datamodels"
+	"searchGin/service"
+	"searchGin/utils"
 )
 
 func GetSettingInfo(c *gin.Context) {

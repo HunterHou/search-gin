@@ -3,9 +3,9 @@ package service
 import (
 	"fmt"
 	"os"
-	"search-gin/cons"
-	"search-gin/datamodels"
-	"search-gin/utils"
+	"searchGin/cons"
+	"searchGin/datamodels"
+	"searchGin/utils"
 	"strings"
 	"sync"
 
@@ -18,8 +18,8 @@ var dbEngine *xorm.Engine
 
 func init() {
 	var err error
-	os.Remove("search-gin")
-	dbEngine, err = xorm.NewEngine("sqlite3", "search-gin")
+	os.Remove("searchGin")
+	dbEngine, err = xorm.NewEngine("sqlite3", "searchGin")
 	if err != nil {
 		fmt.Println(err)
 	}

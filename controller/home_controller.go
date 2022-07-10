@@ -2,10 +2,10 @@ package controller
 
 import (
 	"net/http"
-	"search-gin/cons"
-	"search-gin/datasource"
-	"search-gin/service"
-	"search-gin/utils"
+	"searchGin/cons"
+	"searchGin/datasource"
+	"searchGin/service"
+	"searchGin/utils"
 	"sort"
 
 	"github.com/gin-gonic/gin"

@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"search-gin/cons"
-	"search-gin/datamodels"
-	"search-gin/datasource"
-	"search-gin/utils"
+	"searchGin/cons"
+	"searchGin/datamodels"
+	"searchGin/datasource"
+	"searchGin/utils"
 	"sort"
 	"strings"
 	"sync"
@@ -975,7 +975,7 @@ func HeartBeat() {
 	time.AfterFunc(60*time.Second, HeartBeat)
 }
 
-//遍历目录 获取文件库
+// Walk 遍历目录 获取文件库
 func Walk(baseDir string, types []string) []datamodels.Movie {
 	var result []datamodels.Movie
 	files, _ := ioutil.ReadDir(baseDir)

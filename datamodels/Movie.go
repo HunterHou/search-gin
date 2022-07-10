@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"search-gin/utils"
+	"searchGin/utils"
 )
 
 // Movie 声明一个File结构体 表示一个文件信息
