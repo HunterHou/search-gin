@@ -42,7 +42,7 @@
         </el-radio-group>
       </el-col>
       <el-col :span="6"
-        ><el-input placeholder="请输入内容" v-model="searchWords" clearable>
+        ><el-input placeholder="请输入内容" v-model="keywords" clearable>
           <el-button
             slot="append"
             type="primary"
@@ -118,7 +118,7 @@ export default {
       pageSize: 30,
       errorMsg: "",
       fit: "fit",
-      searchWords: "",
+      keywords: "",
       pageNo: 1,
       totalCnt: 0,
       totalPage: 0,
@@ -181,7 +181,7 @@ export default {
       let data = new FormData();
       data.append("pageNo", this.pageNo);
       data.append("pageSize", this.pageSize);
-      data.append("keywords", this.searchWords);
+      data.append("keywords", this.keywords);
       data.append("sortType", this.sortType);
       this.loading = true;
       axios.post("api/actressList", data).then((res) => {
@@ -208,7 +208,7 @@ export default {
 
     open(filename) {
       const self = this;
-      self.$router.push("/fileList?searchWords=" + filename);
+      self.$router.push("/fileList?keywords=" + filename);
     },
     handleSizeChange(val) {
       this.pageSize = val;

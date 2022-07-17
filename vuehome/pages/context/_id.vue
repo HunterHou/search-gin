@@ -220,7 +220,7 @@ export default {
       });
     },
     openActress(actress) {
-      this.searchWords = actress;
+      this.keywords = actress;
       this.$router.push({
         path: "/fileList",
         query: { ...this.$router.query },
@@ -279,8 +279,8 @@ export default {
         query.sortType +
         "&movieType=" +
         query.movieType;
-      if (query.searchWords) {
-        queryParam += "&keywords" + query.searchWords;
+      if (query.keywords) {
+        queryParam += "&keywords" + query.keywords;
       }
       return queryParam;
     },

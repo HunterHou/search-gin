@@ -170,7 +170,7 @@ export default {
   methods: {
     folderGotoMenu(Name) {
       const queryParam = {
-        searchWords: Name,
+        keywords: Name,
         movieType: "",
         no: 1,
       };
@@ -182,7 +182,7 @@ export default {
     gotoMenu(data) {
       const { IsDir, Name } = data;
       const queryParam = {
-        searchWords: !IsDir ? "" : Name,
+        keywords: !IsDir ? "" : Name,
         movieType: !IsDir && Name != "全部" ? Name : "",
         no: 1,
       };

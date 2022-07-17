@@ -155,7 +155,7 @@
             id="searchInput"
             style="min-width: 80px; width: auto"
             placeholder="请输入关键词"
-            v-model="searchWords"
+            v-model="keywords"
             clearable
             :fetch-suggestions="fetchSuggestion"
             @select="handleSelect"
@@ -199,7 +199,7 @@
           @click="
             (e) => {
               this.pageNo = 1;
-              this.searchWords = '';
+              this.keywords = '';
               queryList();
             }
           "
@@ -776,7 +776,7 @@ import setStorePath from "@/mixin/setStorePath";
 export default {
   mixins: [setStorePath],
   data() {
-    const { searchWords, no, movieType } = this.$route.query;
+    const { keywords, no, movieType } = this.$route.query;
     var searchPage = new Map();
 
     return {
@@ -800,7 +800,7 @@ export default {
       dataCnt: 0,
       errorMsg: "",
       fit: "fit",
-      searchWords: searchWords ? searchWords : "",
+      keywords: keywords ? keywords : "",
       searchPage: searchPage,
       pagerCount: 10,
       pageNo: no ? parseInt(no) : 1,
@@ -873,7 +873,7 @@ export default {
     setInterval(this.heartBeat, 20000);
   },
   watch: {
-    searchWords: (a) => {
+    keywords: (a) => {
       // console.log(a);
     },
   },
@@ -949,7 +949,7 @@ export default {
       );
     },
     gotoSearch(tag) {
-      this.searchWords = tag;
+      this.keywords = tag;
       this.queryList();
     },
     //确认点击事件 并执行
@@ -1221,7 +1221,7 @@ export default {
     },
     thisActress(actress) {
       this.pageNo = 1;
-      this.searchWords = actress;
+      this.keywords = actress;
       this.queryList();
     },
 
@@ -1277,7 +1277,7 @@ export default {
     },
 
     handleSelect(item) {
-      this.searchWords = item;
+      this.keywords = item;
     },
     handleSelectTag(item) {
       this.customerTag = item;
@@ -1307,7 +1307,7 @@ export default {
     queryList(concat) {
       this.dataList = [];
       let data = new FormData();
-      const keywords = this.searchWords ? this.searchWords : "";
+      const keywords = this.keywords ? this.keywords : "";
       this.searchPage.set(keywords, this.pageNo);
       data.append("pageNo", this.pageNo);
       data.append("pageSize", this.pageSize);
@@ -1373,7 +1373,7 @@ export default {
             path,
             query: {
               ...query,
-              searchWords: keywords,
+              keywords: keywords,
               no: this.pageNo,
               path: undefined,
             },

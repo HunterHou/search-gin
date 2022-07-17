@@ -22,7 +22,7 @@ let menuhtml = '<div>'
     '      <el-radio-button label="骑兵" >騎</el-radio-button>' +
     '    </el-radio-group></el-col>'
     + '<el-col :span="1"><el-checkbox v-model="onlyRepeat" @change="onlyRepeatQuery()">查重</el-checkbox></el-col>'
-    + '<el-col :span="6"><el-input placeholder="请输入内容" v-model="searchWords" clearable >' +
+    + '<el-col :span="6"><el-input placeholder="请输入内容" v-model="keywords" clearable >' +
     '    <el-button slot="append" type="primary" size="small" icon="el-icon-search" @click="queryList()">Go!</el-button>' +
     '  </el-input> </el-col>'
     + '</el-row>'
@@ -129,7 +129,7 @@ let menu = {
             dataCnt: 0,
             errorMsg: "",
             fit: "fit",
-            searchWords: "",
+            keywords: "",
             pagerCount: 10,
             pageNo: 1,
             pageSize: 30,
@@ -190,7 +190,7 @@ let menu = {
 
         },
         thisActress(actress) {
-            this.searchWords = actress
+            this.keywords = actress
             this.queryList()
         },
         openThisFolder(id) {
@@ -266,7 +266,7 @@ let menu = {
             let data = new FormData()
             data.append("pageNo", this.pageNo)
             data.append("pageSize", this.pageSize)
-            data.append("keywords", this.searchWords)
+            data.append("keywords", this.keywords)
             data.append("sortType", this.sortType)
             data.append("sortField", this.sortField)
             data.append("movieType", this.movieType)
