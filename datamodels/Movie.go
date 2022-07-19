@@ -14,8 +14,8 @@ type Movie struct {
 	Name      string `xorm:"Text"`
 	Path      string `xorm:"Text"`
 	Png       string `xorm:"Text"`
-	Nfo       string `xorm:"Text"`
-	Srt       string `xorm:"Text"`
+	Nfo       string `xorm:"Text"  json:"Nfo,omitempty"`
+	Srt       string `xorm:"Text" json:"Srt,omitempty"`
 	Jpg       string `xorm:"Text"`
 	Actress   string `xorm:"Text"`
 	FileType  string `xorm:"Text"`
@@ -27,18 +27,18 @@ type Movie struct {
 	MTime     string `xorm:"DateTime"`
 	PTime     string `xorm:"DateTime"`
 	MovieType string
-	ImageBase string
-	ImageList []string
+	ImageBase string   `json:"ImageBase,omitempty"`
+	ImageList []string `json:"ImageList,omitempty"`
 	Tags      []string
 
-	Studio   string
-	Supplier string
-	Length   string
-	Series   string
-	Director string
+	Studio   string `json:"Studio,omitempty"`
+	Supplier string `json:"Supplier,omitempty"`
+	Length   string `json:"Length,omitempty"`
+	Series   string `json:"Series,omitempty"`
+	Director string `json:"Director,omitempty"`
 	Title    string
-	PngUrl   string `xorm:"Text"`
-	JpgUrl   string `xorm:"Text"`
+	PngUrl   string `json:"PngUrl,omitempty" xorm:"Text" `
+	JpgUrl   string `json:"JpgUrl,omitempty" xorm:"Text"`
 }
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
