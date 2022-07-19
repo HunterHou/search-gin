@@ -125,7 +125,7 @@ func GetLastInfo(c *gin.Context) {
 
 }
 
-func getNextOne(searchParam datamodels.SearchParam, offset int, currentId string) datamodels.Movie {
+func getNextOne(searchParam datamodels.SearchParam, _ int, currentId string) datamodels.Movie {
 	var res datamodels.Movie
 	fileService := service.CreateFileService()
 	result := fileService.SearchIndex(searchParam)

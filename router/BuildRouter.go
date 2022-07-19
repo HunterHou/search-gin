@@ -13,6 +13,7 @@ func BuildRouter() *gin.Engine {
 	router := gin.Default()
 
 	router.Use(gin.Recovery())
+	router.Use(gin.Logger())
 
 	fLog, _ := os.Create("gin.log")
 	gin.DefaultWriter = io.MultiWriter(fLog, os.Stdout)

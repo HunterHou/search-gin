@@ -22,9 +22,13 @@ func GetTypeSize(c *gin.Context) {
 		service.SortAct(datasource.ActressList, "desc")
 	}
 	res := []cons.MenuSize{}
-	for _, v := range cons.TypeMenu {
-		res = append(res, v)
-	}
+	cons.TypeMenu.Range(func(_, value interface{}) bool {
+		res = append(res, value.(cons.MenuSize))
+		return true
+	})
+	// for _, v := range cons.TypeMenu {
+	// 	res = append(res, v)
+	// }
 	for i := 0; i < len(res); i++ {
 		res[i].SizeStr = utils.GetSizeStr(res[i].Size)
 	}
@@ -47,9 +51,14 @@ func GetTypeSize(c *gin.Context) {
 
 func GetTagSize(c *gin.Context) {
 	res := []cons.MenuSize{}
-	for _, v := range cons.TagMenu {
-		res = append(res, v)
-	}
+	// for _, v := range cons.TagMenu {
+	// 	res = append(res, v)
+	// }
+
+	cons.TagMenu.Range(func(_, value interface{}) bool {
+		res = append(res, value.(cons.MenuSize))
+		return true
+	})
 	for i := 0; i < len(res); i++ {
 		res[i].SizeStr = utils.GetSizeStr(res[i].Size)
 	}

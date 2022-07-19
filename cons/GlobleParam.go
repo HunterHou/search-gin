@@ -4,6 +4,7 @@ import (
 	"searchGin/datamodels"
 	"searchGin/datasource"
 	"searchGin/utils"
+	"sync"
 )
 
 //环境引用
@@ -56,8 +57,8 @@ func (m MenuSize) Plus(size int64) MenuSize {
 	return m
 }
 
-var TypeMenu map[string]MenuSize
-var TagMenu map[string]MenuSize
+var TypeMenu sync.Map
+var TagMenu sync.Map
 var FolderTime []MenuSize
 
 func InitFolderTime() {
@@ -76,41 +77,35 @@ func TypeSizePlus(targetType string, targetSize int64) {
 	if targetType == "" {
 		targetType = "无"
 	}
-	if len(TypeMenu) == 0 {
-		TypeMenu = make(map[string]MenuSize)
-		TypeMenu["全部"] = MenuSize{
-			Name: "全部",
-			Cnt:  0,
-			Size: 0,
-		}
-	}
-	target, ok := TypeMenu[targetType]
+	TypeMenu.LoadOrStore("全部", MenuSize{
+		Name: "全部",
+		Cnt:  0,
+		Size: 0,
+	})
+	target, ok := TypeMenu.LoadOrStore(targetType, MenuSize{
+		Name: targetType,
+		Cnt:  1,
+		Size: targetSize,
+	})
 	if ok {
-		TypeMenu[targetType] = target.Plus(targetSize)
-	} else {
-		TypeMenu[targetType] = MenuSize{
-			Name: targetType,
-			Cnt:  1,
-			Size: targetSize,
-		}
+		TypeMenu.Store(targetType, target.(MenuSize).Plus(targetSize))
 	}
-	TypeMenu["全部"] = TypeMenu["全部"].Plus(targetSize)
+	all, okAll := TypeMenu.Load("全部")
+	if okAll {
+		TypeMenu.Store("全部", all.(MenuSize).Plus(targetSize))
+	}
 }
 
 func TagSizePlus(targetType string, targetSize int64) {
-	if len(TagMenu) == 0 {
-		TagMenu = make(map[string]MenuSize)
-	}
-	target, ok := TagMenu[targetType]
+
+	target, ok := TagMenu.LoadOrStore(targetType, MenuSize{
+		Name:  targetType,
+		Cnt:   1,
+		IsDir: true,
+		Size:  targetSize,
+	})
 	if ok {
-		TagMenu[targetType] = target.Plus(targetSize)
-	} else {
-		TagMenu[targetType] = MenuSize{
-			Name:  targetType,
-			Cnt:   1,
-			IsDir: true,
-			Size:  targetSize,
-		}
+		TagMenu.Store(targetType, target.(MenuSize).Plus(targetSize))
 	}
 }
 

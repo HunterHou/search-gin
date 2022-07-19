@@ -462,7 +462,7 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 	newFile.Title = bigImage.AttrOr("title", "")
 	newFile.Jpg = bigImage.AttrOr("src", "")
 	info := doc.Find(".header")
-	info.Each(func(i int, selection *goquery.Selection) {
+	info.Each(func(_ int, selection *goquery.Selection) {
 		item := selection.Text()
 		if strings.HasPrefix(item, "發行日期:") {
 			newFile.PTime = selection.Parent().Text()
@@ -472,7 +472,7 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 			newFile.Length = strings.Replace(newFile.Length, "長度:", "", 1)
 		} else if strings.HasPrefix(item, "演員") {
 			stars := doc.Find(".star-name")
-			stars.Each(func(i int, selection *goquery.Selection) {
+			stars.Each(func(_ int, selection *goquery.Selection) {
 				starName := selection.Text()
 				newFile.Actress += strings.TrimSpace(starName)
 			})
@@ -490,7 +490,7 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 	})
 	waterFall := doc.Find(".sample-box")
 	var imageList = []string{}
-	waterFall.Each(func(i int, selection *goquery.Selection) {
+	waterFall.Each(func(_ int, selection *goquery.Selection) {
 		item := selection.AttrOr("href", "")
 		if len(item) > 0 {
 			imageList = append(imageList, item)
@@ -648,8 +648,8 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 
 func (fs FileService) ScanAll() {
 	//统计初始化
-	cons.TypeMenu = make(map[string]cons.MenuSize)
-	cons.TagMenu = make(map[string]cons.MenuSize)
+	cons.TypeMenu = sync.Map{}
+	cons.TagMenu = sync.Map{}
 	cons.SmallDir = []cons.MenuSize{}
 	//初始化查询条件
 	dirList := []string{}
@@ -973,7 +973,7 @@ var this = FileService{}
 func HeartBeat() {
 	time.After(1 * time.Second)
 	this.ScanAll()
-	time.AfterFunc(60*time.Second, HeartBeat)
+	time.AfterFunc(5*time.Second, HeartBeat)
 }
 
 // Walk 遍历目录 获取文件库
