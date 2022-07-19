@@ -1,11 +1,16 @@
 package main
 
 import (
+	"log"
+	"net/http"
 	"path/filepath"
 	"searchGin/cons"
 	"searchGin/router"
 	"searchGin/service"
 	"searchGin/utils"
+	"time"
+
+	"golang.org/x/sync/errgroup"
 )
 
 // var curDir string
@@ -25,14 +30,40 @@ func init() {
 	// staticDir = curDir + "/static"
 }
 
+var (
+	g errgroup.Group
+)
+
 func main() {
 	app := router.BuildRouter()
-	url := "http://127.0.0.1" + cons.PortNo + "/"
+	server01 := &http.Server{
+		Addr:         cons.PortNo,
+		Handler:      app,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	server02 := &http.Server{
+		Addr:         cons.PortNo2,
+		Handler:      app,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
 	//默认启动页面
 	go service.HeartBeat()
 
-	go utils.ExecCmdStart(url)
 	//启动服务
-	app.Run(cons.PortNo)
+	// app.Run(cons.PortNo)
+	g.Go(func() error {
+		return server01.ListenAndServe()
+	})
+	g.Go(func() error {
+		return server02.ListenAndServe()
+	})
+	if err := g.Wait(); err != nil {
+		log.Fatal(err)
+	}
+	url := "http://127.0.0.1" + cons.PortNo + "/"
+	go utils.ExecCmdStart(url)
 
 }

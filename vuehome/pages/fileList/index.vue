@@ -1043,10 +1043,10 @@ export default {
     },
 
     getPng(Id) {
-      return "api/png/" + Id;
+      return "http://127.0.0.1:8082/api/png/" + Id;
     },
     getJpg(Id) {
-      return "api/jpg/" + Id;
+      return "http://127.0.0.1:8082/api/jpg/" + Id;
     },
     editItem(item) {
       this.formItem = item;

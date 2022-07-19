@@ -13,6 +13,7 @@ import (
 //初始化 扫描路径
 
 var PortNo = ":8081"
+var PortNo2 = ":8082"
 var Port = "//" + PortNo
 var QueryTypes []string
 
