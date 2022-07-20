@@ -514,7 +514,7 @@
               title="国产"
               @click="setMovieType(item.Id, 4)"
             >
-              <i class="el-icon-location"></i
+              <i class="el-icon-ship"></i
             ></el-button>
             <el-button
               plain
@@ -1517,8 +1517,8 @@ export default {
 }
 
 .image-tool {
-  margin-top: 4px;
-  margin-bottom: 2px;
+  margin-top: 3px;
+  margin-bottom: 1px;
 }
 .redbackground {
   background-color: rgb(205, 138, 50);
@@ -1552,7 +1552,7 @@ export default {
   background: #e4e6d1;
 }
 .list-item {
-  width: 230px;
+  width: 238px;
   height: 358px;
   float: left;
   list-style: none;
