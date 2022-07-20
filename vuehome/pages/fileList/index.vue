@@ -514,7 +514,7 @@
               title="国产"
               @click="setMovieType(item.Id, 4)"
             >
-              <i class="el-icon-ship"></i
+              <i class="el-icon-location"></i
             ></el-button>
             <el-button
               plain
