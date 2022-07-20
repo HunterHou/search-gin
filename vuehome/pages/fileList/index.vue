@@ -37,7 +37,7 @@
     </el-button>
     <div id="mainButtom">
       <el-row id="mainButtomRow">
-        <el-col :span="3" :offset="1">
+        <el-col :span="2">
           <el-button
             type="success"
             size="mini"
@@ -141,11 +141,12 @@
             <el-radio-button label="asc">正</el-radio-button>
           </el-radio-group>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
           <el-radio-group v-model="movieType" @change="queryList()" size="mini">
-            <el-radio-button label="">全</el-radio-button>
+            <el-radio-button label="">·</el-radio-button>
             <el-radio-button label="骑兵">骑</el-radio-button>
             <el-radio-button label="步兵">步</el-radio-button>
+            <el-radio-button label="国产">国</el-radio-button>
             <el-radio-button label="斯巴达">欧</el-radio-button>
           </el-radio-group>
         </el-col>
@@ -391,6 +392,18 @@
               style="margin-right: 10px"
               plain
               size="mini"
+              @click="setMovieType(item.Id, 4)"
+            >
+              <i
+                v-if="notNative(item.MovieType)"
+                class="el-icon-location icon-style"
+                title="国产"
+                >国产</i
+              ></el-button>
+            <el-button
+              style="margin-right: 10px"
+              plain
+              size="mini"
               @click="setMovieType(item.Id, 3)"
             >
               <i
@@ -493,6 +506,16 @@
               @click="setMovieType(item.Id, 1)"
             >
             </el-button>
+            <el-button
+              plain
+              type="info"
+              class="icon-button"
+              v-if="notNative(item.MovieType)"
+              title="国产"
+              @click="setMovieType(item.Id, 4)"
+            >
+              <i class="el-icon-location"></i
+            ></el-button>
             <el-button
               plain
               type="info"
@@ -730,6 +753,7 @@
             <el-radio-button label="">无</el-radio-button>
             <el-radio-button label="骑兵">骑</el-radio-button>
             <el-radio-button label="步兵">步</el-radio-button>
+            <el-radio-button label="国产">国</el-radio-button>
             <el-radio-button label="斯巴达">欧</el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -1145,6 +1169,12 @@ export default {
       }
       return false;
     },
+    notNative(movieType) {
+      if (movieType != "国产") {
+        return true;
+      }
+      return false;
+    },
     notBuBing(movieType) {
       if (movieType != "步兵") {
         return true;
@@ -1239,7 +1269,7 @@ export default {
     },
     setMovieType(id, movieType) {
       movieType =
-        movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵";
+        movieType==4?'国产':(movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵");
       axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
         if (res.status === 200) {
           this.$notify({
