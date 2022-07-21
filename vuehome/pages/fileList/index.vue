@@ -15,13 +15,13 @@
       size="small"
       type="danger"
       round
-      v-if="!loading && TotalPage>1"
+      v-if="!loading && TotalPage > 1"
       @click="pageLoading(-1)"
       ><i class="el-icon-back"></i>上一頁
     </el-button>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <el-button
-      v-if="!loading  && TotalPage>1"
+      v-if="!loading && TotalPage > 1"
       style="
         position: fixed;
         top: 640px;
@@ -399,7 +399,8 @@
                 class="el-icon-location icon-style"
                 title="国产"
                 >国产</i
-              ></el-button>
+              ></el-button
+            >
             <el-button
               style="margin-right: 10px"
               plain
@@ -488,48 +489,10 @@
               @click="editItem(item)"
             >
             </el-button>
-            <el-button
-              type="info"
-              plain
-              class="icon-button el-icon-bicycle"
-              v-if="notQiBing(item.MovieType)"
-              title="骑兵"
-              @click="setMovieType(item.Id, 2)"
-            >
-            </el-button>
-            <el-button
-              plain
-              type="info"
-              class="icon-button el-icon-sunny"
-              v-if="notBuBing(item.MovieType)"
-              title="步兵"
-              @click="setMovieType(item.Id, 1)"
-            >
-            </el-button>
-            <el-button
-              plain
-              type="info"
-              class="icon-button"
-              v-if="notNative(item.MovieType)"
-              title="国产"
-              @click="setMovieType(item.Id, 4)"
-            >
-              <i class="el-icon-location"></i
-            ></el-button>
-            <el-button
-              plain
-              type="info"
-              class="icon-button"
-              v-if="notSiBaDa(item.MovieType)"
-              title="欧美"
-              @click="setMovieType(item.Id, 3)"
-            >
-              <i class="el-icon-ship"></i
-            ></el-button>
+
             <el-button
               type="danger"
               plain
-              v-if="7 < showIconNum"
               class="icon-button"
               title="删除"
               @click="deleteThis(item.Id, 2)"
@@ -539,7 +502,6 @@
             <el-button
               type="danger"
               plain
-              v-if="8 < showIconNum"
               class="icon-button"
               title="刮图"
               @click="getImageList(item.Id, 2)"
@@ -549,7 +511,6 @@
             <el-button
               type="danger"
               plain
-              v-if="9 < showIconNum"
               class="icon-button"
               title="同步"
               @click="syncThis(item.Id)"
@@ -557,46 +518,96 @@
               <i class="el-icon-refresh"></i
             ></el-button>
 
+            <el-button
+              type="info"
+              plain
+              class="icon-button el-icon-bicycle"
+              v-if="7 < showIconNum && notQiBing(item.MovieType)"
+              title="骑兵"
+              @click="setMovieType(item.Id, 2)"
+            >
+            </el-button>
+            <el-button
+              plain
+              type="info"
+              class="icon-button el-icon-sunny"
+              v-if="notBuBing(item.MovieType) && 7 < showIconNum"
+              title="步兵"
+              @click="setMovieType(item.Id, 1)"
+            >
+            </el-button>
+            <el-button
+              plain
+              type="info"
+              class="icon-button"
+              v-if="notNative(item.MovieType) && 7 < showIconNum"
+              title="国产"
+              @click="setMovieType(item.Id, 4)"
+            >
+              <i class="el-icon-location"></i
+            ></el-button>
+            <el-button
+              plain
+              type="info"
+              class="icon-button"
+              v-if="notSiBaDa(item.MovieType) && 7 < showIconNum"
+              title="欧美"
+              @click="setMovieType(item.Id, 3)"
+            >
+              <i class="el-icon-ship"></i
+            ></el-button>
+
             <el-link>
               <el-dropdown placement="top-start" v-if="7 > showIconNum">
                 <i class="el-icon-more icon-style"></i>
                 <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-if="notQiBing(item.MovieType)">
+                    <el-link>
+                      <i
+                        class="el-icon-bicycle icon-style"
+                        title="骑兵"
+                        @click="setMovieType(item.Id, 2)"
+                        >骑兵</i
+                      ></el-link
+                    >
+                  </el-dropdown-item>
+
+                  <el-dropdown-item v-if="notBuBing(item.MovieType)">
+                    <i
+                      class="el-icon-sunny icon-style"
+                      title="步兵"
+                      @click="setMovieType(item.Id, 1)"
+                      >步兵</i
+                    >
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="notNative(item.MovieType)">
+                    <el-link>
+                      <i
+                        :underline="false"
+                        class="el-icon-location icon-style"
+                        title="国产"
+                        @click="setMovieType(item.Id, 4)"
+                        >国产</i
+                      ></el-link
+                    >
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="notSiBaDa(item.MovieType)">
+                    <el-link>
+                      <i
+                        :underline="false"
+                        class="el-icon-ship icon-style"
+                        title="欧美"
+                        @click="setMovieType(item.Id, 3)"
+                        >欧美</i
+                      ></el-link
+                    >
+                  </el-dropdown-item>
                   <el-dropdown-item v-if="7 > showIconNum">
                     <i
                       class="el-icon-refresh-right icon-style"
                       title="信息"
                       @click="infoThis(item.Id, 2)"
                       >信</i
-                    >
-                  </el-dropdown-item>
-                  <el-dropdown-item v-if="8 > showIconNum">
-                    <el-link>
-                      <i
-                        class="el-icon-delete icon-style"
-                        title="删除"
-                        @click="deleteThis(item.Id, 2)"
-                        >删</i
-                      ></el-link
-                    >
-                  </el-dropdown-item>
-
-                  <el-dropdown-item v-if="9 > showIconNum">
-                    <i
-                      class="el-icon-download icon-style"
-                      title="刮图"
-                      @click="getImageList(item.Id, 2)"
-                      >刮</i
-                    >
-                  </el-dropdown-item>
-                  <el-dropdown-item v-if="10 > showIconNum">
-                    <el-link>
-                      <i
-                        :underline="false"
-                        class="el-icon-refresh icon-style"
-                        title="同步"
-                        @click="syncThis(item.Id)"
-                        >同</i
-                      ></el-link
                     >
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -1262,21 +1273,27 @@ export default {
             title: "成功",
             message: res.data.Message,
             type: "success",
-            position: 'bottom-right'
+            position: "bottom-right",
           });
         }
       });
     },
     setMovieType(id, movieType) {
       movieType =
-        movieType==4?'国产':(movieType == "3" ? "斯巴达" : movieType == "1" ? "步兵" : "骑兵");
+        movieType == 4
+          ? "国产"
+          : movieType == "3"
+          ? "斯巴达"
+          : movieType == "1"
+          ? "步兵"
+          : "骑兵";
       axios.get("api/setMovieType/" + id + "/" + movieType).then((res) => {
         if (res.status === 200) {
           this.$notify({
             title: "成功",
             message: res.data.Message,
             type: "success",
-            position: 'bottom-right'
+            position: "bottom-right",
           });
         }
       });
