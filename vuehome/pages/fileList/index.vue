@@ -143,7 +143,7 @@
         </el-col>
         <el-col :span="5">
           <el-radio-group v-model="movieType" @change="queryList()" size="mini">
-            <el-radio-button label="">·</el-radio-button>
+            <el-radio-button label="">~</el-radio-button>
             <el-radio-button label="骑兵">骑</el-radio-button>
             <el-radio-button label="步兵">步</el-radio-button>
             <el-radio-button label="国产">国</el-radio-button>
@@ -360,55 +360,47 @@
           </div>
           <div
             v-if="item.MovieType == ''"
-            style="max-width: 380px; float: right"
+            style=" float: right"
           >
             <el-button
-              style="margin-right: 10px"
               plain
               size="mini"
               @click="setMovieType(item.Id, 2)"
             >
               <i
-                v-if="notQiBing(item.MovieType)"
                 class="el-icon-bicycle icon-style"
                 title="骑兵"
                 >骑兵</i
               ></el-button
             >
             <el-button
-              style="margin-right: 10px"
               plain
               size="mini"
               @click="setMovieType(item.Id, 1)"
             >
               <i
-                v-if="notBuBing(item.MovieType)"
                 class="el-icon-sunny icon-style"
                 title="步兵"
                 >步兵</i
               ></el-button
             >
             <el-button
-              style="margin-right: 10px"
               plain
               size="mini"
               @click="setMovieType(item.Id, 4)"
             >
               <i
-                v-if="notNative(item.MovieType)"
                 class="el-icon-location icon-style"
                 title="国产"
                 >国产</i
               ></el-button
             >
             <el-button
-              style="margin-right: 10px"
               plain
               size="mini"
               @click="setMovieType(item.Id, 3)"
             >
               <i
-                v-if="notSiBaDa(item.MovieType)"
                 class="el-icon-ship icon-style"
                 title="欧美"
                 >斯巴达</i
