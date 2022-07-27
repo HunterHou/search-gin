@@ -14,6 +14,7 @@
     "element-ui": "^2.15.1",
     "moment": "^2.29.2",
     "nuxt": "^2.15.3",
+    "prosemirror-tables": "^1.2.4",
     "tiptap": "^1.32.1",
     "tiptap-extensions": "^1.35.1",
     "v-contextmenu": "^2.9.0",
