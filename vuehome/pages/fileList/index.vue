@@ -669,8 +669,8 @@
       class="pageTool"
       style="align: center"
       background
-      :page-sizes="pageSizes"
-      :page-size="pageSize"
+      :page-sizes="PageSizes"
+      :page-size="PageSize"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       layout="prev, pager, next, sizes, jumper"
@@ -831,8 +831,8 @@ export default {
       searchPage: searchPage,
       pagerCount: 10,
       pageNo: no ? parseInt(no) : 1,
-      pageSize: 12,
-      pageSizes: [2, 4, 6, 10, 12, 14, 30, 60, 90, 200],
+      PageSize: 12,
+      PageSizes: [2, 4, 6, 10, 12, 14, 30, 60, 90, 200],
       TotalCnt: 0,
       TotalPage: 0,
       loading: false,
@@ -863,9 +863,9 @@ export default {
       if (suggestionsCaches) {
         this.suggestions = suggestionsCaches.split(",");
       }
-      const pageSize = localStorage.getItem("pageSizeStore");
-      if (pageSize) {
-        this.pageSize = parseInt(pageSize);
+      const PageSize = localStorage.getItem("PageSizeStore");
+      if (PageSize) {
+        this.PageSize = parseInt(PageSize);
       }
     });
   },
@@ -1349,7 +1349,7 @@ export default {
       const keywords = this.keywords ? this.keywords : "";
       this.searchPage.set(keywords, this.pageNo);
       data.append("pageNo", this.pageNo);
-      data.append("pageSize", this.pageSize);
+      data.append("PageSize", this.PageSize);
       data.append("keywords", keywords);
       data.append("sortType", this.sortType);
       data.append("sortField", this.sortField);
@@ -1432,7 +1432,7 @@ export default {
       const queryParam = {
         ...query,
         path,
-        pageSize: this.pageSize,
+        PageSize: this.PageSize,
         sortField: this.sortField,
         sortType: this.sortType,
         movieType: this.movieType,
@@ -1484,8 +1484,8 @@ export default {
       });
     },
     handleSizeChange(val) {
-      this.pageSize = val;
-      localStorage.setItem("pageSizeStore", val);
+      this.PageSize = val;
+      localStorage.setItem("PageSizeStore", val);
       this.queryList();
     },
     handleCurrentChange(val) {
