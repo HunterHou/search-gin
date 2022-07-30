@@ -857,7 +857,7 @@ export default {
     this.$nextTick(() => {
       this.$nuxt.$loading.start();
       this.fetchButtom();
-      this.queryList();
+      // this.queryList();
       this.$nuxt.$loading.finish();
       const suggestionsCaches = localStorage.getItem("searchSuggestions");
       if (suggestionsCaches) {
@@ -898,6 +898,9 @@ export default {
     };
     this.listenScroll();
     setInterval(this.heartBeat, 20000);
+    setTimeout(() => {
+     this.queryList();
+    }, 2000);
   },
   watch: {
     keywords: (a) => {
