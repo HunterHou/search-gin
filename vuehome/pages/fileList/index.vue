@@ -1345,16 +1345,19 @@ export default {
     },
     queryList(concat) {
       this.dataList = [];
-      let data = new FormData();
+      // let data = new FormData();
+     
       const keywords = this.keywords ? this.keywords : "";
       this.searchPage.set(keywords, this.pageNo);
-      data.append("pageNo", this.pageNo);
-      data.append("PageSize", this.PageSize);
-      data.append("keywords", keywords);
-      data.append("sortType", this.sortType);
-      data.append("sortField", this.sortField);
-      data.append("movieType", this.movieType);
-      data.append("onlyRepeat", this.onlyRepeat);
+      // data.append("pageNo", this.pageNo);
+      // data.append("PageSize", this.PageSize);
+      // data.append("keywords", keywords);
+      // data.append("sortType", this.sortType);
+      // data.append("sortField", this.sortField);
+      // data.append("movieType", this.movieType);
+      // data.append("onlyRepeat", this.onlyRepeat);
+
+       let data ={Page:this.pageNo,PageSize:this.PageSize,Keywords:keywords,SortType:this.sortType,SortField:this.sortField};
       let title = keywords;
       if (keywords !== "") {
         const idx = this.suggestions.indexOf(keywords);
