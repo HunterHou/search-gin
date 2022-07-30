@@ -900,7 +900,7 @@ export default {
     setInterval(this.heartBeat, 20000);
     setTimeout(() => {
      this.queryList();
-    }, 2000);
+    }, 1000);
   },
   watch: {
     keywords: (a) => {
