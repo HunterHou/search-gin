@@ -3,6 +3,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   ElButton,
+  ElMessage,
   ElDivider,
   ElTag,
   ElTable,
@@ -20,7 +21,8 @@ const systemProperty = useSystemProperty()
 document.title = "首页";
 const indexLoading = ref(false)
 const view = reactive({
-  tableData: []
+  tableData: [],
+  indexLoading:false,
 })
 const tableData = ref([])
 const tagData = ref([])
@@ -66,7 +68,7 @@ onMounted(() => {
 
 })
 
-const openThis = async (index, data) => {
+const openThis = async (index, data?) => {
   const { Name } = data;
   const res = await OpenFolerByPath({ dirpath: Name })
   if (res.Code == 200) {
@@ -75,7 +77,7 @@ const openThis = async (index, data) => {
     ElMessage.error('执行失败')
   }
 }
-const deleteThis = async (index, data) => {
+const deleteThis = async (index, data?) => {
   const { Name } = data;
   const res = await DeleteFolerByPath({ dirpath: Name })
   if (res.Code == 200) {

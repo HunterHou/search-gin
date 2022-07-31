@@ -383,7 +383,6 @@ import {
 } from 'element-plus';
 import { Eleme } from '@element-plus/icons-vue'
 import { MovieQuery, MovieModel } from '.';
-import { dateFormat } from '@/utils/timeUtils';
 import { ResultList } from '@/utils/ResultResponse';
 import { useSystemProperty } from '@/store/System'
 import { useClipboard ,onKeyStroke } from '@vueuse/core'
@@ -810,13 +809,6 @@ onMounted(() => {
   margin-top: -20px;
 }
 
-.container-body {
-  /* min-width: 600px; */
-  /* min-height: 600px; */
-  /* height: 100%; */
-  /* padding: 1px; */
-  /* margin-bottom: 20px; */
-}
 
 .floatButton {
   float: right;
