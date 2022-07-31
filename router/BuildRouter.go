@@ -19,8 +19,9 @@ func BuildRouter() *gin.Engine {
 	gin.DefaultWriter = io.MultiWriter(fLog, os.Stdout)
 
 	// router.StaticFS("/static", http.Dir("static"))
-	router.StaticFS("/_nuxt", http.Dir("./home/dist/_nuxt"))
-	router.LoadHTMLFiles("./home/dist/index.html")
+	router.StaticFS("/_nuxt", http.Dir("./vuehome/dist/_nuxt"))
+	router.StaticFS("/assert", http.Dir("./vitehome/dist/assert"))
+	router.LoadHTMLFiles("./vuehome/dist/index.html")
 	// router.LoadHTMLGlob("vuehome/dist/*")
 
 	router.NoRoute(controller.Index)
