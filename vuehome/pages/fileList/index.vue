@@ -960,13 +960,13 @@ export default {
       // data.append("movieType", this.movieType);
       // data.append("onlyRepeat", this.onlyRepeat);
 
-      let data = { 
-        Page: this.pageNo, 
-        PageSize: this.PageSize, 
-        Keyword: keywords, 
-        SortType: this.sortType, 
-        SortField: this.sortField 
-        };
+      let data = {
+        Page: this.pageNo,
+        PageSize: this.PageSize,
+        Keyword: keywords,
+        SortType: this.sortType,
+        SortField: this.sortField
+      };
       let title = keywords;
       if (keywords !== "") {
         const idx = this.suggestions.indexOf(keywords);

@@ -1,14 +1,81 @@
 
 
 <template>
+  <ElBacktop :bottom="100" style="width: 50px; height: 50px">
+    <div class="up">UP</div>
+  </ElBacktop>
+  <ElButton style="
+        position: fixed;
+        top: 640px;
+        overflow: auto;
+        z-index: 999;
+        left: 5px;
+      " size="small" type="danger" round v-if="!loading && view.ResultCnt > queryParam.PageSize"
+    @click="pageLoading(-1)"><i class="el-icon-back"></i>上一頁
+  </ElButton>
+  <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
+  <ElButton v-if="!loading && view.ResultCnt > queryParam.PageSize" style="
+        position: fixed;
+        top: 640px;
+        overflow: auto;
+        z-index: 999;
+        right: 5px;
+      " size="small" type="danger" round @click="pageLoading(1)">下一頁<i class="el-icon-right"></i>
+  </ElButton>
   <div class="searchRow">
     <ElRow :span="24">
+      <ElCol :span="2">
+        <ElButton type="success" size="small" :loading-icon="Eleme" :loading="refreshIndexFlag" @click="refreshIndex()">
+          扫 描
+        </ElButton>
+        <ElPopover placement="bottom-end" v-model="view.settingInfoShow" width="800px" trigger="click">
+          <template #reference>
+            <ElLink> ({{ view.settingInfo.DirsCnt }})</ElLink>
+          </template>
+          <template #default>
+            <h1 align="center">索引配置</h1>
+            <div style="margin: 2px 2px">
+              <ElRow>
+                <ElCol :span="20">
+                  <ElRow>
+                    <ElCol :span="4">
+                      <span>视频类型：</span>
+                    </ElCol>
+                    <ElCol :span="20">
+                      <ElSelect v-model="view.settingInfo.VideoTypes" multiple placeholder="请选择" style="width: 90%">
+                        <ElOption v-for="item in view.settingInfo.Types" :key="item" :label="item" :value="item">
+                        </ElOption>
+                      </ElSelect>
+                    </ElCol>
+                  </ElRow>
+                  <ElRow>
+                    <ElCol :span="4">
+                      <span>扫描路径：</span>
+                    </ElCol>
+                    <ElCol :span="20">
+                      <el-checkbox size="small" :indeterminate="view.isIndeterminateDir" v-model="view.settingCheckAll"
+                        @change="handleCheckAllChange">全选</el-checkbox>
+                      <el-checkbox-group v-model="view.settingInfo.Dirs" @change="handleCheckedCitiesChange">
+                        <el-checkbox v-for="dir in view.settingInfo.DirsLib" :label="dir" :key="dir">{{ dir }}
+                        </el-checkbox>
+                      </el-checkbox-group>
+                    </ElCol>
+                  </ElRow>
+                </ElCol>
+                <ElCol :span="4">
+                  <ElButton type="primary" style="height: 50px; width: 120px" @click="settingSubmit">提 交</ElButton>
+                </ElCol>
+              </ElRow>
+            </div>
+          </template>
+        </ElPopover>
+      </ElCol>
       <ElCol :span="1">
         <ElLink style="color: green">
-          <i :underline="true" class="el-icon-zoom-out" title="重复" @click="onlyRepeatQuery()">重</i>
+          <i :underline="true" class="ElIcon-zoom-out" title="重复" @click="onlyRepeatQuery()">重</i>
         </ElLink>
       </ElCol>
-      <ElCol :span="2">
+      <ElCol :span="3">
         <ElRadioGroup v-model="queryParam.SortField" @change="queryList" size="small">
           <ElRadioButton label="Code">名</ElRadioButton>
           <ElRadioButton label="MTime">时</ElRadioButton>
@@ -33,9 +100,10 @@
 
       <ElCol :span="5">
         <ElAutocomplete id="searchInput" style="min-width: 80px; width: auto" placeholder="请输入关键词"
-          v-model="queryParam.Keywords" clearable size="small" @keyup.enter.native="queryList">
+          v-model="queryParam.Keyword" clearable size="small" @change="keywordChange" @select="selectSuggestion"
+          :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
           <template #append>
-            <ElButton slot="append" type="primary" size="small" icon="el-icon-search" @click="
+            <ElButton slot="append" type="primary" size="small" icon="ElIcon-search" @click="
               () => {
                 queryParam.Page = 1;
                 queryList();
@@ -43,9 +111,9 @@
             ">Enter
             </ElButton>
           </template>
-          <!-- <template slot-scope="{ item }">
-              <div v-if="item" class="name">{{ item }}</div>
-            </template> -->
+          <template #default="{ item }">
+            <div class="value">{{ item }}</div>
+          </template>
         </ElAutocomplete>
       </ElCol>
     </ElRow>
@@ -59,168 +127,222 @@
 
       <ElCol :span="12">
         <span v-if="!running" style="color: red">运行异常</span>
-        <el-divider v-if="!running" direction="vertical"></el-divider>
-        <el-link :underline="false" @click="
+        <ElDivider v-if="!running" direction="vertical"></ElDivider>
+        <ElLink :underline="false" @click="
           (e) => {
             queryParam.Page = 1;
-            queryParam.Keywords = '';
+            queryParam.Keyword = '';
             queryList();
           }
         ">
           <span> 总：{{ view.TotalSize }}({{ view.TotalCnt }}) </span>
-        </el-link>
+        </ElLink>
 
-        <el-divider direction="vertical"></el-divider>
+        <ElDivider direction="vertical"></ElDivider>
         <span> 搜：{{ view.ResultSize }}({{ view.ResultCnt }}) </span>
-        <el-divider direction="vertical"></el-divider>
+        <ElDivider direction="vertical"></ElDivider>
         <span> 页：{{ view.CurSize }}({{ view.CurCnt }})</span>
-        <el-divider direction="vertical"></el-divider>
+        <ElDivider direction="vertical"></ElDivider>
       </ElCol>
     </ElRow>
   </div>
-  <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
-    style="margin-top: 8px; min-height: 600px">
-    <li :class="isShowCover() ? 'list-item-cover' : 'list-item'" v-for="item in view.modelList" :key="item.Id">
-      <el-card class="ecard" shadow="always" :body-style="{
-        padding: '0px',
-        margin: '4px 2px',
-        background: item.MovieType ? '' : 'rgb(205, 138, 50)',
-      }">
+  <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
+    style="margin-top: 4px; min-height: 700px">
+    <li :class="isShowCover() ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
 
-        <div v-if="item" :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'">
-          <el-image style="width: 100%; height: 100%" :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
-            @click="openInfoWindow(item.Id)" fit="contain" lazy />
-        </div>
-        <div class="image-tool">
-          <el-button type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
-            <el-icon>
-              <VideoPlay />
-            </el-icon>
-          </el-button>
-          <el-button type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
-            <el-icon>
-              <UserFilled />
-            </el-icon>
-          </el-button>
-          <el-button type="success" plain class="icon-button" title="文件夹" @click="openThisFolder(item.Id, 2)">
-            <el-icon>
-              <FolderOpened />
-            </el-icon>
-          </el-button>
-          <el-button plain type="success" class="icon-button " title="编辑" @click="editItem(item)">
-            <el-icon>
-              <Edit />
-            </el-icon>
-          </el-button>
 
-          <el-button type="danger" plain class="icon-button" title="删除" @click="deleteThis(item.Id, 2)">
-            <el-icon>
-              <DeleteFilled />
-            </el-icon>
-          </el-button>
-          <el-button type="danger" plain class="icon-button" title="刮图" @click="getImageList(item.Id)">
-            <el-icon>
-              <Download />
-            </el-icon>
-          </el-button>
-          <el-button type="danger" plain class="icon-button" title="同步" @click="syncThis(item.Id)">
-            <el-icon>
-              <Refresh />
-            </el-icon>
-          </el-button>
+      <div class="tag-area">
+    <li v-for="tag in item.Tags" :key="tag">
+      <el-tag closable effect="dark" :size="isShowCover() ? 'small' : 'small'" @close="closeTag(item.Id, tag)">
+        <el-link :underline="false" plain @click="gotoSearch(tag)">
+          <span> {{ tag }}</span>
+        </el-link>
+      </el-tag>
+    </li>
+  </div>
+  <ElPopover placement="bottom-start" width="auto" v-model="view.addTagShow" trigger="click" :auto-close="0">
+    <template #reference>
+      <ElButton :class="isShowCover() ? 'tag-buttom-cover' : 'tag-buttom'" :size="isShowCover() ? 'small' : 'small'"
+        type="warning" @click="()=>{
+          view.addTagShow= !view.addTagShow
+        }">
+        <b>
+          {{ item.MovieType ? item.MovieType : "无" }}
+        </b>
+      </ElButton>
+    </template>
+    <template #default>
+      <div v-if="item.MovieType != ''" style="max-width: 300px">
+        <ElButton size="small" type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag"
+          style="margin: 1px 2px" :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
+          <span style="font-size: 12px">{{ tag }}</span>
+        </ElButton>
+        <br /><br />
+        <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
+          @select="handleSelectTag" size="small" style="width: 240px">
+          <template #append>
+            <ElButton size="small" type="primary" :disabled="customerTagEmpty()" @click="addCustomerTag(item.Id)"
+              style="font-size: 14px">加</ElButton>
+          </template>
+          <template #default="{ item }">
+            <div v-if="item" style="font-size: 14px" class="value">
+              {{ item }}
+            </div>
+          </template>
+        </ElAutocomplete>
+      </div>
+      <div v-if="item.MovieType == ''" style=" float: right">
+        <ElButton plain size="small" @click="setMovieType(item.Id, 2)">
+          <i class="el-icon-bicycle icon-style" title="骑兵">骑兵</i>
+        </ElButton>
+        <ElButton plain size="small" @click="setMovieType(item.Id, 1)">
+          <i class="el-icon-sunny icon-style" title="步兵">步兵</i>
+        </ElButton>
+        <ElButton plain size="small" @click="setMovieType(item.Id, 4)">
+          <i class="el-icon-location icon-style" title="国产">国产</i>
+        </ElButton>
+        <ElButton plain size="small" @click="setMovieType(item.Id, 3)">
+          <i class="el-icon-ship icon-style" title="欧美">斯巴达</i>
+        </ElButton>
+      </div>
+    </template>
 
-          <el-button type="info" plain class="icon-button"
-            v-if="7 < view.showIconNum && notQiBing(item.MovieType)" title="骑兵" @click="setMovieType(item.Id, 2)">
-            <el-icon>
-              <Bicycle />
-            </el-icon>
-          </el-button>
-          <el-button plain type="info" class="icon-button"
-            v-if="notBuBing(item.MovieType) && 7 < view.showIconNum" title="步兵" @click="setMovieType(item.Id, 1)">
-            <el-icon>
-              <Sunny />
-            </el-icon>
-          </el-button>
-          <el-button plain type="info" class="icon-button" v-if="notNative(item.MovieType) && 7 < view.showIconNum"
-            title="国产" @click="setMovieType(item.Id, 4)">
-            <el-icon>
-              <Location />
-            </el-icon>
-          </el-button>
-          <el-button plain type="info" class="icon-button" v-if="notSiBaDa(item.MovieType) && 7 < view.showIconNum"
-            title="欧美" @click="setMovieType(item.Id, 3)">
-            <el-icon>
-              <Ship />
-            </el-icon>
-          </el-button>
+  </ElPopover>
+  <el-card class="ecard" shadow="always" :body-style="{
+    padding: '0px',
+    margin: '4px 2px',
+    background: item.MovieType ? '' : 'rgb(205, 138, 50)',
+  }">
 
-          <el-link>
-            <el-dropdown placement="top-start" v-if="7 > view.showIconNum">
-              <i class="el-icon-more icon-style"></i>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="notQiBing(item.MovieType)">
-                  <el-link>
-                    <i class="el-icon-bicycle icon-style" title="骑兵" @click="setMovieType(item.Id, 2)">骑兵</i>
-                  </el-link>
-                </el-dropdown-item>
+    <div v-if="item" :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'">
+      <el-image style="width: 100%; height: 100%" :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
+        @click="openInfoWindow(item.Id)" fit="contain" lazy />
+    </div>
+    <div class="image-tool">
+      <ElButton type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
+        <ElIcon>
+          <VideoPlay />
+        </ElIcon>
+      </ElButton>
+      <ElButton type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
+        <ElIcon>
+          <UserFilled />
+        </ElIcon>
+      </ElButton>
+      <ElButton type="success" plain class="icon-button" title="文件夹" @click="openThisFolder(item.Id, 2)">
+        <ElIcon>
+          <FolderOpened />
+        </ElIcon>
+      </ElButton>
+      <ElButton plain type="success" class="icon-button " title="编辑" @click="editItem(item)">
+        <ElIcon>
+          <Edit />
+        </ElIcon>
+      </ElButton>
 
-                <el-dropdown-item v-if="notBuBing(item.MovieType)">
-                  <i class="icon-style" title="步兵" @click="setMovieType(item.Id, 1)">步兵</i>
-                </el-dropdown-item>
-                <el-dropdown-item v-if="notNative(item.MovieType)">
-                  <el-link>
-                    <i :underline="false" class="icon-style" title="国产" @click="setMovieType(item.Id, 4)">国产</i>
-                  </el-link>
-                </el-dropdown-item>
-                <el-dropdown-item v-if="notSiBaDa(item.MovieType)">
-                  <el-link>
-                    <i :underline="false" class="icon-style" title="欧美" @click="setMovieType(item.Id, 3)">欧美</i>
-                  </el-link>
-                </el-dropdown-item>
-                <el-dropdown-item v-if="7 > view.showIconNum">
-                  <i class="el-icon-refresh-right icon-style" title="信息" @click="infoThis(item.Id)">信</i>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-link>
+      <ElButton type="danger" plain class="icon-button" title="删除" @click="deleteThis(item.Id, 2)">
+        <ElIcon>
+          <DeleteFilled />
+        </ElIcon>
+      </ElButton>
+      <ElButton type="danger" plain class="icon-button" title="刮图" @click="getImageList(item.Id)">
+        <ElIcon>
+          <Download />
+        </ElIcon>
+      </ElButton>
+      <ElButton v-if="!item.MovieType" type="danger" plain class="icon-button" title="同步" @click="syncThis(item.Id)">
+        <ElIcon>
+          <Refresh />
+        </ElIcon>
+      </ElButton>
 
-          <div class="context-text" style="font-size: 13px">
-            <el-link v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}</el-link>
-            <el-link v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</el-link>
-            <el-popover placement="top" width="460" trigger="hover" :close-delay="1">
-              <el-link v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}</el-link>
-              <el-divider v-if="item.Actress" direction="vertical"></el-divider>
-              <el-link v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</el-link>
-              <el-divider v-if="item.Code" direction="vertical"></el-divider>
+      <ElButton type="info" plain class="icon-button" v-if="7 < view.showIconNum && notQiBing(item.MovieType)"
+        title="骑兵" @click="setMovieType(item.Id, 2)">
+        <ElIcon>
+          <Bicycle />
+        </ElIcon>
+      </ElButton>
+      <ElButton plain type="info" class="icon-button" v-if="notBuBing(item.MovieType) && 7 < view.showIconNum"
+        title="步兵" @click="setMovieType(item.Id, 1)">
+        <ElIcon>
+          <Sunny />
+        </ElIcon>
+      </ElButton>
+      <ElButton plain type="info" class="icon-button" v-if="notNative(item.MovieType) && 7 < view.showIconNum"
+        title="国产" @click="setMovieType(item.Id, 4)">
+        <ElIcon>
+          <Location />
+        </ElIcon>
+      </ElButton>
+      <ElButton plain type="info" class="icon-button" v-if="notSiBaDa(item.MovieType) && 7 < view.showIconNum"
+        title="欧美" @click="setMovieType(item.Id, 3)">
+        <ElIcon>
+          <Ship />
+        </ElIcon>
+      </ElButton>
+
+      <ElLink>
+        <ElDropdown placement="top-start" v-if="7 > view.showIconNum">
+          <i class="ElIcon-more icon-style"></i>
+          <ElDropdown-menu slot="dropdown">
+            <ElDropdownItem v-if="notQiBing(item.MovieType)">
+              <ElLink>
+                <i class="ElIcon-bicycle icon-style" title="骑兵" @click="setMovieType(item.Id, 2)">骑兵</i>
+              </ElLink>
+            </ElDropdownItem>
+
+            <ElDropdownItem v-if="notBuBing(item.MovieType)">
+              <i class="icon-style" title="步兵" @click="setMovieType(item.Id, 1)">步兵</i>
+            </ElDropdownItem>
+            <ElDropdownItem v-if="notNative(item.MovieType)">
+              <ElLink>
+                <i :underline="false" class="icon-style" title="国产" @click="setMovieType(item.Id, 4)">国产</i>
+              </ElLink>
+            </ElDropdownItem>
+            <ElDropdownItem v-if="notSiBaDa(item.MovieType)">
+              <ElLink>
+                <i :underline="false" class="icon-style" title="欧美" @click="setMovieType(item.Id, 3)">欧美</i>
+              </ElLink>
+            </ElDropdownItem>
+            <ElDropdownItem v-if="7 > view.showIconNum">
+              <i class="ElIcon-refresh-right icon-style" title="信息" @click="infoThis(item.Id)">信</i>
+            </ElDropdownItem>
+          </ElDropdown-menu>
+        </ElDropdown>
+      </ElLink>
+
+      <div class="context-text" style="font-size: 13px">
+        <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}</ElLink>
+        <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
+        <ElPopover placement="top" width="460" trigger="hover" :auto-close="1">
+          <template #reference>
+            <span style="color: red"> 【{{ item.SizeStr }}】</span>
+          </template>
+          <template #default>
+            <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}</ElLink>
+            <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
+            <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
+            <!-- <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
               【{{ item.SizeStr }}】
-              {{ dateFormat(item.MTime, "yyyy-MM-DD HH:MM") }}
-              <hr />
-              <span style="
+              {{ dateFormat(item.MTime, "yyyy-MM-DD HH:MM") }} -->
+            <hr />
+            <span style="
                     margin-buttom: 30px;
                     margin-top: 30px;
                     margin-left: 30px;
                     margin-right: 30px;
                   ">
-                {{ item.Name }}</span>
-              <span slot="reference" style="color: red">
-                【{{ item.SizeStr }}】
-              </span>
-            </el-popover>
-            {{ item.Name }}
-          </div>
-        </div>
-      </el-card>
-    </li>
-     <ElPagination
-      class="pageTool"
-      v-model:currentPage="queryParam.Page"
-      v-model:page-size="queryParam.PageSize"
-      :page-sizes="[12, 14, 30, 50,200]"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="view.totalCount"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+              {{ item.Name }}</span>
+          </template>
+        </ElPopover>
+        {{ item.Name }}
+      </div>
+    </div>
+  </el-card>
+  </li>
+  <ElPagination class="pageTool" v-model:currentPage="queryParam.Page" v-model:page-size="queryParam.PageSize"
+    :page-sizes="[12, 14, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
+    @size-change="handleSizeChange" @current-change="handleCurrentChange" />
   </div>
 
 </template>
@@ -236,41 +358,234 @@ import {
   DownImageList,
   SyncFileInfo,
   ResetMovieType,
-  RefreshIndex
-} from '../../api/file'
+  RefreshIndex,
+  AddTag
+} from '@/api/file'
+import { GetSettingInfo, PostSettingInfo } from '@/api/setting'
+
+
+
 import { onMounted, reactive, ref } from 'vue'
-import { ElRow, ElCol, ElLink, ElRadioGroup, ElRadioButton, ElMessage, ElMessageBox,ElPagination } from 'element-plus';
+import {
+  ElRow,
+  ElCol,
+  ElLink,
+  ElBacktop,
+  ElPopover,
+  ElDivider,
+  ElRadioGroup,
+  ElRadioButton,
+  ElMessage,
+  ElMessageBox,
+  ElDropdown,
+  ElDropdownItem,
+  ElPagination
+} from 'element-plus';
+import { Eleme } from '@element-plus/icons-vue'
 import { MovieQuery, MovieModel } from '.';
-import { dateFormat } from '../../utils/timeUtils';
+import { dateFormat } from '@/utils/timeUtils';
+import { ResultList } from '@/utils/ResultResponse';
+import { useSystemProperty } from '@/store/System'
+import { useClipboard ,onKeyStroke } from '@vueuse/core'
+import {getPng ,getJpg} from '@/utils/ImageUtils'
 
 const running = ref(true)
 const loading = ref(false)
+const refreshIndexFlag = ref(false)
 const showStyle = ref('post')
+const systemProperty = useSystemProperty()
+
+
+const source = ref('')
+const {  copy  } = useClipboard({ source })
 
 const view = reactive<any>({
   file: new MovieModel(),
+  addTagShow:false,
+  settingInfo: {},
   showIconNum: 6,
-  modelList: [],
-  totalCount: 0
+  ModelList: [],
+  ResultCnt: 0
 })
 const queryParam = reactive<MovieQuery>(new MovieQuery())
 
+const settingInfo = reactive({
+
+})
+
+
+onKeyStroke(['`'],(e)=>{
+  refreshIndex()
+})
+onKeyStroke(['Enter'],(e)=>{
+  queryList()
+})
+
+const loadSettingInfo = async () => {
+  const res = await GetSettingInfo()
+  if (res) {
+    view.settingInfo = { DirsCnt: res.Dirs?.length, ...res }
+  }
+}
+
+
+const handleCheckAllChange = (val) => {
+  view.settingInfo.Dirs = val ? view.settingInfo.DirsLib : [];
+  view.isIndeterminateDir = false;
+}
+
+const handleCheckedCitiesChange = (value) => {
+  let checkedCount = value.length;
+  view.settingCheckAll = checkedCount === view.settingInfo.Dirs.length;
+  view.isIndeterminateDir =
+    checkedCount > 0 && checkedCount < view.settingInfo.Dirs.length;
+}
+
+const settingSubmit = async () => {
+  const postForm = { ...view.settingInfo };
+  const res = await PostSettingInfo(postForm)
+  console.log(res)
+  if (res.Code === 200) {
+    view.settingInfoShow = false
+    ElMessage.success(res.Message)
+  } else {
+    ElMessage.error(res.Message)
+  }
+
+}
+
+const notContainTag = (tags: string[], tag: string) => {
+  if (!tags || !tag) {
+    return true;
+  }
+  if (tags.indexOf(tag) < 0) {
+    return true;
+  }
+  return false;
+}
+
+const gotoSearch = (tag: string) => {
+  queryParam.Keyword = tag
+  queryList()
+}
+
+
+const fetchTagsLib = (queryString, callback) => {
+  const suggrestTagsLib = view.settingInfo?.TagsLib;
+  const results = queryString
+    ? suggrestTagsLib.filter(createFilter(queryString))
+    : suggrestTagsLib;
+  callback(results);
+}
+const customerTagEmpty = () => {
+  if (view.customerTag) {
+    return false;
+  }
+  return true;
+}
+
+const addTag = async (clickId, title) => {
+  const res = await AddTag(clickId, title)
+  if (res.Code == 200) {
+    view.addTagShow= false
+    for (var i = 0; i < view.ModelList.length; i++) {
+      if (view.ModelList[i].Id == clickId) {
+        if (!view.ModelList[i].Tags) {
+          view.ModelList[i].Tags = []
+        }
+        view.ModelList[i].Tags.push(title);
+        return;
+      }
+    }
+    ElMessage.success(res.Message)
+  } else {
+    ElMessage.error(res.Message)
+  }
+}
+
+const addCustomerTag = (clickId: string) => {
+  addTag(clickId, view.customerTag)
+  view.addTagShow= false
+  view.customerTag = ""
+}
+const handleSelectTag = (item:string) => {
+  view.customerTag = item;
+}
+
 const queryList = async (params?: any) => {
+
+  let title = queryParam.Keyword;
+  systemProperty.syncSearchParam(queryParam)
+  if (queryParam.Keyword && queryParam.Keyword !== '') {
+    // if (!view.suggestions) {
+    //   view.suggestions = []
+    // }
+    // const idx = view.suggestions.indexOf(queryParam.Keyword);
+    // if (idx >= 0) {
+    //   view.suggestions.splice(idx, 1);
+    // }
+    // view.suggestions.unshift(queryParam.Keyword);
+    // console.log(view.suggestions)
+    // if (view.suggestions.length > 100) {
+    //   view.suggestions.pop();
+    // }
+    // localStorage.setItem("searchSuggestions", view.suggestions);
+  } else {
+    title = "文件";
+  }
+  document.title = title
+  view.ModelList = []
+  loading.value = true
   const res = await QueryFileList(queryParam)
 
   if (res) {
-    console.log(res)
-    view.modelList = res.Data
-    view.totalCount = res.TotalCnt
-    view.ResultCnt = res.ResultCnt
-    view.TotalCnt = res.TotalCnt
-    view.CurCnt = res.CurCnt
-    view.TotalPage = res.TotalPage
-    view.TotalSize = res.TotalSize
-    view.ResultSize = res.ResultSize
-    view.CurSize = res.CurSize
+    loading.value = false
+    const model = res as unknown as ResultList
+    view.ModelList = model.Data
+    view.TotalCnt = model.TotalCnt
+    view.ResultCnt = model.ResultCnt
+    view.CurCnt = model.CurCnt
+    view.TotalPage = model.TotalPage
+    view.TotalSize = model.TotalSize
+    view.ResultSize = model.ResultSize
+    view.CurSize = model.CurSize
   }
 }
+
+const selectSuggestion = (item) => {
+  queryParam.Keyword = item
+  queryList()
+}
+
+const pageLoading = (num: number) => {
+  if (queryParam.Page + num <= 0) {
+    queryParam.Page = 1
+  }
+  queryParam.Page += num
+
+  queryList()
+}
+
+const fetchSuggestion = (queryString: string, callback) => {
+  // const sourceSuggestions = view.suggestions;
+  const sourceSuggestions = systemProperty.getSuggestions;
+  if (!sourceSuggestions) {
+    return
+  }
+  const results = queryString
+    ? sourceSuggestions.filter(createFilter(queryString))
+    : sourceSuggestions;
+  // 调用 callback 返回建议列表的数据
+  const finalResults = results.slice(0, 50)
+  callback(finalResults)
+}
+
+const createFilter = (queryString) => {
+  return (res) => {
+    return res.toLowerCase().indexOf(queryString.toLowerCase()) >= 0;
+  }
+}
+
 const onlyRepeatQuery = () => {
   queryParam.OnlyRepeat = true
   queryList()
@@ -284,12 +599,7 @@ const isShowCover = () => {
   view.showIconNum = 6;
   return false;
 }
-const getPng = (Id: string) => {
-  return "http://127.0.0.1:8082/api/png/" + Id;
-}
-const getJpg = (Id: string) => {
-  return "http://127.0.0.1:8082/api/jpg/" + Id;
-}
+
 const openInfoWindow = async (id: string) => {
   const res = await FindFileInfo(id)
   view.sourceList = [];
@@ -351,16 +661,17 @@ const setMovieType = async (id: string, typeId: number) => {
 }
 
 const refreshIndex = async () => {
-  view.refreshIndexFlag = true
+  refreshIndexFlag.value = true
   const res = await RefreshIndex()
   if (res.Code === 200) {
-    view.refreshIndexFlag = false
     ElMessage.success(res.Message)
+    await queryList()
+    refreshIndexFlag.value = false
   }
 }
 
 const thisActress = async (actress: string) => {
-  queryParam.Keywords = actress
+  queryParam.Keyword = actress
   queryParam.Page = 1
   queryList()
 }
@@ -455,36 +766,56 @@ const notBuBing = async (movieType: string) => {
   return false;
 }
 
-const copy = async (params: string) => {
-  console.log(params)
-
+const keywordChange = (value) => {
+  queryParam.Keyword = value
+  queryList()
 }
 
-const handleCurrentChange=(page:number)=>{
+
+const handleCurrentChange = (page: number) => {
   queryParam.Page = page
   queryList()
 }
-const handleSizeChange=(pageSize:number)=>{
+const handleSizeChange = (pageSize: number) => {
   queryParam.PageSize = pageSize
   queryList()
 }
 
 setInterval(heartBeat, 10000);
 
-queryList()
+// const suggestionsInit = () => {
+//   const suggestionsCaches = localStorage.getItem("searchSuggestions");
+//   if (suggestionsCaches) {
+//     view.suggestions = suggestionsCaches.split(",");
+//   }
+// }
+
 onMounted(() => {
-  
+
+  // suggestionsInit()
+  loadSettingInfo()
+  queryParam.Page = systemProperty.getSearchParam.Page
+  queryParam.PageSize = systemProperty.getSearchParam.PageSize
+  queryParam.MovieType = systemProperty.getSearchParam.MovieType
+  queryParam.SortField = systemProperty.getSearchParam.SortField
+  queryParam.SortType = systemProperty.getSearchParam.SortType
+  queryParam.Keyword = systemProperty.getSearchParam.Keyword
+  setTimeout(queryList, 200)
 })
 
 </script>
 
 <style scoped>
+.searchRow {
+  margin-top: -20px;
+}
+
 .container-body {
-  min-width: 600px;
-  min-height: 600px;
-  height: 100%;
-  padding: 1px;
-  margin-bottom: 20px;
+  /* min-width: 600px; */
+  /* min-height: 600px; */
+  /* height: 100%; */
+  /* padding: 1px; */
+  /* margin-bottom: 20px; */
 }
 
 .floatButton {
@@ -512,12 +843,12 @@ onMounted(() => {
 }
 
 .context-text {
-  font-size: 14px;
+  font-size: 10px;
   font-size-adjust: inherit;
-  margin-right: 4px;
-  margin-left: 4px;
+  margin-right: 1px;
+  margin-left: 1px;
   position: relative;
-  height: 40px;
+  height: 46px;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 2;
@@ -530,13 +861,13 @@ onMounted(() => {
 }
 
 .ecard {
-  margin-left: 6px;
+  margin-left: 4px;
   padding: 0;
   background: #e4e6d1;
 }
 
 .list-item {
-  width: 238px;
+  width: 220px;
   height: 358px;
   float: left;
   list-style: none;
@@ -585,22 +916,22 @@ onMounted(() => {
   position: absolute;
   z-index: 999;
   opacity: 1;
+  margin: 4px 4px;
 }
 
 .tag-buttom {
-  margin-left: 144px;
+  margin-left: 64px;
   filter: alpha(opacity=100);
-  opacity: 1;
   position: absolute;
   z-index: 999;
-  margin-top: 2px;
+  height: 28px;
   float: right;
   text-align: justify;
   text-align-last: justify;
 }
 
 .tag-buttom-cover {
-  margin-left: 344px;
+  margin-left: 156px;
   filter: alpha(opacity=100);
   opacity: 1;
   position: absolute;
@@ -615,17 +946,17 @@ onMounted(() => {
   filter: alpha(opacity=90);
   opacity: 0.9;
   background: #94df71;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
   z-index: 99;
-  height: 23px;
+  height: 28px;
   color: #000;
-  line-height: 20px;
+  line-height: 28px;
 }
 
-v-deep .el-tooltip__popper {
+/* v-deep .el-tooltip__popper {
   width: 300px;
   height: 40px;
-}
+} */
 
 .icon-button {
   margin: 0px 0px;

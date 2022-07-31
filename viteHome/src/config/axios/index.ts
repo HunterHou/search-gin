@@ -1,8 +1,8 @@
-import axios, {AxiosRequestConfig, AxiosError,AxiosResponse} from "axios";
-import { ElNotification } from "element-plus";
+import axios, {AxiosRequestConfig, AxiosError, AxiosResponse} from "axios";
+import {ElNotification} from "element-plus";
 import qs from 'qs'
-import { ResultResponse } from "../../utils/ResultResponse";
-import { config } from "./config";
+import {ResultResponse} from "../../utils/ResultResponse";
+import {config} from "./config";
 const server = axios.create({baseURL: 'http://localhost:7001', timeout: config.request_timeout})
 server.interceptors.request.use((config : AxiosRequestConfig) => {
     if (config.method === 'post' && config !.headers !['Content-Type'] === 'application/x-www-form-urlencoded') {
@@ -33,19 +33,17 @@ server.interceptors.request.use((config : AxiosRequestConfig) => {
 })
 
 // response 拦截器
-server.interceptors.response.use(
-    (response: AxiosResponse<any>) => {
-      console.log(response.data)
-      if (response.status == 403) {
+server.interceptors.response.use((response : AxiosResponse < any >) => {
+    if (response.status == 403) {
         console.log(response.data.msg)
         ElNotification.error(response.data.msg)
-      }
-      return response.data
-    },
-    (error: AxiosError) => {
-      ElNotification.error(error)
-      return Promise.reject(error)
     }
-  )
-  
-  export { server }
+    return response.data
+}, (error : AxiosError) => {
+    ElNotification.error(error)
+    return Promise.reject(error)
+})
+
+export {
+    server
+}

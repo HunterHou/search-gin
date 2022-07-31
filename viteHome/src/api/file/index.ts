@@ -58,3 +58,21 @@ export const HeartBeatQuery = async () => {
     const res = await request.get({url: `/api/heartBeat`})
     return res
 }
+
+
+export const AddTag = async (clickId:string,title:string) => {
+    const res = await request.get({url: `/api/file/addTag/${clickId}/${title}`})
+    return res
+}
+
+
+export const OpenFolerByPath = async (data:any) => {
+    const res = await request.post({url: `/api/OpenFolerByPath`,data})
+    return res
+}
+export const DeleteFolerByPath = async (data:any) => {
+    const res = await request.post({url: `/api/DeleteFolerByPath`,data})
+    return res
+}
+
+

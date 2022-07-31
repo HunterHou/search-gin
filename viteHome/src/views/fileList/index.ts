@@ -18,7 +18,7 @@ class MovieQuery extends MovieModel{
     Page:number=1
     PageSize:number=14
     OnlyRepeat:boolean=false
-    Keywords:string
+    Keyword:string
     SortField:string='MTime'
     SortType:string='desc'
 }

@@ -146,25 +146,27 @@ func getNextOne(searchParam datamodels.SearchParam, _ int, currentId string) dat
 }
 func PostActess(c *gin.Context) {
 
-	keywords := c.PostForm("keywords")
-	pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
-	sortType := c.DefaultPostForm("sortType", "desc")
-	if pageNo < 1 {
-		pageNo = 1
-	}
-	pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "14"))
-	if pageSize < 1 {
-		pageSize = 14
-	}
+	param := datamodels.SearchParam{}
+	c.Bind(&param)
+	// keywords := c.PostForm("keywords")
+	// pageNo, _ := strconv.Atoi(c.DefaultPostForm("pageNo", "1"))
+	// sortType := c.DefaultPostForm("sortType", "desc")
+	// if pageNo < 1 {
+	// 	pageNo = 1
+	// }
+	// pageSize, _ := strconv.Atoi(c.DefaultPostForm("pageSize", "14"))
+	// if pageSize < 1 {
+	// 	pageSize = 14
+	// }
 	service := service.CreateFileService()
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
-		service.SortAct(datasource.ActressList, sortType)
+		service.SortAct(datasource.ActressList, param.SortType)
 	}
-	service.SortAct(datasource.ActressList, sortType)
+	service.SortAct(datasource.ActressList, param.SortType)
 	totalCnt := len(datasource.ActressList)
-	list, searchCnt := service.SearchActressByKeyWord(datasource.ActressList, keywords)
-	list = service.GetActressPage(list, pageNo, pageSize)
+	list, searchCnt := service.SearchActressByKeyWord(datasource.ActressList, param.Keyword)
+	list = service.GetActressPage(list, param.Page, param.PageSize)
 	result := utils.NewPage()
 	result.CurCnt = len(list)
 	result.TotalCnt = totalCnt
