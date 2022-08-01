@@ -3,7 +3,7 @@ import {ElNotification} from "element-plus";
 import qs from 'qs'
 import {ResultResponse} from "../../utils/ResultResponse";
 import {config} from "./config";
-const server = axios.create({baseURL: 'http://localhost:7001', timeout: config.request_timeout})
+const server = axios.create({baseURL: '', timeout: config.request_timeout})
 server.interceptors.request.use((config : AxiosRequestConfig) => {
     if (config.method === 'post' && config !.headers !['Content-Type'] === 'application/x-www-form-urlencoded') {
         config.data = qs.stringify(config.data)

@@ -18,10 +18,10 @@ fi
 printf '执行级别：levelKey[{%s}]--levelValue[{%s}] \n' $levelKey $levelValue
 echo 'cd ./viteApp'
 cd ./viteApp
-echo 'rm -rf home'
-rm -rf home
-echo 'mkdir -p home/dist'
-mkdir -p home/dist
+echo 'rm -rf vitehome'
+rm -rf vitehome
+echo 'mkdir -p vitehome/dist'
+mkdir -p vitehome/dist
 echo 'cd ..'
 cd ..
 echo 'cd vitehome'
@@ -32,8 +32,8 @@ if [ $levelKey -ge 1 ]; then
     echo 'npm run build'
     npm run build
     echo 打包完成，开始移动到app目录
-    echo 'cp -R dist ../viteApp/home'
-    cp -R dist ../viteApp/home
+    echo 'cp -R dist ../viteApp/vitehome/dist'
+    cp -R dist ../viteApp/vitehome/
 fi
 cd ..
 if [ $levelKey -ge 2 ]; then

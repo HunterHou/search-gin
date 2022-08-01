@@ -32,8 +32,8 @@ if [ $levelKey -ge 1 ]; then
     echo 'npm run generate'
     npm run generate
     echo 打包完成，开始移动到app目录
-    echo 'cp -R dist ../app/home'
-    cp -R dist ../app/home
+    echo 'cp -R dist ../app/vuehome'
+    cp -R dist ../app/vuehome
 fi
 cd ..
 if [ $levelKey -ge 2 ]; then

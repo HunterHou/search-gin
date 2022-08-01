@@ -73,10 +73,12 @@ func (o *OrmService) query(param datamodels.SearchParam) ([]datamodels.Movie, in
 	if param.Sql != "" {
 		session.And(param.Sql)
 	}
+	session.Engine().ShowSQL(true)
 	err := session.OrderBy(orderBy).Limit(param.GetPageSize(), param.StartNum()).Find(&res)
 	if err != nil {
 		fmt.Println(err)
 	}
+	session.Engine().ShowSQL(false)
 	size := int64(0)
 	for _, re := range res {
 		size += re.Size
