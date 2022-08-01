@@ -39,7 +39,7 @@ cd ..
 if [ $levelKey -ge 2 ]; then
     echo 移动完成，打包APP
     echo 'go build -o viteApp/appVite.exe -ldflags "-H=windowsgui" '
-    go build -o viteApp/appVite.exe -tags=prod -ldflags  "-H=windowsgui"
+    go build -o viteApp/appVite.exe -ldflags  "-H=windowsgui" -tags=prod
     echo 移动配置文件 '*.*(1)'
     echo 'cp dirList.ini viteApp/dirList.ini(1)'
     echo 'cp setting.json viteApp/setting.json(1)'
