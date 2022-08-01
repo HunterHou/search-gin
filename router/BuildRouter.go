@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"searchGin/config"
 	"searchGin/controller"
 
 	"github.com/gin-gonic/gin"
@@ -18,14 +19,18 @@ func BuildRouter() *gin.Engine {
 	fLog, _ := os.Create("gin.log")
 	gin.DefaultWriter = io.MultiWriter(fLog, os.Stdout)
 
+	for k, v := range config.StaticFs {
+		router.StaticFS(k, http.Dir(v))
+	}
+	router.LoadHTMLFiles(config.IndexHtml)
 	// router.StaticFS("/_nuxt", http.Dir("./vuehome/dist/_nuxt"))
 	// router.LoadHTMLFiles("./vuehome/dist/index.html")
 
 	// router.StaticFS("/static", http.Dir("static"))
 
-	router.StaticFS("/css", http.Dir("./vitehome/dist/css"))
-	router.StaticFS("/js", http.Dir("./vitehome/dist/js"))
-	router.LoadHTMLFiles("./vitehome/dist/index.html")
+	// router.StaticFS("/css", http.Dir("./vitehome/dist/css"))
+	// router.StaticFS("/js", http.Dir("./vitehome/dist/js"))
+	// router.LoadHTMLFiles("./vitehome/dist/index.html")
 
 	router.NoRoute(controller.Index)
 	router.GET("/", controller.Index)
