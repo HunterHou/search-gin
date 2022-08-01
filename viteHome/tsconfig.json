@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "baseUrl":"./",
+    "paths":{"@/*":["src/*"]},
     // "types":["element-plus/global"],
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -16,7 +18,5 @@
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }],
-  "baseUrl":"./",
-  "paths":{"@/*":["src/*"]},
   "exclude": ["dist", "node_modules"]
 }
