@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { reactive, onMounted } from 'vue'
+import {reactive, onMounted} from 'vue'
 import {
   ElPagination,
   ElRadioGroup,
@@ -8,12 +8,12 @@ import {
   ElCol,
   ElRadioButton,
 } from 'element-plus'
-import { QueryActressList } from '@/api/actress'
-import { useRouter } from 'vue-router'
-import { useSystemProperty } from '@/store/System'
-import { getActressImage } from '@/utils/ImageUtils.js'
+import {QueryActressList} from '@/api/actress'
+import {useRouter} from 'vue-router'
+import {useSystemProperty} from '@/store/System'
+import {getActressImage} from '@/utils/ImageUtils'
 
-const { push } = useRouter()
+const {push} = useRouter()
 const systemProperty = useSystemProperty()
 const view = reactive({
   CurCnt: 1,
@@ -82,19 +82,21 @@ onMounted(() => {
         overflow: auto;
         z-index: 999;
         left: 20px;
-      " round @click="pageLoading(-1)">上一页</ElButton>
+      " round @click="pageLoading(-1)">上一页
+  </ElButton>
   <ElButton style="
         position: fixed;
         top: 600px;
         overflow: auto;
         z-index: 999;
         right: 80px;
-      " round @click="pageLoading(1)">下一页</ElButton>
+      " round @click="pageLoading(1)">下一页
+  </ElButton>
   <ElRow :span="24">
     <ElCol :span="8" :offset="1"><span>
         扫描库：{{ view.TotalCnt }} 搜索：{{ view.ResultCnt }} 当前：{{
-            view.CurCnt
-        }}</span>
+        view.CurCnt
+      }}</span>
     </ElCol>
     <ElCol :span="3">
       <ElRadioGroup v-model="view.SortType" @change="queryList()" size="small">
@@ -113,13 +115,13 @@ onMounted(() => {
 
   </ElRow>
   <div v-loading="view.loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
-    style="margin-top: -10px">
+       style="margin-top: -10px">
     <ul class="infinite-list" style="overflow: auto">
       <li class="infinite-list list-item" v-for="item in view.dataList" :key="item.Id">
         <div v-if="item" class="img-list-item" @click="open(item.Name)">
           <el-link>
             <el-badge :value="item.Cnt">
-              <el-image :src="getActressImage(item.JpgUrl)" lazy round> </el-image>
+              <el-image :src="getActressImage(item.JpgUrl)" lazy round></el-image>
             </el-badge>
           </el-link>
           {{ item.Name ? item.Name : "" }} 【{{ item.SizeStr }}】
@@ -128,8 +130,9 @@ onMounted(() => {
     </ul>
   </div>
   <ElPagination class="pageTool" :page-sizes="[5, 7, 10, 12, 14, 30, 60, 90, 200]" :page-size="view.PageSize"
-    @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="total,prev, pager, next, sizes"
-    :current-page="view.Page" :total="view.ResultCnt" />
+                @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                layout="total,prev, pager, next, sizes"
+                :current-page="view.Page" :total="view.ResultCnt"/>
 </template>
 
 <style>
