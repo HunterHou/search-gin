@@ -215,8 +215,18 @@
   }">
 
     <div v-if="item" :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'">
+
+      <!-- <el-popover title="Title" :width="200" trigger="contextmenu" placement="right"
+        content="this is content, this is content, this is content">
+        <template #reference>
+          <el-image style="width: 100%; height: 100%" :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
+            @click="openInfoWindow(item.Id)" fit="contain" lazy />
+        </template>
+      </el-popover> -->
       <el-image style="width: 100%; height: 100%" :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
-        @click="openInfoWindow(item.Id)" fit="contain" lazy />
+        @click="openInfoWindow(item.Id)" @contextmenu.prevent.native="() => {
+          openInfoWindow(item.Id)
+        }" fit="contain" lazy />
     </div>
     <div class="image-tool">
       <ElButton type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
@@ -239,15 +249,14 @@
           <Edit />
         </ElIcon>
       </ElButton>
-
-      <ElButton type="danger" plain class="icon-button" title="删除" @click="deleteThis(item.Id, 2)">
-        <ElIcon>
-          <DeleteFilled />
-        </ElIcon>
-      </ElButton>
       <ElButton type="danger" plain class="icon-button" title="刮图" @click="getImageList(item.Id)">
         <ElIcon>
           <Download />
+        </ElIcon>
+      </ElButton>
+      <ElButton type="danger" plain class="icon-button" title="删除" @click="deleteThis(item.Id, 2)">
+        <ElIcon>
+          <DeleteFilled />
         </ElIcon>
       </ElButton>
       <ElButton v-if="!item.MovieType" type="danger" plain class="icon-button" title="同步" @click="syncThis(item.Id)">
@@ -314,7 +323,7 @@
       <div class="context-text" style="font-size: 13px">
         <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}</ElLink>
         <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
-        <ElPopover placement="top" width="460" trigger="hover" :auto-close="1">
+        <ElPopover placement="top" width="400px" trigger="hover" :auto-close="1" :show-after="500">
           <template #reference>
             <span style="color: red"> 【{{ item.SizeStr }}】</span>
           </template>
@@ -322,9 +331,9 @@
             <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}</ElLink>
             <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
             <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
-            <!-- <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
-              【{{ item.SizeStr }}】
-              {{ dateFormat(item.MTime, "yyyy-MM-DD HH:MM") }} -->
+            <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
+            【{{ item.SizeStr }}】
+            {{ useDateFormat(item.MTime, 'YYYY-MM-DD HH:MM', { locales: 'zh-cn' }) }}
             <hr />
             <span style="
                     margin-buttom: 30px;
@@ -423,6 +432,7 @@ import { ResultList } from '@/utils/ResultResponse';
 import { useSystemProperty } from '@/store/System'
 import { useClipboard, onKeyStroke } from '@vueuse/core'
 import { getPng, getJpg } from '@/utils/ImageUtils'
+import { useDateFormat } from '@vueuse/core'
 
 const running = ref(true)
 const loading = ref(false)
@@ -489,11 +499,11 @@ const editItemSubmit = async () => {
   }
   const param = { Id, Name: name, Code: code, Actress };
   const res = await FileRename(param)
-  if (res.Code ==200) {
+  if (res.Code == 200) {
     view.formItem = {};
     view.dialogFormItemVisible = false;
     refreshIndex();
-  }else{
+  } else {
     ElMessage.error(res.Message)
   }
 }
@@ -644,6 +654,18 @@ const queryList = async (params?: any) => {
   if (res) {
     loading.value = false
     const model = res as unknown as ResultList
+    model.Data.map((item) => {
+      if (item.Code == item.Actress) {
+        item.Code = "";
+        item.Actress = "";
+      }
+      if (item.Code.lastIndexOf("-") == item.Code.length - 1) {
+        item.Code = item.Code.substring(0, item.Code.length - 1);
+      }
+      item.name = item.Name.trim();
+      item.Name = item.Name.replace("[" + item.Code + "]", "");
+      item.Name = item.Name.replace("[" + item.Actress + "]", "");
+    })
     view.ModelList = model.Data
     view.TotalCnt = model.TotalCnt
     view.ResultCnt = model.ResultCnt
@@ -704,11 +726,13 @@ const isShowCover = () => {
 }
 
 const openInfoWindow = async (id: string) => {
+  console.log(id)
   const res = await FindFileInfo(id)
+  view.dialogVisible = true;
   view.sourceList = [];
   if (res.Code === 200) {
     view.file = res.Data;
-    view.dialogVisible = true;
+    view.dialogVisible = false;
     loadDirInfo(view.file.Id, true);
   }
 }
