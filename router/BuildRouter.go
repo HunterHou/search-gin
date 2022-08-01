@@ -4,8 +4,9 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"searchGin/config"
 	"searchGin/controller"
+
+	"searchGin/config"
 
 	"github.com/gin-gonic/gin"
 )
