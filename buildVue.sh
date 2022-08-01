@@ -38,7 +38,7 @@ fi
 cd ..
 if [ $levelKey -ge 2 ]; then
     echo 移动完成，打包APP
-    echo 'go build -o app/appVue.exe -ldflags "-H=windowsgui" '
+    echo 'go build -o app/appVue.exe -ldflags -tags=dev"-H=windowsgui" '
     go build -o app/appVue.exe -ldflags -tags=dev "-H=windowsgui"
     echo 移动配置文件 '*.*(1)'
     echo 'cp dirList.ini app/dirList.ini(1)'
