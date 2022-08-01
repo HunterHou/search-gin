@@ -9,7 +9,7 @@
         z-index: 999;
         left: 5px;
       " size="small" type="danger" round v-if="!loading && view.ResultCnt > queryParam.PageSize"
-            @click="pageLoading(-1)"><i class="el-icon-back"></i>上一頁
+    @click="pageLoading(-1)"><i class="el-icon-back"></i>上一頁
   </ElButton>
   <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
   <ElButton v-if="!loading && view.ResultCnt > queryParam.PageSize" style="
@@ -52,7 +52,7 @@
                     </ElCol>
                     <ElCol :span="20">
                       <el-checkbox size="small" :indeterminate="view.isIndeterminateDir" v-model="view.settingCheckAll"
-                                   @change="handleCheckAllChange">全选
+                        @change="handleCheckAllChange">全选
                       </el-checkbox>
                       <el-checkbox-group v-model="view.settingInfo.Dirs" @change="handleCheckedCitiesChange">
                         <el-checkbox v-for="dir in view.settingInfo.DirsLib" :label="dir" :key="dir">{{ dir }}
@@ -99,9 +99,8 @@
 
       <ElCol :span="5">
         <ElAutocomplete id="searchInput" style="min-width: 80px; width: auto" placeholder="请输入关键词"
-                        v-model="queryParam.Keyword" clearable size="small" @change="keywordChange"
-                        @select="selectSuggestion"
-                        :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
+          v-model="queryParam.Keyword" clearable size="small" @change="keywordChange" @select="selectSuggestion"
+          :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
           <template #append>
             <ElButton slot="append" type="primary" size="small" icon="ElIcon-search" @click="
               () => {
@@ -147,7 +146,7 @@
     </ElRow>
   </div>
   <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
-       style="margin-top: 4px; min-height: 700px">
+    style="margin-top: 4px; min-height: 700px">
     <li :class="isShowCover() ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
 
 
@@ -163,8 +162,8 @@
   <ElPopover placement="bottom-start" width="auto" v-model="view.addTagShow" trigger="click" :auto-close="0">
     <template #reference>
       <ElButton :class="isShowCover() ? 'tag-buttom-cover' : 'tag-buttom'" :size="isShowCover() ? 'small' : 'small'"
-                type="warning" @click="()=>{
-          view.addTagShow= !view.addTagShow
+        type="warning" @click="() => {
+          view.addTagShow = !view.addTagShow
         }">
         <b>
           {{ item.MovieType ? item.MovieType : "无" }}
@@ -174,15 +173,15 @@
     <template #default>
       <div v-if="item.MovieType != ''" style="max-width: 300px">
         <ElButton size="small" type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag"
-                  style="margin: 1px 2px" :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
+          style="margin: 1px 2px" :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
           <span style="font-size: 12px">{{ tag }}</span>
         </ElButton>
-        <br/><br/>
+        <br /><br />
         <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
-                        @select="handleSelectTag" size="small" style="width: 240px">
+          @select="handleSelectTag" size="small" style="width: 240px">
           <template #append>
             <ElButton size="small" type="primary" :disabled="customerTagEmpty()" @click="addCustomerTag(item.Id)"
-                      style="font-size: 14px">加
+              style="font-size: 14px">加
             </ElButton>
           </template>
           <template #default="{ item }">
@@ -217,68 +216,68 @@
 
     <div v-if="item" :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'">
       <el-image style="width: 100%; height: 100%" :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
-                @click="openInfoWindow(item.Id)" fit="contain" lazy/>
+        @click="openInfoWindow(item.Id)" fit="contain" lazy />
     </div>
     <div class="image-tool">
       <ElButton type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
         <ElIcon>
-          <VideoPlay/>
+          <VideoPlay />
         </ElIcon>
       </ElButton>
       <ElButton type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
         <ElIcon>
-          <UserFilled/>
+          <UserFilled />
         </ElIcon>
       </ElButton>
       <ElButton type="success" plain class="icon-button" title="文件夹" @click="openThisFolder(item.Id, 2)">
         <ElIcon>
-          <FolderOpened/>
+          <FolderOpened />
         </ElIcon>
       </ElButton>
       <ElButton plain type="success" class="icon-button " title="编辑" @click="editItem(item)">
         <ElIcon>
-          <Edit/>
+          <Edit />
         </ElIcon>
       </ElButton>
 
       <ElButton type="danger" plain class="icon-button" title="删除" @click="deleteThis(item.Id, 2)">
         <ElIcon>
-          <DeleteFilled/>
+          <DeleteFilled />
         </ElIcon>
       </ElButton>
       <ElButton type="danger" plain class="icon-button" title="刮图" @click="getImageList(item.Id)">
         <ElIcon>
-          <Download/>
+          <Download />
         </ElIcon>
       </ElButton>
       <ElButton v-if="!item.MovieType" type="danger" plain class="icon-button" title="同步" @click="syncThis(item.Id)">
         <ElIcon>
-          <Refresh/>
+          <Refresh />
         </ElIcon>
       </ElButton>
 
       <ElButton type="info" plain class="icon-button" v-if="7 < view.showIconNum && notQiBing(item.MovieType)"
-                title="骑兵" @click="setMovieType(item.Id, 2)">
+        title="骑兵" @click="setMovieType(item.Id, 2)">
         <ElIcon>
-          <Bicycle/>
+          <Bicycle />
         </ElIcon>
       </ElButton>
       <ElButton plain type="info" class="icon-button" v-if="notBuBing(item.MovieType) && 7 < view.showIconNum"
-                title="步兵" @click="setMovieType(item.Id, 1)">
+        title="步兵" @click="setMovieType(item.Id, 1)">
         <ElIcon>
-          <Sunny/>
+          <Sunny />
         </ElIcon>
       </ElButton>
       <ElButton plain type="info" class="icon-button" v-if="notNative(item.MovieType) && 7 < view.showIconNum"
-                title="国产" @click="setMovieType(item.Id, 4)">
+        title="国产" @click="setMovieType(item.Id, 4)">
         <ElIcon>
-          <Location/>
+          <Location />
         </ElIcon>
       </ElButton>
       <ElButton plain type="info" class="icon-button" v-if="notSiBaDa(item.MovieType) && 7 < view.showIconNum"
-                title="欧美" @click="setMovieType(item.Id, 3)">
+        title="欧美" @click="setMovieType(item.Id, 3)">
         <ElIcon>
-          <Ship/>
+          <Ship />
         </ElIcon>
       </ElButton>
 
@@ -326,7 +325,7 @@
             <!-- <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
               【{{ item.SizeStr }}】
               {{ dateFormat(item.MTime, "yyyy-MM-DD HH:MM") }} -->
-            <hr/>
+            <hr />
             <span style="
                     margin-buttom: 30px;
                     margin-top: 30px;
@@ -342,9 +341,8 @@
   </el-card>
   </li>
   <ElPagination class="pageTool" v-model:currentPage="queryParam.Page" v-model:page-size="queryParam.PageSize"
-                :page-sizes="[12, 14, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper"
-                :total="view.ResultCnt"
-                @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
+    :page-sizes="[12, 14, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
+    @size-change="handleSizeChange" @current-change="handleCurrentChange" />
   </div>
 
 </template>
@@ -363,10 +361,10 @@ import {
   RefreshIndex,
   AddTag
 } from '@/api/file'
-import {GetSettingInfo, PostSettingInfo} from '@/api/setting'
+import { GetSettingInfo, PostSettingInfo } from '@/api/setting'
 
 
-import {onMounted, reactive, ref} from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import {
   ElRow,
   ElCol,
@@ -382,12 +380,12 @@ import {
   ElDropdownItem,
   ElPagination
 } from 'element-plus';
-import {Eleme} from '@element-plus/icons-vue'
-import {MovieQuery, MovieModel} from '.';
-import {ResultList} from '@/utils/ResultResponse';
-import {useSystemProperty} from '@/store/System'
-import {useClipboard, onKeyStroke} from '@vueuse/core'
-import {getPng, getJpg} from '@/utils/ImageUtils'
+import { Eleme } from '@element-plus/icons-vue'
+import { MovieQuery, MovieModel } from '.';
+import { ResultList } from '@/utils/ResultResponse';
+import { useSystemProperty } from '@/store/System'
+import { useClipboard, onKeyStroke } from '@vueuse/core'
+import { getPng, getJpg } from '@/utils/ImageUtils'
 
 const running = ref(true)
 const loading = ref(false)
@@ -397,7 +395,7 @@ const systemProperty = useSystemProperty()
 
 
 const source = ref('')
-const {copy} = useClipboard({source})
+const { copy } = useClipboard({ source })
 
 const view = reactive<any>({
   file: new MovieModel(),
@@ -422,7 +420,7 @@ onKeyStroke(['Enter'], (e) => {
 const loadSettingInfo = async () => {
   const res = await GetSettingInfo()
   if (res) {
-    view.settingInfo = {DirsCnt: res.Dirs?.length, ...res}
+    view.settingInfo = { DirsCnt: res.Dirs?.length, ...res }
   }
 }
 
@@ -436,11 +434,11 @@ const handleCheckedCitiesChange = (value) => {
   let checkedCount = value.length;
   view.settingCheckAll = checkedCount === view.settingInfo.Dirs.length;
   view.isIndeterminateDir =
-      checkedCount > 0 && checkedCount < view.settingInfo.Dirs.length;
+    checkedCount > 0 && checkedCount < view.settingInfo.Dirs.length;
 }
 
 const settingSubmit = async () => {
-  const postForm = {...view.settingInfo};
+  const postForm = { ...view.settingInfo };
   const res = await PostSettingInfo(postForm)
   console.log(res)
   if (res.Code === 200) {
@@ -471,8 +469,8 @@ const gotoSearch = (tag: string) => {
 const fetchTagsLib = (queryString, callback) => {
   const suggrestTagsLib = view.settingInfo?.TagsLib;
   const results = queryString
-      ? suggrestTagsLib.filter(createFilter(queryString))
-      : suggrestTagsLib;
+    ? suggrestTagsLib.filter(createFilter(queryString))
+    : suggrestTagsLib;
   callback(results);
 }
 const customerTagEmpty = () => {
@@ -508,6 +506,9 @@ const addCustomerTag = (clickId: string) => {
 }
 const handleSelectTag = (item: string) => {
   view.customerTag = item;
+}
+const closeTag = (clickId:string, title:string) => {
+  console.log(clickId, title)
 }
 
 const queryList = async (params?: any) => {
@@ -571,8 +572,8 @@ const fetchSuggestion = (queryString: string, callback) => {
     return
   }
   const results = queryString
-      ? sourceSuggestions.filter(createFilter(queryString))
-      : sourceSuggestions;
+    ? sourceSuggestions.filter(createFilter(queryString))
+    : sourceSuggestions;
   // 调用 callback 返回建议列表的数据
   const finalResults = results.slice(0, 50)
   callback(finalResults)
@@ -643,13 +644,13 @@ const syncThis = async (id: string) => {
 
 const setMovieType = async (id: string, typeId: number) => {
   const movieType =
-      (typeId == 4
-          ? "国产"
-          : typeId == 3
-              ? "斯巴达"
-              : typeId == 1
-                  ? "步兵"
-                  : "骑兵");
+    (typeId == 4
+      ? "国产"
+      : typeId == 3
+        ? "斯巴达"
+        : typeId == 1
+          ? "步兵"
+          : "骑兵");
   const res = await ResetMovieType(id, movieType)
   if (res.Code === 200) {
     ElMessage.success(res.Message)

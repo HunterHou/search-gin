@@ -26,8 +26,8 @@ const SystemProperty = defineStore({
                 Page: 1,
                 PageSize: 14,
                 MovieType: '',
-                SortField: '',
-                SortType: '',
+                SortField: 'MTime',
+                SortType: 'desc',
                 Keyword: '',
                 OnlyRepeat: false
             },
