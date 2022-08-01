@@ -178,11 +178,17 @@ export default {
     },
     queryList(concat) {
       this.dataList = [];
-      let data = new FormData();
-      data.append("pageNo", this.pageNo);
-      data.append("pageSize", this.pageSize);
-      data.append("keywords", this.keywords);
-      data.append("sortType", this.sortType);
+      // let data = new FormData();
+      // data.append("pageNo", this.pageNo);
+      // data.append("pageSize", this.pageSize);
+      // data.append("keywords", this.keywords);
+      // data.append("sortType", this.sortType);
+      let data={
+        Page:this.pageNo,
+        PageSize:this.pageSize,
+        Keyword:this.keywords,
+        SortType:this.sortType,
+      }
       this.loading = true;
       axios.post("api/actressList", data).then((res) => {
         if (res.status === 200) {
