@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import {
   ElButton,
   ElMessage,
-  ElDivider,
   ElTag,
   ElTable,
   ElTableColumn,
@@ -169,7 +168,7 @@ const refreshIndex = async () => {
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column prop="Name" label="操作" header-align="left" align="left" @click="openThis(Name)">
+        <el-table-column prop="Name" label="操作" header-align="left" align="left">
           <template #default="scope">
             <el-button v-if="!scope.row.IsDir" type="success" @click="gotoMenu(scope.row)">前往
             </el-button>

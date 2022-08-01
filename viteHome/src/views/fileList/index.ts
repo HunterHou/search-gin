@@ -15,12 +15,12 @@ class MovieModel{
 }
 
 class MovieQuery extends MovieModel{
-    Page:number=1
-    PageSize:number=14
-    OnlyRepeat:boolean=false
+    Page=1
+    PageSize=14
+    OnlyRepeat=false
     Keyword:string
-    SortField:string='MTime'
-    SortType:string='desc'
+    SortField='MTime'
+    SortType='desc'
 }
 
 export{MovieQuery,MovieModel}

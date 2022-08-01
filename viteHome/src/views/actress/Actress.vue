@@ -1,13 +1,7 @@
 <script setup lang="ts">
 
-import {reactive, onMounted} from 'vue'
-import {
-  ElPagination,
-  ElRadioGroup,
-  ElRow,
-  ElCol,
-  ElRadioButton,
-} from 'element-plus'
+import {onMounted, reactive} from 'vue'
+import {ElCol, ElPagination, ElRadioButton, ElRadioGroup, ElRow,} from 'element-plus'
 import {QueryActressList} from '@/api/actress'
 import {useRouter} from 'vue-router'
 import {useSystemProperty} from '@/store/System'
@@ -19,7 +13,6 @@ const view = reactive({
   CurCnt: 1,
   TotalCnt: 1,
   ResultCnt: 1,
-  CurSizege: 1,
   Page: 1,
   PageSize: 30,
   Keyword: '',

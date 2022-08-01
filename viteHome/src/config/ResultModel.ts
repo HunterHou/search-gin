@@ -1,6 +1,14 @@
-export class ResultEdit<T>{
-    Code:number
-    Message:string
-    Data:T
-    EffectRows:number
+export class ResultEdit {
+    Code: number
+    Message: string
+    Data: any
+    EffectRows: number
+}
+
+export class ResultList {
+    TotalCnt: number
+    Code: number
+    ResultCnt: number
+    CurCnt: number
+    Data: any
 }

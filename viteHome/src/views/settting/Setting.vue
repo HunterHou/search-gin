@@ -1,146 +1,3 @@
-<script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import {
-  ElForm,
-  ElFormItem,
-  ElTabs,
-  ElSelect,
-  ElOption,
-  ElPopover,
-  ElTransfer,
-  ElCheckbox,
-  ElCheckboxGroup,
-  ElInput,
-  ElButton,
-  ElTag,
-  ElLink,
-  ElTabPane
-} from 'element-plus'
-import { PostSettingInfo, GetSettingInfo } from '@/api/setting'
-import { computed } from '@vue/reactivity';
-import { useNow, useDateFormat } from '@vueuse/core'
-const formatted = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss')
-
-const { go } = useRouter()
-const view = reactive({
-  form: {
-    Tags: [],
-    ImageTypes: [],
-    DocsTypes: [],
-    VideoTypes: [],
-    DirsLib: [],
-    Dirs: [],
-    Types: [],
-    BaseDir: [],
-    tagLibData: [],
-    TagsLib: [],
-    Remark: '',
-    SystemInfo: '',
-    BaseUrl: '',
-    OMUrl: '',
-  },
-  inputVisible: false,
-  isIndeterminateDir: false,
-  inputVisibleFile: false,
-  inputValueFile: '',
-  inputValue: '',
-  popTagLibData: [],
-  isIndeterminate: false,
-  loading: false,
-})
-const activeName = ref('first')
-
-let checkAll = computed(() => {
-  return (view.form.Dirs.length === view.form.DirsLib.length)
-})
-const removeTag = (val) => {
-  const idx = view.form.Tags.indexOf(val);
-  view.form.Tags.splice(idx, 1);
-}
-const goMenu = () => {
-  go(-1)
-}
-
-const handleClick = () => { }
-const handleCheckAllChange = (val) => {
-  view.form.Dirs = val ? view.form.DirsLib : [];
-  view.isIndeterminate = false;
-}
-const handleCheckedCitiesChange = (value) => {
-  // let checkedCount = value.length
-  // checkAll = checkedCount === view.form.Dirs.length;
-  // view.isIndeterminate =
-  //   checkedCount > 0 && checkedCount < view.form.Dirs.length;
-}
-const submitForm = async () => {
-  const postForm = { ...view.form, BaseDir: view.form.Dirs };
-  view.loading = true;
-  console.log(postForm);
-  const res = await PostSettingInfo(postForm)
-  if (res) {
-    go(0)
-  }
-}
-const handleClose = (tag) => {
-  view.form.Types.splice(view.form.Types.indexOf(tag), 1);
-}
-
-const showInput = () => {
-  view.inputVisible = true;
-  // view.$nextTick((_) => {
-  //   view.$refs.saveTagInput.$refs.input.focus();
-  // });
-}
-const handleInputConfirm = () => {
-  let inputValue = view.inputValue;
-  if (inputValue) {
-    view.form.Types.push(inputValue);
-  }
-  view.inputVisible = false;
-  view.inputValue = "";
-}
-const showInputFile = () => {
-  view.inputVisibleFile = true;
-  // view.$nextTick((_) => {
-  //   view.$refs.saveTagInputFile.$refs.input.focus();
-  // });
-}
-const handleCloseFile = (tag) => {
-  view.form.BaseDir.splice(view.form.BaseDir.indexOf(tag), 1);
-}
-
-
-const handleInputConfirmFile = () => {
-  let inputValueFile = view.inputValueFile;
-  if (inputValueFile) {
-    view.form.BaseDir.push(inputValueFile);
-  }
-  view.inputVisibleFile = false;
-  view.inputValueFile = "";
-}
-const makeTabLibData = () => {
-  const dataLib = [];
-  const { TagsLib } = view.form;
-  for (var i = 0; i < TagsLib.length; i++) {
-    dataLib.push({ key: TagsLib[i], label: TagsLib[i] });
-  }
-  view.form.tagLibData = dataLib;
-}
-const loadData = async () => {
-  const res = await GetSettingInfo()
-  view.form = res;
-  makeTabLibData()
-}
-
-
-onMounted(() => {
-  document.title = "設置"
-  loadData()
-})
-
-</script>
-
 <template>
   <div align="center" style="margin-top: -30px;">
     <ElForm label-width="160px" ref="form" :model="view.form" label-position="right">
@@ -189,16 +46,14 @@ onMounted(() => {
                       makeTabLibData();
                       view.popTagLibData = view.form.tagLibData;
                     }
-                    ">添加</ElLink>
+                    ">添加
+                    </ElLink>
                   </template>
-
                   <template #default>
                     <ElTransfer :titles="['标签库', '已选']" v-model="view.form.Tags" target-order="push"
                       :data="view.popTagLibData">
                     </ElTransfer>
                   </template>
-
-
                 </ElPopover>
               </div>
             </ElFormItem>
@@ -276,6 +131,139 @@ onMounted(() => {
   </div>
 </template>
 
+<script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import {
+  ElForm,
+  ElFormItem,
+  ElTabs,
+  ElSelect,
+  ElOption,
+  ElPopover,
+  ElTransfer,
+  ElCheckbox,
+  ElCheckboxGroup,
+  ElInput,
+  ElButton,
+  ElTag,
+  ElLink,
+  ElTabPane
+} from 'element-plus'
+import { PostSettingInfo, GetSettingInfo } from '@/api/setting'
+import { computed } from 'vue'
+import { useNow, useDateFormat } from '@vueuse/core'
+import { SettingInfo } from "@/views/settting/index";
+
+const formatted = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss')
+
+const { go } = useRouter()
+const view = reactive({
+  form: new SettingInfo(),
+  inputVisible: false,
+  isIndeterminateDir: false,
+  inputVisibleFile: false,
+  inputValueFile: '',
+  inputValue: '',
+  popTagLibData: [],
+  isIndeterminate: false,
+  loading: false,
+})
+const activeName = ref('first')
+
+let checkAll = computed(() => {
+  return (view.form.Dirs.length === view.form.DirsLib.length)
+})
+const removeTag = (val) => {
+  const idx = view.form.Tags.indexOf(val);
+  view.form.Tags.splice(idx, 1);
+}
+const goMenu = () => {
+  go(-1)
+}
+
+const handleClick = () => {
+  console.log('val')
+}
+const handleCheckAllChange = (val) => {
+  view.form.Dirs = val ? view.form.DirsLib : [];
+  view.isIndeterminate = false;
+}
+const handleCheckedCitiesChange = (value) => {
+  console.log(value);
+
+  // let checkedCount = value.length
+  // checkAll = checkedCount === view.form.Dirs.length;
+  // view.isIndeterminate =
+  //   checkedCount > 0 && checkedCount < view.form.Dirs.length;
+}
+const submitForm = async () => {
+  const postForm = { ...view.form, BaseDir: view.form.Dirs };
+  view.loading = true;
+  console.log(postForm);
+  const res = await PostSettingInfo(postForm)
+  if (res) {
+    go(0)
+  }
+}
+const handleClose = (tag) => {
+  view.form.Types.splice(view.form.Types.indexOf(tag), 1);
+}
+
+const showInput = () => {
+  view.inputVisible = true;
+  // view.$nextTick((_) => {
+  //   view.$refs.saveTagInput.$refs.input.focus();
+  // });
+}
+const handleInputConfirm = () => {
+  let inputValue = view.inputValue;
+  if (inputValue) {
+    view.form.Types.push(inputValue);
+  }
+  view.inputVisible = false;
+  view.inputValue = "";
+}
+const showInputFile = () => {
+  view.inputVisibleFile = true;
+  // view.$nextTick((_) => {
+  //   view.$refs.saveTagInputFile.$refs.input.focus();
+  // });
+}
+const handleCloseFile = (tag) => {
+  view.form.BaseDir.splice(view.form.BaseDir.indexOf(tag), 1);
+}
+
+
+const handleInputConfirmFile = () => {
+  let inputValueFile = view.inputValueFile;
+  if (inputValueFile) {
+    view.form.BaseDir.push(inputValueFile);
+  }
+  view.inputVisibleFile = false;
+  view.inputValueFile = "";
+}
+const makeTabLibData = () => {
+  const dataLib = [];
+  const { TagsLib } = view.form;
+  for (var i = 0; i < TagsLib.length; i++) {
+    dataLib.push({ key: TagsLib[i], label: TagsLib[i] });
+  }
+  view.form.tagLibData = dataLib;
+}
+const loadData = async () => {
+  const res = await GetSettingInfo()
+  view.form = res;
+  makeTabLibData()
+}
+
+
+onMounted(() => {
+  document.title = "設置"
+  loadData()
+})
+
+</script>
 
 <style scoped>
 .return {

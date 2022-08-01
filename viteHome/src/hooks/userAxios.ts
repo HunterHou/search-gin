@@ -1,7 +1,7 @@
 import { server } from "../config/axios";
 import { config } from "../config/axios/config";
 import { AxiosPromise } from 'axios'
-import { ResultEdit } from "../config/axios/ResultModel";
+import { ResultEdit } from "../config/ResultModel";
 
 const request =(options:AxiosConfig)=>{
     const { url, method, params, data, headersType, responseType } = options

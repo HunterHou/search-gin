@@ -34,7 +34,7 @@ export function dateFormat(date?: any, format?: string)  {
     else {}
     // 没有分隔符的特殊处理
 
-    var map = {
+    const map = {
         "y": date.getFullYear() + "", // 年份
         "M": date.getMonth() + 1 + "", // 月份
         "d": date.getDate() + "", // 日
@@ -53,9 +53,9 @@ export function dateFormat(date?: any, format?: string)  {
     }
     map["H"] += "";
 
-    var reg = "yMdHhmsqf";
-    var all = "", str = "";
-    for(var i = 0, n = 0; i < reg.length; i++) {
+    const reg = "yMdHhmsqf";
+    let all = "", str = "";
+    for(let i = 0, n = 0; i < reg.length; i++) {
         n = format.indexOf(reg[i]);
         if(n < 0) {
             continue;

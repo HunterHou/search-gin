@@ -1,2 +1,2 @@
-export const SUCCESS: string = '200'
-export const FAIL: string = '400'
+export const SUCCESS = '200'
+export const FAIL = '400'
