@@ -67,6 +67,11 @@ export const AddTag = async (clickId: string, title: string) => {
     return res
 }
 
+export const FileRename = async (data: any) => {
+    const res = await request.post({url: `/api/file/rename`,data})
+    return res as unknown as ResultEdit
+}
+
 
 export const OpenFolerByPath = async (data: any) => {
     const res = await request.post({url: `/api/OpenFolerByPath`, data})

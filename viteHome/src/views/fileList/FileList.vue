@@ -345,6 +345,41 @@
     @size-change="handleSizeChange" @current-change="handleCurrentChange" />
   </div>
 
+
+  <ElDialog title="文件信息" v-model="view.dialogFormItemVisible" :close-on-press-escape="false"
+    :close-on-click-modal="false">
+    <el-form label-position="right" :model="view.formItem" size="small" label-width="18%">
+      <el-form-item label="类型">
+        <el-radio-group v-model="view.formItem.MovieType" @change="formMovieTypeChange" size="small">
+          <el-radio-button label="">无</el-radio-button>
+          <el-radio-button label="骑兵">骑</el-radio-button>
+          <el-radio-button label="步兵">步</el-radio-button>
+          <el-radio-button label="国产">国</el-radio-button>
+          <el-radio-button label="斯巴达">欧</el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="脸谱">
+        <el-input v-model="view.formItem.Actress" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="编码">
+        <el-input v-model="view.formItem.Code" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="文件名称">
+        <el-input type="textarea" v-model="view.formItem.Name" autocomplete="off"></el-input>
+        <!-- {{formItem.Title}} -->
+      </el-form-item>
+      <!-- <el-form-item label="标签">
+        <el-tag v-for="tag in view.formItem.Tags" :key="tag" effect="dark" closable style="margin-right: 8px" type=""
+          size="small" @close="removeFormTag(tag)">
+          {{ tag }}
+        </el-tag>
+      </el-form-item> -->
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="view.dialogFormItemVisible = false">取 消</el-button>
+      <el-button type="primary" @click="editItemSubmit">确 定</el-button>
+    </div>
+  </ElDialog>
 </template>
 <script setup lang="ts">
 import {
@@ -359,6 +394,7 @@ import {
   SyncFileInfo,
   ResetMovieType,
   RefreshIndex,
+  FileRename,
   AddTag
 } from '@/api/file'
 import { GetSettingInfo, PostSettingInfo } from '@/api/setting'
@@ -369,6 +405,7 @@ import {
   ElRow,
   ElCol,
   ElLink,
+  ElDialog,
   ElBacktop,
   ElPopover,
   ElDivider,
@@ -398,7 +435,8 @@ const source = ref('')
 const { copy } = useClipboard({ source })
 
 const view = reactive<any>({
-  file: new MovieModel(),
+  formItem: new MovieModel(),
+  dialogFormItemVisible: false,
   addTagShow: false,
   settingInfo: {},
   showIconNum: 6,
@@ -416,6 +454,72 @@ onKeyStroke(['`'], (e) => {
 onKeyStroke(['Enter'], (e) => {
   queryList()
 })
+
+
+const editItemSubmit = async () => {
+  const { Id, Name, Code, Actress } = view.formItem;
+  const code = Code.trim()
+  let name = "";
+  if (Actress.length != 0) {
+    name += "[" + Actress.trim() + "]";
+  }
+  if (code.length != 0) {
+    name += " [" + code.trim() + "]";
+  }
+  const arr = Name.trim().split(".");
+  const arrLength = arr.length;
+  for (let idx = 0; idx < arrLength; idx++) {
+    const str = arr[idx];
+
+    if (idx == arrLength - 1) {
+      name += "." + str;
+    } else if (idx == 0) {
+      const strNew = str.replace(
+        str.charAt(0),
+        str.charAt(0).toUpperCase()
+      );
+      name += strNew;
+    } else {
+      const strNew = str.replace(
+        str.charAt(0),
+        str.charAt(0).toUpperCase()
+      );
+      name += " " + strNew;
+    }
+  }
+  const param = { Id, Name: name, Code: code, Actress };
+  const res = await FileRename(param)
+  if (res.Code ==200) {
+    view.formItem = {};
+    view.dialogFormItemVisible = false;
+    refreshIndex();
+  }else{
+    ElMessage.error(res.Message)
+  }
+}
+
+const editItem = (item: MovieModel) => {
+  view.formItem = item;
+  view.dialogFormItemVisible = true;
+}
+
+const formMovieTypeChange = () => {
+  let { MovieType, Name, FileType } = view.formItem;
+  let newName = "";
+  if (Name.indexOf("{{") >= 0) {
+    const startC = Name.substr(0, Name.indexOf("{{"));
+    const endC = Name.substr(Name.indexOf("}}") + 2, Name.length);
+    newName = startC;
+    if (MovieType && MovieType !== "") {
+      newName += "{{" + MovieType + "}}";
+    }
+    newName += endC;
+  } else {
+    newName = Name.replaceAll("." + FileType, "");
+    newName = newName + "{{" + MovieType + "}}" + "." + FileType;
+  }
+  view.formItem.Name = newName;
+}
 
 const loadSettingInfo = async () => {
   const res = await GetSettingInfo()
@@ -507,7 +611,7 @@ const addCustomerTag = (clickId: string) => {
 const handleSelectTag = (item: string) => {
   view.customerTag = item;
 }
-const closeTag = (clickId:string, title:string) => {
+const closeTag = (clickId: string, title: string) => {
   console.log(clickId, title)
 }
 
@@ -698,10 +802,7 @@ const heartBeat = async () => {
 
 }
 
-const editItem = (item: MovieModel) => {
-  view.formItem = item;
-  view.dialogFormItemVisible = true;
-}
+
 
 const deleteThis = async (id: string, a?: number) => {
   ElMessageBox.alert('此操作将永久删除该文件, 是否继续?', '提示', {
