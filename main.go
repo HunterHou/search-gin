@@ -18,7 +18,7 @@ import (
 
 // 打包命令
 // 1 命令行UI 常规打包 go build
-// 2 无窗口  go build -o app/appVue.exe -ldflags "-H=windowsgui"
+// 2 无窗口  go build -o viteApp/appVite.exe -ldflags  "-H=windowsgui" -tags=prod
 
 func init() {
 	curDir, _ := filepath.Abs(".")

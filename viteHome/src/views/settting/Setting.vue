@@ -78,23 +78,22 @@
             <ElFormItem label="OM-URL">
               <ElInput v-model="view.form.OMUrl" style="width: 90%"></ElInput>
             </ElFormItem>
-
             <ElFormItem label="枚举文件类型">
-              <ElSelect v-model="view.form.Types" multiple :filterable="true" allow-create default-first-option
-                placeholder="请添加类型" style="width: 90%;height: auto;" size="large">
+              <ElSelect v-model="view.form.Types" multiple filterable allowCreate defaultFirstOption
+                placeholder="请添加类型" style="width: 90%" size="small">
                 <ElOption v-for="item in view.form.Types" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="标签库">
-              <ElSelect v-model="view.form.TagsLib" multiple :filterable="true" allow-create default-first-option
-                placeholder="请添加标签" style="width: 90%;height: auto;" size="large">
+              <ElSelect v-model="view.form.TagsLib" multiple filterable allowCreate defaultFirstOption
+                placeholder="请添加标签" style="width: 90%" size="small">
                 <ElOption v-for="item in view.form.Tags" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="路徑库">
-              <ElSelect v-model="view.form.DirsLib" multiple :filterable="true" allow-create default-first-option
+              <ElSelect v-model="view.form.DirsLib" multiple :filterable="true" allowCreate defaultFirstOption
                 placeholder="请添加路径" style="width: 90%">
                 <ElOption v-for="item in view.form.Dirs" :key="item" :label="item" :value="item">
                 </ElOption>
@@ -169,10 +168,10 @@ const view = reactive({
   isIndeterminate: false,
   loading: false,
 })
-const activeName = ref('first')
+const activeName = ref('second')
 
 let checkAll = computed(() => {
-  return (view.form.Dirs.length === view.form.DirsLib.length)
+  return (view.form?.Dirs?.length === view.form?.DirsLib?.length)
 })
 const removeTag = (val) => {
   const idx = view.form.Tags.indexOf(val);
