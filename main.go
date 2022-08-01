@@ -52,8 +52,6 @@ func main() {
 	//默认启动页面
 	go service.HeartBeat()
 
-	//启动服务
-	// app.Run(cons.PortNo)
 	g.Go(func() error {
 		return server01.ListenAndServe()
 	})
@@ -65,5 +63,8 @@ func main() {
 	}
 	url := "http://127.0.0.1" + cons.PortNo + "/"
 	go utils.ExecCmdStart(url)
+
+	//启动服务
+	// app.Run(cons.PortNo)
 
 }

@@ -1,11 +1,17 @@
-import {createApp} from 'vue'
+import { createApp} from 'vue'
 import './style.css'
-import App from './App.vue'
-import {router} from './route'
-import  elementPlus  from 'element-plus'
-import 'element-plus/dist/index.css'
+import Main from './App.vue'
 
-const app = createApp(App)
-app.use(router)
-app.use(elementPlus,{size:'small'})
+import {StoreSetup} from './store/pinia'
+import {RouterSetup} from './route'
+import {ElementSetup} from './plugin/element'
+
+const AppInit = (app:any) => {
+    RouterSetup(app)
+    StoreSetup(app)
+    ElementSetup(app)
+}
+
+const app = createApp(Main)
+AppInit(app)
 app.mount('#app')

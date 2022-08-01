@@ -2,11 +2,13 @@
 /search.iml
 /app/app.exe
 app/
+viteApp/
 app.exe
 .vscode/settings.json
 client/node_modules/
 node_modules/
 /app/
+vuehome/dist/
 /vuehome/.nuxt
 __debug_bin
 election/src/
@@ -14,3 +16,4 @@ searchGin
 gin.log
 /gin.log
 searchGin
+searchGin-journal

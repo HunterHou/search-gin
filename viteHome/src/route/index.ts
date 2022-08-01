@@ -20,7 +20,8 @@ export const staticRoutes: RouteRecordRaw[] = [
         component: HomeVue,
         name: 'home',
         meta: {
-            title: '首页'
+            title: '首页',
+            hidden: true
         }
     },
     {
@@ -59,6 +60,6 @@ export const router = createRouter({
 })
 
 
-export const setupRouter = (app : App < Element >) => {
+export const RouterSetup = (app : App < Element >) => {
     app.use(router)
 }

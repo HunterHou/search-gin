@@ -20,6 +20,7 @@ func BuildRouter() *gin.Engine {
 
 	// router.StaticFS("/static", http.Dir("static"))
 	router.StaticFS("/_nuxt", http.Dir("./vuehome/dist/_nuxt"))
+	router.StaticFS("/assert", http.Dir("./vitehome/dist/assert"))
 	router.LoadHTMLFiles("./vuehome/dist/index.html")
 	// router.LoadHTMLGlob("vuehome/dist/*")
 

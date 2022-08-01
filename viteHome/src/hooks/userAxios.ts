@@ -1,6 +1,7 @@
 import { server } from "../config/axios";
 import { config } from "../config/axios/config";
 import { AxiosPromise } from 'axios'
+import { ResultEdit } from "../config/axios/ResultModel";
 
 const request =(options:AxiosConfig)=>{
     const { url, method, params, data, headersType, responseType } = options
@@ -16,8 +17,8 @@ const request =(options:AxiosConfig)=>{
     })
 }
 
-function getFn<T = any>(option: AxiosConfig): AxiosPromise<T> {
-    return request({ method: 'get', ...option })
+function getFn<T = any>(option: AxiosConfig): ResultEdit<T> {
+    return request({ method: 'get', ...option }) as unknown as ResultEdit<any>
   }
   
   function postFn<T = any>(option: AxiosConfig): AxiosPromise<T> {
