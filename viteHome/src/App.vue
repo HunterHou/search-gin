@@ -9,10 +9,12 @@ import HeaderVue from './components/Header/Header.vue';
     <ElHeader>
       <HeaderVue />
     </ElHeader>
-    <ElMain>
+    <div class="main">
       <RouterView></RouterView>
-    </ElMain>
-    <ElFooter><hr></ElFooter>
+    </div>
+    <ElFooter>
+      <hr>
+    </ElFooter>
   </ElContainer>
 </template>
 <style>
@@ -26,5 +28,11 @@ html {
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
   --el-header-height: 48px;
+}
+
+.main {
+  padding-right: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
 }
 </style>
