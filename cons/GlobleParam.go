@@ -156,3 +156,10 @@ const JAVA = "java"
 const XML = "xml"
 
 var Types = []string{PNG, JPG, GIF, XLSX, TXT, MP4, WMV, MKV, AVI, JAVA, XML}
+
+
+var IndexHtml = "./vitehome/dist/index.html"
+var StaticFs = map[string]string{
+	"/css": "./vitehome/dist/css",
+	"/js":  "./vitehome/dist/js",
+}

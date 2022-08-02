@@ -389,6 +389,39 @@
       <el-button type="primary" @click="editItemSubmit">确 定</el-button>
     </div>
   </ElDialog>
+  <ElDialog width="66%" :modal="true" :lock-scroll="true" :title="view.formItem.Title" :visible.sync="view.dialogVisible">
+    <div v-if="view.formItem">
+      <div border="1">
+        <el-image :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto"
+          @click="gotoContext(view.formItem.Id)" />
+        <ElRow :gutter="24">
+          <ElCol :span="4" tyle="text-align:right">
+            YY：
+            <a href="javascript:void(0);" @click="openSearch(view.formItem.Actress)">
+              <span>{{ view.formItem.Actress }}</span></a>
+          </ElCol>
+          <ElCol :span="8">
+            Code：
+            <a href="javascript:void(0);" @click="openLick(view.formItem.Code)"><span>{{ view.formItem.Code }}</span></a>
+          </ElCol>
+          <ElCol :span="12">
+            <span @click="gotoContext(view.formItem.Id)">大小：【{{ view.formItem.SizeStr }}】</span>
+            <span>时间：{{ useDateFormat(view.formItem.MTime,"yyyy-MM-DD") }}</span>
+          </ElCol>
+        </ElRow>
+        <ElRow :gutter="20">
+          <ElCol :span="20">
+            <span>源：</span> <span>{{ view.formItem.Path }}</span>
+          </ElCol>
+        </ElRow>
+        <el-divider></el-divider>
+      </div>
+    </div>
+    <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 10px auto">
+      <el-image style="min-width: 800px; margin: 0 auto" :src="item" :preview-src-list="view.sourceList" lazy>
+      </el-image>
+    </div>
+  </ElDialog>
 </template>
 <script setup lang="ts">
 import {
@@ -465,6 +498,15 @@ onKeyStroke(['Enter'], (e) => {
   queryList()
 })
 
+const gotoContext = (id:string) => { 
+    console.log('gotoContext',id)
+}
+const openSearch = (name:string){ 
+console.log('gotoContext',id)
+}
+const openLick = (code: string){ 
+console.log('gotoContext',id)
+}
 
 const editItemSubmit = async () => {
   const { Id, Name, Code, Actress } = view.formItem;

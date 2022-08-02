@@ -1,6 +1,4 @@
-//go:build prod
-
-package config
+package conf
 
 var IndexHtml = "./vitehome/dist/index.html"
 var StaticFs = map[string]string{
