@@ -8,6 +8,7 @@ app.exe
 client/node_modules/
 node_modules/
 /app/
+vitehome/dist/
 vuehome/dist/
 /vuehome/.nuxt
 __debug_bin
