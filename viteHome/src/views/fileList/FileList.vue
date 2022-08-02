@@ -120,7 +120,7 @@
             </template>
           </ElAutocomplete>
         </ElCol>
-        x:{{ x }} y:{{ y }} {{ pressed}}
+        <!-- x:{{ x }} y:{{ y }} {{ pressed}} -->
       </ElRow>
       <ElRow style="margin-top: 4px">
         <ElCol :span="3" :offset="1">
