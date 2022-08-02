@@ -389,7 +389,8 @@
       <el-button type="primary" @click="editItemSubmit">确 定</el-button>
     </div>
   </ElDialog>
-  <ElDialog width="66%" :modal="true" :lock-scroll="true" :title="view.formItem.Title" :visible.sync="view.dialogVisible">
+  <ElDialog width="66%" :modal="true" :lock-scroll="true" :title="view.formItem.Title"
+    :visible.sync="view.dialogVisible">
     <div v-if="view.formItem">
       <div border="1">
         <el-image :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto"
@@ -402,11 +403,12 @@
           </ElCol>
           <ElCol :span="8">
             Code：
-            <a href="javascript:void(0);" @click="openLick(view.formItem.Code)"><span>{{ view.formItem.Code }}</span></a>
+            <a href="javascript:void(0);" @click="openLick(view.formItem.Code)"><span>{{ view.formItem.Code
+            }}</span></a>
           </ElCol>
           <ElCol :span="12">
             <span @click="gotoContext(view.formItem.Id)">大小：【{{ view.formItem.SizeStr }}】</span>
-            <span>时间：{{ useDateFormat(view.formItem.MTime,"yyyy-MM-DD") }}</span>
+            <span>时间：{{ useDateFormat(view.formItem.MTime, "yyyy-MM-DD") }}</span>
           </ElCol>
         </ElRow>
         <ElRow :gutter="20">
@@ -498,14 +500,14 @@ onKeyStroke(['Enter'], (e) => {
   queryList()
 })
 
-const gotoContext = (id:string) => { 
-    console.log('gotoContext',id)
+const gotoContext = (id: string) => {
+  console.log('gotoContext', id)
 }
-const openSearch = (name:string){ 
-console.log('gotoContext',id)
+const openSearch = (name: string) => {
+  console.log('gotoContext', name)
 }
-const openLick = (code: string){ 
-console.log('gotoContext',id)
+const openLick = (code: string) => {
+  console.log('gotoContext', code)
 }
 
 const editItemSubmit = async () => {
