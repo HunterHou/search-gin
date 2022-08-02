@@ -120,7 +120,7 @@
             </template>
           </ElAutocomplete>
         </ElCol>
-        x:{{ x }} y:{{ y }}
+        x:{{ x }} y:{{ y }} {{ pressed}}
       </ElRow>
       <ElRow style="margin-top: 4px">
         <ElCol :span="3" :offset="1">
@@ -152,12 +152,12 @@
       </ElRow>
     </div>
     <ElCard id="cmenu" class="cmenu" v-show="cmenuShow" ref="target" :body-style="{ padding: '4px' }">
-      <ElSpace direction="vertical" size="large" :fill="true">
-        <!-- <ElButton class="cmenuButton" @click="cmenuSync">同步</ElButton>
+      <!-- <ElSpace direction="vertical" size="large" :fill="true">
+        <ElButton class="cmenuButton" @click="cmenuSync">同步</ElButton>
       <ElButton class="cmenuButton" @click="cmenuCode">源链接</ElButton>
       <ElButton class="cmenuButton" @click="cmenuPlay">播放</ElButton>
-      <ElButton class="cmenuButton" @click="cmenuOpenDir">打开</ElButton> -->
-      </ElSpace>
+      <ElButton class="cmenuButton" @click="cmenuOpenDir">打开</ElButton>
+      </ElSpace> -->
       <ElRow :span="2">
         <ElCol>
           <ElButton class="cmenuButton" @click="cmenuSync">同步</ElButton>
@@ -539,8 +539,10 @@ const queryParam = reactive<MovieQuery>(new MovieQuery())
 
 // 鼠标移出右键菜单
 watch(pressed, (newVal) => {
-  if (pressed) {
-    cmenuShow.value = false
+  if (pressed && cmenuShow) {
+    setTimeout(() => {
+      cmenuShow.value = false
+    }, 4000);
   }
 })
 
@@ -557,21 +559,20 @@ const imageContextmenu = (item) => {
   view.contextmenuTarget = item
   document.getElementById("cmenu").style.marginLeft = (x.value - 30 + 'px')
   document.getElementById("cmenu").style.marginTop = (y.value - 150 + 'px')
-  console.log('imageContextmenu', x.value, y.value, item.Id)
 }
 
 
-const cmenuSync = () => {
+const cmenuSync = async () => {
   syncThis(view.contextmenuTarget.Id)
 }
-const cmenuCode = () => {
+const cmenuCode = async () => {
   javCode(view.contextmenuTarget.Code)
 }
-const cmenuPlay = () => {
+const cmenuPlay = async () => {
   playThis(view.contextmenuTarget.Id)
 }
-const cmenuOpenDir = () => {
-  openThisFolder(view.contextmenuTarget.Code)
+const cmenuOpenDir = async () => {
+  openThisFolder(view.contextmenuTarget.Id)
 }
 
 
@@ -677,7 +678,6 @@ const handleCheckedCitiesChange = (value) => {
 const settingSubmit = async () => {
   const postForm = { ...view.settingInfo };
   const res = await PostSettingInfo(postForm)
-  console.log(res)
   if (res.Code === 200) {
     view.settingInfoShow = false
     ElMessage.success(res.Message)
@@ -869,7 +869,6 @@ const loadDirInfo = async (id: string, loading: boolean) => {
     }
     if (loading) {
       view.sourceList = view.imageList;
-      console.log(view.sourceList)
     }
   }
 }
@@ -926,6 +925,7 @@ const thisActress = async (actress: string) => {
 }
 
 const openThisFolder = async (id: string, a?: number) => {
+  console.log('openThisFolder',id,'a',a)
   const res = await OpenFileFolder(id)
   if (res.Code === 200) {
     ElMessage.success(res.Message)
