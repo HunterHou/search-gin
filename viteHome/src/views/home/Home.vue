@@ -15,7 +15,7 @@ import { TypeSizeMap, TagSizeMap, ScanTime } from '@/api/home'
 
 import { useSystemProperty } from '@/store/System'
 
-const { push } = useRouter()
+const { push,go } = useRouter()
 const systemProperty = useSystemProperty()
 document.title = "首页";
 const indexLoading = ref(false)
@@ -81,6 +81,7 @@ const deleteThis = async (index, data?) => {
   const res = await DeleteFolerByPath({ dirpath: Name })
   if (res.Code == 200) {
     ElMessage.success('执行成功')
+    go(0)
   } else {
     ElMessage.error('执行失败')
   }
