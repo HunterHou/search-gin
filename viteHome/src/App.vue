@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ElContainer, ElHeader } from 'element-plus';
-import HeaderVue from './components/Header/Header.vue';
-
+import { ElContainer, ElHeader } from "element-plus";
+import HeaderVue from "./components/Header/Header.vue";
 </script>
 
 <template>
@@ -13,7 +12,7 @@ import HeaderVue from './components/Header/Header.vue';
       <RouterView></RouterView>
     </div>
     <ElFooter>
-      <hr>
+      <hr />
     </ElFooter>
   </ElContainer>
 </template>
