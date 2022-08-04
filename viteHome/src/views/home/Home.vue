@@ -35,8 +35,7 @@ const folderGotoMenu = (Name) => {
 };
 const gotoMenu = (data) => {
   const { IsDir, Name } = data;
-  const keywords = !IsDir ? "" : Name;
-  const movieType = !IsDir && Name != "全部" ? Name : "";
+  const movieType = (!IsDir && Name !== '全部') ? Name : "";
   systemProperty.setPage(1);
   systemProperty.setKeyword(Name);
   systemProperty.setMovieType(movieType);
@@ -78,7 +77,7 @@ const deleteThis = async (index, data?) => {
   const res = await DeleteFolerByPath({ dirpath: Name });
   if (res.Code == 200) {
     ElMessage.success("执行成功");
-    go(0);
+    refreshIndex()
   } else {
     ElMessage.error("执行失败");
   }
@@ -88,43 +87,33 @@ const refreshIndex = async () => {
   const res = await RefreshIndex();
   if (res.Code == 200) {
     view.indexLoading = false;
-    loadTagSize();
     ElMessage.success("执行成功");
+    f5()
   } else {
     ElMessage.error("执行失败");
   }
 };
+
+const f5 = () => {
+  setTimeout(() => {
+    window.location.href = "/home";
+  }, 200);
+}
 </script>
 
 <template>
   <div>
-    <h4 align="center" style="margin-top: -20px">
+    <h4 align="center">
       掃描结果分析
-      <el-button
-        type="primary"
-        :loading="indexLoading"
-        size="small"
-        @click="refreshIndex()"
-        >重建索引
+      <el-button type="primary" :loading="indexLoading" size="small" @click="refreshIndex()">重建索引
       </el-button>
     </h4>
-    <div
-      class="d-tag"
-      style="background: white"
-      v-if="tagData && tagData.length > 0"
-    >
-      <el-link
-        v-for="tag in tagData"
-        :key="tag.Name"
-        class="e-tag"
-        :underline="false"
-      >
+    <div class="d-tag" style="background: white" v-if="tagData && tagData.length > 0">
+      <el-link v-for="tag in tagData" :key="tag.Name" class="d-tag" :underline="false">
         <el-tag size="default" :value="tag.Cnt" @click="gotoMenu(tag)">
           <el-badge :value="tag.Cnt">
             <span style="font-size: 10px">
-              <b
-                >{{ tag.Name }} (<i>{{ tag.SizeStr }}</i
-                >)
+              <b>{{ tag.Name }} (<i>{{ tag.SizeStr }}</i>)
               </b>
             </span>
           </el-badge>
@@ -135,35 +124,21 @@ const refreshIndex = async () => {
       <el-table :data="scanTime" align="center" :stripe="true">
         <el-table-column label="文件夹" header-align="left" align="left">
           <template #default="scope">
-            <el-link
-              :title="scope.row.Name"
-              @click="folderGotoMenu(scope.row.Name)"
-            >
+            <el-link :title="scope.row.Name" @click="folderGotoMenu(scope.row.Name)">
               {{ scope.row.Name }}
             </el-link>
           </template>
         </el-table-column>
         <el-table-column label="数量" header-align="right" align="right">
           <template #default="scope">
-            <el-link
-              :title="scope.row.Size"
-              @click="folderGotoMenu(scope.row.Size)"
-            >
+            <el-link :title="scope.row.Size" @click="folderGotoMenu(scope.row.Size)">
               {{ scope.row.Size }}
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column
-          label="耗时"
-          width="80px"
-          header-align="right"
-          align="right"
-        >
+        <el-table-column label="耗时" width="80px" header-align="right" align="right">
           <template #default="scope">
-            <el-link
-              :title="scope.row.Cnt"
-              @click="folderGotoMenu(scope.row.Name)"
-            >
+            <el-link :title="scope.row.Cnt" @click="folderGotoMenu(scope.row.Name)">
               {{ scope.row.Cnt }}&nbsp;ms
             </el-link>
           </template>
@@ -172,19 +147,8 @@ const refreshIndex = async () => {
     </li>
 
     <li class="d-table d-li">
-      <el-table
-        :data="tableData"
-        align="center"
-        style="margin: 20px auto"
-        :stripe="true"
-        border
-      >
-        <el-table-column
-          label="结果集"
-          header-align="left"
-          min-width="250px"
-          align="left"
-        >
+      <el-table :data="tableData" align="center" style="margin: 20px auto" :stripe="true" border>
+        <el-table-column label="结果集" header-align="left" min-width="250px" align="left">
           <template #default="scope">
             <el-link :title="scope.row.Name" @click="gotoMenu(scope.row)">
               {{ scope.row.Name }}
@@ -205,32 +169,13 @@ const refreshIndex = async () => {
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="Name"
-          label="操作"
-          header-align="left"
-          align="left"
-        >
+        <el-table-column prop="Name" label="操作" header-align="left" align="left">
           <template #default="scope">
-            <el-button
-              v-if="!scope.row.IsDir"
-              type="success"
-              @click="gotoMenu(scope.row)"
-              >前往
+            <el-button v-if="!scope.row.IsDir" type="success" @click="gotoMenu(scope.row)">前往
             </el-button>
-            <el-button
-              size="small"
-              v-if="scope.row.IsDir"
-              type="info"
-              @click="openThis(scope.$index, scope.row)"
-              >打开
+            <el-button size="small" v-if="scope.row.IsDir" type="info" @click="openThis(scope.$index, scope.row)">打开
             </el-button>
-            <el-button
-              size="small"
-              v-if="scope.row.IsDir"
-              type="danger"
-              @click="deleteThis(scope.$index, scope.row)"
-              >删除
+            <el-button size="small" v-if="scope.row.IsDir" type="danger" @click="deleteThis(scope.$index, scope.row)">删除
             </el-button>
           </template>
         </el-table-column>
@@ -247,7 +192,7 @@ const refreshIndex = async () => {
 }
 
 .d-tag {
-  margin: 10px 8px;
+  margin: 4px 12px;
   padding: 8px 8px;
 }
 
