@@ -444,14 +444,14 @@
             {{ tag }}
           </ElTag>
           <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
-            @select="handleSelectTag" size="small" style="width: 240px">
+            @select="handleSelectTag" size="small" style="width: 160px">
             <template #append>
               <ElButton size="default" type="primary" :disabled="customerTagEmpty()" @click="addThisCustomerTag"
-                style="font-size: 14px">加
+                style="font-size: 12px">加
               </ElButton>
             </template>
             <template #default="{ item }">
-              <div v-if="item" style="font-size: 14px" class="value">
+              <div v-if="item" style="font-size: 12px" class="value">
                 {{ item }}
               </div>
             </template>
@@ -517,6 +517,7 @@ import {
   RefreshIndex,
   FileRename,
   AddTag,
+CloseTag,
 } from "@/api/file";
 import { GetSettingInfo, PostSettingInfo } from "@/api/setting";
 
@@ -649,18 +650,18 @@ const addThisCustomerTag = () => {
   }
   console.log(view.customerTag)
   view.formItem.Tags.push(view.customerTag)
-  view.customerTag=undefined
+  view.customerTag = undefined
   formItemTagsChange()
 }
 
 const formItemTagsChange = () => {
-  let {  Name, Tags,FileType } = view.formItem;
+  let { Name, Tags, FileType } = view.formItem;
   let newName = "";
   if (Name.indexOf("《") >= 0) {
-    const startC = Name.substr(0, Name.indexOf("《")+1);
+    const startC = Name.substr(0, Name.indexOf("《") + 1);
     const endC = Name.substr(Name.indexOf("》"), Name.length);
     newName = startC;
-    if (Tags && Tags.length > 0 ) {
+    if (Tags && Tags.length > 0) {
       newName += Tags
     }
     newName += endC;
@@ -678,7 +679,7 @@ const editItem = (item: MovieModel) => {
 };
 
 const editItemSubmit = async () => {
-  const { Id, Name, Code, Actress,Tags } = view.formItem;
+  const { Id, Name, Code, Actress, Tags } = view.formItem;
   const code = Code.trim();
   let name = "";
   if (Actress.length != 0) {
@@ -816,8 +817,22 @@ const addCustomerTag = (clickId: string) => {
 const handleSelectTag = (item: string) => {
   view.customerTag = item;
 };
-const closeTag = (clickId: string, title: string) => {
+const closeTag = async (clickId: string, title: string) => {
   console.log(clickId, title);
+  const res = await CloseTag(clickId, title)
+  if (res.Code == 200) {
+    ElMessage.success(res.Message)
+    for (var i = 0; i < view.ModelList.length; i++) {
+      if (view.ModelList[i].Id == clickId) {
+        const idx = view.ModelList[i].Tags.indexOf(title);
+        view.ModelList[i].Tags.splice(idx, 1);
+      }
+      return;
+    }
+    refreshIndex();
+  } else {
+    ElMessage.error(res.Message)
+  }
 };
 
 const queryList = async (params?: any) => {

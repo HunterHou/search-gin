@@ -81,3 +81,8 @@ export const DeleteFolerByPath = async (data: any) => {
   const res = await request.post({ url: `/api/DeleteFolerByPath`, data });
   return res as unknown as ResultEdit;
 };
+
+export const CloseTag = async (id: string,title:string) => {
+  const res = await request.get({ url: `/api/file/clearTag//${id}/${title}` });
+  return res;
+};
