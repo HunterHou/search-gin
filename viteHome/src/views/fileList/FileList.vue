@@ -470,31 +470,49 @@
           <ElRow :gutter="24">
             <ElCol :span="4" tyle="text-align:right">
               YY：
+            </ElCol>
+            <ElCol :span="8" tyle="text-align:right">
               <a href="javascript:void(0);" @click="javSearch(view.formItem.Actress)">
                 <span>{{ view.formItem.Actress }}</span></a>
             </ElCol>
-            <ElCol :span="4">
-              Code：
+          </ElRow>
+          <ElRow :gutter="24">
+            <ElCol :span="4" tyle="text-align:right">
+              Code
+            </ElCol>
+            <ElCol :span="8">
               <a href="javascript:void(0);" @click="javCode(view.formItem.Code)"><span>{{ view.formItem.Code
               }}</span></a>
             </ElCol>
-            <ElCol :span="16">
-              <span @click="gotoContext(view.formItem.Id)">大小：【{{ view.formItem.SizeStr }}】</span>
-              <span>时间：{{
+          </ElRow>
+          <ElRow :gutter="24">
+            <ElCol :span="4" tyle="text-align:right">
+              大小：
+            </ElCol>
+            <ElCol :span="8">
+              <span @click="gotoContext(view.formItem.Id)">【{{ view.formItem.SizeStr }}】</span>
+              <span>{{
                   useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
               }}</span>
             </ElCol>
           </ElRow>
+
           <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto"
             @click="gotoContext(view.formItem.Id)" />
           <ElRow :gutter="20">
-            <ElCol :span="20">
-              <span>源名：</span> <span>{{ view.formItem.Title }}</span>
+            <ElCol :span="4">
+              <span>源名：</span>
+            </ElCol>
+            <ElCol :span="16">
+              <span>{{ view.formItem.Title }}</span>
             </ElCol>
           </ElRow>
           <ElRow :gutter="20">
-            <ElCol :span="20">
-              <span>源址：</span> <span>{{ view.formItem.Path }}</span>
+            <ElCol :span="4">
+              <span>源址：</span>
+            </ElCol>
+            <ElCol :span="16">
+              <span>{{ view.formItem.Path }}</span>
             </ElCol>
           </ElRow>
           <el-divider></el-divider>
