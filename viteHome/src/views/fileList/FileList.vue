@@ -212,11 +212,11 @@
         <div :class="isShowCover() ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
             <li v-for="tag in item.Tags" :key="tag">
-              <el-tag closable effect="dark" :size="isShowCover() ? 'small' : 'small'" @close="closeTag(item.Id, tag)">
+              <ElTag closable effect="dark" :size="isShowCover() ? 'small' : 'small'" @close="closeTag(item.Id, tag)">
                 <el-link :underline="false" plain @click="gotoSearch(tag)">
                   <span> {{ tag }}</span>
                 </el-link>
-              </el-tag>
+              </ElTag>
             </li>
           </div>
           <ElPopover placement="bottom-start" width="auto" v-model="view.addTagShow" trigger="click" :auto-close="0">
@@ -418,36 +418,49 @@
 
     <ElDialog title="文件信息" v-model="view.dialogFormItemVisible" :close-on-press-escape="false"
       :close-on-click-modal="false">
-      <el-form label-position="right" :model="view.formItem" size="small" label-width="18%">
-        <el-form-item label="类型">
-          <el-radio-group v-model="view.formItem.MovieType" @change="formMovieTypeChange" size="small">
+      <ElForm label-position="right" :model="view.formItem" size="large" label-width="18%">
+        <ElFormItem label="类型">
+          <el-radio-group v-model="view.formItem.MovieType" @change="formMovieTypeChange" size="large">
             <el-radio-button label="">无</el-radio-button>
             <el-radio-button label="骑兵">骑</el-radio-button>
             <el-radio-button label="步兵">步</el-radio-button>
             <el-radio-button label="国产">国</el-radio-button>
             <el-radio-button label="斯巴达">欧</el-radio-button>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="脸谱">
-          <el-input v-model="view.formItem.Actress" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="编码">
-          <el-input v-model="view.formItem.Code" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="文件名称">
-          <el-input type="textarea" v-model="view.formItem.Name" autocomplete="off"></el-input>
-          <!-- {{formItem.Title}} -->
-        </el-form-item>
-        <!-- <el-form-item label="标签">
-        <el-tag v-for="tag in view.formItem.Tags" :key="tag" effect="dark" closable style="margin-right: 8px" type=""
-          size="small" @close="removeFormTag(tag)">
-          {{ tag }}
-        </el-tag>
-      </el-form-item> -->
-      </el-form>
+        </ElFormItem>
+        <ElFormItem label="脸谱">
+          <ElInput v-model="view.formItem.Actress" autocomplete="off"></ElInput>
+        </ElFormItem>
+        <ElFormItem label="编码">
+          <ElInput v-model="view.formItem.Code" autocomplete="off"></ElInput>
+        </ElFormItem>
+        <ElFormItem label="文件名称">
+          <ElInput type="textarea" v-model="view.formItem.Name" autocomplete="off"></ElInput>
+
+        </ElFormItem>
+        <ElFormItem label="标签">
+          <ElTag v-for="tag in view.formItem.Tags" :key="tag" effect="dark" closable style="margin-right: 8px" type=""
+            size="large" @close="removeFormTag(tag)">
+            {{ tag }}
+          </ElTag>
+          <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
+            @select="handleSelectTag" size="small" style="width: 240px">
+            <template #append>
+              <ElButton size="default" type="primary" :disabled="customerTagEmpty()" @click="addThisCustomerTag"
+                style="font-size: 14px">加
+              </ElButton>
+            </template>
+            <template #default="{ item }">
+              <div v-if="item" style="font-size: 14px" class="value">
+                {{ item }}
+              </div>
+            </template>
+          </ElAutocomplete>
+        </ElFormItem>
+      </ElForm>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="view.dialogFormItemVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editItemSubmit">确 定</el-button>
+        <el-button size="large" @click="view.dialogFormItemVisible = false">取 消</el-button>
+        <el-button type="primary" size="large" @click="editItemSubmit">确 定</el-button>
       </div>
     </ElDialog>
     <ElDialog width="66%" :modal="true" :title="view.formItem.Title" v-model="view.dialogVisible">
@@ -623,6 +636,41 @@ const javCode = (code: string) => {
   window.open(url);
 };
 
+const removeFormTag = (tag: string) => {
+  const idx = view.formItem.Tags.indexOf(tag);
+  view.formItem.Tags.splice(idx, 1);
+  view.formItem.Name = view.formItem.Name.replaceAll(tag, "");
+  formItemTagsChange()
+}
+
+const addThisCustomerTag = () => {
+  if (!view.formItem.Tags) {
+    view.formItem.Tags = []
+  }
+  console.log(view.customerTag)
+  view.formItem.Tags.push(view.customerTag)
+  view.customerTag=undefined
+  formItemTagsChange()
+}
+
+const formItemTagsChange = () => {
+  let {  Name, Tags,FileType } = view.formItem;
+  let newName = "";
+  if (Name.indexOf("《") >= 0) {
+    const startC = Name.substr(0, Name.indexOf("《")+1);
+    const endC = Name.substr(Name.indexOf("》"), Name.length);
+    newName = startC;
+    if (Tags && Tags.length > 0 ) {
+      newName += Tags
+    }
+    newName += endC;
+  } else {
+    newName = Name.replaceAll("." + FileType, "");
+    newName = newName + "《" + Tags + "》" + "." + FileType;
+  }
+  view.formItem.Name = newName;
+};
+
 const editItem = (item: MovieModel) => {
   cmenuShow.value = false;
   view.formItem = item;
@@ -630,7 +678,7 @@ const editItem = (item: MovieModel) => {
 };
 
 const editItemSubmit = async () => {
-  const { Id, Name, Code, Actress } = view.formItem;
+  const { Id, Name, Code, Actress,Tags } = view.formItem;
   const code = Code.trim();
   let name = "";
   if (Actress.length != 0) {
@@ -643,7 +691,6 @@ const editItemSubmit = async () => {
   const arrLength = arr.length;
   for (let idx = 0; idx < arrLength; idx++) {
     const str = arr[idx];
-
     if (idx == arrLength - 1) {
       name += "." + str;
     } else if (idx == 0) {
