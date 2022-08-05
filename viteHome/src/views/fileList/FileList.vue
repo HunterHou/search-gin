@@ -463,33 +463,38 @@
         <el-button type="primary" size="large" @click="editItemSubmit">确 定</el-button>
       </div>
     </ElDialog>
-    <ElDialog width="66%" :modal="true" :title="view.formItem.Title" v-model="view.dialogVisible">
+    <ElDialog width="66%" :modal="true" :title="'  ' + view.formItem.Code + ' '" v-model="view.dialogVisible">
       <div v-if="view.formItem">
         <div>
+
           <ElRow :gutter="24">
             <ElCol :span="4" tyle="text-align:right">
               YY：
               <a href="javascript:void(0);" @click="javSearch(view.formItem.Actress)">
                 <span>{{ view.formItem.Actress }}</span></a>
             </ElCol>
-            <ElCol :span="8">
+            <ElCol :span="4">
               Code：
               <a href="javascript:void(0);" @click="javCode(view.formItem.Code)"><span>{{ view.formItem.Code
               }}</span></a>
             </ElCol>
-            <ElCol :span="12">
+            <ElCol :span="16">
               <span @click="gotoContext(view.formItem.Id)">大小：【{{ view.formItem.SizeStr }}】</span>
               <span>时间：{{
-                  useDateFormat(view.formItem.MTime, "YYYY-MM-DD")
+                  useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
               }}</span>
             </ElCol>
           </ElRow>
           <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto"
             @click="gotoContext(view.formItem.Id)" />
-
           <ElRow :gutter="20">
             <ElCol :span="20">
-              <span>源：</span> <span>{{ view.formItem.Path }}</span>
+              <span>源名：</span> <span>{{ view.formItem.Title }}</span>
+            </ElCol>
+          </ElRow>
+          <ElRow :gutter="20">
+            <ElCol :span="20">
+              <span>源址：</span> <span>{{ view.formItem.Path }}</span>
             </ElCol>
           </ElRow>
           <el-divider></el-divider>
@@ -517,7 +522,7 @@ import {
   RefreshIndex,
   FileRename,
   AddTag,
-CloseTag,
+  CloseTag,
 } from "@/api/file";
 import { GetSettingInfo, PostSettingInfo } from "@/api/setting";
 
