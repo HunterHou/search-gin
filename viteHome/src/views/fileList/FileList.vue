@@ -518,7 +518,7 @@
         </div>
       </div>
       <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 10px auto">
-        <ElImage style="min-width: 800px; margin: 0 auto" :src="item" :preview-src-list="view.sourceList" lazy>
+        <ElImage style="min-width: 800px;width: 95%; margin: 0 auto" :src="item" :preview-src-list="view.sourceList" lazy>
         </ElImage>
       </div>
     </ElDialog>
@@ -578,7 +578,7 @@ import {
 } from "@vueuse/core";
 const target = ref(null);
 const selectText = useTextSelection();
-const { x: wx, y: wy } = useWindowScroll();
+const { y: wy } = useWindowScroll();
 const { x, y, isOutside } = useMouseInElement(target);
 const pagePress = ref(null);
 const { pressed } = useMousePressed({ target: pagePress });
@@ -609,9 +609,17 @@ const queryParam = reactive<MovieQuery>(new MovieQuery());
 
 // 鼠标移出右键菜单
 watch(pressed, (newVal) => {
-  if ((newVal && cmenuShow)) {
-    cmenuShow.value = false
-  }
+   
+  // if (!isOutside) {
+  //   console.log('no',isOutside.value)
+  //   cmenuShow.value = false
+  // } else {
+  //   console.log('yes',isOutside.value)
+  //   if ((newVal && cmenuShow)) {
+  //     cmenuShow.value = false
+  //   }
+  // }
+
 });
 watch(wy, () => {
   if (wy.value > 50) {

@@ -108,7 +108,7 @@ const f5 = () => {
       <el-button type="primary" :loading="indexLoading" size="small" @click="refreshIndex()">重建索引
       </el-button>
     </h4>
-    <div class="d-tag" style="background: white" v-if="tagData && tagData.length > 0">
+    <div style="background: white" v-if="tagData && tagData.length > 0">
       <el-link v-for="tag in tagData" :key="tag.Name" class="d-tag" :underline="false">
         <el-tag size="default" :value="tag.Cnt" @click="gotoMenu(tag)">
           <el-badge :value="tag.Cnt">
@@ -192,8 +192,7 @@ const f5 = () => {
 }
 
 .d-tag {
-  margin: 4px 12px;
-  padding: 8px 8px;
+  margin: 4px 8px;
 }
 
 .s-table {
