@@ -12,7 +12,7 @@
       @click="pageLoading(1)">下一頁<i class="el-icon-right"></i>
     </ElButton>
 
-    <div class="searchRow">
+    <div class="searchRow" :style="searchStyle">
       <ElRow :span="24">
         <ElCol :span="2">
           <ElButton type="success" size="default" :loading-icon="Eleme" :loading="refreshIndexFlag"
@@ -140,12 +140,13 @@
       </ElRow>
     </div>
     <ElCard id="cmenu" class="cmenu" v-show="cmenuShow" ref="target" :body-style="{ padding: '4px' }">
-      <!-- <ElSpace direction="vertical" size="large" :fill="true">
-        <ElButton class="cmenuButton" @click="cmenuSync">同步</ElButton>
-      <ElButton class="cmenuButton" @click="cmenuCode">源链接</ElButton>
-      <ElButton class="cmenuButton" @click="cmenuPlay">播放</ElButton>
-      <ElButton class="cmenuButton" @click="cmenuOpenDir">打开</ElButton>
-      </ElSpace> -->
+      <span>{{ view.contextmenuTarget.Code ?? view.contextmenuTarget.Name }} </span>
+      &nbsp;&nbsp;
+      <ElButton type="danger" @click="cmenuClose" circle>
+        <ElIcon>
+          <CloseBold />
+        </ElIcon>
+      </ElButton>
       <ElRow :span="2">
         <ElCol>
           <ElButton class="cmenuButton" @click="cmenuSync">
@@ -193,15 +194,6 @@
               <Magnet />
             </ElIcon>
             刮图
-          </ElButton>
-        </ElCol>
-      </ElRow>
-      <ElRow :span="2">
-        <ElCol>
-          <ElButton type="danger" @click="cmenuClose" round>
-            <ElIcon>
-              <CloseBold />
-            </ElIcon>
           </ElButton>
         </ElCol>
       </ElRow>
@@ -578,9 +570,15 @@ import { useSystemProperty } from "@/store/System";
 import { useClipboard, onKeyStroke } from "@vueuse/core";
 import { getPng, getJpg } from "@/utils/ImageUtils";
 import { useDateFormat } from "@vueuse/core";
-import { useMouseInElement } from "@vueuse/core";
-import { useMousePressed } from "@vueuse/core";
+import {
+  useMouseInElement,
+  useMousePressed,
+  useTextSelection,
+  useWindowScroll
+} from "@vueuse/core";
 const target = ref(null);
+const selectText = useTextSelection();
+const { x: wx, y: wy } = useWindowScroll();
 const { x, y, isOutside } = useMouseInElement(target);
 const pagePress = ref(null);
 const { pressed } = useMousePressed({ target: pagePress });
@@ -594,6 +592,8 @@ const systemProperty = useSystemProperty();
 const cmenuShow = ref(false);
 const source = ref("");
 const { copy } = useClipboard({ source });
+
+const searchStyle = ref({})
 
 const view = reactive<any>({
   formItem: new MovieModel(),
@@ -609,7 +609,30 @@ const queryParam = reactive<MovieQuery>(new MovieQuery());
 
 // 鼠标移出右键菜单
 watch(pressed, (newVal) => {
-  if (pressed && cmenuShow) {
+  if ((newVal && cmenuShow)) {
+    cmenuShow.value = false
+  }
+});
+watch(wy, () => {
+  console.log(wy.value)
+  if (wy.value > 50) {
+    searchStyle.value = {
+      top: '1px',
+      width: '100%',
+      zIndex: 9999,
+      background: 'white',
+      opacity: 1,
+      bgColor: "white",
+      position: "fixed",
+    }
+  } else
+    searchStyle.value = {}
+}
+)
+watch(selectText.text, (newVal) => {
+  console.log(selectText)
+  if ((newVal)) {
+    queryParam.Keyword = newVal
   }
 });
 
@@ -620,7 +643,7 @@ onKeyStroke(["Enter"], (e) => {
   queryList();
 });
 
-const imageContextmenu = (item) => {
+const imageContextmenu = (item: MovieModel) => {
   cmenuShow.value = false;
   setTimeout(() => {
     view.contextmenuTarget = item;
@@ -1307,7 +1330,7 @@ onMounted(() => {
 
 .cmenu {
   padding: 4px;
-  width: 100px;
+  width: 180px;
   height: auto;
   border: 1;
   z-index: 9999;

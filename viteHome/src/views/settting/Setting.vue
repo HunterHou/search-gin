@@ -79,8 +79,8 @@
               <ElInput v-model="view.form.OMUrl" style="width: 90%"></ElInput>
             </ElFormItem>
             <ElFormItem label="枚举文件类型">
-              <ElSelect v-model="view.form.Types" multiple filterable allowCreate defaultFirstOption
-                placeholder="请添加类型" style="width: 90%" size="small">
+              <ElSelect v-model="view.form.Types" multiple filterable allowCreate defaultFirstOption placeholder="请添加类型"
+                style="width: 90%" size="small">
                 <ElOption v-for="item in view.form.Types" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
@@ -153,6 +153,7 @@ import { PostSettingInfo, GetSettingInfo } from '@/api/setting'
 import { computed } from 'vue'
 import { useNow, useDateFormat } from '@vueuse/core'
 import { SettingInfo } from "@/views/settting/index";
+
 
 const formatted = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss')
 
