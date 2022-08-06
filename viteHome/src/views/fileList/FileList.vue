@@ -144,7 +144,7 @@
             【
             <ElButton type="success" plain size="large" loading :link="true" />
             {{
-                view.contextmenuTarget.Code + '-' + view.contextmenuTarget.Actress
+            view.contextmenuTarget.Code + '-' + view.contextmenuTarget.Actress
             }}
             <ElButton type="success" plain size="large" loading :link="true" />
             】
@@ -446,9 +446,9 @@
                     <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                     <span style="color: red">【{{ item.SizeStr }}】</span>
                     {{
-                        useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
-                          locales: "zh-cn",
-                        })
+                    useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
+                    locales: "zh-cn",
+                    })
                     }}
                     <hr />
                     <span style="
@@ -561,7 +561,7 @@
             <ElCol :span="8">
               <span @click="gotoContext(view.formItem.Id)">【{{ view.formItem.SizeStr }}】</span>
               <span>{{
-                  useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
+              useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
               }}</span>
 
             </ElCol>
@@ -770,7 +770,9 @@ const cmenuPlay = async (item?) => {
   if (item) {
     view.contextmenuTarget = item
   }
-  view.videoVisible = true
+  if (!isPlaying.value) {
+    view.videoVisible = true
+  }
   cmenuShow.value = false;
   startPlayVideo()
 
