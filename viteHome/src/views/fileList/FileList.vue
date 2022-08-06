@@ -205,7 +205,7 @@
         style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;margin:0px auto;overflow: hidden;background-color: rgba(0,0,0,0.7);"
         id="videoDiv">
         <ElRow :gutter="24" style="background:white">
-          <ElCol :span="8" :offset="8">
+          <ElCol :span="14" :offset="2">
             <span>{{ view.contextmenuTarget.Actress + view.contextmenuTarget.Name }}</span>
           </ElCol>
           <ElCol :span="8">
