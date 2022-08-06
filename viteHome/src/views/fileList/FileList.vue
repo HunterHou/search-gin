@@ -137,6 +137,23 @@
           <span> 页：{{ view.CurSize }}({{ view.CurCnt }})</span>
           <ElDivider direction="vertical"></ElDivider>
         </ElCol>
+        <div v-if="isPlaying">
+          <ElLink type="success" plain size="large" @click="view.videoVisible = true" :underline="false"
+            style="font-size:16px;">
+            播放中：
+            【
+            <ElButton type="success" plain size="large" loading :link="true" />
+            {{
+                view.contextmenuTarget.Code + '-' + view.contextmenuTarget.Actress
+            }}
+            <ElButton type="success" plain size="large" loading :link="true" />
+            】
+          </ElLink>
+          <ElLink type="danger" plain size="large" @click="closePlayVideo" :underline="false" style="font-size:16px;">
+            关闭
+          </ElLink>
+        </div>
+
       </ElRow>
     </div>
     <ElCard id="cmenu" class="cmenu" v-show="cmenuShow" ref="target" :body-style="{ padding: '4px' }">
@@ -202,26 +219,33 @@
     <!--  -->
     <teleport to="body">
       <div v-show="view.videoVisible"
-        style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;margin:0px auto;overflow: hidden;background-color: rgba(0,0,0,0.7);"
+        style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;margin:0px auto;overflow: auto;background-color: rgba(0,0,0,0.7);"
         id="videoDiv">
-        <ElRow :gutter="24" style="background:white">
-          <ElCol :span="14" :offset="2">
-            <span>{{ view.contextmenuTarget.Actress + view.contextmenuTarget.Name }}</span>
-          </ElCol>
-          <ElCol :span="8">
-            <ElButton @click="videoPlus(4, 0)">宽</ElButton>
-            <ElButton @click="videoPlus(-4, 0)">窄</ElButton>
-            <ElButton @click="videoPlus(4, 4)">大</ElButton>
-            <ElButton @click="videoPlus(-4, -4)">小</ElButton>
-            <ElButton @click="fullPlayVideo">满屏</ElButton>
-            <ElButton @click="closePlayVideo">关闭</ElButton>
-          </ElCol>
 
-        </ElRow>
         <ElRow :gutter="24">
-          <video id="video" :src="view.videoUrl" controls style="margin:4px auto">
-            您的浏览器不支持 video 标签。
-          </video>
+          <ElCol :span="22">
+            <video id="video" :src="view.videoUrl" controls style="margin:0 auto">
+              您的浏览器不支持 video 标签。
+            </video>
+          </ElCol>
+          <ElCol :span="2">
+            <el-space direction="vertical" alignment="flex-end" :size="30" style="margin-right: 10px;color: white;">
+              <ElButton type="primary" @click="view.videoVisible = false">隐藏</ElButton>
+              <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+              <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
+              <ElButton type="primary" @click="videoPlus(4, 4)">扩大</ElButton>
+              <ElButton type="primary" @click="videoPlus(-4, -4)">减小</ElButton>
+              <ElButton type="primary" @click="videoPlus(4, 0)">增宽</ElButton>
+              <ElButton type="primary" @click="videoPlus(-4, 0)">减窄</ElButton>
+              <div style="margin-right: 10px;color: white;">
+                <p>【{{ view.contextmenuTarget.Code }}】</p>
+                <p>【{{ view.contextmenuTarget.Actress }}】</p>
+                <p>{{ view.contextmenuTarget.Name }}</p>
+              </div>
+
+            </el-space>
+
+          </ElCol>
         </ElRow>
       </div>
     </teleport>
@@ -672,6 +696,7 @@ onKeyStroke(["Enter"], (e) => {
 });
 
 const fullScreen = ref(true)
+const isPlaying = ref(false)
 
 const videoPlus = (x: number = 0, y: number = 0) => {
   const videoElement = document.getElementById('video')
@@ -687,7 +712,7 @@ const fullPlayVideo = () => {
   const videoElement = document.getElementById('video')
   console.log('currentSize', width.value, height.value)
   if (fullScreen.value) {
-    videoElement.setAttribute('width', width.value + '')
+    videoElement.setAttribute('width', width.value - 96 + '')
     videoElement.setAttribute('height', height.value + '')
   } else {
     videoElement.setAttribute('width', 1600 + '')
@@ -702,6 +727,7 @@ const closePlayVideo = () => {
   const videoElement = document.getElementById('video')
   videoElement.normalize()
   videoElement.setAttribute('src', '')
+  isPlaying.value = false
   // videoElement.removeAttribute('src')
 }
 
@@ -711,6 +737,8 @@ const startPlayVideo = () => {
   const videoElement = document.getElementById('video')
   videoElement.setAttribute('src', getFileStream(view.contextmenuTarget.Id))
   videoElement.setAttribute('autoplay', 'true')
+  videoElement.setAttribute('loop', 'true')
+  isPlaying.value = true
 
   // videoElement.appendChild()
 
