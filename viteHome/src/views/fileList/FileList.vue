@@ -328,16 +328,18 @@
             </div>
             <div class="image-tool">
               <ElSpace wrap>
-                <ElButton type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
-                  <ElIcon>
-                    <VideoPlay />
-                  </ElIcon>
-                </ElButton>
                 <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
                   <ElIcon>
                     <VideoPlay />
                   </ElIcon>
                 </ElButton>
+                
+                <ElButton type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
+                  <ElIcon>
+                    <VideoPlay />
+                  </ElIcon>
+                </ElButton>
+                
                 <ElButton type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
                   <ElIcon>
                     <UserFilled />
@@ -393,11 +395,6 @@
                     <MoreFilled />
                     <template #dropdown>
                       <ElDropdownMenu>
-                        <!-- <ElDropdownItem @click="cmenuPlay(item)">
-                          <ElIcon type="info" plain class="icon-button">
-                            <Bicycle />
-                          </ElIcon>播放
-                        </ElDropdownItem> -->
                         <ElDropdownItem v-if="notQiBing(item.MovieType)" title="骑兵" @click="setMovieType(item.Id, 2)">
                           <ElIcon type="info" plain class="icon-button">
                             <Bicycle />
