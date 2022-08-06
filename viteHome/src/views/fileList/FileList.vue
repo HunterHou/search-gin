@@ -630,7 +630,6 @@ watch(wy, () => {
 }
 )
 watch(selectText.text, (newVal) => {
-  console.log(selectText)
   if ((newVal)) {
     queryParam.Keyword = newVal
   }
