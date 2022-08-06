@@ -467,6 +467,9 @@
       <div v-if="view.formItem">
         <div>
 
+
+          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto"
+            @click="gotoContext(view.formItem.Id)" />
           <ElRow :gutter="24">
             <ElCol :span="4" tyle="text-align:right">
               YY：
@@ -503,9 +506,6 @@
 
             </ElCol>
           </ElRow>
-          <el-divider></el-divider>
-          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto"
-            @click="gotoContext(view.formItem.Id)" />
           <ElRow :gutter="20">
             <ElCol :span="4">
               <span>源名：</span>
