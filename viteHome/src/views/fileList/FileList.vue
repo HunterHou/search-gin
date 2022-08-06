@@ -142,6 +142,11 @@
     <ElCard id="cmenu" class="cmenu" v-show="cmenuShow" ref="target" :body-style="{ padding: '4px' }">
       <span>{{ view.contextmenuTarget.Code ?? view.contextmenuTarget.Name }} </span>
       &nbsp;&nbsp;
+      <ElButton type="danger" @click="cmenuClose" circle>
+        <ElIcon>
+          <CloseBold />
+        </ElIcon>
+      </ElButton>
       <ElRow :span="2">
         <ElCol>
           <ElButton class="cmenuButton" @click="cmenuPlay">
@@ -152,11 +157,6 @@
           </ElButton>
         </ElCol>
       </ElRow>
-      <ElButton type="danger" @click="cmenuClose" circle>
-        <ElIcon>
-          <CloseBold />
-        </ElIcon>
-      </ElButton>
       <ElRow :span="2">
         <ElCol>
           <ElButton class="cmenuButton" @click="cmenuSync">
@@ -202,21 +202,24 @@
     <!--  -->
     <teleport to="body">
       <div v-show="view.videoVisible"
-        style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;overflow: auto;" id="videoDiv">
+        style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;margin:0px auto;overflow: hidden;background-color: rgba(0,0,0,0.7);"
+        id="videoDiv">
         <ElRow :gutter="24" style="background:white">
-          <ElCol :span="20">
-            <span>{{ view.contextmenuTarget.Name }}</span>
+          <ElCol :span="8" :offset="8">
+            <span>{{ view.contextmenuTarget.Actress + view.contextmenuTarget.Name }}</span>
           </ElCol>
-          <ElCol :span="4">
-            <ElButton @click="videoPlus" style="margin-top:0;margin-left:0;">大</ElButton>
-            <ElButton @click="videoReduce" style="margin-top:0;margin-left:0;">小</ElButton>
-            <ElButton @click="fullPlayVideo" style="margin-top:0;margin-left:0;">满屏</ElButton>
-            <ElButton @click="closePlayVideo" style="margin-top:0;margin-left:0;">关闭</ElButton>
+          <ElCol :span="8">
+            <ElButton @click="videoPlus(4, 0)">宽</ElButton>
+            <ElButton @click="videoPlus(-4, 0)">窄</ElButton>
+            <ElButton @click="videoPlus(4, 4)">大</ElButton>
+            <ElButton @click="videoPlus(-4, -4)">小</ElButton>
+            <ElButton @click="fullPlayVideo">满屏</ElButton>
+            <ElButton @click="closePlayVideo">关闭</ElButton>
           </ElCol>
 
         </ElRow>
         <ElRow :gutter="24">
-          <video id="video" :src="view.videoUrl" controls>
+          <video id="video" :src="view.videoUrl" controls style="margin:4px auto">
             您的浏览器不支持 video 标签。
           </video>
         </ElRow>
@@ -306,6 +309,11 @@
                     <VideoPlay />
                   </ElIcon>
                 </ElButton>
+                <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
+                  <ElIcon>
+                    <VideoPlay />
+                  </ElIcon>
+                </ElButton>
                 <ElButton type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
                   <ElIcon>
                     <UserFilled />
@@ -325,11 +333,7 @@
                     <Edit />
                   </ElIcon>
                 </ElButton>
-                <ElButton type="danger" plain class="icon-button" title="删除" @click="deleteThis(item.Id, 2)">
-                  <ElIcon>
-                    <DeleteFilled />
-                  </ElIcon>
-                </ElButton>
+
                 <ElButton v-if="!item.MovieType" type="danger" plain class="icon-button" title="同步"
                   @click="syncThis(item.Id)">
                   <ElIcon>
@@ -365,11 +369,11 @@
                     <MoreFilled />
                     <template #dropdown>
                       <ElDropdownMenu>
-                        <ElDropdownItem @click="cmenuPlay">
+                        <!-- <ElDropdownItem @click="cmenuPlay(item)">
                           <ElIcon type="info" plain class="icon-button">
                             <Bicycle />
                           </ElIcon>播放
-                        </ElDropdownItem>
+                        </ElDropdownItem> -->
                         <ElDropdownItem v-if="notQiBing(item.MovieType)" title="骑兵" @click="setMovieType(item.Id, 2)">
                           <ElIcon type="info" plain class="icon-button">
                             <Bicycle />
@@ -389,6 +393,11 @@
                           <ElIcon plain type="info" class="icon-button">
                             <Ship />
                           </ElIcon>欧美
+                        </ElDropdownItem>
+                        <ElDropdownItem @click="deleteThis(item.Id, 2)">
+                          <ElIcon type="info" plain class="icon-button">
+                            <DeleteFilled />
+                          </ElIcon>删除
                         </ElDropdownItem>
                       </ElDropdownMenu>
                     </template>
@@ -576,9 +585,9 @@
 </template>
 <script setup lang="ts">
 import {
-AddTag,
-CloseTag, DeleteFile,
-DownImageList, FileRename, FindFileInfo, HeartBeatQuery, OpenFileFolder, PlayMovie, QueryDirImageBase64, QueryFileList, RefreshIndex, ResetMovieType, SyncFileInfo
+  AddTag,
+  CloseTag, DeleteFile,
+  DownImageList, FileRename, FindFileInfo, HeartBeatQuery, OpenFileFolder, PlayMovie, QueryDirImageBase64, QueryFileList, RefreshIndex, ResetMovieType, SyncFileInfo
 } from "@/api/file";
 import { GetSettingInfo, PostSettingInfo } from "@/api/setting";
 
@@ -587,14 +596,14 @@ import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
 import { ResultList } from "@/utils/ResultResponse";
 import { Eleme } from "@element-plus/icons-vue";
 import {
-onKeyStroke, useClipboard, useDateFormat, useMouseInElement, useTextSelection,
-useWindowScroll, useWindowSize
+  onKeyStroke, useClipboard, useDateFormat, useMouseInElement, useTextSelection,
+  useWindowScroll, useWindowSize
 } from "@vueuse/core";
 import {
-ElBacktop, ElCol, ElDialog, ElDivider, ElDropdown,
-ElDropdownItem, ElDropdownMenu, ElImage, ElLink, ElMessage,
-ElMessageBox, ElPagination, ElPopover, ElRadioButton, ElRadioGroup, ElRow,
-ElSpace
+  ElBacktop, ElCol, ElDialog, ElDivider, ElDropdown,
+  ElDropdownItem, ElDropdownMenu, ElImage, ElLink, ElMessage,
+  ElMessageBox, ElPagination, ElPopover, ElRadioButton, ElRadioGroup, ElRow,
+  ElSpace
 } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
 import { MovieModel, MovieQuery } from ".";
@@ -664,21 +673,12 @@ onKeyStroke(["Enter"], (e) => {
 
 const fullScreen = ref(true)
 
-const videoPlus = () => {
+const videoPlus = (x: number = 0, y: number = 0) => {
   const videoElement = document.getElementById('video')
   const height = videoElement.getAttribute('height')
   const width = videoElement.getAttribute('width')
-  const newWidth = parseInt(width) + (16 * 4)
-  const newHeight = parseInt(height) + (9 * 4)
-  videoElement.setAttribute('width', newWidth + '')
-  videoElement.setAttribute('height', newHeight + '')
-}
-const videoReduce = () => {
-  const videoElement = document.getElementById('video')
-  const height = videoElement.getAttribute('height')
-  const width = videoElement.getAttribute('width')
-  const newWidth = width as unknown as number - (16 * 4)
-  const newHeight = height as unknown as number - (9 * 4)
+  const newWidth = parseInt(width) + (16 * x)
+  const newHeight = parseInt(height) + (9 * y)
   videoElement.setAttribute('width', newWidth + '')
   videoElement.setAttribute('height', newHeight + '')
 }
@@ -737,8 +737,11 @@ const cmenuCode = async () => {
   await javCode(view.contextmenuTarget.Code);
   cmenuShow.value = false;
 };
-const cmenuPlay = async () => {
+const cmenuPlay = async (item?) => {
   // await playThis(view.contextmenuTarget.Id);
+  if (item) {
+    view.contextmenuTarget = item
+  }
   view.videoVisible = true
   cmenuShow.value = false;
   startPlayVideo()
@@ -1164,18 +1167,21 @@ const deleteThis = async (id: string, a?: number) => {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
-    callback: async () => {
-      await DeleteFile(id)
-        .then((res) => {
-          if (res.Code === 200) {
-            ElMessage.success(res.Message);
-          } else {
-            ElMessage.error(res.Message);
-          }
-        })
-        .catch(() => {
-          ElMessage.error("已取消删除");
-        });
+    callback: async (action) => {
+      if (action == 'confirm') {
+        await DeleteFile(id)
+          .then((res) => {
+            if (res.Code === 200) {
+              ElMessage.success(res.Message);
+            } else {
+              ElMessage.error(res.Message);
+            }
+          })
+          .catch(() => {
+            ElMessage.error("已取消删除");
+          });
+      }
+
     },
   });
 };
