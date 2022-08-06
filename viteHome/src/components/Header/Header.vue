@@ -26,21 +26,8 @@ const handleSelect = (key: string, keyPath: string[]) => {
         </ElMenuItem>
         <div class="flex-grow" />
         <div v-for="item in staticRoutes">
-            <ElMenuItem :index="item.path">{{ item.meta.hidden ? '' : item.meta.title }}</ElMenuItem>
+            <ElMenuItem v-if="!item.meta.hidden" :index="item.path">{{  item.meta.title }}</ElMenuItem>
         </div>
-        <!-- <ElMenuItem index="1">Processing Center</ElMenuItem>
-        <ElSubMenu index="2">
-            <template #title>Workspace</template>
-            <ElMenuItem index="2-1">item one</ElMenuItem>
-            <ElMenuItem index="2-2">item two</ElMenuItem>
-            <ElMenuItem index="2-3">item three</ElMenuItem>
-            <ElSubMenu index="2-4">
-                <template #title>item four</template>
-                <ElMenuItem index="2-4-1">item one</ElMenuItem>
-                <ElMenuItem index="2-4-2">item two</ElMenuItem>
-                <ElMenuItem index="2-4-3">item three</ElMenuItem>
-            </ElSubMenu>
-        </ElSubMenu> -->
     </ElMenu>
 </template>
 <style scoped>

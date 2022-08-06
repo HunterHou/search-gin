@@ -614,7 +614,6 @@ watch(pressed, (newVal) => {
   }
 });
 watch(wy, () => {
-  console.log(wy.value)
   if (wy.value > 50) {
     searchStyle.value = {
       top: '1px',

@@ -21,7 +21,7 @@ export const staticRoutes: RouteRecordRaw[] = [
         name: 'home',
         meta: {
             title: '首页',
-            hidden: true
+            hidden: false
         }
     },
     {
