@@ -4,6 +4,7 @@ import ActressVue from '../views/actress/Actress.vue';
 import FileListVue from '../views/fileList/FileList.vue';
 import HomeVue from "../views/home/Home.vue";
 import SettingVue from "../views/settting/Setting.vue";
+import SystemInfo from "../views/systeminfo/Systeminfo.vue";
 
 export const staticRoutes: RouteRecordRaw[] = [
     {
@@ -46,6 +47,13 @@ export const staticRoutes: RouteRecordRaw[] = [
         name: 'setting',
         meta: {
             title: '设置'
+        }
+    }, {
+        path: '/systeminfo',
+        component: SystemInfo,
+        name: 'systeminfo',
+        meta: {
+            title: '系统信息'
         }
     },
 ]
