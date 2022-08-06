@@ -14,6 +14,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func GetFile(c *gin.Context) {
+	service := service.CreateFileService()
+	id := c.Param("id")
+	file := service.FindOne(id)
+	if utils.ExistsFiles(file.Path) {
+		c.File(file.Path)
+	} else {
+		return
+	}
+}
+
 func GetActessImage(c *gin.Context) {
 	path := c.Param("path")
 	list := datasource.ActressLib

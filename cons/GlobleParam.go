@@ -14,6 +14,7 @@ import (
 
 var PortNo = ":8081"
 var PortNo2 = ":8082"
+var PortNo3 = ":8083"
 var Port = "//" + PortNo
 var QueryTypes []string
 
@@ -156,7 +157,6 @@ const JAVA = "java"
 const XML = "xml"
 
 var Types = []string{PNG, JPG, GIF, XLSX, TXT, MP4, WMV, MKV, AVI, JAVA, XML}
-
 
 var IndexHtml = "./vitehome/dist/index.html"
 var StaticFs = map[string]string{

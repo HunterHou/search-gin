@@ -86,3 +86,8 @@ export const CloseTag = async (id: string,title:string) => {
   const res = await request.get({ url: `/api/file/clearTag//${id}/${title}` });
   return res;
 };
+
+export const GetFile = async (id: string) => {
+  const res = await request.get({ url: `/api/file/${id}` });
+  return res;
+};

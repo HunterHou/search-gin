@@ -3,12 +3,12 @@
     <ElBacktop :bottom="100" style="width: 50px; height: 50px">
       <div class="up">UP</div>
     </ElBacktop>
-    <ElButton style="position: fixed; bottom: 300px; z-index: 999; left: 5px" size="default" type="danger" round
+    <ElButton style="position: fixed; bottom: 300px; z-index: 99; left: 5px" size="default" type="danger" round
       v-if="!loading && view.ResultCnt > queryParam.PageSize" @click="pageLoading(-1)"><i class="el-icon-back"></i>上一頁
     </ElButton>
     <!-- 键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40 -->
     <ElButton v-if="!loading && view.ResultCnt > queryParam.PageSize"
-      style="position: fixed; bottom: 300px; z-index: 999; right: 5px" size="default" type="danger" round
+      style="position: fixed; bottom: 300px; z-index: 99; right: 5px" size="default" type="danger" round
       @click="pageLoading(1)">下一頁<i class="el-icon-right"></i>
     </ElButton>
 
@@ -142,6 +142,16 @@
     <ElCard id="cmenu" class="cmenu" v-show="cmenuShow" ref="target" :body-style="{ padding: '4px' }">
       <span>{{ view.contextmenuTarget.Code ?? view.contextmenuTarget.Name }} </span>
       &nbsp;&nbsp;
+      <ElRow :span="2">
+        <ElCol>
+          <ElButton class="cmenuButton" @click="cmenuPlay">
+            <ElIcon>
+              <VideoPlay />
+            </ElIcon>
+            播放
+          </ElButton>
+        </ElCol>
+      </ElRow>
       <ElButton type="danger" @click="cmenuClose" circle>
         <ElIcon>
           <CloseBold />
@@ -167,16 +177,7 @@
           </ElButton>
         </ElCol>
       </ElRow>
-      <ElRow :span="2">
-        <ElCol>
-          <ElButton class="cmenuButton" @click="cmenuPlay">
-            <ElIcon>
-              <VideoPlay />
-            </ElIcon>
-            播放
-          </ElButton>
-        </ElCol>
-      </ElRow>
+
       <ElRow :span="2">
         <ElCol>
           <ElButton class="cmenuButton" @click="cmenuOpenDir">
@@ -198,6 +199,30 @@
         </ElCol>
       </ElRow>
     </ElCard>
+    <!--  -->
+    <teleport to="body">
+      <div v-show="view.videoVisible"
+        style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;overflow: auto;" id="videoDiv">
+        <ElRow :gutter="24" style="background:white">
+          <ElCol :span="20">
+            <span>{{ view.contextmenuTarget.Name }}</span>
+          </ElCol>
+          <ElCol :span="4">
+            <ElButton @click="videoPlus" style="margin-top:0;margin-left:0;">大</ElButton>
+            <ElButton @click="videoReduce" style="margin-top:0;margin-left:0;">小</ElButton>
+            <ElButton @click="fullPlayVideo" style="margin-top:0;margin-left:0;">满屏</ElButton>
+            <ElButton @click="closePlayVideo" style="margin-top:0;margin-left:0;">关闭</ElButton>
+          </ElCol>
+
+        </ElRow>
+        <ElRow :gutter="24">
+          <video id="video" :src="view.videoUrl" controls>
+            您的浏览器不支持 video 标签。
+          </video>
+        </ElRow>
+      </div>
+    </teleport>
+
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
       style="min-height: 700px">
       <ElSpace wrap size="default">
@@ -340,6 +365,11 @@
                     <MoreFilled />
                     <template #dropdown>
                       <ElDropdownMenu>
+                        <ElDropdownItem @click="cmenuPlay">
+                          <ElIcon type="info" plain class="icon-button">
+                            <Bicycle />
+                          </ElIcon>播放
+                        </ElDropdownItem>
                         <ElDropdownItem v-if="notQiBing(item.MovieType)" title="骑兵" @click="setMovieType(item.Id, 2)">
                           <ElIcon type="info" plain class="icon-button">
                             <Bicycle />
@@ -455,13 +485,18 @@
         <el-button type="primary" size="large" @click="editItemSubmit">确 定</el-button>
       </div>
     </ElDialog>
-    <ElDialog width="66%" :modal="true" :title="'  ' + view.formItem.Code + ' '" v-model="view.dialogVisible">
+    <ElDialog width="66%" :modal="true" :title="'  ' + view.formItem.Code + ' '" v-model="view.dialogVisible"
+      :before-close="() => {
+        innerVisibleFalse()
+        view.dialogVisible = false
+      }" :destroy-on-close="true">
       <div v-if="view.formItem">
         <div>
-
-
-          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto"
-            @click="gotoContext(view.formItem.Id)" />
+          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto" @click="() => {
+            if (view.sourceList && view.sourceList.length > 0) {
+              view.innerVisible = true
+            }
+          }" />
           <ElRow :gutter="24">
             <ElCol :span="4" tyle="text-align:right">
               YY：
@@ -517,78 +552,67 @@
           <el-divider></el-divider>
         </div>
       </div>
-      <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 10px auto">
-        <ElImage style="min-width: 800px;width: 95%; margin: 0 auto" :src="item" :preview-src-list="view.sourceList" lazy>
+      <teleport to="body">
+        <div v-show="view.innerVisible"
+          style="width: 100%;height:100%;z-index: 9999;top: 0px;position:fixed;overflow: auto;"
+          @click="innerVisibleFalse">
+          <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
+            <ElImage style="min-width: 1200px;width: auto; margin: 0 auto;opacity: 9;z-index: 9999" :src="item">
+              @click.stop="innerVisibleFalse"
+            </ElImage>
+          </div>
+        </div>
+      </teleport>
+
+      <!-- <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 10px auto">
+        <ElImage style="min-width: 800px;width: auto; margin: 0 auto" :src="item" lazy
+          @click="view.innerVisible = true">
         </ElImage>
-      </div>
+      </div> -->
     </ElDialog>
+
   </div>
+
 </template>
 <script setup lang="ts">
 import {
-  FindFileInfo,
-  QueryFileList,
-  QueryDirImageBase64,
-  PlayMovie,
-  OpenFileFolder,
-  HeartBeatQuery,
-  DeleteFile,
-  DownImageList,
-  SyncFileInfo,
-  ResetMovieType,
-  RefreshIndex,
-  FileRename,
-  AddTag,
-  CloseTag,
+AddTag,
+CloseTag, DeleteFile,
+DownImageList, FileRename, FindFileInfo, HeartBeatQuery, OpenFileFolder, PlayMovie, QueryDirImageBase64, QueryFileList, RefreshIndex, ResetMovieType, SyncFileInfo
 } from "@/api/file";
 import { GetSettingInfo, PostSettingInfo } from "@/api/setting";
 
-import { onMounted, reactive, ref, watch } from "vue";
-import {
-  ElRow,
-  ElSpace,
-  ElCol,
-  ElLink,
-  ElDialog,
-  ElBacktop,
-  ElPopover,
-  ElDivider,
-  ElRadioGroup,
-  ElRadioButton,
-  ElImage,
-  ElMessage,
-  ElMessageBox,
-  ElDropdownMenu,
-  ElDropdown,
-  ElDropdownItem,
-  ElPagination,
-} from "element-plus";
-import { Eleme } from "@element-plus/icons-vue";
-import { MovieQuery, MovieModel } from ".";
-import { ResultList } from "@/utils/ResultResponse";
 import { useSystemProperty } from "@/store/System";
-import { useClipboard, onKeyStroke } from "@vueuse/core";
-import { getPng, getJpg } from "@/utils/ImageUtils";
-import { useDateFormat } from "@vueuse/core";
+import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
+import { ResultList } from "@/utils/ResultResponse";
+import { Eleme } from "@element-plus/icons-vue";
 import {
-  useMouseInElement,
-  useMousePressed,
-  useTextSelection,
-  useWindowScroll
+onKeyStroke, useClipboard, useDateFormat, useMouseInElement, useTextSelection,
+useWindowScroll, useWindowSize
 } from "@vueuse/core";
+import {
+ElBacktop, ElCol, ElDialog, ElDivider, ElDropdown,
+ElDropdownItem, ElDropdownMenu, ElImage, ElLink, ElMessage,
+ElMessageBox, ElPagination, ElPopover, ElRadioButton, ElRadioGroup, ElRow,
+ElSpace
+} from "element-plus";
+import { onMounted, reactive, ref, watch } from "vue";
+import { MovieModel, MovieQuery } from ".";
+
+
 const target = ref(null);
 const selectText = useTextSelection();
 const { y: wy } = useWindowScroll();
 const { x, y, isOutside } = useMouseInElement(target);
 const pagePress = ref(null);
-const { pressed } = useMousePressed({ target: pagePress });
+// const { pressed } = useMousePressed({ target: pagePress });
+
 
 const running = ref(true);
 const loading = ref(false);
 const refreshIndexFlag = ref(false);
 const showStyle = ref("post");
 const systemProperty = useSystemProperty();
-
 const cmenuShow = ref(false);
 const source = ref("");
 const { copy } = useClipboard({ source });
@@ -596,6 +620,9 @@ const { copy } = useClipboard({ source });
 const searchStyle = ref({})
 
 const view = reactive<any>({
+  videoUrl: null,
+  videoVisible: false,
+  innerVisible: false,
   formItem: new MovieModel(),
   dialogFormItemVisible: false,
   contextmenuTarget: {},
@@ -607,26 +634,12 @@ const view = reactive<any>({
 });
 const queryParam = reactive<MovieQuery>(new MovieQuery());
 
-// 鼠标移出右键菜单
-watch(pressed, (newVal) => {
-   
-  // if (!isOutside) {
-  //   console.log('no',isOutside.value)
-  //   cmenuShow.value = false
-  // } else {
-  //   console.log('yes',isOutside.value)
-  //   if ((newVal && cmenuShow)) {
-  //     cmenuShow.value = false
-  //   }
-  // }
-
-});
 watch(wy, () => {
   if (wy.value > 50) {
     searchStyle.value = {
       top: '1px',
       width: '100%',
-      zIndex: 9999,
+      zIndex: 100,
       background: 'white',
       opacity: 1,
       bgColor: "white",
@@ -649,6 +662,63 @@ onKeyStroke(["Enter"], (e) => {
   queryList();
 });
 
+const fullScreen = ref(true)
+
+const videoPlus = () => {
+  const videoElement = document.getElementById('video')
+  const height = videoElement.getAttribute('height')
+  const width = videoElement.getAttribute('width')
+  const newWidth = parseInt(width) + (16 * 4)
+  const newHeight = parseInt(height) + (9 * 4)
+  videoElement.setAttribute('width', newWidth + '')
+  videoElement.setAttribute('height', newHeight + '')
+}
+const videoReduce = () => {
+  const videoElement = document.getElementById('video')
+  const height = videoElement.getAttribute('height')
+  const width = videoElement.getAttribute('width')
+  const newWidth = width as unknown as number - (16 * 4)
+  const newHeight = height as unknown as number - (9 * 4)
+  videoElement.setAttribute('width', newWidth + '')
+  videoElement.setAttribute('height', newHeight + '')
+}
+const fullPlayVideo = () => {
+  const { width, height } = useWindowSize()
+  const videoElement = document.getElementById('video')
+  console.log('currentSize', width.value, height.value)
+  if (fullScreen.value) {
+    videoElement.setAttribute('width', width.value + '')
+    videoElement.setAttribute('height', height.value + '')
+  } else {
+    videoElement.setAttribute('width', 1600 + '')
+    videoElement.setAttribute('height', 900 + '')
+  }
+  fullScreen.value = !fullScreen.value
+
+}
+
+const closePlayVideo = () => {
+  view.videoVisible = false
+  const videoElement = document.getElementById('video')
+  videoElement.normalize()
+  videoElement.setAttribute('src', '')
+  // videoElement.removeAttribute('src')
+}
+
+const startPlayVideo = () => {
+  fullScreen.value = false
+  fullPlayVideo()
+  const videoElement = document.getElementById('video')
+  videoElement.setAttribute('src', getFileStream(view.contextmenuTarget.Id))
+  videoElement.setAttribute('autoplay', 'true')
+
+  // videoElement.appendChild()
+
+}
+
+const innerVisibleFalse = () => {
+  view.innerVisible = false
+}
 const imageContextmenu = (item: MovieModel) => {
   cmenuShow.value = false;
   setTimeout(() => {
@@ -660,23 +730,26 @@ const imageContextmenu = (item: MovieModel) => {
 };
 
 const cmenuSync = async () => {
-  syncThis(view.contextmenuTarget.Id);
+  await syncThis(view.contextmenuTarget.Id);
   cmenuShow.value = false;
 };
 const cmenuCode = async () => {
-  javCode(view.contextmenuTarget.Code);
+  await javCode(view.contextmenuTarget.Code);
   cmenuShow.value = false;
 };
 const cmenuPlay = async () => {
-  playThis(view.contextmenuTarget.Id);
+  // await playThis(view.contextmenuTarget.Id);
+  view.videoVisible = true
   cmenuShow.value = false;
+  startPlayVideo()
+
 };
 const cmenuOpenDir = async () => {
-  openThisFolder(view.contextmenuTarget.Id);
+  await openThisFolder(view.contextmenuTarget.Id);
   cmenuShow.value = false;
 };
 const cmenuGetImageList = async () => {
-  getImageList(view.contextmenuTarget.Id);
+  await getImageList(view.contextmenuTarget.Id);
   cmenuShow.value = false;
 };
 
@@ -997,7 +1070,7 @@ const loadDirInfo = async (id: string, loading: boolean) => {
   if (res && res.length > 0) {
     view.imageList = [];
     for (let i = 0; i < res.length; i++) {
-      if (res[i].FileType == "jpg") {
+      if (res[i].FileType == "jpg" || res[i].FileType == "png") {
         view.imageList.push(res[i].ImageBase);
       }
     }
@@ -1049,6 +1122,8 @@ const refreshIndex = async () => {
     ElMessage.success(res.Message);
     await queryList();
     refreshIndexFlag.value = false;
+  } else {
+    ElMessage.error(res.Message);
   }
 };
 
@@ -1063,6 +1138,8 @@ const openThisFolder = async (id: string, a?: number) => {
   const res = await OpenFileFolder(id);
   if (res.Code === 200) {
     ElMessage.success(res.Message);
+  } else {
+    ElMessage.error(res.Message);
   }
 };
 
@@ -1092,6 +1169,8 @@ const deleteThis = async (id: string, a?: number) => {
         .then((res) => {
           if (res.Code === 200) {
             ElMessage.success(res.Message);
+          } else {
+            ElMessage.error(res.Message);
           }
         })
         .catch(() => {
@@ -1105,6 +1184,8 @@ const getImageList = async (params: string) => {
   const res = await DownImageList(params);
   if (res.Code === 200) {
     ElMessage.success(res.Message);
+  } else {
+    ElMessage.error(res.Message);
   }
 };
 
@@ -1112,6 +1193,8 @@ const infoThis = async (id: string) => {
   const res = await FindFileInfo(id);
   if (res.Code === 200) {
     ElMessage.success(res.Message);
+  } else {
+    ElMessage.error(res.Message);
   }
 };
 
@@ -1253,7 +1336,7 @@ onMounted(() => {
 .pageTool {
   position: fixed;
   bottom: 4px;
-  z-index: 999;
+  z-index: 99;
   margin-bottom: 8px;
 }
 
@@ -1269,7 +1352,7 @@ onMounted(() => {
 
 .tag-area {
   position: absolute;
-  z-index: 999;
+  z-index: 99;
   opacity: 1;
   margin: 4px 4px;
 }
@@ -1278,7 +1361,7 @@ onMounted(() => {
   margin-left: 64px;
   filter: alpha(opacity=100);
   position: absolute;
-  z-index: 999;
+  z-index: 99;
   height: 28px;
   float: right;
   text-align: justify;
@@ -1290,7 +1373,7 @@ onMounted(() => {
   filter: alpha(opacity=100);
   opacity: 1;
   position: absolute;
-  z-index: 999;
+  z-index: 99;
   margin-top: 2px;
   float: right;
   text-align: justify;
@@ -1321,7 +1404,7 @@ onMounted(() => {
   top: 0px;
   opacity: 1;
   position: fixed;
-  z-index: 9999;
+  z-index: 99;
   width: 100%;
   background: #b8aeae;
 }
@@ -1339,7 +1422,7 @@ onMounted(() => {
   width: 180px;
   height: auto;
   border: 1;
-  z-index: 9999;
+  z-index: 99;
   position: absolute;
   background: white;
   opacity: 1;

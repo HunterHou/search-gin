@@ -36,14 +36,20 @@ var (
 
 func main() {
 	app := router.BuildRouter()
-	server01 := &http.Server{
+	serviceRequest := &http.Server{
 		Addr:         cons.PortNo,
 		Handler:      app,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	server02 := &http.Server{
+	imageRequest := &http.Server{
 		Addr:         cons.PortNo2,
+		Handler:      app,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	fileRequest := &http.Server{
+		Addr:         cons.PortNo3,
 		Handler:      app,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -53,10 +59,13 @@ func main() {
 	go service.HeartBeat()
 
 	g.Go(func() error {
-		return server01.ListenAndServe()
+		return serviceRequest.ListenAndServe()
 	})
 	g.Go(func() error {
-		return server02.ListenAndServe()
+		return imageRequest.ListenAndServe()
+	})
+	g.Go(func() error {
+		return fileRequest.ListenAndServe()
 	})
 	if err := g.Wait(); err != nil {
 		log.Fatal(err)
