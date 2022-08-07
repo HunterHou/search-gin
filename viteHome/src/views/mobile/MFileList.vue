@@ -1,6 +1,7 @@
 
 <template>
   <div class="mainBody">
+    <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home');"></NavBar>
     <Sticky v-if="isPlaying" :offsetTop="520" style="left:450px;width: 400px;">
       <Button size="small" type="success" @click="() => { view.videoVisible = true }">
         正在播放：
@@ -90,12 +91,14 @@ import { ResultList } from '@/config/ResultModel';
 import { getFileStream, getPng } from "@/utils/ImageUtils";
 import {
   Button, Card, DropdownItem, DropdownMenu, List, PullRefresh, Search, Sticky,
-  Tag, Toast
+  Tag, Toast, NavBar
 } from 'vant';
 import 'vant/lib/index.css';
 import { onMounted, reactive, ref, watch, watchEffect } from 'vue';
 import { MovieModel } from '../fileList';
+import { useRouter} from 'vue-router'
 
+const {push} =useRouter()
 const loading = ref(false)
 const finished = ref(false)
 const isPlaying = ref(false)
@@ -145,11 +148,6 @@ const options = reactive({
   ], //显示所有按钮,
 });
 
-watchEffect(view.Keyword, (newVal) => {
-  console.log(newVal)
-  view.Page = 1
-  onSearch()
-})
 
 const onLoad = async () => {
   view.Page += 1
