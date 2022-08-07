@@ -1,7 +1,7 @@
 
 <template>
   <div class="mainBody">
-    <Sticky v-if="isPlaying || viewPic" :offsetTop="520" style="left:450px;width: 400px;">
+    <Sticky v-if="isPlaying" :offsetTop="520" style="left:450px;width: 400px;">
       <Button size="small" type="success" @click="() => { view.videoVisible = true }">
         正在播放：
         {{ view.currentFile?.Code ||
@@ -24,7 +24,8 @@
       </DropdownItem>
 
     </DropdownMenu>
-    <Search v-model="view.Keyword" placeholder="请输入搜索关键词" @search="onSearch" @cancel="onCancel" input-align="center">
+    <Search v-model="view.Keyword" placeholder="请输入搜索关键词" @search="onSearch" @update:model-value="keywordUpdate"
+      @cancel="onCancel" input-align="center">
     </Search>
 
 
@@ -37,19 +38,23 @@
     <PullRefresh v-model="refreshing" @refresh="() => {
       view.Page = 1
       onSearch()
+      finished = false
     }">
-      <List class="mlist" v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <List class="mlist" v-model:loading="loading" v-model:error="error" :finished="finished" finished-text="没有更多了"
+        @load="onLoad">
         <Card v-for="item in view.ModelList" :desc="item.Actress" :title="item.Code" :thumb="getPng(item.Id)">
           <template #tags>
-            <Tag v-for="tag in item.Tags" plain type="danger">{{ tag }}</Tag>
+            <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
           </template>
           <template #footer>
-            <Button size="mini" @click="openFile(item)">播放</Button>
-            <Button size="mini" @click="viewPictures(item)">查看</Button>
+            <Button size="normal" type="primary" @click="openFile(item)">播放</Button>
+            <Button size="normal" type="primary" @click="viewPictures(item)">查看</Button>
           </template>
         </Card>
       </List>
+      <Button @click="onLoad" block type="primary">加载</Button>
     </PullRefresh>
+
 
     <teleport to="body">
       <div v-show="view.videoVisible"
@@ -74,7 +79,6 @@
         </div>
       </div>
     </teleport>
-    viewPic
   </div>
 
 
@@ -85,20 +89,21 @@ import { QueryDirImageBase64, QueryFileList } from '@/api/file';
 import { ResultList } from '@/config/ResultModel';
 import { getFileStream, getPng } from "@/utils/ImageUtils";
 import {
-Button, Card, DropdownItem, DropdownMenu, List, PullRefresh, Search, Sticky,
-Tag, Toast
+  Button, Card, DropdownItem, DropdownMenu, List, PullRefresh, Search, Sticky,
+  Tag, Toast
 } from 'vant';
 import 'vant/lib/index.css';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch, watchEffect } from 'vue';
 import { MovieModel } from '../fileList';
 
 const loading = ref(false)
 const finished = ref(false)
 const isPlaying = ref(false)
 const refreshing = ref(false)
+const error = ref(false)
 const view = reactive(
   {
-    Page: 1,
+    Page: 0,
     PageSize: 10,
     SortField: 'MTime',
     SortType: 'desc',
@@ -140,12 +145,23 @@ const options = reactive({
   ], //显示所有按钮,
 });
 
-const onLoad = () => {
-  console.log('onLoad')
-  view.Page += 1
+watchEffect(view.Keyword, (newVal) => {
+  console.log(newVal)
+  view.Page = 1
   onSearch()
+})
+
+const onLoad = async () => {
+  view.Page += 1
+  console.log('onLoad', view.Page)
+  await onSearch(false)
 }
 
+const searchKeyword = (words: string) => {
+  view.Keyword = words
+  view.Page = 1
+  onSearch()
+}
 const viewPic = ref(false)
 
 const viewPictures = async (item) => {
@@ -207,15 +223,24 @@ const onSearch = async (clear: boolean = true) => {
     item.Name = item.Name.replace("[" + item.Code + "]", "");
     item.Name = item.Name.replace("[" + item.Actress + "]", "");
   });
-  view.ModelList = model.Data;
+  const newList = [...view.ModelList, ...model.Data]
+  view.ModelList = newList
   view.TotalCnt = model.TotalCnt;
   view.ResultCnt = model.ResultCnt;
   refreshing.value = false
+  error.value = true
+  finished.value = false
 }
 const onCancel = () => {
   Toast('取消')
+  onSearch()
 }
-
+const keywordUpdate = () => {
+  if (view.Keyword.length >= 2) {
+    view.Page = 1
+    onSearch()
+  }
+}
 onMounted(() => {
   // onSearch()
   options.src = null
