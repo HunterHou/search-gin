@@ -144,7 +144,7 @@
             【
             <ElButton type="success" plain size="large" loading :link="true" />
             {{
-            view.contextmenuTarget.Code + '-' + view.contextmenuTarget.Actress
+                view.contextmenuTarget.Code + '-' + view.contextmenuTarget.Actress
             }}
             <ElButton type="success" plain size="large" loading :link="true" />
             】
@@ -216,39 +216,7 @@
         </ElCol>
       </ElRow>
     </ElCard>
-    <!--  -->
-    <teleport to="body">
-      <div v-show="view.videoVisible"
-        style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;margin:0px auto;overflow: auto;background-color: rgba(0,0,0,0.7);"
-        id="videoDiv">
 
-        <ElRow :gutter="24">
-          <ElCol :span="22">
-            <video id="video" :src="view.videoUrl" controls style="margin:0 auto">
-              您的浏览器不支持 video 标签。
-            </video>
-          </ElCol>
-          <ElCol :span="2">
-            <el-space direction="vertical" alignment="flex-end" :size="30" style="margin-right: 10px;color: white;">
-              <ElButton type="primary" @click="view.videoVisible = false">隐藏</ElButton>
-              <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-              <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
-              <ElButton type="primary" @click="videoPlus(4, 4)">扩大</ElButton>
-              <ElButton type="primary" @click="videoPlus(-4, -4)">减小</ElButton>
-              <ElButton type="primary" @click="videoPlus(4, 0)">增宽</ElButton>
-              <ElButton type="primary" @click="videoPlus(-4, 0)">减窄</ElButton>
-              <div style="margin-right: 10px;color: white;">
-                <p>【{{ view.contextmenuTarget.Code }}】</p>
-                <p>【{{ view.contextmenuTarget.Actress }}】</p>
-                <p>{{ view.contextmenuTarget.Name }}</p>
-              </div>
-
-            </el-space>
-
-          </ElCol>
-        </ElRow>
-      </div>
-    </teleport>
 
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
       style="min-height: 700px">
@@ -287,11 +255,11 @@
                   @select="handleSelectTag" size="small" style="width: 240px">
                   <template #append>
                     <ElButton size="default" type="primary" :disabled="customerTagEmpty()"
-                      @click="addCustomerTag(item.Id)" style="font-size: 14px">加
+                      @click="addCustomerTag(item.Id)" style="font-size: 16px">加
                     </ElButton>
                   </template>
                   <template #default="{ item }">
-                    <div v-if="item" style="font-size: 14px" class="value">
+                    <div v-if="item" style="font-size: 16px" class="value">
                       {{ item }}
                     </div>
                   </template>
@@ -333,13 +301,13 @@
                     <VideoPlay />
                   </ElIcon>
                 </ElButton>
-                
+
                 <ElButton type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
                   <ElIcon>
                     <VideoPlay />
                   </ElIcon>
                 </ElButton>
-                
+
                 <ElButton type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
                   <ElIcon>
                     <UserFilled />
@@ -443,9 +411,9 @@
                     <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                     <span style="color: red">【{{ item.SizeStr }}】</span>
                     {{
-                    useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
-                    locales: "zh-cn",
-                    })
+                        useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
+                          locales: "zh-cn",
+                        })
                     }}
                     <hr />
                     <span style="
@@ -464,7 +432,7 @@
         </div>
       </ElSpace>
       <ElPagination class="pageTool" v-model:currentPage="queryParam.Page" v-model:page-size="queryParam.PageSize"
-        :page-sizes="[12, 14, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
+        :page-sizes="[12, 16, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
         :background="true" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
 
@@ -558,7 +526,7 @@
             <ElCol :span="8">
               <span @click="gotoContext(view.formItem.Id)">【{{ view.formItem.SizeStr }}】</span>
               <span>{{
-              useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
+                  useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
               }}</span>
 
             </ElCol>
@@ -584,7 +552,7 @@
       </div>
       <teleport to="body">
         <div v-show="view.innerVisible"
-          style="width: 100%;height:100%;z-index: 9999;top: 0px;position:fixed;overflow: auto;"
+          style="width: 100%;height:100%;z-index: 9999;top: 0px;position:fixed;overflow: hidden;"
           @click="innerVisibleFalse">
           <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
             <ElImage style="min-width: 1200px;width: auto; margin: 0 auto;opacity: 9;z-index: 9999" :src="item">
@@ -600,9 +568,37 @@
         </ElImage>
       </div> -->
     </ElDialog>
+    <!--  -->
 
   </div>
+  <teleport to="body">
+    <div v-show="view.videoVisible"
+      style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;"
+      id="videoDiv">
+      <div
+        style="top:0;height:2rem;width:100%;margin:1rem auto;position:absolute;color: white;z-index: 9999;float: right;">
+        <span style="margin-left:2rem">
+          <ElTag v-for="item in view.contextmenuTarget.Tags" key="default" type="danger" size="large"
+            style="margin-left: 0.5rem;">
+            {{ item }}
+          </ElTag>
+          {{ view.contextmenuTarget.Code }}
+          {{ view.contextmenuTarget.Actress }}
+          {{ view.contextmenuTarget.Name }}
+        </span>
+        <div style="right:1rem;top:0;height:2rem;position:absolute;z-index: 9999;">
+          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+          <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
+        </div>
+      </div>
+      <!-- <video id="video" :src="view.videoUrl" controls style="right: 0;top: 0;position:absolute">
+        您的浏览器不支持 video 标签。
+      </video> -->
+      <vue3VideoPlay v-bind="options"  />
 
+    </div>
+  </teleport>
 </template>
 <script setup lang="ts">
 import {
@@ -629,13 +625,15 @@ import {
 import { onMounted, reactive, ref, watch } from "vue";
 import { MovieModel, MovieQuery } from ".";
 
+import "vue3-video-play/dist/style.css";
+
+
 
 const target = ref(null);
 const selectText = useTextSelection();
-const { y: wy } = useWindowScroll();
+const { y: windowScrollHheight } = useWindowScroll();
 const { x, y, isOutside } = useMouseInElement(target);
 const pagePress = ref(null);
-// const { pressed } = useMousePressed({ target: pagePress });
 
 
 const running = ref(true);
@@ -646,6 +644,7 @@ const systemProperty = useSystemProperty();
 const cmenuShow = ref(false);
 const source = ref("");
 const { copy } = useClipboard({ source });
+const { width: windowWidth, height: windowHeight } = useWindowSize()
 
 const searchStyle = ref({})
 
@@ -662,10 +661,51 @@ const view = reactive<any>({
   ModelList: [],
   ResultCnt: 0,
 });
+const options = reactive({
+  width: "1200px", //播放器高度
+  height: "700px", //播放器高度
+  color: "#409eff", //主题色
+  title: "", //视频名称
+  src: "https://cdn.jsdelivr.net/gh/xdlumia/files/video-play/IronMan.mp4", //视频源
+  muted: false, //静音
+  webFullScreen: false,
+  speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
+  autoPlay: false, //自动播放
+  loop: false, //循环播放
+  mirror: false, //镜像画面
+  ligthOff: false, //关灯模式
+  volume: 0.3, //默认音量大小
+  control: true, //是否显示控制
+  controlBtns: [
+    "audioTrack",
+    "quality",
+    "speedRate",
+    "volume",
+    "setting",
+    "pip",
+    "pageFullScreen",
+    "fullScreen",
+  ], //显示所有按钮,
+});
 const queryParam = reactive<MovieQuery>(new MovieQuery());
 
-watch(wy, () => {
-  if (wy.value > 50) {
+
+watch(windowWidth, (newWidth) => {
+  let newHeight = newWidth * 9 / 16
+  if (newHeight > windowHeight.value) {
+    newHeight = windowHeight.value
+  }
+  options.width = newWidth - 20 + 'px'
+  options.height = newHeight - 14 + 'px'
+})
+watch(windowHeight, (newHeight) => {
+  const newWidth = newHeight * 16 / 9
+  options.width = newWidth - 20 + 'px'
+  options.height = newHeight - 14 + 'px'
+
+})
+watch(windowScrollHheight, () => {
+  if (windowScrollHheight.value > 50) {
     searchStyle.value = {
       top: '1px',
       width: '100%',
@@ -695,46 +735,33 @@ onKeyStroke(["Enter"], (e) => {
 const fullScreen = ref(true)
 const isPlaying = ref(false)
 
-const videoPlus = (x: number = 0, y: number = 0) => {
-  const videoElement = document.getElementById('video')
-  const height = videoElement.getAttribute('height')
-  const width = videoElement.getAttribute('width')
-  const newWidth = parseInt(width) + (16 * x)
-  const newHeight = parseInt(height) + (9 * y)
-  videoElement.setAttribute('width', newWidth + '')
-  videoElement.setAttribute('height', newHeight + '')
-}
 const fullPlayVideo = () => {
-  const { width, height } = useWindowSize()
-  const videoElement = document.getElementById('video')
-  console.log('currentSize', width.value, height.value)
   if (fullScreen.value) {
-    videoElement.setAttribute('width', width.value - 96 + '')
-    videoElement.setAttribute('height', height.value + '')
+    options.width = windowWidth.value - 20 + 'px'
+    options.height = windowHeight.value - 14 + 'px'
   } else {
-    videoElement.setAttribute('width', 1600 + '')
-    videoElement.setAttribute('height', 900 + '')
+    options.width = 1600 + 'px'
+    options.height = 916 + 'px'
   }
   fullScreen.value = !fullScreen.value
+}
 
+const hiddenPlayVideo = () => {
+  view.videoVisible = false
 }
 
 const closePlayVideo = () => {
   view.videoVisible = false
-  const videoElement = document.getElementById('video')
-  videoElement.normalize()
-  videoElement.setAttribute('src', '')
+  options.src = null
   isPlaying.value = false
-  // videoElement.removeAttribute('src')
 }
 
 const startPlayVideo = () => {
   fullScreen.value = false
   fullPlayVideo()
-  const videoElement = document.getElementById('video')
-  videoElement.setAttribute('src', getFileStream(view.contextmenuTarget.Id))
-  videoElement.setAttribute('autoplay', 'true')
-  videoElement.setAttribute('loop', 'true')
+  const stream = getFileStream(view.contextmenuTarget.Id)
+  options.title=view.contextmenuTarget.Name
+  options.src = stream
   isPlaying.value = true
 
   // videoElement.appendChild()
@@ -767,9 +794,7 @@ const cmenuPlay = async (item?) => {
   if (item) {
     view.contextmenuTarget = item
   }
-  if (!isPlaying.value) {
-    view.videoVisible = true
-  }
+  view.videoVisible = true
   cmenuShow.value = false;
   startPlayVideo()
 
