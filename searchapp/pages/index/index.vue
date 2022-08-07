@@ -23,11 +23,11 @@
 	} from 'vue'
 	import {
 		GetSettingInfo
-	} from './setting.js'
+	} from '@/api/setting.js'
 
 	const view = reactive({
 		title: 'Hello',
-		dirsInfo: []
+		dirsInfo: {}
 	})
 	const loadData = async () => {
 		const res = await GetSettingInfo({})

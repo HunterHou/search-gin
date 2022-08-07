@@ -1,3 +1,6 @@
+
+
+
 const common= {
 		baseUrl: "",
 		data: {},
@@ -7,6 +10,7 @@ const common= {
 		},
 		dataType: 'json',
 		method: 'GET',
+		timeout:3000,
 
 	}
 export const  request=(options = {})=> {
@@ -15,6 +19,8 @@ export const  request=(options = {})=> {
 		options.header = options.header || common.header
 		options.dataType = options.dataType || common.dataType
 		options.method = options.method || common.method
+		options.timeout=common.timeout
+		console.log('url:',options.url)
 		return new Promise((res, resj) => {
 			uni.request({
 				...options,

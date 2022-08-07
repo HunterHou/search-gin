@@ -1,6 +1,12 @@
 <script>
 	export default {
 		onLaunch: function() {
+			let destHost = uni.getStorageSync("destHost")
+			if (!destHost) {
+				destHost = "http://192.168.3.38"
+				uni.setStorageSync("destHost", destHost)
+			}
+
 			console.log('App Launch')
 		},
 		onShow: function() {
