@@ -1,6 +1,14 @@
 
 <template>
   <div class="mainBody">
+    <Sticky v-if="isPlaying" :offsetTop="520" style="left:450px;width: 400px;">
+      <Button size="small" type="success" @click="() => { view.videoVisible = true }">{{ view.currentFile?.Code ||
+          view.currentFile?.Actress ||
+          '无'
+      }}播放中
+      <Button  size="small" type="success" :loading="true"></Button>
+      </Button>
+    </Sticky>
     <DropdownMenu>
       <DropdownItem v-model="view.MovieType" :options="MovieTypeOptions" @change="onSearch">
 
@@ -15,6 +23,14 @@
     </DropdownMenu>
     <Search v-model="view.Keyword" placeholder="请输入搜索关键词" @search="onSearch" @cancel="onCancel" input-align="center">
     </Search>
+
+
+    <!-- <div style="overflow-y:scroll ;" v-for="item in view.ModelList" :desc="item.Actress" :title="item.Code" :thumb="getPng(item.Id)">
+      <Tag v-for="tag in item.Tags" plain type="danger">{{ tag }}</Tag>
+      <Button size="mini" @click="openFile(item)">播放</Button>
+      <Button size="mini">播放</Button>
+    </div> -->
+
     <PullRefresh v-model="refreshing" @refresh="() => {
       view.Page = 1
       onSearch()
@@ -36,14 +52,16 @@
       <div v-show="view.videoVisible"
         style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;"
         id="videoDiv">
-        <video id="video" :src="options.src" controls style="width: 100%;height:auto;right: 0;top: 0;position:absolute">
-          您的浏览器不支持 video 标签。
-        </video>
+        <div style="right:1rem;top:0;height:2rem;position:absolute;z-index: 9999;">
+          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+        </div>
         <vue3VideoPlay v-bind="options" />
-
       </div>
     </teleport>
+
   </div>
+
 
 </template>
 
@@ -53,7 +71,7 @@ import { ResultList } from '@/config/ResultModel';
 import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
 import {
   Row,
-  Col,
+  Sticky,
   Tag,
   Button,
   PullRefresh,
@@ -69,11 +87,12 @@ import { reactive, onMounted, ref } from 'vue';
 
 const loading = ref(false)
 const finished = ref(false)
+const isPlaying = ref(false)
 const refreshing = ref(false)
 const view = reactive(
   {
     Page: 1,
-    PageSize: 15,
+    PageSize: 10,
     SortField: 'MTime',
     SortType: 'desc',
     MovieType: '',
@@ -93,7 +112,7 @@ const options = reactive({
   title: "", //视频名称
   src: "http://192.168.3.38:8083/api/file/F~emby~emby-rename~井川ゆい柳田やよい~YeLLOW~[川い田よ]EO29人中しンィスッン 川い柳やい~[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv", //视频源
   muted: false, //静音
-  webFullScreen: true,
+  webFullScreen: false,
   speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
   autoPlay: true, //自动播放
   loop: true, //循环播放
@@ -119,8 +138,19 @@ const onLoad = () => {
   onSearch()
 }
 
+const hiddenPlayVideo = () => {
+  view.videoVisible = false
+}
+
+const closePlayVideo = () => {
+  view.videoVisible = false
+  options.src = null
+  isPlaying.value = false
+}
+
 const openFile = (item: any) => {
   view.currentFile = item
+  isPlaying.value = true
   view.videoVisible = true
   const stream = getFileStream(item.Id)
   console.log(stream)
@@ -157,8 +187,8 @@ const onCancel = () => {
 
 onMounted(() => {
   // onSearch()
-  //  options.src=null
-  view.videoVisible = true
+  options.src = null
+  // view.videoVisible = true
 
 })
 
@@ -182,8 +212,12 @@ const SortTypeOptions = [
 <style>
 .mainBody {
   width: 100%;
-  position: fixed;
+  position: absolute;
+  display: block;
 }
 
-.mlist {}
+.mlist {
+  float: none;
+  width: 100%;
+}
 </style>
