@@ -1,13 +1,16 @@
 
 <template>
   <div class="mainBody">
-    <Sticky v-if="isPlaying" :offsetTop="520" style="left:450px;width: 400px;">
-      <Button size="small" type="success" @click="() => { view.videoVisible = true }">{{ view.currentFile?.Code ||
-          view.currentFile?.Actress ||
-          '无'
-      }}播放中
-      <Button  size="small" type="success" :loading="true"></Button>
+    <Sticky v-if="isPlaying || viewPic" :offsetTop="520" style="left:450px;width: 400px;">
+      <Button size="small" type="success" @click="() => { view.videoVisible = true }">
+        正在播放：
+        {{ view.currentFile?.Code ||
+            view.currentFile?.Actress ||
+            '无'
+        }}
+        <Button size="small" type="success" :loading="true" loading-type="spinner"></Button>
       </Button>
+      <Button size="small" type="danger" @click="closePlayVideo">停止播放</Button>
     </Sticky>
     <DropdownMenu>
       <DropdownItem v-model="view.MovieType" :options="MovieTypeOptions" @change="onSearch">
@@ -42,7 +45,7 @@
           </template>
           <template #footer>
             <Button size="mini" @click="openFile(item)">播放</Button>
-            <Button size="mini">播放</Button>
+            <Button size="mini" @click="viewPictures(item)">查看</Button>
           </template>
         </Card>
       </List>
@@ -59,31 +62,35 @@
         <vue3VideoPlay v-bind="options" />
       </div>
     </teleport>
-
+    <teleport to="body">
+      <div v-show="viewPic" style="width: 100%;height:100%;z-index: 99;top: 0px;position:fixed;overflow: auto;">
+        <div style="right:1rem;top:20px;height:2rem;position:fixed;z-index: 999;">
+          <Button type="primary" @click="closeViewPicture">关闭</Button>
+        </div>
+        <div v-for="(item, index) in view.imageList" :key="index" style="display: flex; margin: 1px auto">
+          <ElImage style="width: 100%; margin: 0 auto;opacity: 9;z-index: 99" :src="item">
+            @click.stop="innerVisibleFalse"
+          </ElImage>
+        </div>
+      </div>
+    </teleport>
+    viewPic
   </div>
 
 
 </template>
 
 <script setup lang="ts">
-import { QueryFileList } from '@/api/file';
+import { QueryDirImageBase64, QueryFileList } from '@/api/file';
 import { ResultList } from '@/config/ResultModel';
-import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
+import { getFileStream, getPng } from "@/utils/ImageUtils";
 import {
-  Row,
-  Sticky,
-  Tag,
-  Button,
-  PullRefresh,
-  List,
-  Card,
-  Toast,
-  Search,
-  DropdownMenu,
-  DropdownItem
+Button, Card, DropdownItem, DropdownMenu, List, PullRefresh, Search, Sticky,
+Tag, Toast
 } from 'vant';
 import 'vant/lib/index.css';
-import { reactive, onMounted, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
+import { MovieModel } from '../fileList';
 
 const loading = ref(false)
 const finished = ref(false)
@@ -101,7 +108,8 @@ const view = reactive(
     TotalCnt: 0,
     ResultCnt: 0,
     videoVisible: false,
-    currentFile: {}
+    currentFile: new MovieModel(),
+    imageList: []
   }
 )
 
@@ -137,6 +145,29 @@ const onLoad = () => {
   view.Page += 1
   onSearch()
 }
+
+const viewPic = ref(false)
+
+const viewPictures = async (item) => {
+  await loadDirInfo(item.Id)
+  viewPic.value = true
+}
+const closeViewPicture = () => {
+  viewPic.value = false
+}
+
+
+const loadDirInfo = async (id: string) => {
+  const res = await QueryDirImageBase64(id);
+  if (res && res.length > 0) {
+    view.imageList = [];
+    for (let i = 0; i < res.length; i++) {
+      if (res[i].FileType == "jpg" || res[i].FileType == "png") {
+        view.imageList.push(res[i].ImageBase);
+      }
+    }
+  }
+};
 
 const hiddenPlayVideo = () => {
   view.videoVisible = false
