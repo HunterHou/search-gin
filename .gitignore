@@ -6,10 +6,8 @@ viteApp/
 app.exe
 .vscode/settings.json
 client/node_modules/
-node_modules/
+node_modules/**/*
 /app/
-viteHome/dist
-vueome/dist/
 /vuehome/.nuxt
 __debug_bin
 election/src/
@@ -18,4 +16,8 @@ gin.log
 /gin.log
 searchGin
 searchGin-journal
-viteHome/src/views/fileList/FileList.vue
+viteHome/dist/**/*
+viteHome/dist/
+vuehome/dist/
+vuehome/node_modules/
+election/node_modules/
