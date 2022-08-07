@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { ElContainer, ElHeader } from "element-plus";
-import HeaderVue from "./components/Header/Header.vue";
+import { computed } from "vue";
+import DefaultLay from "./layout/DefaultLay.vue";
+import { useRoute } from "vue-router";
+const key = computed(() => {
+  console.log('key',useRoute().path)
+  return useRoute().path
+})
 </script>
 
 <template>
-  <ElContainer>
-    <ElHeader>
-      <HeaderVue />
-    </ElHeader>
-    <div class="main">
-      <RouterView></RouterView>
-    </div>
-    <ElFooter>
-      <hr />
-    </ElFooter>
-  </ElContainer>
+  <section>
+    <RouterView :key="key"></RouterView>
+  </section>
+  <!-- <DefaultLay /> -->
 </template>
 <style>
 html {

@@ -25,8 +25,11 @@ const handleSelect = (key: string, keyPath: string[]) => {
             {{ logo.title }}
         </ElMenuItem>
         <div class="flex-grow" />
+        <!-- <div v-for="item in staticRoutes">
+            <ElMenuItem v-if="!item.meta.hidden" :index="item.path">{{ item.meta.title }}</ElMenuItem>
+        </div> -->
         <div v-for="item in staticRoutes">
-            <ElMenuItem v-if="!item.meta.hidden" :index="item.path">{{  item.meta.title }}</ElMenuItem>
+            <ElMenuItem v-if="item.children" v-for="citem in item.children" :index="citem.path">{{ citem.meta.title }}</ElMenuItem>
         </div>
     </ElMenu>
 </template>
@@ -34,13 +37,16 @@ const handleSelect = (key: string, keyPath: string[]) => {
 .flex-grow {
     flex-grow: 1;
 }
+
 .el-header {
     height: 40px
 }
+
 .el-menu-demo {
-    height:48px;
+    height: 48px;
 }
-.el-menu-item{
-    height:48px;
+
+.el-menu-item {
+    height: 48px;
 }
 </style>
