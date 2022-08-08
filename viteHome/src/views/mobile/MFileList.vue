@@ -3,8 +3,8 @@
   <div class="mainBody">
     <teleport to="body">
       <div v-show="view.videoVisible" id="videoDiv"
-        style="width: 100%;height:100%;z-index: 9999; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;">
-        <div style="right:1rem;height:2rem;position:absolute;z-index: 9999;">
+        style="width: 100vw;height:100vh;z-index: 9999; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;">
+        <div style="right:10vw;height:10vh;position:absolute;z-index: 9999;">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <ElButton type="primary" @click="transformThis">旋转</ElButton>
@@ -62,41 +62,42 @@
       <!-- -->
       <!--   -->
       <!-- <List class="mlist" v-model:loading="loadingList" :finished="finished" finished-text="没有更多了" offset="1200000" @load="onLoad" :immediate-check	="false"> -->
-        <div v-for="item in view.ModelList" :key="item.Id"
-          style="width: 96vw;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
-          <div style="width: 40%;margin: 8px auto;">
-            <Image :src="getPng(item.Id)" style="height: auto;width: 8rem;"></Image>
-          </div>
-          <div style="width:55%;margin: 8px auto;float: right;">
-            <div style="margin: 1px auto;">
-              <Row type="flex" justify="space-around">
-                <Col span="12">
-                <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
-                </a>
-                </Col>
-                <Col span="5">
-                <Button size="small" type="primary" @click="openFile(item)">播放</Button>
-                </Col>
-                <Col span="5">
-                <Button size="small" type="primary" @click="viewPictures(item)">查看</Button>
-                </Col>
-              </Row>
-              <Row>
-                <span v-if="item.Code">{{ item.Code }}</span>
-                <span>【{{ item.SizeStr }}】 </span>
-                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-              </Row>
-              <Row>
-                <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
-              </Row>
-              <Row>
-                <div style="margin: 1px auto;font-size: 12px;color: gray;max-height: 3rem;">
-                  <span> 【{{ item.Name }}】</span>
-                </div>
-              </Row>
-            </div>
+      <div v-for="item in view.ModelList" :key="item.Id"
+        style="width: 96vw;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
+        <div style="width: 40vw;margin: 8px auto;">
+          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)"
+            :style="{ height: '100%', width: isWide ? '100%' : 'auto' ,margin:'2px auto'}"></Image>
+        </div>
+        <div style="width:55vw;margin: 8px auto;float: right;">
+          <div style="margin: 1px auto;">
+            <Row type="flex" justify="space-around">
+              <Col span="12">
+              <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
+              </a>
+              </Col>
+              <Col span="5">
+              <Button size="small" type="primary" @click="openFile(item)">播放</Button>
+              </Col>
+              <Col span="5">
+              <Button size="small" type="primary" @click="viewPictures(item)">查看</Button>
+              </Col>
+            </Row>
+            <Row>
+              <span v-if="item.Code">{{ item.Code }}</span>
+              <span>【{{ item.SizeStr }}】 </span>
+              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+            </Row>
+            <Row>
+              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
+            </Row>
+            <Row>
+              <div style="margin: 1px auto;font-size: 12px;color: gray;max-height: 3rem;">
+                <span> 【{{ item.Name }}】</span>
+              </div>
+            </Row>
           </div>
         </div>
+      </div>
       <!-- </List> -->
       <Button @click="onLoadMore" block type="primary">加载</Button>
     </PullRefresh>
@@ -109,16 +110,19 @@
 <script setup lang="ts">
 import { QueryDirImageBase64, QueryFileList } from '@/api/file';
 import { ResultList } from '@/config/ResultModel';
-import { getFileStream, getPng } from "@/utils/ImageUtils";
+import { getFileStream, getPng, getJpg } from "@/utils/ImageUtils";
 import {
   Button, Row, Col, Icon, DropdownItem, DropdownMenu, List, PullRefresh, Search, Sticky,
   Tag, Toast, NavBar, Image
 } from 'vant';
 import 'vant/lib/index.css';
-import { onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { MovieModel, MovieQuery } from '../fileList';
 import { useRouter } from 'vue-router'
+import { useWindowSize } from '@vueuse/core'
 const { push } = useRouter()
+const { width } = useWindowSize()
+const isWide = computed(() => { return width.value > 600 })
 const loadingList = ref(false)
 const finished = ref(false)
 const isPlaying = ref(false)
@@ -182,14 +186,16 @@ const isTransform = ref(false)
 const transformThis = () => {
   const videoDiv = document.getElementById("videoDiv")
   videoDiv.style.position = 'fixed'
+  videoDiv.style.width = '100vw'
+  videoDiv.style.height = '100vh'
   if (isTransform.value) {
     videoDiv.style.transform = 'rotate(90deg)'
-    videoDiv.style.width = '80vw'
-    videoDiv.style.height = '80vh'
+    // videoDiv.style.width = '100vw'
+    // videoDiv.style.height = '100vh'
   } else {
     videoDiv.style.transform = 'rotate(0deg)'
-    videoDiv.style.width = '80vw'
-    videoDiv.style.height = '80vh'
+    // videoDiv.style.width = '100vw'
+    // videoDiv.style.height = '100vh'
   }
   isTransform.value = !isTransform.value
 
@@ -300,7 +306,7 @@ const queryList = async (pageStart?: number) => {
   view.loadCnt = view.loadCnt + model.Data.length
   refreshing.value = false
   loadingList.value = false
-  console.log('queryListOver',loadingList.value)
+  console.log('queryListOver', loadingList.value)
 }
 
 const onSearch = async (clear?: Boolean) => {
