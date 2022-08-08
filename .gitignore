@@ -10,6 +10,7 @@ searchGin
 gin.log
 searchGin
 viteHome/dist/**/*
+/viteHome/dist/
 viteHome/node_modules/
 
 /vuehome/.nuxt
