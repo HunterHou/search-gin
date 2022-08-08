@@ -1,6 +1,29 @@
 
 <template>
   <div class="mainBody">
+    <teleport to="body">
+      <div v-show="view.videoVisible" id="videoDiv"
+        style="width: 100%;height:100%;z-index: 9999; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;">
+        <div style="right:1rem;height:2rem;position:absolute;z-index: 9999;">
+          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+          <ElButton type="primary" @click="transformThis">旋转</ElButton>
+        </div>
+        <vue3VideoPlay v-bind="options" />
+      </div>
+    </teleport>
+    <teleport to="body">
+      <div v-show="viewPic" style="width: 100%;height:100%;z-index: 99;top: 0px;position:fixed;overflow: auto;">
+        <div style="right:1rem;top:20px;height:2rem;position:fixed;z-index: 999;">
+          <Button type="primary" @click="closeViewPicture">关闭</Button>
+        </div>
+        <div v-for="(item, index) in view.imageList" :key="index" style="display: flex; margin: 1px auto">
+          <ElImage style="width: 100%; margin: 0 auto;opacity: 9;z-index: 99" :src="item">
+            @click.stop="innerVisibleFalse"
+          </ElImage>
+        </div>
+      </div>
+    </teleport>
     <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home');">
       <Icon name="search" slot="right" />
     </NavBar>
@@ -34,10 +57,11 @@
     <PullRefresh v-model="refreshing" @refresh="() => {
       view.queryParam.Page = 1
       onSearch()
-      finished = false
+      refreshing = false
     }">
       <!-- -->
-      <List class="mlist"  v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <!--   -->
+      <!-- <List class="mlist" v-model:loading="loadingList" :finished="finished" finished-text="没有更多了" offset="1200000" @load="onLoad" :immediate-check	="false"> -->
         <div v-for="item in view.ModelList" :key="item.Id"
           style="width: 23rem;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
           <div style="width: 40%;margin: 8px auto;">
@@ -73,33 +97,10 @@
             </div>
           </div>
         </div>
-      </List>
+      <!-- </List> -->
       <Button @click="onLoadMore" block type="primary">加载</Button>
     </PullRefresh>
-    <teleport to="body">
-      <div v-show="view.videoVisible"
-       id="videoDiv"
-        style="width: 100%;height:100%;z-index: 9999; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;">
-        <div style="right:1rem;height:2rem;position:absolute;z-index: 9999;">
-          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-          <ElButton type="primary" @click="transformThis">旋转</ElButton>
-        </div>
-        <vue3VideoPlay v-bind="options" />
-      </div>
-    </teleport>
-    <teleport to="body">
-      <div v-show="viewPic" style="width: 100%;height:100%;z-index: 99;top: 0px;position:fixed;overflow: auto;">
-        <div style="right:1rem;top:20px;height:2rem;position:fixed;z-index: 999;">
-          <Button type="primary" @click="closeViewPicture">关闭</Button>
-        </div>
-        <div v-for="(item, index) in view.imageList" :key="index" style="display: flex; margin: 1px auto">
-          <ElImage style="width: 100%; margin: 0 auto;opacity: 9;z-index: 99" :src="item">
-            @click.stop="innerVisibleFalse"
-          </ElImage>
-        </div>
-      </div>
-    </teleport>
+
   </div>
 
 
@@ -118,7 +119,7 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import { MovieModel, MovieQuery } from '../fileList';
 import { useRouter } from 'vue-router'
 const { push } = useRouter()
-const loading = ref(false)
+const loadingList = ref(false)
 const finished = ref(false)
 const isPlaying = ref(false)
 const refreshing = ref(false)
@@ -170,11 +171,11 @@ const options = reactive({
   ], //显示所有按钮,
 });
 
-watch(loading, () => {
-  console.log('loading', loading.value)
+watch(loadingList, () => {
+  console.log('loadingListWatch', loadingList.value)
 })
 watch(finished, () => {
-  console.log('finished', loading.value)
+  console.log('finished', finished.value)
 })
 
 const isTransform = ref(false)
@@ -199,10 +200,10 @@ const onLoad = async () => {
   }
   console.log('onLoad2', view.queryParam.Page)
   await queryList(view.loadCnt + 1)
-  loading.value = false
+
 }
 const onLoadMore = async () => {
-  view.queryParam.Page+=1
+  view.queryParam.Page += 1
   await onSearch()
 }
 
@@ -297,6 +298,9 @@ const queryList = async (pageStart?: number) => {
   view.TotalCnt = model.TotalCnt;
   view.ResultCnt = model.ResultCnt;
   view.loadCnt = view.loadCnt + model.Data.length
+  refreshing.value = false
+  loadingList.value = false
+  console.log('queryListOver',loadingList.value)
 }
 
 const onSearch = async (clear?: Boolean) => {
@@ -320,7 +324,7 @@ const keywordUpdate = () => {
   }
 }
 onMounted(() => {
-  // onSearch()
+  onSearch()
   options.src = null
   transformThis()
   // view.videoVisible = true
