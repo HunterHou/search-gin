@@ -16,73 +16,74 @@
       <Button size="small" type="danger" @click="closePlayVideo">停止播放</Button>
     </Sticky>
     <DropdownMenu>
-      <DropdownItem v-model="view.MovieType" :options="MovieTypeOptions" @change="onSearch">
+      <DropdownItem v-model="view.queryParam.MovieType" :options="MovieTypeOptions" @change="onSearch">
 
       </DropdownItem>
-      <DropdownItem v-model="view.SortField" :options="SortFieldOptions" @change="onSearch">
+      <DropdownItem v-model="view.queryParam.SortField" :options="SortFieldOptions" @change="onSearch">
 
       </DropdownItem>
-      <DropdownItem v-model="view.SortType" :options="SortTypeOptions" @change="onSearch">
+      <DropdownItem v-model="view.queryParam.SortType" :options="SortTypeOptions" @change="onSearch">
 
       </DropdownItem>
 
     </DropdownMenu>
-    <Search v-model="view.Keyword" placeholder="请输入搜索关键词" @search="onSearch" @update:model-value="keywordUpdate"
-      @cancel="onCancel" input-align="center">
+    <Search v-model="view.queryParam.Keyword" placeholder="请输入搜索关键词" @search="onSearch"
+      @update:model-value="keywordUpdate" @cancel="onCancel" input-align="center">
     </Search>
 
     <PullRefresh v-model="refreshing" @refresh="() => {
-      view.Page = 1
+      view.queryParam.Page = 1
       onSearch()
       finished = false
     }">
-      <List class="mlist" v-model:loading="loading" v-model:error="error" :finished="finished" finished-text="没有更多了"
-        @load="onLoad">
+      <!-- -->
+      <List class="mlist"  v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <div v-for="item in view.ModelList" :key="item.Id"
           style="width: 23rem;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
           <div style="width: 40%;margin: 8px auto;">
             <Image :src="getPng(item.Id)" style="height: auto;width: 8rem;"></Image>
           </div>
-          <div style="width:55%;margin: 8px auto;">
+          <div style="width:55%;margin: 8px auto;float: right;">
             <div style="margin: 1px auto;">
-              <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
-                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-              </a>
-              <br />
-              <span v-if="item.Code">{{ item.Code }}</span>
-              <span>【{{ item.SizeStr }}】 </span>
-            </div>
-            <div style="margin: 1px auto;font-size: 12px;color: gray;">
-              <span> 【{{ item.Name }}】</span>
-            </div>
-
-            <div style="margin: 1px auto;">
-              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
               <Row type="flex" justify="space-around">
-                <Col span="8">
+                <Col span="12">
+                <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
+                </a>
+                </Col>
+                <Col span="5">
                 <Button size="small" type="primary" @click="openFile(item)">播放</Button>
                 </Col>
-                <Col span="8">
+                <Col span="5">
                 <Button size="small" type="primary" @click="viewPictures(item)">查看</Button>
                 </Col>
               </Row>
-
+              <Row>
+                <span v-if="item.Code">{{ item.Code }}</span>
+                <span>【{{ item.SizeStr }}】 </span>
+                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+              </Row>
+              <Row>
+                <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
+              </Row>
+              <Row>
+                <div style="margin: 1px auto;font-size: 12px;color: gray;max-height: 3rem;">
+                  <span> 【{{ item.Name }}】</span>
+                </div>
+              </Row>
             </div>
           </div>
-
         </div>
       </List>
-      <Button @click="onLoad" block type="primary">加载</Button>
+      <Button @click="onLoadMore" block type="primary">加载</Button>
     </PullRefresh>
-
-
     <teleport to="body">
       <div v-show="view.videoVisible"
-        style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;"
-        id="videoDiv">
-        <div style="right:1rem;top:0;height:2rem;position:absolute;z-index: 9999;">
+       id="videoDiv"
+        style="width: 100%;height:100%;z-index: 9999; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;">
+        <div style="right:1rem;height:2rem;position:absolute;z-index: 9999;">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+          <ElButton type="primary" @click="transformThis">旋转</ElButton>
         </div>
         <vue3VideoPlay v-bind="options" />
       </div>
@@ -113,24 +114,25 @@ import {
   Tag, Toast, NavBar, Image
 } from 'vant';
 import 'vant/lib/index.css';
-import { onMounted, reactive, ref, watch, watchEffect } from 'vue';
-import { MovieModel } from '../fileList';
+import { onMounted, reactive, ref, watch } from 'vue';
+import { MovieModel, MovieQuery } from '../fileList';
 import { useRouter } from 'vue-router'
-
 const { push } = useRouter()
 const loading = ref(false)
 const finished = ref(false)
 const isPlaying = ref(false)
 const refreshing = ref(false)
-const error = ref(false)
 const view = reactive(
   {
-    Page: 0,
-    PageSize: 10,
-    SortField: 'MTime',
-    SortType: 'desc',
-    MovieType: '',
-    Keyword: '',
+    queryParam: {
+      Page: 1,
+      PageSize: 10,
+      SortField: 'MTime',
+      SortType: 'desc',
+      MovieType: '',
+      Keyword: '',
+    } as unknown as MovieQuery,
+    loadCnt: 0,
     ModelList: [],
     TotalCnt: 0,
     ResultCnt: 0,
@@ -142,18 +144,19 @@ const view = reactive(
 
 const options = reactive({
   width: "100%", //播放器高度
-  height: "auto", //播放器高度
+  height: "100%", //播放器高度
   color: "#409eff", //主题色
   title: "", //视频名称
   src: "http://192.168.3.38:8083/api/file/F~emby~emby-rename~井川ゆい柳田やよい~YeLLOW~[川い田よ]EO29人中しンィスッン 川い柳やい~[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv", //视频源
   muted: false, //静音
   webFullScreen: false,
   speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
+
   autoPlay: true, //自动播放
   loop: true, //循环播放
   mirror: false, //镜像画面
   ligthOff: false, //关灯模式
-  volume: 0.3, //默认音量大小
+  volume: 0.8, //默认音量大小
   control: true, //是否显示控制
   controlBtns: [
     "audioTrack",
@@ -167,16 +170,45 @@ const options = reactive({
   ], //显示所有按钮,
 });
 
+watch(loading, () => {
+  console.log('loading', loading.value)
+})
+watch(finished, () => {
+  console.log('finished', loading.value)
+})
 
+const isTransform = ref(false)
+const transformThis = () => {
+  const videoDiv = document.getElementById("videoDiv")
+  videoDiv.style.position = 'fixed'
+  if (isTransform.value) {
+    videoDiv.style.transform = 'rotate(90deg)'
+    videoDiv.style.width = '80vw'
+    videoDiv.style.height = '80vh'
+  } else {
+    videoDiv.style.transform = 'rotate(0deg)'
+    videoDiv.style.width = '80vw'
+    videoDiv.style.height = '80vh'
+  }
+  isTransform.value = !isTransform.value
+
+}
 const onLoad = async () => {
-  view.Page += 1
-  console.log('onLoad', view.Page)
-  await onSearch(false)
+  if (!view.ModelList || view.ModelList.length == 0) {
+    return await onSearch()
+  }
+  console.log('onLoad2', view.queryParam.Page)
+  await queryList(view.loadCnt + 1)
+  loading.value = false
+}
+const onLoadMore = async () => {
+  view.queryParam.Page+=1
+  await onSearch()
 }
 
 const searchKeyword = (words: string) => {
-  view.Keyword = words
-  view.Page = 1
+  view.queryParam.Keyword = words
+  view.queryParam.Page = 1
   onSearch()
 }
 const viewPic = ref(false)
@@ -236,13 +268,18 @@ const openFile = (item: any) => {
   options.title = item.Name
   options.src = stream
 }
-
-const onSearch = async (clear?) => {
-  const res = await QueryFileList(view);
-  if (clear !== false) {
-    view.ModelList = []
+const queryList = async (pageStart?: number) => {
+  let queryParam = { ...view.queryParam }
+  if (pageStart > 0) {
+    queryParam.Page = pageStart
+    queryParam.PageSize = 1
   }
+  const res = await QueryFileList(queryParam);
   const model = res as unknown as ResultList;
+  if (!model.Data || model.Data.length == 0) {
+    finished.value = false
+    return
+  }
   model.Data.map((item) => {
     if (item.Code == item.Actress) {
       item.Code = "";
@@ -259,22 +296,33 @@ const onSearch = async (clear?) => {
   view.ModelList = newList
   view.TotalCnt = model.TotalCnt;
   view.ResultCnt = model.ResultCnt;
-  refreshing.value = false
-  error.value = true
-  finished.value = false
+  view.loadCnt = view.loadCnt + model.Data.length
+}
+
+const onSearch = async (clear?: Boolean) => {
+
+  if (clear === true) {
+    view.ModelList = []
+    view.loadCnt = 0
+  }
+  await queryList()
+  // refreshing.value = false
+  // error.value = true
+  // 
 }
 const onCancel = () => {
   onSearch()
 }
 const keywordUpdate = () => {
-  if (view.Keyword.length >= 2) {
-    view.Page = 1
+  if (view.queryParam.Keyword.length >= 2) {
+    view.queryParam.Page = 1
     onSearch()
   }
 }
 onMounted(() => {
   // onSearch()
   options.src = null
+  transformThis()
   // view.videoVisible = true
 
 })
@@ -305,6 +353,7 @@ const SortTypeOptions = [
 
 .mlist {
   float: none;
+  z-index: 99;
   width: 100%;
 }
 </style>

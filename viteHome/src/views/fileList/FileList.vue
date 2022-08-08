@@ -577,7 +577,7 @@
       id="videoDiv">
       <div
         style="top:0;height:2rem;width:100%;margin:1rem auto;position:absolute;color: white;z-index: 9999;float: right;">
-        <span style="margin-left:2rem">
+        <span style="margin-left:2rem;text-overflow: ellipsis;white-space: nowrap;">
           <ElTag v-for="item in view.contextmenuTarget.Tags" key="default" type="danger" size="large"
             style="margin-left: 0.5rem;">
             {{ item }}
@@ -595,7 +595,7 @@
       <!-- <video id="video" :src="view.videoUrl" controls style="right: 0;top: 0;position:absolute">
         您的浏览器不支持 video 标签。
       </video> -->
-      <vue3VideoPlay v-bind="options"  />
+      <vue3VideoPlay v-bind="options" />
 
     </div>
   </teleport>
@@ -674,7 +674,7 @@ const options = reactive({
   loop: false, //循环播放
   mirror: false, //镜像画面
   ligthOff: false, //关灯模式
-  volume: 0.3, //默认音量大小
+  volume: 0.8, //默认音量大小
   control: true, //是否显示控制
   controlBtns: [
     "audioTrack",
@@ -740,8 +740,8 @@ const fullPlayVideo = () => {
     options.width = windowWidth.value - 20 + 'px'
     options.height = windowHeight.value - 14 + 'px'
   } else {
-    options.width = 1600 + 'px'
-    options.height = 916 + 'px'
+    options.width = windowWidth.value * 0.988 + 'px'
+    options.height = windowHeight.value * 0.988 + 'px'
   }
   fullScreen.value = !fullScreen.value
 }
@@ -760,7 +760,7 @@ const startPlayVideo = () => {
   fullScreen.value = false
   fullPlayVideo()
   const stream = getFileStream(view.contextmenuTarget.Id)
-  options.title=view.contextmenuTarget.Name
+  options.title = view.contextmenuTarget.Name
   options.src = stream
   isPlaying.value = true
 
