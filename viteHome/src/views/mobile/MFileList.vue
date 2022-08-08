@@ -66,7 +66,7 @@
         style="width: 96vw;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
         <div style="width: 40vw;margin: 8px auto;">
           <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)"
-            :style="{ height: '100%', width: isWide ? '100%' : 'auto' ,margin:'2px auto'}"></Image>
+            :style="{ height: '100%', width: isWide ? '100%' : 'auto', margin: '2px auto' }"></Image>
         </div>
         <div style="width:55vw;margin: 8px auto;float: right;">
           <div style="margin: 1px auto;">
@@ -210,7 +210,7 @@ const onLoad = async () => {
 }
 const onLoadMore = async () => {
   view.queryParam.Page += 1
-  await onSearch()
+  await queryList()
 }
 
 const searchKeyword = (words: string) => {
@@ -311,10 +311,9 @@ const queryList = async (pageStart?: number) => {
 
 const onSearch = async (clear?: Boolean) => {
 
-  if (clear === true) {
-    view.ModelList = []
-    view.loadCnt = 0
-  }
+  view.queryParam.Page = 1
+  view.ModelList = []
+  view.loadCnt = 0
   await queryList()
   // refreshing.value = false
   // error.value = true
