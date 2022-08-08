@@ -63,7 +63,7 @@
       <!--   -->
       <!-- <List class="mlist" v-model:loading="loadingList" :finished="finished" finished-text="没有更多了" offset="1200000" @load="onLoad" :immediate-check	="false"> -->
         <div v-for="item in view.ModelList" :key="item.Id"
-          style="width: 23rem;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
+          style="width: 22rem;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
           <div style="width: 40%;margin: 8px auto;">
             <Image :src="getPng(item.Id)" style="height: auto;width: 8rem;"></Image>
           </div>
