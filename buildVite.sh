@@ -29,8 +29,8 @@ cd vitehome
 if [ $levelKey -ge 1 ]; then
 
     echo 开始打包前端文件
-    echo 'npm run build'
-    npm run build
+    echo 'yarn build'
+    yarn build
     echo 打包完成，开始移动到app目录
     echo 'cp -R dist ../viteApp/vitehome/dist'
     cp -R dist ../viteApp/vitehome/

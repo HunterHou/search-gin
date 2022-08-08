@@ -1,7 +1,9 @@
 
 <template>
   <div class="mainBody">
-    <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home');"></NavBar>
+    <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home');">
+      <Icon name="search" slot="right" />
+    </NavBar>
     <Sticky v-if="isPlaying" :offsetTop="520" style="left:450px;width: 400px;">
       <Button size="small" type="success" @click="() => { view.videoVisible = true }">
         正在播放：
@@ -29,13 +31,6 @@
       @cancel="onCancel" input-align="center">
     </Search>
 
-
-    <!-- <div style="overflow-y:scroll ;" v-for="item in view.ModelList" :desc="item.Actress" :title="item.Code" :thumb="getPng(item.Id)">
-      <Tag v-for="tag in item.Tags" plain type="danger">{{ tag }}</Tag>
-      <Button size="mini" @click="openFile(item)">播放</Button>
-      <Button size="mini">播放</Button>
-    </div> -->
-
     <PullRefresh v-model="refreshing" @refresh="() => {
       view.Page = 1
       onSearch()
@@ -43,15 +38,39 @@
     }">
       <List class="mlist" v-model:loading="loading" v-model:error="error" :finished="finished" finished-text="没有更多了"
         @load="onLoad">
-        <Card v-for="item in view.ModelList" :desc="item.Actress" :title="item.Code" :thumb="getPng(item.Id)">
-          <template #tags>
-            <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
-          </template>
-          <template #footer>
-            <Button size="normal" type="primary" @click="openFile(item)">播放</Button>
-            <Button size="normal" type="primary" @click="viewPictures(item)">查看</Button>
-          </template>
-        </Card>
+        <div v-for="item in view.ModelList" :key="item.Id"
+          style="width: 23rem;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
+          <div style="width: 40%;margin: 8px auto;">
+            <Image :src="getPng(item.Id)" style="height: auto;width: 8rem;"></Image>
+          </div>
+          <div style="width:55%;margin: 8px auto;">
+            <div style="margin: 1px auto;">
+              <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
+                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+              </a>
+              <br />
+              <span v-if="item.Code">{{ item.Code }}</span>
+              <span>【{{ item.SizeStr }}】 </span>
+            </div>
+            <div style="margin: 1px auto;font-size: 12px;color: gray;">
+              <span> 【{{ item.Name }}】</span>
+            </div>
+
+            <div style="margin: 1px auto;">
+              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
+              <Row type="flex" justify="space-around">
+                <Col span="8">
+                <Button size="small" type="primary" @click="openFile(item)">播放</Button>
+                </Col>
+                <Col span="8">
+                <Button size="small" type="primary" @click="viewPictures(item)">查看</Button>
+                </Col>
+              </Row>
+
+            </div>
+          </div>
+
+        </div>
       </List>
       <Button @click="onLoad" block type="primary">加载</Button>
     </PullRefresh>
@@ -90,15 +109,15 @@ import { QueryDirImageBase64, QueryFileList } from '@/api/file';
 import { ResultList } from '@/config/ResultModel';
 import { getFileStream, getPng } from "@/utils/ImageUtils";
 import {
-  Button, Card, DropdownItem, DropdownMenu, List, PullRefresh, Search, Sticky,
-  Tag, Toast, NavBar
+  Button, Row, Col, Icon, DropdownItem, DropdownMenu, List, PullRefresh, Search, Sticky,
+  Tag, Toast, NavBar, Image
 } from 'vant';
 import 'vant/lib/index.css';
 import { onMounted, reactive, ref, watch, watchEffect } from 'vue';
 import { MovieModel } from '../fileList';
-import { useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 
-const {push} =useRouter()
+const { push } = useRouter()
 const loading = ref(false)
 const finished = ref(false)
 const isPlaying = ref(false)
@@ -163,8 +182,23 @@ const searchKeyword = (words: string) => {
 const viewPic = ref(false)
 
 const viewPictures = async (item) => {
+  const toast = Toast.loading({
+    duration: 0,       // 持续展示 toast
+    forbidClick: false, // 禁用背景点击
+    loadingType: 'spinner',
+    message: '加载中...'
+  });
+  setTimeout(() => {
+    toast.clear()
+  }, 3000);
   await loadDirInfo(item.Id)
-  viewPic.value = true
+  toast.clear()
+  if (view.imageList && view.imageList.length > 0) {
+    viewPic.value = true
+  } else {
+    Toast.fail('无图')
+  }
+
 }
 const closeViewPicture = () => {
   viewPic.value = false
@@ -203,9 +237,9 @@ const openFile = (item: any) => {
   options.src = stream
 }
 
-const onSearch = async (clear: boolean = true) => {
+const onSearch = async (clear?) => {
   const res = await QueryFileList(view);
-  if (clear) {
+  if (clear !== false) {
     view.ModelList = []
   }
   const model = res as unknown as ResultList;
@@ -230,7 +264,6 @@ const onSearch = async (clear: boolean = true) => {
   finished.value = false
 }
 const onCancel = () => {
-  Toast('取消')
   onSearch()
 }
 const keywordUpdate = () => {

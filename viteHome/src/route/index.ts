@@ -6,6 +6,7 @@ export const staticRoutes: RouteRecordRaw[] = [
   {
     path: "/",
     component: DefaultLayVue,
+    redirect:'/home',
     name: "root",
     meta: {
       title: "首页",

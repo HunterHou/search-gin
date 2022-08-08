@@ -6,6 +6,7 @@ type Setting struct {
 	OMUrl      string
 	Remark     string
 	SystemInfo string
+	ControllerHost string
 	Tags       []string
 	TagsLib    []string
 	Dirs       []string

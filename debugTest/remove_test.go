@@ -13,7 +13,7 @@ const target = "1.txt"
 const targetDir = "D:\\emby\\emby\\ww\\qq\\ww"
 
 func TestWalk(t *testing.T) {
-	files := service.Walk(baseUrl, []string{"jpg", "jpeg"})
+	files := service.Walk(baseUrl, []string{"jpg", "jpeg"},true)
 	for _, file := range files {
 		fmt.Println(file.Name)
 	}

@@ -977,14 +977,14 @@ func HeartBeat() {
 }
 
 // Walk 遍历目录 获取文件库
-func Walk(baseDir string, types []string) []datamodels.Movie {
+func Walk(baseDir string, types []string,deep bool) []datamodels.Movie {
 	var result []datamodels.Movie
 	files, _ := ioutil.ReadDir(baseDir)
 	if len(files) > 0 {
 		for _, path := range files {
 			pathAbs := filepath.Join(baseDir, path.Name())
-			if path.IsDir() {
-				childResult := Walk(pathAbs, types)
+			if path.IsDir() && deep {
+				childResult := Walk(pathAbs, types,deep)
 				result = ExpandsMovie(result, childResult)
 			} else {
 				name := path.Name()

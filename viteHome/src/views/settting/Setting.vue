@@ -72,6 +72,9 @@
           </ElTabPane>
 
           <ElTabPane label="基础配置" name="second">
+            <ElFormItem label="服务IP">
+              <ElInput v-model="view.form.ControllerHost" style="width: 90%"></ElInput>
+            </ElFormItem>
             <ElFormItem label="URL">
               <ElInput v-model="view.form.BaseUrl" style="width: 90%"></ElInput>
             </ElFormItem>
@@ -269,7 +272,7 @@ onMounted(() => {
 .return {
   width: 9%;
   position: fixed;
-  bottom: 10px;
+  bottom: 30px;
   overflow: auto;
   z-index: 999;
   left: 40%;
@@ -278,7 +281,7 @@ onMounted(() => {
 .submit {
   width: 9%;
   position: fixed;
-  bottom: 10px;
+  bottom: 30px;
   overflow: auto;
   z-index: 999;
   right: 40%;

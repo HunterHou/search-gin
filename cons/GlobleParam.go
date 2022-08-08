@@ -126,6 +126,7 @@ var MovieFields = utils.InterfaceFields(datamodels.Movie{})
 
 var OSSetting = datamodels.Setting{
 	SelfPath:   "setting.json",
+	ControllerHost:   "127.0.0.1",
 	BaseUrl:    "https://www.busjav.blog/",
 	OMUrl:      "https://www.busjav.blog/",
 	Remark:     "",
