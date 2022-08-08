@@ -66,7 +66,7 @@
         style="width: 96vw;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
         <div style="width: 40vw;margin: 8px auto;">
           <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)"
-            :style="{ height: '100%', width: isWide ? '100%' : 'auto','max-width':'350px', margin: '2px auto' }"></Image>
+            :style="{ height: '100%', width: isWide ? '100%' : 'auto','max-width':'350px','min-width':'122px', margin: '2px auto' }"></Image>
         </div>
         <div style="width:55vw;margin: 8px auto;float: right;">
           <div style="margin: 1px auto;">
