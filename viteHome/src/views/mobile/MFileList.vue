@@ -89,7 +89,7 @@
 
 
         <div style="width: 40vw;margin: 8px auto;">
-          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)"
+          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)"
             :style="{ height: '100%', width: isWide ? '100%' : 'auto', 'max-width': '350px', 'min-width': '122px', margin: '2px auto' }">
           </Image>
         </div>
@@ -279,6 +279,25 @@ const getImageList = async (Id: string) => {
   }
 }
 
+const previewPictures = async (item) => {
+  const toast = Toast.loading({
+    duration: 0,       // 持续展示 toast
+    forbidClick: false, // 禁用背景点击
+    loadingType: 'spinner',
+    message: '加载中...'
+  });
+  setTimeout(() => {
+    toast.clear()
+  }, 3000);
+  await loadDirInfo(item.Id)
+  toast.clear()
+
+  if (view.imageList && view.imageList.length > 0) {
+    ImagePreview({ images: view.imageList, closeable: true });
+  } else {
+    Toast.fail('无图')
+  }
+}
 const viewPictures = async (item) => {
   const toast = Toast.loading({
     duration: 0,       // 持续展示 toast
@@ -291,15 +310,10 @@ const viewPictures = async (item) => {
   }, 3000);
   await loadDirInfo(item.Id)
   toast.clear()
-  if (isWide.value) {
-    console.log(width.value)
-    if (view.imageList && view.imageList.length > 0) {
-      viewPic.value = true
-    } else {
-      Toast.fail('无图')
-    }
+  if (view.imageList && view.imageList.length > 0) {
+    viewPic.value = true
   } else {
-    ImagePreview({ images: view.imageList, closeable: true });
+    Toast.fail('无图')
   }
 
 
