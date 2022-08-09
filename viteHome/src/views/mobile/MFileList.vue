@@ -1,6 +1,29 @@
 
 <template>
   <div class="mainBody">
+    <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home');">
+      <template #right>
+        <div @click="showSearch = true">
+          <Icon name="search" size="18" />
+          <span> {{ view.queryParam.Keyword }} </span>
+        </div>
+
+      </template>
+    </NavBar>
+    <ActionSheet v-model:show="showSearch" title="搜索" :close-on-click-overlay="true">
+      <Search v-model="view.queryParam.Keyword" placeholder="请输入搜索" @search="onSearch" label="关键词" show-action
+        @update:model-value="keywordUpdate" @cancel="onCancel" input-align="center">
+        <template #action>
+          <div @click="onCancel" style="margin:2px 4px">搜索</div>
+        </template>
+      </Search>
+      <div style="margin-bottom: 10vh;">
+        <Button type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px"
+          @click="searchKeyword(tag); showSearch = false">
+          <span style="font-size: 12px">{{ tag }}</span>
+        </Button>
+      </div>
+    </ActionSheet>
     <teleport to="body">
       <div v-show="view.videoVisible" id="videoDiv"
         style="width: 100vw;height:100vh;z-index: 9999; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;">
@@ -24,9 +47,8 @@
         </div>
       </div>
     </teleport>
-    <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home');">
-      <Icon name="search" slot="right" />
-    </NavBar>
+
+
     <Sticky v-if="isPlaying" :offsetTop="520" style="left:450px;width: 400px;">
       <Button size="small" type="success" @click="() => { view.videoVisible = true }">
         正在播放：
@@ -50,9 +72,8 @@
       </DropdownItem>
 
     </DropdownMenu>
-    <Search v-model="view.queryParam.Keyword" placeholder="请输入搜索关键词" @search="onSearch"
-      @update:model-value="keywordUpdate" @cancel="onCancel" input-align="center">
-    </Search>
+
+
 
     <PullRefresh v-model="refreshing" @refresh="() => {
       view.queryParam.Page = 1
@@ -62,64 +83,82 @@
       <!-- -->
       <!--   -->
       <!-- <List class="mlist" v-model:loading="loadingList" :finished="finished" finished-text="没有更多了" offset="1200000" @load="onLoad" :immediate-check	="false"> -->
+
       <div v-for="item in view.ModelList" :key="item.Id"
         style="width: 96vw;float: left;height: 12rem;margin: 6px 8px;display: flex;box-shadow: 0 0 4px grey;">
+
+
         <div style="width: 40vw;margin: 8px auto;">
           <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)"
-            :style="{ height: '100%', width: isWide ? '100%' : 'auto','max-width':'350px','min-width':'122px', margin: '2px auto' }"></Image>
+            :style="{ height: '100%', width: isWide ? '100%' : 'auto', 'max-width': '350px', 'min-width': '122px', margin: '2px auto' }">
+          </Image>
         </div>
+
         <div style="width:55vw;margin: 8px auto;float: right;">
           <div style="margin: 1px auto;">
+
             <Row type="flex" justify="space-around">
               <Col span="12">
               <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
               </a>
               </Col>
               <Col span="5">
-              <Button size="small" type="primary" @click="openFile(item)">播放</Button>
+              <Button square size="mini" type="primary" @click="openFile(item)">播放</Button>
               </Col>
               <Col span="5">
-              <Button size="small" type="primary" @click="viewPictures(item)">查看</Button>
+              <Button square size="mini" type="primary" @click="viewPictures(item)">查看</Button>
               </Col>
             </Row>
-            <Row>
-              <span v-if="item.Code">{{ item.Code }}</span>
-              <span>【{{ item.SizeStr }}】 </span>
-              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-            </Row>
+            <SwipeCell>
+              <template #left>
+                <Button square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
+              </template>
+              <Row>
+                <span v-if="item.Code">{{ item.Code }}</span>
+                <span>【{{ item.SizeStr }}】 </span>
+                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+              </Row>
+            </SwipeCell>
             <Row>
               <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
             </Row>
             <Row>
-              <div style="margin: 1px auto;font-size: 12px;color: gray;max-height: 3rem;">
+              <!-- <div style="margin: 1px auto;font-size: 12px;color: gray;max-height: 3rem;"
+                class="van-multi-ellipsis--l4">
+                <span> 【{{ item.Name }}】</span>
+              </div> -->
+
+              <div style="margin: 1px auto;font-size: 12px;color: gray;max-height: 3rem;"
+                class="van-multi-ellipsis--l4">
                 <span> 【{{ item.Name }}】</span>
               </div>
+
             </Row>
           </div>
         </div>
+
+
       </div>
+
       <!-- </List> -->
       <Button @click="onLoadMore" block type="primary">加载</Button>
     </PullRefresh>
-
   </div>
-
-
 </template>
 
 <script setup lang="ts">
-import { QueryDirImageBase64, QueryFileList } from '@/api/file';
+import { DownImageList, QueryDirImageBase64, QueryFileList } from '@/api/file';
+import { GetSettingInfo } from '@/api/setting';
 import { ResultList } from '@/config/ResultModel';
-import { getFileStream, getPng, getJpg } from "@/utils/ImageUtils";
-import {
-  Button, Row, Col, Icon, DropdownItem, DropdownMenu, List, PullRefresh, Search, Sticky,
-  Tag, Toast, NavBar, Image
-} from 'vant';
+import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
+import { useWindowSize } from '@vueuse/core';
+import { ActionSheet, Button, Col, DropdownItem, DropdownMenu, Icon, Image, ImagePreview, NavBar, PullRefresh, Row, Search, Sticky, SwipeCell, Tag, Toast } from 'vant';
 import 'vant/lib/index.css';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { MovieModel, MovieQuery } from '../fileList';
-import { useRouter } from 'vue-router'
-import { useWindowSize } from '@vueuse/core'
+import { SettingInfo } from '../settting';
+
 const { push } = useRouter()
 const { width } = useWindowSize()
 const isWide = computed(() => { return width.value > 600 })
@@ -129,6 +168,7 @@ const isPlaying = ref(false)
 const refreshing = ref(false)
 const view = reactive(
   {
+    settingInfo: new SettingInfo(),
     queryParam: {
       Page: 1,
       PageSize: 10,
@@ -182,6 +222,8 @@ watch(finished, () => {
   console.log('finished', finished.value)
 })
 
+const showSearch = ref(false)
+
 const isTransform = ref(false)
 const transformThis = () => {
   const videoDiv = document.getElementById("videoDiv")
@@ -200,6 +242,14 @@ const transformThis = () => {
   isTransform.value = !isTransform.value
 
 }
+
+const loadSettingInfo = async () => {
+  const res = await GetSettingInfo();
+  if (res) {
+    view.settingInfo = { ...res };
+  }
+};
+
 const onLoad = async () => {
   if (!view.ModelList || view.ModelList.length == 0) {
     return await onSearch()
@@ -220,6 +270,15 @@ const searchKeyword = (words: string) => {
 }
 const viewPic = ref(false)
 
+const getImageList = async (Id: string) => {
+  const res = await DownImageList(Id);
+  if (res.Code === 200) {
+    Toast.success(res.Message);
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+
 const viewPictures = async (item) => {
   const toast = Toast.loading({
     duration: 0,       // 持续展示 toast
@@ -232,11 +291,17 @@ const viewPictures = async (item) => {
   }, 3000);
   await loadDirInfo(item.Id)
   toast.clear()
-  if (view.imageList && view.imageList.length > 0) {
-    viewPic.value = true
+  if (isWide.value) {
+    console.log(width.value)
+    if (view.imageList && view.imageList.length > 0) {
+      viewPic.value = true
+    } else {
+      Toast.fail('无图')
+    }
   } else {
-    Toast.fail('无图')
+    ImagePreview({ images: view.imageList, closeable: true });
   }
+
 
 }
 const closeViewPicture = () => {
@@ -317,10 +382,10 @@ const onSearch = async (clear?: Boolean) => {
   await queryList()
   // refreshing.value = false
   // error.value = true
-  // 
 }
-const onCancel = () => {
-  onSearch()
+const onCancel = async () => {
+  console.log('onCancel')
+  await onSearch()
 }
 const keywordUpdate = () => {
   if (view.queryParam.Keyword.length >= 2) {
@@ -332,6 +397,7 @@ onMounted(() => {
   onSearch()
   options.src = null
   transformThis()
+  loadSettingInfo()
   // view.videoVisible = true
 
 })

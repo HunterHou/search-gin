@@ -552,7 +552,7 @@
       </div>
       <teleport to="body">
         <div v-show="view.innerVisible"
-          style="width: 100%;height:100%;z-index: 9999;top: 0px;position:fixed;overflow: hidden;"
+          style="width: 100%;height:100%;z-index: 9999;top: 0px;position:fixed;overflow: auto;"
           @click="innerVisibleFalse">
           <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
             <ElImage style="min-width: 1200px;width: auto; margin: 0 auto;opacity: 9;z-index: 9999" :src="item">
@@ -763,6 +763,7 @@ const startPlayVideo = () => {
   options.title = view.contextmenuTarget.Name
   options.src = stream
   isPlaying.value = true
+  view.videoVisible =true
 
   // videoElement.appendChild()
 
