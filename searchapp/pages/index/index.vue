@@ -1,5 +1,6 @@
 <template>
 	<view class="content">
+		<!-- <van-botton>click</van-botton> -->
 		<uni-table border stripe emptyText="暂无更多数据" >
 			<!-- 表头行 -->
 			<uni-tr>

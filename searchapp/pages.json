@@ -31,7 +31,10 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
-		"enablePullDownRefresh": false
+		"enablePullDownRefresh": false,
+		"usingComponents": {
+			 "van-button": "/wxcomponents/vant/dist/button/index"
+		}
 	},
 	"tabBar": {
 		"list": [
@@ -48,5 +51,11 @@
 			}
 		]
 	},
-	"uniIdRouter": {}
+	"uniIdRouter": {},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"van-(.*)":"@/wxcomponents/vant/$1/index.vue"
+		}
+	}
 }

@@ -1,20 +1,23 @@
 <template>
 	<view>
-		<view v-show="player.isPlaying">
+		<view v-if="player.isPlaying" class="videoClass">
+			<button size="default" type="primary" @click="closeVideo">关闭</button>
 			<video id="myVideo" style="width: 100%;min-height: 16rem;" :autoplay="player.autoplay" :src="player.src"
-				@error="videoErrorCallback" :direction="player.direction" :loop="player.loop" :objectFit="player.fit"
-				controls></video>
+				@error="videoErrorCallback" :direction="player.direction" :show-loading="true" :loop="player.loop"
+				:objectFit="player.fit" controls></video>
+
 		</view>
+
 		<uni-forms :modelValue="view.formData">
-			<uni-forms-item label="">
+			<uni-forms-item label="类型">
 				<uni-data-checkbox v-model="view.formData.movieType" @change="loadData()"
 					:localdata="view.movieTypes" />
 			</uni-forms-item>
-			<uni-forms-item label="">
+			<uni-forms-item label="分类">
 				<uni-data-checkbox v-model="view.formData.sortField" @change="loadData()"
 					:localdata="view.sortFields" />
 			</uni-forms-item>
-			<uni-forms-item label="">
+			<uni-forms-item label="排序">
 				<uni-data-checkbox v-model="view.formData.sortType" @change="loadData()" :localdata="view.sortTypes" />
 			</uni-forms-item>
 		</uni-forms>
@@ -55,9 +58,12 @@
 <script setup lang="ts">
 	import {
 		ref,
-		reactive
+		reactive,
+		watch
 	} from 'vue'
-	import { QueryFileList} from '../../api/files'
+	import {
+		QueryFileList
+	} from '../../api/files'
 	const player = reactive({
 		isPlaying: false,
 		src: '',
@@ -67,6 +73,9 @@
 		showLoading: true,
 		direction: 90,
 		loop: true,
+	})
+	watch(player.isPlaying, () => {
+		console.log(player.isPlaying)
 	})
 	const view = reactive({
 		modelList: [],
@@ -113,7 +122,7 @@
 		]
 	})
 	const loadData = async () => {
-		const data = {
+		const queryParam = {
 			Page: 1,
 			PageSize: 15,
 			MovieType: view.formData.movieType,
@@ -121,11 +130,11 @@
 			SortType: view.formData.sortType,
 		}
 		view.modelList = []
-		const res = await QueryFileList(data)
+		const res = await QueryFileList(queryParam)
 		const {
 			Data,
 			TotalCnt
-		} = res.data
+		} = res
 		view.modelList = Data
 		view.totalCount = TotalCnt
 		// uni.request({
@@ -168,6 +177,9 @@
 		player.title = item.Code + item.Actress
 		player.src = getFileStream(item.Id)
 	}
+	const closeVideo = () => {
+		player.isPlaying = false
+	}
 	loadData()
 </script>
 
@@ -205,5 +217,12 @@
 
 	.light {
 		background-color: #e5e9f2;
+	}
+
+	.videoClass {
+		width: 100%;
+		height: auto;
+		z-index: 99;
+		position: fixed;
 	}
 </style>

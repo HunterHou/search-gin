@@ -1,8 +1,8 @@
 
 
 
-const common= {
-		baseUrl: "",
+export const common= {
+		baseUrl: "http://192.168.3.38:8081",
 		data: {},
 		header: {
 			"Accept": "application/json, text/plain, */*",
@@ -25,7 +25,6 @@ export const  request=(options = {})=> {
 			uni.request({
 				...options,
 				success: (result) => {
-					console.log(result)
 					if (result.statusCode ==200) {
 						res(result.data)
 					} else {
