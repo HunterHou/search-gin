@@ -1,11 +1,11 @@
 <template>
 	<view>
 		<view v-if="player.isPlaying" class="videoClass">
-			<button size="default" type="primary" @click="closeVideo">关闭</button>
+
 			<video id="myVideo" style="width: 100%;min-height: 16rem;" :autoplay="player.autoplay" :src="player.src"
 				@error="videoErrorCallback" :direction="player.direction" :show-loading="true" :loop="player.loop"
 				:objectFit="player.fit" controls></video>
-
+			<button size="default" type="primary" @click="closeVideo">关闭</button>
 		</view>
 
 		<uni-forms :modelValue="view.formData">
@@ -74,12 +74,18 @@
 		direction: 90,
 		loop: true,
 	})
-	watch(player.isPlaying, () => {
-		console.log(player.isPlaying)
-	})
+
+	const initView = async () => {
+		const localHost = await uni.getStorageSync("distHost")
+		console.log("readDistHost", localHost)
+		if (localHost) {
+			view.distHost = localHost
+		}
+	}
 	const view = reactive({
 		modelList: [],
 		totalCount: 0,
+		distHost: '',
 		formData: {
 			sortType: 'desc',
 			sortField: 'MTime',
@@ -159,19 +165,21 @@
 		// })
 	}
 	const getPng = (Id: string) => {
-		return "http://192.168.3.38:8082/api/png/" + Id;
+		return "http://192.168.3.38:8083/api/png/" + Id;
 	}
 	const getJpg = (Id: string) => {
-		return "http://192.168.3.38:8082/api/jpg/" + Id;
+		return "http://192.168.3.38:8083/api/jpg/" + Id;
+	}
+
+	const getActressImage = (actressUrl: string) => {
+		return "http://192.168.3.38:8083" + actressUrl;
 	}
 
 	const getFileStream = (id: string) => {
 		return "http://192.168.3.38:8083/api/file/" + id;
 	}
 
-	const getActressImage = (actressUrl: string) => {
-		return "http://192.168.3.38:8082" + actressUrl;
-	}
+
 	const playVideo = (item: any) => {
 		player.isPlaying = true
 		player.title = item.Code + item.Actress
@@ -180,6 +188,7 @@
 	const closeVideo = () => {
 		player.isPlaying = false
 	}
+	initView()
 	loadData()
 </script>
 
