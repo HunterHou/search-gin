@@ -72,8 +72,14 @@
           </ElTabPane>
 
           <ElTabPane label="基础配置" name="second">
-            <ElFormItem label="服务IP">
+            <ElFormItem label="请求服务器">
               <ElInput v-model="view.form.ControllerHost" style="width: 90%"></ElInput>
+            </ElFormItem>
+            <ElFormItem label="图片服务器">
+              <ElInput v-model="view.form.ImageHost" style="width: 90%"></ElInput>
+            </ElFormItem>
+            <ElFormItem label="流服务器">
+              <ElInput v-model="view.form.StreamHost" style="width: 90%"></ElInput>
             </ElFormItem>
             <ElFormItem label="URL">
               <ElInput v-model="view.form.BaseUrl" style="width: 90%"></ElInput>

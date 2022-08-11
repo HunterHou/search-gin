@@ -6,13 +6,16 @@ type Setting struct {
 	OMUrl      string
 	Remark     string
 	SystemInfo string
+
+	Tags           []string
+	TagsLib        []string
+	Dirs           []string
+	DirsLib        []string
+	ImageTypes     []string
+	DocsTypes      []string
+	VideoTypes     []string
+	Types          []string
 	ControllerHost string
-	Tags       []string
-	TagsLib    []string
-	Dirs       []string
-	DirsLib    []string
-	ImageTypes []string
-	DocsTypes  []string
-	VideoTypes []string
-	Types      []string
+	ImageHost      string
+	StreamHost     string
 }

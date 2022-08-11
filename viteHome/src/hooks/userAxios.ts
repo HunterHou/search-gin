@@ -17,8 +17,8 @@ const request =(options:AxiosConfig)=>{
     })
 }
 
-function getFn<T = any>(option: AxiosConfig): ResultEdit<T> {
-    return request({ method: 'get', ...option }) as unknown as ResultEdit<any>
+function getFn<T = any>(option: AxiosConfig): ResultEdit {
+    return request({ method: 'get', ...option }) as unknown as ResultEdit
   }
   
   function postFn<T = any>(option: AxiosConfig): AxiosPromise<T> {

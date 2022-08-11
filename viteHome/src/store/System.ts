@@ -32,9 +32,17 @@ const SystemProperty = defineStore({
       OnlyRepeat: false,
     },
     SearchSuggestions: [],
-    ControllerHost: "http://127.0.0.1",
+    ControllerHost: "http://127.0.0.1:8081",
+    ImageHost: "http://127.0.0.1:8081",
+    StreamHost: "http://127.0.0.1:8081",
   }),
   getters: {
+    getStreamHost() {
+      return this.StreamHost;
+    },
+    getImageHost() {
+      return this.ImageHost;
+    },
     getControllerHost() {
       return this.ControllerHost;
     },
@@ -58,6 +66,16 @@ const SystemProperty = defineStore({
       }
     },
 
+    setImageHost(url: string) {
+      this.ImageHost = url;
+    },
+    setStreamHost(url: string) {
+      this.StreamHost = url;
+    },
+    setControllerHost(url: string) {
+      this.ControllerHost = url;
+    },
+
     setPage(page: number) {
       this.FileSearchParam.Page = page;
     },
@@ -78,9 +96,6 @@ const SystemProperty = defineStore({
     },
     setOnlyRepeat(OnlyRepeat: boolean) {
       this.FileSearchParam.OnlyRepeat = OnlyRepeat;
-    },
-    setControllerHost(ControllerHost: string) {
-      this.ControllerHost = ControllerHost;
     },
 
     addSuggestions(queryParam: string) {

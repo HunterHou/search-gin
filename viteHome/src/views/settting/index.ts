@@ -14,4 +14,6 @@ export class SettingInfo {
   BaseUrl: string;
   OMUrl: string;
   ControllerHost: string;
+  ImageHost: string;
+  StreamHost: string;
 }
