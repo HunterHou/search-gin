@@ -18,12 +18,15 @@ import (
 
 // 打包命令
 // 1 命令行UI 常规打包 go build
+// 2 命令行UI 常规打包 go build windows
 // 2 无窗口  go build -o viteApp/appVite.exe -ldflags  "-H=windowsgui" -tags=prod
+// 3 命令行UI 常规打包 go build linux
+// 3 无窗口  go build -o viteApp/appVite.exe -ldflags  "-H=windowsgui" -tags=prod
 
 func init() {
 	curDir, _ := filepath.Abs(".")
 	osSetting := cons.OSSetting
-	settingPath := curDir + "\\" + cons.OSSetting.SelfPath
+	settingPath := curDir + utils.PathSeparator + cons.OSSetting.SelfPath
 	dict := service.ReadDictionaryFromJson(settingPath)
 	dict.SelfPath = osSetting.SelfPath
 	cons.OSSetting = dict

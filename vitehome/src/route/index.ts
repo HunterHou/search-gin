@@ -81,17 +81,17 @@ export const staticRoutes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: "/systeminfo",
+    path: "/systemview",
     component: DefaultLayVue,
-    name: "systeminfo",
+    name: "SystemView",
     meta: {
       title: "系统信息",
     },
     children: [
       {
-        path: "/systeminfo",
-        component: () => import("@/views/systeminfo/Systeminfo.vue"),
-        name: "systeminfo",
+        path: "/systemview",
+        component: () => import("@/views/systemInfo/SystemView.vue"),
+        name: "SystemView",
         meta: {
           title: "系统信息",
         },

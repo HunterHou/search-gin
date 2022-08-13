@@ -1,6 +1,9 @@
 package datamodels
 
-import "strings"
+import (
+	"searchGin/utils"
+	"strings"
+)
 
 // SearchParam 查询参数
 type SearchParam struct {
@@ -36,7 +39,7 @@ func (p *SearchParam) SetSql(sql string) {
 }
 func (p *SearchParam) GetFuzzyKeywords() string {
 	p.Keyword = strings.TrimSpace(p.Keyword)
-	p.Keyword = strings.ReplaceAll(p.Keyword, "\\\\", "\\")
+	p.Keyword = strings.ReplaceAll(p.Keyword, utils.PathSeparator+utils.PathSeparator, utils.PathSeparator)
 	return "%" + p.Keyword + "%"
 }
 

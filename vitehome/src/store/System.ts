@@ -1,3 +1,4 @@
+import { SettingInfo } from "@/views/settting";
 import { defineStore } from "pinia";
 import { MovieQuery } from "../views/fileList";
 import { store } from "./pinia";
@@ -31,12 +32,17 @@ const SystemProperty = defineStore({
       Keyword: "",
       OnlyRepeat: false,
     },
+    SettingInfo: {
+      ControllerHost: "http://127.0.0.1:8081",
+      ImageHost: "http://127.0.0.1:8081",
+      StreamHost: "http://127.0.0.1:8081",
+    },
     SearchSuggestions: [],
-    ControllerHost: "http://127.0.0.1:8081",
-    ImageHost: "http://127.0.0.1:8081",
-    StreamHost: "http://127.0.0.1:8081",
   }),
   getters: {
+    getSettingInfo() {
+      return this.SettingInfo as SettingInfo;
+    },
     getStreamHost() {
       return this.StreamHost;
     },
@@ -44,10 +50,10 @@ const SystemProperty = defineStore({
       return this.ImageHost;
     },
     getControllerHost() {
-      return this.ControllerHost;
+      return this.SettingInfo?.ControllerHost;
     },
     getSuggestions() {
-      return this.SearchSuggestions;
+      return this.SettingInfo?.SearchSuggestions;
     },
     getSearchParam() {
       return this.FileSearchParam;
@@ -66,14 +72,18 @@ const SystemProperty = defineStore({
       }
     },
 
+    setSettingInfo(settingInfo: SettingInfo) {
+      this.SettingInfo = settingInfo;
+    },
+
     setImageHost(url: string) {
-      this.ImageHost = url;
+      this.SettingInfo.ImageHost = url;
     },
     setStreamHost(url: string) {
-      this.StreamHost = url;
+      this.SettingInfo.StreamHost = url;
     },
     setControllerHost(url: string) {
-      this.ControllerHost = url;
+      this.SettingInfo.ControllerHost = url;
     },
 
     setPage(page: number) {

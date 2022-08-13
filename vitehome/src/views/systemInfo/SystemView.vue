@@ -15,7 +15,7 @@ onMounted(() => {
 })
 </script>
 <template>
-    <div v-html="view.form.SystemInfo">
+    <div v-html="view.form.SystemHtml">
 
     </div>
 </template>

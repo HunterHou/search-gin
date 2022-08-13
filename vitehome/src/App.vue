@@ -12,9 +12,7 @@ const key = computed(() => {
 
 const loadSetting = async () => {
   const res = await GetSettingInfo()
-  systemProperty.setControllerHost(res.ControllerHost)
-  systemProperty.setStreamHost(res.StreamHost)
-  systemProperty.setImageHost(res.ImageHost)
+  systemProperty.setSettingInfo(res)
 }
 onMounted(()=>{
   loadSetting()

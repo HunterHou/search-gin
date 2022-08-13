@@ -1,7 +1,7 @@
 /.idea/
 /search.iml
 app/
-viteApp/
+vapp/
 .vscode/settings.json
 /app/
 
@@ -9,9 +9,9 @@ election/src/
 searchGin
 gin.log
 searchGin
-viteHome/dist/**/*
-/viteHome/dist/
-viteHome/node_modules/
+vitehome/dist/**/*
+/vitehome/dist/
+vitehome/node_modules/
 
 /vuehome/.nuxt
 /vuehome/dist/

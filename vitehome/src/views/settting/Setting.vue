@@ -123,7 +123,7 @@
                 v-model="form.SystemInfo"
                 style="width: 90%"
               ></ElInput> -->
-              <ElInput type="textarea" :rows="8" v-model="view.form.SystemInfo" />
+              <ElInput type="textarea" :rows="8" v-model="view.form.SystemHtml" />
             </ElFormItem>
           </ElTabPane>
         </ElTabs>

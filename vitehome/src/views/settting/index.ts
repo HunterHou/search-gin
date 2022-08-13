@@ -10,7 +10,7 @@ export class SettingInfo {
   tagLibData: string[];
   TagsLib: string[];
   Remark: string;
-  SystemInfo: string;
+  SystemHtml: string;
   BaseUrl: string;
   OMUrl: string;
   ControllerHost: string;

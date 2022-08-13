@@ -139,25 +139,24 @@
         </ElCol>
         <div v-if="isPlaying">
           <ElLink type="success" plain size="large" @click="view.videoVisible = true" :underline="false"
-            style="font-size:16px;">
-            播放中：
-            【
+            style="font-size: 16px">
+            播放中： 【
             <ElButton type="success" plain size="large" loading :link="true" />
             {{
-                view.contextmenuTarget.Code + '-' + view.contextmenuTarget.Actress
+                view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
             }}
             <ElButton type="success" plain size="large" loading :link="true" />
             】
           </ElLink>
-          <ElLink type="danger" plain size="large" @click="closePlayVideo" :underline="false" style="font-size:16px;">
+          <ElLink type="danger" plain size="large" @click="closePlayVideo" :underline="false" style="font-size: 16px">
             关闭
           </ElLink>
         </div>
-
       </ElRow>
     </div>
     <ElCard id="cmenu" class="cmenu" v-show="cmenuShow" ref="target" :body-style="{ padding: '4px' }">
-      <span>{{ view.contextmenuTarget.Code ?? view.contextmenuTarget.Name }} </span>
+      <span>{{ view.contextmenuTarget.Code ?? view.contextmenuTarget.Name }}
+      </span>
       &nbsp;&nbsp;
       <ElButton type="danger" @click="cmenuClose" circle>
         <ElIcon>
@@ -216,7 +215,6 @@
         </ElCol>
       </ElRow>
     </ElCard>
-
 
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
       style="min-height: 700px">
@@ -456,7 +454,6 @@
         </ElFormItem>
         <ElFormItem label="文件名称">
           <ElInput type="textarea" v-model="view.formItem.Name" autocomplete="off"></ElInput>
-
         </ElFormItem>
         <ElFormItem label="标签">
           <ElTag v-for="tag in view.formItem.Tags" :key="tag" effect="dark" closable style="margin-right: 8px" type=""
@@ -484,39 +481,37 @@
       </div>
     </ElDialog>
     <ElDialog width="66%" :modal="true" :title="'  ' + view.formItem.Code + ' '" v-model="view.dialogVisible"
-      :before-close="() => {
-        innerVisibleFalse()
-        view.dialogVisible = false
-      }" :destroy-on-close="true">
+      :before-close="
+        () => {
+          innerVisibleFalse();
+          view.dialogVisible = false;
+        }
+      " :destroy-on-close="true">
       <div v-if="view.formItem">
         <div>
-          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto" @click="() => {
-            if (view.sourceList && view.sourceList.length > 0) {
-              view.innerVisible = true
+          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto" @click="
+            () => {
+              if (view.sourceList && view.sourceList.length > 0) {
+                view.innerVisible = true;
+              }
             }
-          }" />
+          " />
           <ElRow :gutter="24">
-            <ElCol :span="4" tyle="text-align:right">
-              YY：
-            </ElCol>
+            <ElCol :span="4" tyle="text-align:right"> YY： </ElCol>
             <ElCol :span="8" tyle="text-align:right">
               <a href="javascript:void(0);" @click="javSearch(view.formItem.Actress)">
                 <span>{{ view.formItem.Actress }}</span></a>
             </ElCol>
           </ElRow>
           <ElRow :gutter="24">
-            <ElCol :span="4" tyle="text-align:right">
-              Code
-            </ElCol>
+            <ElCol :span="4" tyle="text-align:right"> Code </ElCol>
             <ElCol :span="8">
               <a href="javascript:void(0);" @click="javCode(view.formItem.Code)"><span>{{ view.formItem.Code
               }}</span></a>
             </ElCol>
           </ElRow>
           <ElRow :gutter="24">
-            <ElCol :span="4" tyle="text-align:right">
-              大小：
-            </ElCol>
+            <ElCol :span="4" tyle="text-align:right"> 大小： </ElCol>
             <ElCol :span="8" v-if="view.formItem.Tags" tyle="text-align:right">
               <ElTag v-for="tag in view.formItem.Tags" :key="tag" effect="dark" style="margin-right: 8px" type=""
                 size="large">
@@ -528,7 +523,6 @@
               <span>{{
                   useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
               }}</span>
-
             </ElCol>
           </ElRow>
           <ElRow :gutter="20">
@@ -551,11 +545,22 @@
         </div>
       </div>
       <teleport to="body">
-        <div v-show="view.innerVisible"
-          style="width: 100%;height:100%;z-index: 9999;top: 0px;position:fixed;overflow: auto;"
-          @click="innerVisibleFalse">
+        <div v-show="view.innerVisible" style="
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            top: 0px;
+            position: fixed;
+            overflow: auto;
+          " @click="innerVisibleFalse">
           <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
-            <ElImage style="min-width: 1200px;width: auto; margin: 0 auto;opacity: 9;z-index: 9999" :src="item">
+            <ElImage style="
+                min-width: 1200px;
+                width: auto;
+                margin: 0 auto;
+                opacity: 9;
+                z-index: 9999;
+              " :src="item">
               @click.stop="innerVisibleFalse"
             </ElImage>
           </div>
@@ -569,24 +574,48 @@
       </div> -->
     </ElDialog>
     <!--  -->
-
   </div>
   <teleport to="body">
-    <div v-show="view.videoVisible"
-      style="width: 100%;height:100%;z-index: 9999;top:0; position:fixed;overflow: auto;background-color: rgba(0,0,0,0.7);float: left;"
-      id="videoDiv">
-      <div
-        style="top:0;height:2rem;width:100%;margin:1rem auto;position:absolute;color: white;z-index: 9999;float: right;">
-        <span style="margin-left:2rem;text-overflow: ellipsis;white-space: nowrap;">
+    <div v-show="view.videoVisible" style="
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        top: 0;
+        position: fixed;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.7);
+        float: left;
+      " id="videoDiv">
+      <div style="
+          top: 0;
+          height: 2rem;
+          width: 100%;
+          margin: 1rem auto;
+          position: absolute;
+          color: white;
+          z-index: 9999;
+          float: right;
+        ">
+        <span style="
+            margin-left: 2rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          ">
           <ElTag v-for="item in view.contextmenuTarget.Tags" key="default" type="danger" size="large"
-            style="margin-left: 0.5rem;">
+            style="margin-left: 0.5rem">
             {{ item }}
           </ElTag>
           {{ view.contextmenuTarget.Code }}
           {{ view.contextmenuTarget.Actress }}
           {{ view.contextmenuTarget.Name }}
         </span>
-        <div style="right:1rem;top:0;height:2rem;position:absolute;z-index: 9999;">
+        <div style="
+            right: 1rem;
+            top: 0;
+            height: 2rem;
+            position: absolute;
+            z-index: 9999;
+          ">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
@@ -595,46 +624,71 @@
       <!-- <video id="video" :src="view.videoUrl" controls style="right: 0;top: 0;position:absolute">
         您的浏览器不支持 video 标签。
       </video> -->
-      <vue3VideoPlay v-bind="options" />
-
+      <vue3VideoPlay v-if="view.videoClose" v-bind="options" />
     </div>
   </teleport>
 </template>
 <script setup lang="ts">
 import {
   AddTag,
-  CloseTag, DeleteFile,
-  DownImageList, FileRename, FindFileInfo, HeartBeatQuery, OpenFileFolder, PlayMovie, QueryDirImageBase64, QueryFileList, RefreshIndex, ResetMovieType, SyncFileInfo
+  CloseTag,
+  DeleteFile,
+  DownImageList,
+  FileRename,
+  FindFileInfo,
+  HeartBeatQuery,
+  OpenFileFolder,
+  PlayMovie,
+  QueryDirImageBase64,
+  QueryFileList,
+  RefreshIndex,
+  ResetMovieType,
+  SyncFileInfo,
 } from "@/api/file";
-import { GetSettingInfo, PostSettingInfo } from "@/api/setting";
+import { PostSettingInfo } from "@/api/setting";
 
 import { useSystemProperty } from "@/store/System";
 import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
 import { ResultList } from "@/utils/ResultResponse";
 import { Eleme } from "@element-plus/icons-vue";
 import {
-  onKeyStroke, useClipboard, useDateFormat, useMouseInElement, useTextSelection,
-  useWindowScroll, useWindowSize
+  onKeyStroke,
+  useClipboard,
+  useDateFormat,
+  useMouseInElement,
+  useTextSelection,
+  useWindowScroll,
+  useWindowSize,
 } from "@vueuse/core";
 import {
-  ElBacktop, ElCol, ElDialog, ElDivider, ElDropdown,
-  ElDropdownItem, ElDropdownMenu, ElImage, ElLink, ElMessage,
-  ElMessageBox, ElPagination, ElPopover, ElRadioButton, ElRadioGroup, ElRow,
-  ElSpace
+  ElBacktop,
+  ElCol,
+  ElDialog,
+  ElDivider,
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
+  ElImage,
+  ElLink,
+  ElMessage,
+  ElMessageBox,
+  ElPagination,
+  ElPopover,
+  ElRadioButton,
+  ElRadioGroup,
+  ElRow,
+  ElSpace,
 } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
 import { MovieModel, MovieQuery } from ".";
 
 import "vue3-video-play/dist/style.css";
 
-
-
 const target = ref(null);
 const selectText = useTextSelection();
 const { y: windowScrollHheight } = useWindowScroll();
 const { x, y, isOutside } = useMouseInElement(target);
 const pagePress = ref(null);
-
 
 const running = ref(true);
 const loading = ref(false);
@@ -644,13 +698,14 @@ const systemProperty = useSystemProperty();
 const cmenuShow = ref(false);
 const source = ref("");
 const { copy } = useClipboard({ source });
-const { width: windowWidth, height: windowHeight } = useWindowSize()
+const { width: windowWidth, height: windowHeight } = useWindowSize();
 
-const searchStyle = ref({})
+const searchStyle = ref({});
 
 const view = reactive<any>({
   videoUrl: null,
   videoVisible: false,
+  videoClose: false,
   innerVisible: false,
   formItem: new MovieModel(),
   dialogFormItemVisible: false,
@@ -666,7 +721,7 @@ const options = reactive({
   height: "700px", //播放器高度
   color: "#409eff", //主题色
   title: "", //视频名称
-  src: "https://cdn.jsdelivr.net/gh/xdlumia/files/video-play/IronMan.mp4", //视频源
+  src: "", //视频源
   muted: false, //静音
   webFullScreen: false,
   speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
@@ -689,39 +744,35 @@ const options = reactive({
 });
 const queryParam = reactive<MovieQuery>(new MovieQuery());
 
-
 watch(windowWidth, (newWidth) => {
-  let newHeight = newWidth * 9 / 16
+  let newHeight = (newWidth * 9) / 16;
   if (newHeight > windowHeight.value) {
-    newHeight = windowHeight.value
+    newHeight = windowHeight.value;
   }
-  options.width = newWidth - 20 + 'px'
-  options.height = newHeight - 14 + 'px'
-})
+  options.width = newWidth - 20 + "px";
+  options.height = newHeight - 14 + "px";
+});
 watch(windowHeight, (newHeight) => {
-  const newWidth = newHeight * 16 / 9
-  options.width = newWidth - 20 + 'px'
-  options.height = newHeight - 14 + 'px'
-
-})
+  const newWidth = (newHeight * 16) / 9;
+  options.width = newWidth - 20 + "px";
+  options.height = newHeight - 14 + "px";
+});
 watch(windowScrollHheight, () => {
   if (windowScrollHheight.value > 50) {
     searchStyle.value = {
-      top: '1px',
-      width: '100%',
+      top: "1px",
+      width: "100%",
       zIndex: 100,
-      background: 'white',
+      background: "white",
       opacity: 1,
       bgColor: "white",
       position: "fixed",
-    }
-  } else
-    searchStyle.value = {}
-}
-)
+    };
+  } else searchStyle.value = {};
+});
 watch(selectText.text, (newVal) => {
-  if ((newVal)) {
-    queryParam.Keyword = newVal
+  if (newVal) {
+    queryParam.Keyword = newVal;
   }
 });
 
@@ -732,46 +783,45 @@ onKeyStroke(["Enter"], (e) => {
   queryList();
 });
 
-const fullScreen = ref(true)
-const isPlaying = ref(false)
+const fullScreen = ref(true);
+const isPlaying = ref(false);
 
 const fullPlayVideo = () => {
   if (fullScreen.value) {
-    options.width = windowWidth.value - 20 + 'px'
-    options.height = windowHeight.value - 14 + 'px'
+    options.width = windowWidth.value - 20 + "px";
+    options.height = windowHeight.value - 14 + "px";
   } else {
-    options.width = windowWidth.value * 0.988 + 'px'
-    options.height = windowHeight.value * 0.988 + 'px'
+    options.width = windowWidth.value * 0.988 + "px";
+    options.height = windowHeight.value * 0.988 + "px";
   }
-  fullScreen.value = !fullScreen.value
-}
+  fullScreen.value = !fullScreen.value;
+};
 
 const hiddenPlayVideo = () => {
-  view.videoVisible = false
-}
+  view.videoVisible = false;
+};
 
 const closePlayVideo = () => {
-  view.videoVisible = false
-  options.src = null
-  isPlaying.value = false
-}
+  view.videoVisible = false;
+  view.videoClose = false;
+  options.src = null;
+  isPlaying.value = false;
+};
 
 const startPlayVideo = () => {
-  fullScreen.value = false
-  fullPlayVideo()
-  const stream = getFileStream(view.contextmenuTarget.Id)
-  options.title = view.contextmenuTarget.Name
-  options.src = stream
-  isPlaying.value = true
-  view.videoVisible =true
-
-  // videoElement.appendChild()
-
-}
+  view.videoClose = true;
+  fullScreen.value = false;
+  fullPlayVideo();
+  const stream = getFileStream(view.contextmenuTarget.Id);
+  options.title = view.contextmenuTarget.Name;
+  options.src = stream;
+  isPlaying.value = true;
+  view.videoVisible = true;
+};
 
 const innerVisibleFalse = () => {
-  view.innerVisible = false
-}
+  view.innerVisible = false;
+};
 const imageContextmenu = (item: MovieModel) => {
   cmenuShow.value = false;
   setTimeout(() => {
@@ -793,12 +843,11 @@ const cmenuCode = async () => {
 const cmenuPlay = async (item?) => {
   // await playThis(view.contextmenuTarget.Id);
   if (item) {
-    view.contextmenuTarget = item
+    view.contextmenuTarget = item;
   }
-  view.videoVisible = true
+  view.videoVisible = true;
   cmenuShow.value = false;
-  startPlayVideo()
-
+  startPlayVideo();
 };
 const cmenuOpenDir = async () => {
   await openThisFolder(view.contextmenuTarget.Id);
@@ -829,18 +878,18 @@ const removeFormTag = (tag: string) => {
   const idx = view.formItem.Tags.indexOf(tag);
   view.formItem.Tags.splice(idx, 1);
   view.formItem.Name = view.formItem.Name.replaceAll(tag, "");
-  formItemTagsChange()
-}
+  formItemTagsChange();
+};
 
 const addThisCustomerTag = () => {
   if (!view.formItem.Tags) {
-    view.formItem.Tags = []
+    view.formItem.Tags = [];
   }
-  console.log(view.customerTag)
-  view.formItem.Tags.push(view.customerTag)
-  view.customerTag = undefined
-  formItemTagsChange()
-}
+  console.log(view.customerTag);
+  view.formItem.Tags.push(view.customerTag);
+  view.customerTag = undefined;
+  formItemTagsChange();
+};
 
 const formItemTagsChange = () => {
   let { Name, Tags, FileType } = view.formItem;
@@ -850,7 +899,7 @@ const formItemTagsChange = () => {
     const endC = Name.substr(Name.indexOf("》"), Name.length);
     newName = startC;
     if (Tags && Tags.length > 0) {
-      newName += Tags
+      newName += Tags;
     }
     newName += endC;
   } else {
@@ -920,7 +969,8 @@ const formMovieTypeChange = () => {
 };
 
 const loadSettingInfo = async () => {
-  const res = await GetSettingInfo();
+  const res = systemProperty.GetSettingInfo;
+  //const res = await GetSettingInfo();
   if (res) {
     view.settingInfo = { DirsCnt: res.Dirs?.length, ...res };
   }
@@ -1007,9 +1057,9 @@ const handleSelectTag = (item: string) => {
 };
 const closeTag = async (clickId: string, title: string) => {
   console.log(clickId, title);
-  const res = await CloseTag(clickId, title)
+  const res = await CloseTag(clickId, title);
   if (res.Code == 200) {
-    ElMessage.success(res.Message)
+    ElMessage.success(res.Message);
     for (var i = 0; i < view.ModelList.length; i++) {
       if (view.ModelList[i].Id == clickId) {
         const idx = view.ModelList[i].Tags.indexOf(title);
@@ -1019,7 +1069,7 @@ const closeTag = async (clickId: string, title: string) => {
     }
     refreshIndex();
   } else {
-    ElMessage.error(res.Message)
+    ElMessage.error(res.Message);
   }
 };
 
@@ -1027,7 +1077,6 @@ const queryList = async (params?: any) => {
   let title = queryParam.Keyword;
   systemProperty.syncSearchParam(queryParam);
   if (queryParam.Keyword && queryParam.Keyword !== "") {
-
   } else {
     title = "文件";
   }
@@ -1221,7 +1270,7 @@ const deleteThis = async (id: string, a?: number) => {
     cancelButtonText: "取消",
     type: "warning",
     callback: async (action) => {
-      if (action == 'confirm') {
+      if (action == "confirm") {
         await DeleteFile(id)
           .then((res) => {
             if (res.Code === 200) {
@@ -1234,7 +1283,6 @@ const deleteThis = async (id: string, a?: number) => {
             ElMessage.error("已取消删除");
           });
       }
-
     },
   });
 };
@@ -1310,7 +1358,8 @@ setInterval(heartBeat, 10000);
 onMounted(() => {
   // suggestionsInit()
   loadSettingInfo();
-  queryParam.Page = systemProperty.getSearchParam.Page;
+  console.log(systemProperty.getSearchParam)
+  queryParam.Page = systemProperty.getSearchParam?.Page;
   queryParam.PageSize = systemProperty.getSearchParam.PageSize;
   queryParam.MovieType = systemProperty.getSearchParam.MovieType;
   queryParam.SortField = systemProperty.getSearchParam.SortField;

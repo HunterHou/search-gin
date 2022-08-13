@@ -254,7 +254,7 @@ func GetDirInfo(c *gin.Context) {
 	fileService := service.CreateFileService()
 	file := fileService.FindOne(id)
 
-	files := service.Walk(file.DirPath, cons.Types,false)
+	files := service.Walk(file.DirPath, cons.Types, false)
 	for i := 0; i < len(files); i++ {
 		files[i].SetImageBase64()
 	}
@@ -276,7 +276,7 @@ func PostOpenFolerByPath(c *gin.Context) {
 	forms := make(map[string]string)
 	c.ShouldBindJSON(&forms)
 	dirpath := forms["dirpath"]
-	dirpath = strings.ReplaceAll(dirpath, "\\\\", "\\")
+	dirpath = strings.ReplaceAll(dirpath, utils.PathSeparator+utils.PathSeparator, utils.PathSeparator)
 	utils.ExecCmdExplorer(dirpath)
 	res := utils.NewSuccessByMsg("打开成功")
 	c.JSON(http.StatusOK, res)
@@ -287,7 +287,7 @@ func PostDeleteFolerByPath(c *gin.Context) {
 	forms := make(map[string]string)
 	c.ShouldBindJSON(&forms)
 	dirpath := forms["dirpath"]
-	dirpath = strings.ReplaceAll(dirpath, "\\\\", "\\")
+	dirpath = strings.ReplaceAll(dirpath, utils.PathSeparator+utils.PathSeparator, utils.PathSeparator)
 	service.DownDeleteDir(dirpath)
 	res := utils.NewSuccessByMsg("打开成功")
 	c.JSON(http.StatusOK, res)

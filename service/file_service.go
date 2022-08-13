@@ -239,9 +239,9 @@ func (fs FileService) ClearTag(id string, tag string) utils.Result {
 func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
 	result := utils.Result{}
 	root := srcFile.DirPath
-	path := root + "\\" + toFile.Actress
+	path := root + utils.PathSeparator + toFile.Actress
 	if toFile.Studio != "" {
-		path = path + "\\" + toFile.Studio
+		path = path + utils.PathSeparator + toFile.Studio
 	}
 	title := toFile.Title
 	title = strings.ReplaceAll(title, ":", "~")
@@ -249,20 +249,20 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 	title = strings.ReplaceAll(title, "!", "~")
 
 	dirname := "[" + toFile.Actress + "][" + toFile.Code + "]" + title
-	dirpath := path + "\\" + dirname
+	dirpath := path + utils.PathSeparator + dirname
 	os.MkdirAll(dirpath, os.ModePerm)
 	filename := dirname + "." + utils.GetSuffux(srcFile.Path)
-	finalpath := dirpath + "\\" + filename
+	finalpath := dirpath + utils.PathSeparator + filename
 	jpgpath := utils.GetPng(finalpath, "jpg")
 	nfopath := utils.GetPng(finalpath, "nfo")
 	jpgOut, createErr := os.Create(jpgpath)
 	if createErr != nil {
 		//TODO 创建失败  标题 特殊字符处理 改为 演员+番号
 		dirname = "[" + toFile.Actress + "][" + toFile.Code + "]"
-		dirpath = path + "\\" + dirname
+		dirpath = path + utils.PathSeparator + dirname
 		os.MkdirAll(dirpath, os.ModePerm)
 		filename = dirname + "." + utils.GetSuffux(srcFile.Path)
-		finalpath = dirpath + "\\" + filename
+		finalpath = dirpath + utils.PathSeparator + filename
 		jpgpath = utils.GetPng(finalpath, "jpg")
 		jpgOut, createErr = os.Create(jpgpath)
 		if createErr != nil {
@@ -338,7 +338,7 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 func downImageItem(url string, dirPath string, prefix string, sufix string, wg *sync.WaitGroup) utils.Result {
 	defer wg.Done()
 	result := utils.NewResult()
-	filepath := dirPath + "\\" + prefix
+	filepath := dirPath + utils.PathSeparator + prefix
 	if len(sufix) > 0 {
 		filepath = filepath + "-" + sufix + ".jpg"
 	}
@@ -580,7 +580,7 @@ func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 		res.FailByMsg("文件不存在")
 		return res
 	}
-	newPath := movieLib.DirPath + "\\" + movie.Name
+	newPath := movieLib.DirPath + utils.PathSeparator + movie.Name
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
@@ -673,7 +673,7 @@ func DeleteOne(dirName string, fileName string) {
 	files, _ := ioutil.ReadDir(dirName)
 	for _, f := range files {
 		if strings.Contains(f.Name(), fileName) {
-			path := dirName + "\\" + f.Name()
+			path := dirName + utils.PathSeparator + f.Name()
 			err := os.Remove(path)
 			if err != nil {
 				fmt.Println(err)
@@ -691,7 +691,7 @@ func DownDeleteDir(dirname string) {
 	files2, _ := ioutil.ReadDir(dirname)
 	if len(files2) > 0 {
 		for _, ff := range files2 {
-			path := dirname + "\\" + ff.Name()
+			path := dirname + utils.PathSeparator + ff.Name()
 			if ff.IsDir() {
 				DownDeleteDir(path)
 			} else {
@@ -709,7 +709,7 @@ func UpDeleteDir(dirname string) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		newpath := dirname[0:strings.LastIndex(dirname, "\\")]
+		newpath := dirname[0:strings.LastIndex(dirname, utils.PathSeparator)]
 		UpDeleteDir(newpath)
 	} else {
 		return
@@ -977,14 +977,14 @@ func HeartBeat() {
 }
 
 // Walk 遍历目录 获取文件库
-func Walk(baseDir string, types []string,deep bool) []datamodels.Movie {
+func Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
 	var result []datamodels.Movie
 	files, _ := ioutil.ReadDir(baseDir)
 	if len(files) > 0 {
 		for _, path := range files {
 			pathAbs := filepath.Join(baseDir, path.Name())
 			if path.IsDir() && deep {
-				childResult := Walk(pathAbs, types,deep)
+				childResult := Walk(pathAbs, types, deep)
 				result = ExpandsMovie(result, childResult)
 			} else {
 				name := path.Name()

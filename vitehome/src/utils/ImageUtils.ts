@@ -1,0 +1,22 @@
+import { useSystemProperty } from "@/store/System";
+import { computed } from "vue";
+
+const systemProperty = useSystemProperty();
+const settingInfo = computed(() => {
+  return systemProperty.getSettingInfo;
+});
+
+export const getPng = (Id: string) => {
+  return settingInfo.value.ImageHost + "/api/png/" + Id;
+};
+export const getJpg = (Id: string) => {
+  return settingInfo.value.ImageHost + "/api/jpg/" + Id;
+};
+
+export const getFileStream = (id: string) => {
+  return settingInfo.value.StreamHost + "/api/file/" + id;
+};
+
+export const getActressImage = (actressUrl: string) => {
+  return settingInfo.value.ImageHost + actressUrl;
+};

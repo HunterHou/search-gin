@@ -5,7 +5,7 @@ type Setting struct {
 	BaseUrl    string
 	OMUrl      string
 	Remark     string
-	SystemInfo string
+	SystemHtml string
 
 	Tags           []string
 	TagsLib        []string

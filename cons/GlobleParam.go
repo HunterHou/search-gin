@@ -132,7 +132,7 @@ var OSSetting = datamodels.Setting{
 	BaseUrl:        "https://www.busjav.blog/",
 	OMUrl:          "https://www.busjav.blog/",
 	Remark:         "",
-	SystemInfo:     "",
+	SystemHtml:     "",
 	Dirs: []string{
 		"e://emby",
 		"e://code",
@@ -146,7 +146,7 @@ var OSSetting = datamodels.Setting{
 	Types:      []string{AVI, MKV, WMV, MP4, GIF, PNG, JPG, TXT, XLSX},
 }
 
-//Base Dictory
+// Base Dictory
 const PNG = "png"
 const JPG = "jpg"
 const GIF = "gif"

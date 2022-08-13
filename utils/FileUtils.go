@@ -28,9 +28,9 @@ func PKId(path string) string {
 
 func DirpathForId(path string) (string, string) {
 	res, _ := url.QueryUnescape(path)
-	res = strings.ReplaceAll(res, "\\\\", "\\")
-	res = strings.ReplaceAll(res, "\\", "~")
-	res = strings.ReplaceAll(res, "\\", "~")
+	res = strings.ReplaceAll(res, PathSeparator+PathSeparator, PathSeparator)
+	res = strings.ReplaceAll(res, PathSeparator, "~")
+	res = strings.ReplaceAll(res, PathSeparator, "~")
 	res = strings.ReplaceAll(res, ":", "")
 	res = strings.ReplaceAll(res, ".", "")
 	res = strings.ReplaceAll(res, ",", "")
