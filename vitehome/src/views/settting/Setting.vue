@@ -116,15 +116,8 @@
           </ElTabPane>
 
           <ElTabPane label="系统信息" name="third">
-            <ElFormItem label="系統信息">
-              <!-- <ElInput
-                type="textarea"
-                :rows="20"
-                v-model="form.SystemInfo"
-                style="width: 90%"
-              ></ElInput> -->
-              <ElInput type="textarea" :rows="8" v-model="view.form.SystemHtml" />
-            </ElFormItem>
+            <v-md-editor v-model="view.form.SystemHtml" height="700px"></v-md-editor>
+            <!-- <ElInput type="textarea" :rows="8" v-model="view.form.SystemHtml" /> -->
           </ElTabPane>
         </ElTabs>
       </div>

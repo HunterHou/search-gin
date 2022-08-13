@@ -15,7 +15,8 @@ onMounted(() => {
 })
 </script>
 <template>
-    <div v-html="view.form.SystemHtml">
+    <!-- <div v-html="view.form.SystemHtml">
 
-    </div>
+    </div> -->
+    <v-md-preview-html v-bind:html="view.form.SystemHtml" preview-class="vuepress-markdown-body"></v-md-preview-html>
 </template>
