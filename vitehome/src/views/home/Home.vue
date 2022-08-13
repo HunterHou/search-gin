@@ -120,7 +120,7 @@ const f5 = () => {
         </el-tag>
       </el-link>
     </div>
-    <li class="s-table d-li" v-if="scanTime && scanTime.length > 0">
+    <li class="left-div d-li" v-if="scanTime && scanTime.length > 0">
       <el-table :data="scanTime" align="center" :stripe="true">
         <el-table-column label="文件夹" header-align="left" align="left">
           <template #default="scope">
@@ -146,7 +146,7 @@ const f5 = () => {
       </el-table>
     </li>
 
-    <li class="d-table d-li">
+    <li class="right-div d-li">
       <el-table :data="tableData" align="center" style="margin: 20px auto" :stripe="true" border>
         <el-table-column label="结果集" header-align="left" min-width="250px" align="left">
           <template #default="scope">
@@ -195,14 +195,14 @@ const f5 = () => {
   margin: 4px 8px;
 }
 
-.s-table {
-  width: 250px;
-  width: 20%;
+.left-div {
+  min-width: 250px;
+  width: 38%;
 }
 
-.d-table {
+.right-div {
   margin: 0 10px;
-  width: 76%;
+  width: 60%;
   min-width: 350px;
 }
 

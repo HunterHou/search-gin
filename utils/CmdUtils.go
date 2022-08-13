@@ -8,22 +8,35 @@ import (
 )
 
 func ExecCmdStart(path string) int {
-	return ExecCmd(path, "start")
+	
+	if runtime.GOOS == "windows" {
+		md := exec.Command("cmd", "/C", "start", path)
+		return excCommand(md)
+	}else{}
+	fmt.Println("runtime.GOOS"+runtime.GOOS)
+	md := exec.Command("deepin-movie", "/C", path)
+	return excCommand(md)
 }
 
 func ExecCmdExplorer(path string) int {
-	return ExecCmd(path, "start")
+	if runtime.GOOS == "windows" {
+		md := exec.Command("cmd", "/C", "start", path)
+		return excCommand(md)
+	}else{}
+	fmt.Println("runtime.GOOS"+runtime.GOOS)
+	md := exec.Command("dde-file-manager", "/C", path)
+	return excCommand(md)
 }
 
-func ExecCmd(path string, cmdType string) int {
-	cmd := exec.Command("cmd", "/C", cmdType, "", path)
+
+func excCommand(cmd *exec.Cmd) int{
+	if runtime.GOOS == "windows" {
+		// cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		cmd.SysProcAttr = &syscall.SysProcAttr{}
+	}
 	if cmd != nil {
-		if runtime.GOOS == "windows" {
-			// cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-			cmd.SysProcAttr = &syscall.SysProcAttr{}
-		}
 		cmdErr := cmd.Start()
-		fmt.Println(cmdType + ":" + path)
+		// fmt.Println( "cmd:" + cmd.Env)
 		if cmdErr != nil {
 			fmt.Println(cmdErr)
 			return 0
