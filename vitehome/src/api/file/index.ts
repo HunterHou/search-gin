@@ -14,14 +14,14 @@ export const FindFileInfo = async (data: string) => {
   return res;
 };
 
-export const QueryDirImageBase64 = async (data: string) => {
+export const QueryDirImageBase64 = async (data: string):Promise<any> => {
   const res = await request.get({ url: `/api/dir/${data}` });
   return res;
 };
 
-export const PlayMovie = async (data: string) => {
+export const PlayMovie = async (data: string):Promise<ResultEdit> => {
   const res = await request.get({ url: `/api/play/${data}` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const OpenFileFolder = async (data: string) => {
@@ -51,7 +51,7 @@ export const RefreshIndex = async () => {
   return res;
 };
 
-export const DownImageList = async (data: string) => {
+export const DownImageList = async (data: string):Promise<any>  => {
   const res = await request.get({ url: `/api/imageList/${data}` });
   return res;
 };
