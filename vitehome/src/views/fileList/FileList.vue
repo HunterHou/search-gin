@@ -969,7 +969,7 @@ const formMovieTypeChange = () => {
 };
 
 const loadSettingInfo = async () => {
-  const res = systemProperty.GetSettingInfo;
+  const res =await systemProperty.getSettingInfo;
   //const res = await GetSettingInfo();
   if (res) {
     view.settingInfo = { DirsCnt: res.Dirs?.length, ...res };

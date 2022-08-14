@@ -11,7 +11,7 @@ export const QueryFileList = async (data: any): Promise<ResultList> => {
 
 export const FindFileInfo = async (data: string) => {
   const res = await request.get({ url: `/api/info/${data}` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const QueryDirImageBase64 = async (data: string):Promise<any> => {
@@ -26,46 +26,46 @@ export const PlayMovie = async (data: string):Promise<ResultEdit> => {
 
 export const OpenFileFolder = async (data: string) => {
   const res = await request.get({ url: `/api/openFolder/${data}` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const DeleteFile = async (data: string) => {
   const res = await request.get({ url: `/api/delete/${data}` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const SyncFileInfo = async (data: string) => {
   const res = await request.get({ url: `/api/sync/${data}` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const ResetMovieType = async (data: string, movieType: string) => {
   const res = await request.get({
     url: `/api/setMovieType/${data}/${movieType}`,
   });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const RefreshIndex = async () => {
   const res = await request.get({ url: `/api/refreshIndex` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const DownImageList = async (data: string):Promise<any>  => {
   const res = await request.get({ url: `/api/imageList/${data}` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const HeartBeatQuery = async () => {
   const res = await request.get({ url: `/api/heartBeat` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const AddTag = async (clickId: string, title: string) => {
   const res = await request.get({
     url: `/api/file/addTag/${clickId}/${title}`,
   });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const FileRename = async (data: any) => {
@@ -84,7 +84,7 @@ export const DeleteFolerByPath = async (data: any) => {
 
 export const CloseTag = async (id: string,title:string) => {
   const res = await request.get({ url: `/api/file/clearTag//${id}/${title}` });
-  return res;
+  return res as unknown as ResultEdit;
 };
 
 export const GetFile = async (id: string) => {
