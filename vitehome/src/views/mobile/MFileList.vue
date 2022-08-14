@@ -1,11 +1,6 @@
 <template>
   <div class="mainBody">
-    <NavBar
-      title="搜索"
-      left-text="返回"
-      left-arrow
-      @click-left="push('/home')"
-    >
+    <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home')">
       <template #right>
         <div @click="showSearch = true">
           <Icon name="search" size="18" />
@@ -13,46 +8,25 @@
         </div>
       </template>
     </NavBar>
-    <ActionSheet
-      v-model:show="showSearch"
-      title="搜索"
-      :close-on-click-overlay="true"
-    >
-      <Search
-        v-model="view.queryParam.Keyword"
-        placeholder="请输入搜索"
-        @search="onSearch"
-        label="关键词"
-        show-action
-        @update:model-value="keywordUpdate"
-        @cancel="onCancel"
-        input-align="center"
-      >
+    <ActionSheet v-model:show="showSearch" title="搜索" :close-on-click-overlay="true">
+      <Search v-model="view.queryParam.Keyword" placeholder="请输入搜索" @search="onSearch" label="关键词" show-action
+        @update:model-value="keywordUpdate" @cancel="onCancel" input-align="center">
         <template #action>
           <div @click="onCancel" style="margin: 2px 4px">搜索</div>
         </template>
       </Search>
       <div style="margin-bottom: 10vh">
-        <Button
-          type="warning"
-          plain
-          v-for="tag in view.settingInfo.Tags"
-          :key="tag"
-          style="margin: 1px 2px"
-          @click="
-            searchKeyword(tag);
-            showSearch = false;
-          "
-        >
+        <Button type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px" @click="
+  searchKeyword(tag);
+showSearch = false;
+        ">
           <span style="font-size: 12px">{{ tag }}</span>
         </Button>
       </div>
     </ActionSheet>
+    <MobileBar></MobileBar>
     <teleport to="body">
-      <div
-        v-show="view.videoVisible"
-        id="videoDiv"
-        style="
+      <div v-show="view.videoVisible" id="videoDiv" style="
           width: 100vw;
           height: 100vh;
           z-index: 9999;
@@ -60,11 +34,8 @@
           overflow: auto;
           background-color: rgba(0, 0, 0, 0.7);
           float: left;
-        "
-      >
-        <div
-          style="right: 10vw; height: 10vh; position: absolute; z-index: 9999"
-        >
+        ">
+        <div style="right: 10vw; height: 10vh; position: absolute; z-index: 9999">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <ElButton type="primary" @click="transformThis">旋转</ElButton>
@@ -73,9 +44,7 @@
       </div>
     </teleport>
     <teleport to="body">
-      <div
-        v-show="viewPic"
-        style="
+      <div v-show="viewPic" style="
           width: 100%;
           height: 100%;
           z-index: 9999;
@@ -85,28 +54,18 @@
           overflow: auto;
           background-color: rgba(0, 0, 0, 0.9);
           min-height: 1200px;
-        "
-      >
-        <div
-          style="
+        ">
+        <div style="
             right: 1rem;
             top: 20px;
             height: 2rem;
             position: fixed;
             z-index: 999;
-          "
-        >
+          ">
           <Button type="primary" @click="closeViewPicture">关闭</Button>
         </div>
-        <div
-          v-for="(item, index) in view.imageList"
-          :key="index"
-          style="display: flex; margin: 1px auto"
-        >
-          <ElImage
-            style="width: 100%; margin: 0 auto; opacity: 9; z-index: 99"
-            :src="item"
-          >
+        <div v-for="(item, index) in view.imageList" :key="index" style="display: flex; margin: 1px auto">
+          <ElImage style="width: 100%; margin: 0 auto; opacity: 9; z-index: 99" :src="item">
             @click.stop="innerVisibleFalse"
           </ElImage>
         </div>
@@ -114,87 +73,53 @@
     </teleport>
 
     <Sticky v-if="isPlaying" :offsetTop="520" style="left: 450px; width: 400px">
-      <Button
-        size="small"
-        type="success"
-        @click="
-          () => {
-            view.videoVisible = true;
-          }
-        "
-      >
+      <Button size="small" type="success" @click="
+        () => {
+          view.videoVisible = true;
+        }
+      ">
         正在播放：
         {{ view.currentFile?.Code || view.currentFile?.Actress || "无" }}
-        <Button
-          size="small"
-          type="success"
-          :loading="true"
-          loading-type="spinner"
-        ></Button>
+        <Button size="small" type="success" :loading="true" loading-type="spinner"></Button>
       </Button>
-      <Button size="small" type="danger" @click="closePlayVideo"
-        >停止播放</Button
-      >
+      <Button size="small" type="danger" @click="closePlayVideo">停止播放</Button>
     </Sticky>
     <DropdownMenu>
-      <DropdownItem
-        v-model="view.queryParam.MovieType"
-        :options="MovieTypeOptions"
-        @change="onSearch"
-      >
+      <DropdownItem v-model="view.queryParam.MovieType" :options="MovieTypeOptions" @change="onSearch">
       </DropdownItem>
-      <DropdownItem
-        v-model="view.queryParam.SortField"
-        :options="SortFieldOptions"
-        @change="onSearch"
-      >
+      <DropdownItem v-model="view.queryParam.SortField" :options="SortFieldOptions" @change="onSearch">
       </DropdownItem>
-      <DropdownItem
-        v-model="view.queryParam.SortType"
-        :options="SortTypeOptions"
-        @change="onSearch"
-      >
+      <DropdownItem v-model="view.queryParam.SortType" :options="SortTypeOptions" @change="onSearch">
       </DropdownItem>
     </DropdownMenu>
 
-    <PullRefresh
-      v-model="refreshing"
-      @refresh="
-        () => {
-          view.queryParam.Page = 1;
-          onSearch();
-          refreshing = false;
-        }
-      "
-    >
+    <PullRefresh v-model="refreshing" @refresh="
+      () => {
+        view.queryParam.Page = 1;
+        onSearch();
+        refreshing = false;
+      }
+    ">
       <!-- -->
       <!--   -->
       <!-- <List class="mlist" v-model:loading="loadingList" :finished="finished" finished-text="没有更多了" offset="1200000" @load="onLoad" :immediate-check	="false"> -->
 
-      <div
-        v-for="item in view.ModelList"
-        :key="item.Id"
-        style="
+      <div v-for="item in view.ModelList" :key="item.Id" style="
           width: 96vw;
           float: left;
           height: 12rem;
           margin: 6px 8px;
           display: flex;
           box-shadow: 0 0 4px grey;
-        "
-      >
+        ">
         <div style="width: 40vw; margin: 8px auto">
-          <Image
-            :src="isWide ? getJpg(item.Id) : getPng(item.Id)"
-            @click="previewPictures(item)"
-            :style="{
-              height: '100%',
-              width: isWide ? '100%' : 'auto',
-              'max-width': '350px',
-              'min-width': '122px',
-              margin: '2px auto',
-            }"
-          >
+          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
+            height: '100%',
+            width: isWide ? '100%' : 'auto',
+            'max-width': '350px',
+            'min-width': '122px',
+            margin: '2px auto',
+          }">
           </Image>
         </div>
 
@@ -202,81 +127,45 @@
           <div style="margin: 1px auto">
             <Row>
               <Col>
-                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
               </Col>
               <Col span="12">
-                <a v-if="item.Actress" @click="searchKeyword(item.Actress)"
-                  >{{ item.Actress }}
-                </a>
+              <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
+              </a>
               </Col>
               <Col>
-                <span v-if="item.Code">{{ item.Code }}</span>
+              <span v-if="item.Code">{{ item.Code }}</span>
               </Col>
             </Row>
 
             <Row>
-              <Tag
-                v-for="tag in item.Tags"
-                plain
-                type="danger"
-                @click="searchKeyword(tag)"
-                >{{ tag }}</Tag
-              >
+              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
             </Row>
             <Row>
-              <div
-                style="
+              <div style="
                   margin: 1px auto;
                   font-size: 12px;
                   color: gray;
-                  max-height: 6rem;
-                "
-                class="van-multi-ellipsis--l4"
-              >
-                <span>【{{ item.SizeStr }}】 </span
-                ><span> 【{{ item.Name }}】</span>
+                  max-height: 5rem;
+                " class="van-multi-ellipsis--l4">
+                <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
               </div>
             </Row>
 
             <SwipeCell>
               <template #right>
-                <Button
-                  square
-                  size="mini"
-                  type="danger"
-                  @click="getImageList(item.Id)"
-                  text="刮图"
-                />
+                <Button square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
               </template>
               <Row justify="space-around" style="button: 10px">
                 <Col span="5">
-                  <Button
-                    v-if="isWide"
-                    square
-                    size="mini"
-                    type="danger"
-                    @click="getImageList(item.Id)"
-                    text="刮图"
-                  />
+                <Button v-if="isWide" square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
                 </Col>
 
                 <Col span="5">
-                  <Button
-                    square
-                    size="mini"
-                    type="primary"
-                    @click="openFile(item)"
-                    >播放</Button
-                  >
+                <Button square size="mini" type="primary" @click="openFile(item)">播放</Button>
                 </Col>
                 <Col span="5">
-                  <Button
-                    square
-                    size="mini"
-                    type="primary"
-                    @click="viewPictures(item)"
-                    >查看</Button
-                  >
+                <Button square size="mini" type="primary" @click="viewPictures(item)">查看</Button>
                 </Col>
               </Row>
             </SwipeCell>
@@ -319,6 +208,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { MovieModel, MovieQuery } from "../fileList";
 import { SettingInfo } from "../settting";
+import MobileBar from './MobileBar.vue'
 
 const { push } = useRouter();
 const { width } = useWindowSize();

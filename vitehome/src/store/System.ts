@@ -20,8 +20,9 @@ const SystemProperty = defineStore({
   },
   state: () => ({
     Logo: {
-      title: "文件系统",
-      url: "",
+      title: "M系统",
+      logo:"",
+      url: "/mfilelist",
     },
     FileSearchParam: {
       Page: 1,

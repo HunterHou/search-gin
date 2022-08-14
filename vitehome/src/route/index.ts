@@ -10,7 +10,7 @@ export const staticRoutes: RouteRecordRaw[] = [
     name: "root",
     meta: {
       title: "首页",
-      hidden: true,
+      hidden: false,
     },
     children: [
       {
@@ -31,6 +31,7 @@ export const staticRoutes: RouteRecordRaw[] = [
     name: "filelist",
     meta: {
       title: "文件",
+      hidden:false,
     },
     children: [
       {
@@ -49,6 +50,7 @@ export const staticRoutes: RouteRecordRaw[] = [
     name: "actress",
     meta: {
       title: "脸谱",
+      hidden:false,
     },
     children: [
       {
@@ -68,6 +70,7 @@ export const staticRoutes: RouteRecordRaw[] = [
     name: "setting",
     meta: {
       title: "设置",
+      hidden:false,
     },
     children: [
       {
@@ -86,6 +89,7 @@ export const staticRoutes: RouteRecordRaw[] = [
     name: "SystemView",
     meta: {
       title: "系统信息",
+      hidden:false,
     },
     children: [
       {
@@ -98,11 +102,32 @@ export const staticRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  // {
+  //   path: "/mobilebar",
+  //   name: "mobilebar",
+  //   meta: {
+  //     title: "M文件",
+  //     hidden: true,
+  //   },
+  //   children: [
+  //     {
+  //       path: "/mobilebar",
+  //       component: () => import("../views/mobile/MobileBar.vue"),
+  //       name: "MobileBar",
+  //       meta: {
+  //         title: "M文件",
+  //         hidden: true,
+  //       },
+  //     },
+  //   ],
+  // },
   {
-    path: "/mfilelist",
-    name: "mfilelist",
+    path: "/mhome",
+    name: "mhome",
+    redirect:"/mfilelist",
     meta: {
-      title: "M文件",
+      title: "搜索",
+      hidden: true,
     },
     children: [
       {
@@ -110,7 +135,26 @@ export const staticRoutes: RouteRecordRaw[] = [
         component: () => import("../views/mobile/MFileList.vue"),
         name: "mfilelist",
         meta: {
-          title: "M文件",
+          title: "搜索",
+          hidden: true,
+        },
+      },
+      {
+        path: "/mactress",
+        component: () => import("../views/mobile/MFileList.vue"),
+        name: "mactress",
+        meta: {
+          title: "脸谱",
+          hidden: true,
+        },
+      },
+      {
+        path: "/msetting",
+        component: () => import("../views/mobile/MFileList.vue"),
+        name: "msetting",
+        meta: {
+          title: "设置",
+          hidden: true,
         },
       },
     ],

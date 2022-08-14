@@ -20,13 +20,13 @@ const handleSelect = (key: string, keyPath: string[]) => {
 <template>
     <ElMenu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false"
         @select="handleSelect" :router="true">
-        <ElMenuItem index="/">
-            <ElImage v-if="logo.url" src="logo.url"></ElImage>
+        <ElMenuItem :index="logo.url">
+            <ElImage v-if="logo.logo" :src="logo.logo"></ElImage>
             {{ logo.title }}
         </ElMenuItem>
         <div class="flex-grow" />
         <div v-for="item in staticRoutes">
-            <ElMenuItem v-if="item.children" v-for="citem in item.children" :index="citem.path">{{ citem.meta.title }}</ElMenuItem>
+            <ElMenuItem v-if="item.children && item.meta?.hidden==false" v-for="citem in item.children" :index="citem.path">{{ citem.meta.title }}</ElMenuItem>
         </div>
     </ElMenu>
 </template>
