@@ -14,7 +14,7 @@ const logo = computed(() => {
 })
 const handleSelect = (key: string, keyPath: string[]) => {
     push(key)
-    console.log(key, keyPath)
+    console.log(staticRoutes)
 }
 </script>
 <template>
@@ -26,7 +26,8 @@ const handleSelect = (key: string, keyPath: string[]) => {
         </ElMenuItem>
         <div class="flex-grow" />
         <div v-for="item in staticRoutes">
-            <ElMenuItem v-if="item.children && item.meta?.hidden==false" v-for="citem in item.children" :index="citem.path">{{ citem.meta.title }}</ElMenuItem>
+            <ElMenuItem v-if="item.children && item.meta?.hidden == false" v-for="citem in item.children"
+                :index="citem.path">{{ citem.meta.title }}</ElMenuItem>
         </div>
     </ElMenu>
 </template>

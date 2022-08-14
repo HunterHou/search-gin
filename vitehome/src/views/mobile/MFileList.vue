@@ -40,7 +40,7 @@ showSearch = false;
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <ElButton type="primary" @click="transformThis">旋转</ElButton>
         </div>
-        <vue3VideoPlay v-bind="options" />
+        <vue3VideoPlay v-if="view.videoPlay" v-bind="options" />
       </div>
     </teleport>
     <teleport to="body">
@@ -234,6 +234,7 @@ const view = reactive({
   TotalCnt: 0,
   ResultCnt: 0,
   videoVisible: false,
+  videoPlay: false,
   currentFile: new MovieModel(),
   imageList: [],
 });
@@ -387,11 +388,13 @@ const hiddenPlayVideo = () => {
 
 const closePlayVideo = () => {
   view.videoVisible = false;
+  view.videoPlay = false;
   options.src = null;
   isPlaying.value = false;
 };
 
 const openFile = (item: any) => {
+  view.videoPlay = true;
   view.currentFile = item;
   isPlaying.value = true;
   view.videoVisible = true;
@@ -431,7 +434,6 @@ const queryList = async (pageStart?: number) => {
   view.loadCnt = view.loadCnt + model.Data.length;
   refreshing.value = false;
   loadingList.value = false;
-  console.log("queryListOver", loadingList.value);
 };
 
 const onSearch = async (clear?: Boolean) => {
