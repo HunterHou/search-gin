@@ -124,13 +124,21 @@ export const staticRoutes: RouteRecordRaw[] = [
   {
     path: "/mhome",
     name: "mhome",
-    redirect:"/mfilelist",
+    redirect:"/mhome",
     meta: {
       title: "搜索",
       hidden: true,
     },
     children: [
       {
+        path: "/mhome",
+        component: () => import("../views/mobile/MHome.vue"),
+        name: "mhome",
+        meta: {
+          title: "首页",
+          hidden: true,
+        },
+      },{
         path: "/mfilelist",
         component: () => import("../views/mobile/MFileList.vue"),
         name: "mfilelist",
@@ -141,7 +149,7 @@ export const staticRoutes: RouteRecordRaw[] = [
       },
       {
         path: "/mactress",
-        component: () => import("../views/mobile/MFileList.vue"),
+        component: () => import("../views/mobile/MActress.vue"),
         name: "mactress",
         meta: {
           title: "脸谱",
@@ -150,7 +158,7 @@ export const staticRoutes: RouteRecordRaw[] = [
       },
       {
         path: "/msetting",
-        component: () => import("../views/mobile/MFileList.vue"),
+        component: () => import("../views/mobile/MSetting.vue"),
         name: "msetting",
         meta: {
           title: "设置",
