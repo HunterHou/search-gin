@@ -885,7 +885,6 @@ const addThisCustomerTag = () => {
   if (!view.formItem.Tags) {
     view.formItem.Tags = [];
   }
-  console.log(view.customerTag);
   view.formItem.Tags.push(view.customerTag);
   view.customerTag = undefined;
   formItemTagsChange();
@@ -969,7 +968,7 @@ const formMovieTypeChange = () => {
 };
 
 const loadSettingInfo = async () => {
-  const res =await systemProperty.getSettingInfo;
+  const res = await systemProperty.getSettingInfo;
   //const res = await GetSettingInfo();
   if (res) {
     view.settingInfo = { DirsCnt: res.Dirs?.length, ...res };
@@ -1056,7 +1055,6 @@ const handleSelectTag = (item: string) => {
   view.customerTag = item;
 };
 const closeTag = async (clickId: string, title: string) => {
-  console.log(clickId, title);
   const res = await CloseTag(clickId, title);
   if (res.Code == 200) {
     ElMessage.success(res.Message);
@@ -1239,7 +1237,6 @@ const thisActress = async (actress: string) => {
 };
 
 const openThisFolder = async (id: string, a?: number) => {
-  console.log("openThisFolder", id, "a", a);
   const res = await OpenFileFolder(id);
   if (res.Code === 200) {
     ElMessage.success(res.Message);
@@ -1358,7 +1355,6 @@ setInterval(heartBeat, 10000);
 onMounted(() => {
   // suggestionsInit()
   loadSettingInfo();
-  console.log(systemProperty.getSearchParam)
   queryParam.Page = systemProperty.getSearchParam?.Page;
   queryParam.PageSize = systemProperty.getSearchParam.PageSize;
   queryParam.MovieType = systemProperty.getSearchParam.MovieType;

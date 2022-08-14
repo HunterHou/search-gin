@@ -1,6 +1,6 @@
 <template>
   <div class="mainBody">
-    <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home')">
+    <NavBar title="臉譜" left-text="返回" left-arrow @click-left="push('/home')">
       <template #right>
         <div @click="showSearch = true">
           <Icon name="search" size="18" />
@@ -455,6 +455,8 @@ const keywordUpdate = () => {
   }
 };
 onMounted(() => {
+  const { currentRoute } = useRouter()
+  console.log(currentRoute.value.meta.title)
   onSearch();
   options.src = null;
   transformThis();

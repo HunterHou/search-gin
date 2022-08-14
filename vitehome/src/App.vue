@@ -1,20 +1,38 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { GetSettingInfo } from "./api/setting";
 import { useSystemProperty } from "./store/System";
+import { useTitle } from '@vueuse/core'
 
-const systemProperty =useSystemProperty()
+const title = ref(useTitle())
+const systemProperty = useSystemProperty()
+const { currentRoute } = useRouter()
+
+watch(currentRoute, () => {
+
+  const routerName = currentRoute.value?.meta?.title as string
+  console.log('app', currentRoute.value)
+  if (routerName) {
+    title.value = routerName
+  }
+})
 const key = computed(() => {
-  console.log('key',useRoute().path)
+  console.log('key', useRoute().path)
   return useRoute().path
 })
 
 const loadSetting = async () => {
   const res = await GetSettingInfo()
-  systemProperty.setSettingInfo(res)
+  if (res) {
+    console.log("頁面載入，設置setting：", res)
+    systemProperty.setSettingInfo(res)
+  }
+
 }
-onMounted(()=>{
+onMounted(() => {
+
+
   loadSetting()
 })
 </script>

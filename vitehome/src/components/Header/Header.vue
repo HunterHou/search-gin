@@ -1,11 +1,12 @@
 <script setup lang='ts'>
 import { ElMenu, ElMenuItem } from 'element-plus';
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 
 import { useRouter } from 'vue-router'
 import { staticRoutes } from '../../route'
 import { useSystemProperty } from '../../store/System'
 import { ref } from 'vue'
+import { on } from 'events';
 const { push } = useRouter()
 const systemProperty = useSystemProperty()
 const activeIndex = ref('1')
@@ -14,8 +15,10 @@ const logo = computed(() => {
 })
 const handleSelect = (key: string, keyPath: string[]) => {
     push(key)
-    console.log(staticRoutes)
 }
+onMounted(() => {
+
+})
 </script>
 <template>
     <ElMenu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false"
