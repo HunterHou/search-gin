@@ -25,7 +25,6 @@ const key = computed(() => {
 const loadSetting = async () => {
   const res = await GetSettingInfo()
   if (res) {
-    console.log("頁面載入，設置setting：", res)
     systemProperty.setSettingInfo(res)
   }
 
