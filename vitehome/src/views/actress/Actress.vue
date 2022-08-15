@@ -1,13 +1,13 @@
 <script setup lang="ts">
 
-import {onMounted, reactive} from 'vue'
-import {ElCol, ElPagination, ElRadioButton, ElRadioGroup, ElRow,} from 'element-plus'
-import {QueryActressList} from '@/api/actress'
-import {useRouter} from 'vue-router'
-import {useSystemProperty} from '@/store/System'
-import {getActressImage} from '@/utils/ImageUtils'
+import { onMounted, reactive } from 'vue'
+import { ElCol, ElPagination, ElRadioButton, ElRadioGroup, ElRow, } from 'element-plus'
+import { QueryActressList } from '@/api/actress'
+import { useRouter } from 'vue-router'
+import { useSystemProperty } from '@/store/System'
+import { getActressImage } from '@/utils/ImageUtils'
 
-const {push} = useRouter()
+const { push } = useRouter()
 const systemProperty = useSystemProperty()
 const view = reactive({
   CurCnt: 1,
@@ -88,8 +88,8 @@ onMounted(() => {
   <ElRow :span="24">
     <ElCol :span="8" :offset="1"><span>
         扫描库：{{ view.TotalCnt }} 搜索：{{ view.ResultCnt }} 当前：{{
-        view.CurCnt
-      }}</span>
+            view.CurCnt
+        }}</span>
     </ElCol>
     <ElCol :span="3">
       <ElRadioGroup v-model="view.SortType" @change="queryList()" size="small">
@@ -108,7 +108,7 @@ onMounted(() => {
 
   </ElRow>
   <div v-loading="view.loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
-       style="margin-top: -10px">
+    style="margin-top: -10px">
     <ul class="infinite-list" style="overflow: auto">
       <li class="infinite-list list-item" v-for="item in view.dataList" :key="item.Id">
         <div v-if="item" class="img-list-item" @click="open(item.Name)">
@@ -123,9 +123,8 @@ onMounted(() => {
     </ul>
   </div>
   <ElPagination class="pageTool" :page-sizes="[5, 7, 10, 12, 14, 30, 60, 90, 200]" :page-size="view.PageSize"
-                @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                layout="total,prev, pager, next, sizes"
-                :current-page="view.Page" :total="view.ResultCnt"/>
+    @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="total,prev, pager, next, sizes"
+    :current-page="view.Page" :total="view.ResultCnt" />
 </template>
 
 <style>

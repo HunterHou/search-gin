@@ -100,11 +100,8 @@ showSearch = false;
         refreshing = false;
       }
     ">
-      <!-- -->
-      <!--   -->
-      <!-- <List class="mlist" v-model:loading="loadingList" :finished="finished" finished-text="没有更多了" offset="1200000" @load="onLoad" :immediate-check	="false"> -->
-
-      <div v-for="item in view.ModelList" :key="item.Id" style="
+      <SwipeCell>
+        <div v-for="item in view.ModelList" :key="item.Id" style="
           width: 96vw;
           float: left;
           height: 12rem;
@@ -112,66 +109,67 @@ showSearch = false;
           display: flex;
           box-shadow: 0 0 4px grey;
         ">
-        <div style="width: 40vw; margin: 8px auto">
-          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
-            height: '100%',
-            width: isWide ? '100%' : 'auto',
-            'max-width': '350px',
-            'min-width': '122px',
-            margin: '2px auto',
-          }">
-          </Image>
-        </div>
+          <div style="width: 40vw; margin: 8px auto">
+            <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
+              height: '100%',
+              width: isWide ? '100%' : 'auto',
+              'max-width': '350px',
+              'min-width': '122px',
+              margin: '2px auto',
+            }">
+            </Image>
+          </div>
 
-        <div style="width: 55vw; margin: 8px auto; float: right">
-          <div style="margin: 1px auto">
-            <Row>
-              <Col>
-              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-              </Col>
-              <Col span="12">
-              <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
-              </a>
-              </Col>
-              <Col>
-              <span v-if="item.Code">{{ item.Code }}</span>
-              </Col>
-            </Row>
+          <div style="width: 55vw; margin: 8px auto; float: right">
+            <div style="margin: 1px auto">
+              <Row>
+                <Col>
+                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+                </Col>
+                <Col span="12">
+                <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
+                </a>
+                </Col>
+                <Col>
+                <span v-if="item.Code">{{ item.Code }}</span>
+                </Col>
+              </Row>
 
-            <Row>
-              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
-            </Row>
-            <Row>
-              <div style="
+              <Row>
+                <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
+              </Row>
+              <Row>
+                <div style="
                   margin: 1px auto;
                   font-size: 12px;
                   color: gray;
                   max-height: 5rem;
                 " class="van-multi-ellipsis--l4">
-                <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
-              </div>
-            </Row>
-
-            <SwipeCell>
-              <template #right>
-                <Button square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
-              </template>
-              <Row justify="space-around" style="button: 10px">
-                <Col span="5">
-                <Button v-if="isWide" square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
-                </Col>
-
-                <Col span="5">
-                <Button square size="mini" type="primary" @click="openFile(item)">播放</Button>
-                </Col>
-                <Col span="5">
-                <Button square size="mini" type="primary" @click="viewPictures(item)">查看</Button>
-                </Col>
+                  <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
+                </div>
               </Row>
-            </SwipeCell>
+
+              <SwipeCell>
+                <template #right>
+                  <Button square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
+                </template>
+                <Row justify="space-around" style="button: 10px">
+                  <Col span="5">
+                  <Button v-if="isWide" square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
+                  </Col>
+
+                  <Col span="5">
+                  <Button square size="mini" type="primary" @click="openFile(item)">播放</Button>
+                  </Col>
+                  <Col span="5">
+                  <Button square size="mini" type="primary" @click="viewPictures(item)">查看</Button>
+                  </Col>
+                </Row>
+              </SwipeCell>
+            </div>
           </div>
         </div>
-      </div>
+      </SwipeCell>
 
       <!-- </List> -->
       <Button @click="onLoadMore" block type="primary">加载</Button>
@@ -183,6 +181,7 @@ showSearch = false;
 import { DownImageList, QueryDirImageBase64, QueryFileList } from "@/api/file";
 import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
+import { useSystemProperty } from "@/store/System";
 import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
 import { useWindowSize } from "@vueuse/core";
 import {
@@ -301,13 +300,13 @@ const loadSettingInfo = async () => {
   }
 };
 
-const onLoad = async () => {
-  if (!view.ModelList || view.ModelList.length == 0) {
-    return await onSearch();
-  }
-  console.log("onLoad2", view.queryParam.Page);
-  await queryList(view.loadCnt + 1);
-};
+// const onLoad = async () => {
+//   if (!view.ModelList || view.ModelList.length == 0) {
+//     return await onSearch();
+//   }
+//   console.log("onLoad2", view.queryParam.Page);
+//   await queryList(view.loadCnt + 1);
+// };
 const onLoadMore = async () => {
   view.queryParam.Page += 1;
   await queryList();
@@ -441,8 +440,6 @@ const onSearch = async (clear?: Boolean) => {
   view.ModelList = [];
   view.loadCnt = 0;
   await queryList();
-  // refreshing.value = false
-  // error.value = true
 };
 const onCancel = async () => {
   console.log("onCancel");
@@ -454,12 +451,22 @@ const keywordUpdate = () => {
     onSearch();
   }
 };
+const initQuery = () => {
+  const systemProperty = useSystemProperty()
+  if (systemProperty.getSearchParam.Keyword) {
+    view.queryParam.Keyword = systemProperty.getSearchParam.Keyword
+    view.queryParam.MovieType = systemProperty.getSearchParam.MovieType
+    view.queryParam.Page = 1
+  }
+
+
+}
 onMounted(() => {
+  initQuery()
   onSearch();
   options.src = null;
   transformThis();
   loadSettingInfo();
-  // view.videoVisible = true
 });
 
 const MovieTypeOptions = [

@@ -1,483 +1,225 @@
 <template>
   <div class="mainBody">
-    <NavBar title="設置" left-text="返回" left-arrow @click-left="push('/home')">
+    <NavBar title="设置" left-text="返回" left-arrow @click-left="push('/home')">
       <template #right>
-        <div @click="showSearch = true">
-          <Icon name="search" size="18" />
-          <span> {{ view.queryParam.Keyword }} </span>
+        <div>
+          <Button type="primary" @click="submitForm">保存</Button>
         </div>
       </template>
     </NavBar>
-    <ActionSheet v-model:show="showSearch" title="搜索" :close-on-click-overlay="true">
-      <Search v-model="view.queryParam.Keyword" placeholder="请输入搜索" @search="onSearch" label="关键词" show-action
-        @update:model-value="keywordUpdate" @cancel="onCancel" input-align="center">
-        <template #action>
-          <div @click="onCancel" style="margin: 2px 4px">搜索</div>
-        </template>
-      </Search>
-      <div style="margin-bottom: 10vh">
-        <Button type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px" @click="
-  searchKeyword(tag);
-showSearch = false;
-        ">
-          <span style="font-size: 12px">{{ tag }}</span>
-        </Button>
+    <ActionSheet v-model:show="videoSelect" cancel-text="关闭">
+      <div style="text-align: ;center;margin:30px 30px;display: inline-block;">
+        <CheckboxGroup v-model="view.form.VideoTypes" direction="horizontal">
+          <Checkbox v-for="item in view.form.Types" :name="item" style="margin:4px 8px;width:20vw;">
+            {{ item }}
+          </Checkbox>
+        </CheckboxGroup>
       </div>
     </ActionSheet>
+    <ActionSheet v-model:show="dirSelect" cancel-text="关闭">
+      <div style="text-align: ;center;margin:30px 30px;display: inline-block;">
+        <CheckboxGroup v-model="view.form.Dirs" direction="horizontal">
+          <Checkbox v-for="item in view.form.DirsLib" :name="item" style="margin:4px 8px;max-width:80vw;">
+            {{ item }}
+          </Checkbox>
+        </CheckboxGroup>
+      </div>
+    </ActionSheet>
+
+    <ActionSheet v-model:show="tagSelect" cancel-text="关闭">
+      <div style="text-align: ;center;margin:30px 30px;display: inline-block;">
+        <CheckboxGroup v-model="view.form.Tags" direction="horizontal">
+          <Checkbox v-for="item in view.form.TagsLib" :name="item" style="margin:4px 8px;max-width:80vw;">
+            {{ item }}
+          </Checkbox>
+        </CheckboxGroup>
+      </div>
+    </ActionSheet>
+
+    <ActionSheet v-model:show="typeSelect" cancel-text="关闭">
+      <Search label="添加" v-model="newType" placeholder="请输入添加的类型" @search="addType">
+        <template #action>
+          <div @click="addType">添加</div>
+        </template>
+      </Search>
+      <div style="text-align: ;center;margin:30px 30px;display: inline-block;">
+        <CheckboxGroup v-model="view.form.Types" direction="horizontal">
+          <Checkbox v-for="item in view.form.Types" :name="item" style="margin:4px 8px;max-width:80vw;">
+            {{ item }}
+          </Checkbox>
+        </CheckboxGroup>
+      </div>
+    </ActionSheet>
+    <ActionSheet v-model:show="tagLibSelect" cancel-text="关闭">
+      <Search label="添加" v-model="newTagLib" placeholder="请输入添加的标签" @search="addTagLib">
+        <template #action>
+          <div @click="addTagLib">添加</div>
+        </template>
+      </Search>
+      <div style="text-align: ;center;margin:30px 30px;display: inline-block;">
+        <CheckboxGroup v-model="view.form.TagsLib" direction="horizontal">
+          <Checkbox v-for="item in view.form.TagsLib" :name="item" style="margin:4px 8px;max-width:80vw;">
+            {{ item }}
+          </Checkbox>
+        </CheckboxGroup>
+      </div>
+    </ActionSheet>
+
+
     <MobileBar></MobileBar>
-    <teleport to="body">
-      <div v-show="view.videoVisible" id="videoDiv" style="
-          width: 100vw;
-          height: 100vh;
-          z-index: 9999;
-          position: fixed;
-          overflow: auto;
-          background-color: rgba(0, 0, 0, 0.7);
-          float: left;
-        ">
-        <div style="right: 10vw; height: 10vh; position: absolute; z-index: 9999">
-          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-          <ElButton type="primary" @click="transformThis">旋转</ElButton>
-        </div>
-        <vue3VideoPlay v-if="view.videoPlay" v-bind="options" />
-      </div>
-    </teleport>
-    <teleport to="body">
-      <div v-show="viewPic" style="
-          width: 100%;
-          height: 100%;
-          z-index: 9999;
-          top: 0px;
-          button: 00px;
-          position: fixed;
-          overflow: auto;
-          background-color: rgba(0, 0, 0, 0.9);
-          min-height: 1200px;
-        ">
-        <div style="
-            right: 1rem;
-            top: 20px;
-            height: 2rem;
-            position: fixed;
-            z-index: 999;
-          ">
-          <Button type="primary" @click="closeViewPicture">关闭</Button>
-        </div>
-        <div v-for="(item, index) in view.imageList" :key="index" style="display: flex; margin: 1px auto">
-          <ElImage style="width: 100%; margin: 0 auto; opacity: 9; z-index: 99" :src="item">
-            @click.stop="innerVisibleFalse"
-          </ElImage>
-        </div>
-      </div>
-    </teleport>
+    <Form v-on:submit="submitForm">
+      <Tabs v-model:active="tabActive" type="card" swipeable>
+        <Tab name="base" title="基础设置">
+          <Field v-model="view.form.ControllerHost" name="ControllerHost" label="请求服务器" placeholder="请求服务器" />
+          <Field v-model="view.form.ImageHost" name="ImageHost" label="图片服务器" placeholder="图片服务器" />
+          <Field v-model="view.form.StreamHost" name="StreamHost" label="流服务器" placeholder="流服务器" />
+          <Field v-model="view.form.BaseUrl" name="BaseUrl" label="URL" placeholder="URL" />
+          <Field v-model="view.form.OMUrl" name="OMUrl" label="OM-URL" placeholder="OM-URL" />
 
-    <Sticky v-if="isPlaying" :offsetTop="520" style="left: 450px; width: 400px">
-      <Button size="small" type="success" @click="
-        () => {
-          view.videoVisible = true;
-        }
-      ">
-        正在播放：
-        {{ view.currentFile?.Code || view.currentFile?.Actress || "无" }}
-        <Button size="small" type="success" :loading="true" loading-type="spinner"></Button>
-      </Button>
-      <Button size="small" type="danger" @click="closePlayVideo">停止播放</Button>
-    </Sticky>
-    <DropdownMenu>
-      <DropdownItem v-model="view.queryParam.MovieType" :options="MovieTypeOptions" @change="onSearch">
-      </DropdownItem>
-      <DropdownItem v-model="view.queryParam.SortField" :options="SortFieldOptions" @change="onSearch">
-      </DropdownItem>
-      <DropdownItem v-model="view.queryParam.SortType" :options="SortTypeOptions" @change="onSearch">
-      </DropdownItem>
-    </DropdownMenu>
+          <Row>
+            <Col :span="6">
+            热门标签
+            </Col>
+            <Col :span="18">
+            <Col :span="18" @click="tagSelect = true">
+            <Tag v-for="item in view.form.Tags" :key="item" style="background: green;margin:2px 4px;">{{ item }}</Tag>
+            </Col>
+            </Col>
+          </Row>
+        </Tab>
+        <Tab name="search" title="搜索设置">
+          <Row>
+            <Col :span="6">
+            视频类型
+            </Col>
+            <Col :span="18" @click="chooseVideoTypes">
+            <Tag v-for="item in view.form.VideoTypes" :key="item" style="background: green;margin:2px 4px;">{{ item }}
+            </Tag>
+            </Col>
+          </Row>
+          <Row>
+            <Col :span="6">
+            已选路徑
+            </Col>
+            <Col :span="18" @click="dirSelect = true">
+            <Tag v-for="item in view.form.Dirs" :key="item" style="background: green;margin:2px 4px;">{{ item }}</Tag>
+            </Col>
+          </Row>
+        </Tab>
+        <Tab name="dict" title="字典设置">
+          <Row>
+            <Col :span="6">
+            枚举标签
+            </Col>
+            <Col :span="18" @click="tagLibSelect = true">
+            <Tag v-for="item in view.form.TagsLib" :key="item" style="background: green;margin:2px 4px;">{{ item }}
+            </Tag>
+            </Col>
+          </Row>
+          <Row>
+            <Col :span="6">
+            枚举文件类型
+            </Col>
+            <Col :span="18" @click="typeSelect = true">
+            <Tag v-for="item in view.form.Types" :key="item" style="background: green;margin:2px 4px;">{{ item }}</Tag>
+            </Col>
+          </Row>
+        </Tab>
+        <Tab name="remark" title="备注">
+          <Field v-model="view.form.Remark" autosize type="textarea" rows="4" name="Remark" label="备注"
+            placeholder="备注" />
+        </Tab>
 
-    <PullRefresh v-model="refreshing" @refresh="
-      () => {
-        view.queryParam.Page = 1;
-        onSearch();
-        refreshing = false;
-      }
-    ">
-      <!-- -->
-      <!--   -->
-      <!-- <List class="mlist" v-model:loading="loadingList" :finished="finished" finished-text="没有更多了" offset="1200000" @load="onLoad" :immediate-check	="false"> -->
+      </Tabs>
+      <!-- <div style="margin: 16px;">
+        <Button round block type="primary" native-type="submit">
+          提交
+        </Button>
+      </div> -->
+    </Form>
 
-      <div v-for="item in view.ModelList" :key="item.Id" style="
-          width: 96vw;
-          float: left;
-          height: 12rem;
-          margin: 6px 8px;
-          display: flex;
-          box-shadow: 0 0 4px grey;
-        ">
-        <div style="width: 40vw; margin: 8px auto">
-          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
-            height: '100%',
-            width: isWide ? '100%' : 'auto',
-            'max-width': '350px',
-            'min-width': '122px',
-            margin: '2px auto',
-          }">
-          </Image>
-        </div>
 
-        <div style="width: 55vw; margin: 8px auto; float: right">
-          <div style="margin: 1px auto">
-            <Row>
-              <Col>
-              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-              </Col>
-              <Col span="12">
-              <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
-              </a>
-              </Col>
-              <Col>
-              <span v-if="item.Code">{{ item.Code }}</span>
-              </Col>
-            </Row>
 
-            <Row>
-              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
-            </Row>
-            <Row>
-              <div style="
-                  margin: 1px auto;
-                  font-size: 12px;
-                  color: gray;
-                  max-height: 5rem;
-                " class="van-multi-ellipsis--l4">
-                <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
-              </div>
-            </Row>
 
-            <SwipeCell>
-              <template #right>
-                <Button square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
-              </template>
-              <Row justify="space-around" style="button: 10px">
-                <Col span="5">
-                <Button v-if="isWide" square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
-                </Col>
 
-                <Col span="5">
-                <Button square size="mini" type="primary" @click="openFile(item)">播放</Button>
-                </Col>
-                <Col span="5">
-                <Button square size="mini" type="primary" @click="viewPictures(item)">查看</Button>
-                </Col>
-              </Row>
-            </SwipeCell>
-          </div>
-        </div>
-      </div>
-
-      <!-- </List> -->
-      <Button @click="onLoadMore" block type="primary">加载</Button>
-    </PullRefresh>
   </div>
 </template>
 
 <script setup lang="ts">
-import { DownImageList, QueryDirImageBase64, QueryFileList } from "@/api/file";
-import { GetSettingInfo } from "@/api/setting";
-import { ResultList } from "@/config/ResultModel";
-import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
-import { useWindowSize } from "@vueuse/core";
+import { GetSettingInfo, PostSettingInfo } from "@/api/setting";
 import {
-  ActionSheet,
   Button,
   Col,
-  DropdownItem,
-  DropdownMenu,
-  Icon,
-  Image,
-  ImagePreview,
-  NavBar,
-  PullRefresh,
-  Row,
-  Search,
-  Sticky,
-  SwipeCell,
+  CheckboxGroup,
+  Checkbox,
   Tag,
-  Toast,
+  Row,
+  ActionSheet,
+  NavBar,
+  Field,
+  Form,
+  Tabs,
+  Tab,
+  Search,
 } from "vant";
 import "vant/lib/index.css";
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { MovieModel, MovieQuery } from "../fileList";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
 
-const { push } = useRouter();
-const { width } = useWindowSize();
-const isWide = computed(() => {
-  return width.value > 600;
-});
-const loadingList = ref(false);
-const finished = ref(false);
-const isPlaying = ref(false);
-const refreshing = ref(false);
+const { push, go } = useRouter();
+
+const videoSelect = ref(false)
+const dirSelect = ref(false)
+const tagSelect = ref(false)
+const typeSelect = ref(false)
+const tagLibSelect = ref(false)
+const tabActive = ref("base")
+const newType = ref("")
+const newTagLib = ref("")
+
 const view = reactive({
-  settingInfo: new SettingInfo(),
-  queryParam: {
-    Page: 1,
-    PageSize: 10,
-    SortField: "MTime",
-    SortType: "desc",
-    MovieType: "",
-    Keyword: "",
-  } as unknown as MovieQuery,
-  loadCnt: 0,
-  ModelList: [],
-  TotalCnt: 0,
-  ResultCnt: 0,
-  videoVisible: false,
-  videoPlay: false,
-  currentFile: new MovieModel(),
-  imageList: [],
-});
+  form: new SettingInfo(),
+})
 
-const options = reactive({
-  width: "100%", //播放器高度
-  height: "100%", //播放器高度
-  color: "#409eff", //主题色
-  title: "", //视频名称
-  src: "http://192.168.3.38:8083/api/file/F~emby~emby-rename~井川ゆい柳田やよい~YeLLOW~[川い田よ]EO29人中しンィスッン 川い柳やい~[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv", //视频源
-  muted: false, //静音
-  webFullScreen: false,
-  speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
 
-  autoPlay: true, //自动播放
-  loop: true, //循环播放
-  mirror: false, //镜像画面
-  ligthOff: false, //关灯模式
-  volume: 0.8, //默认音量大小
-  control: true, //是否显示控制
-  controlBtns: [
-    "audioTrack",
-    "quality",
-    "speedRate",
-    "volume",
-    "setting",
-    "pip",
-    "pageFullScreen",
-    "fullScreen",
-  ], //显示所有按钮,
-});
-
-watch(loadingList, () => {
-  console.log("loadingListWatch", loadingList.value);
-});
-watch(finished, () => {
-  console.log("finished", finished.value);
-});
-
-const showSearch = ref(false);
-
-const isTransform = ref(false);
-const transformThis = () => {
-  const videoDiv = document.getElementById("videoDiv");
-  videoDiv.style.position = "fixed";
-  videoDiv.style.width = "100vw";
-  videoDiv.style.height = "100vh";
-  if (isTransform.value) {
-    videoDiv.style.transform = "rotate(90deg)";
-    // videoDiv.style.width = '100vw'
-    // videoDiv.style.height = '100vh'
-  } else {
-    videoDiv.style.transform = "rotate(0deg)";
-    // videoDiv.style.width = '100vw'
-    // videoDiv.style.height = '100vh'
+const addType = () => {
+  if (newType.value && newType.value.length > 0) {
+    view.form.Types.push(newType.value)
+    newType.value = ''
   }
-  isTransform.value = !isTransform.value;
-};
+}
 
-const loadSettingInfo = async () => {
-  const res = await GetSettingInfo();
+const addTagLib = () => {
+  if (newTagLib.value && newTagLib.value.length > 0) {
+    view.form.TagsLib.push(newTagLib.value)
+    newTagLib.value = ''
+  }
+}
+const chooseVideoTypes = () => {
+  console.log('chooseVideoTypes')
+  videoSelect.value = true
+}
+
+const submitForm = async () => {
+  const postForm = { ...view.form, BaseDir: view.form.Dirs };
+  console.log(postForm);
+  const res = await PostSettingInfo(postForm)
   if (res) {
-    view.settingInfo = { ...res };
+    go(0)
   }
-};
+}
 
-const onLoad = async () => {
-  if (!view.ModelList || view.ModelList.length == 0) {
-    return await onSearch();
-  }
-  console.log("onLoad2", view.queryParam.Page);
-  await queryList(view.loadCnt + 1);
-};
-const onLoadMore = async () => {
-  view.queryParam.Page += 1;
-  await queryList();
-};
+const loadData = async () => {
+  const res = await GetSettingInfo()
+  view.form = res
+}
 
-const searchKeyword = (words: string) => {
-  view.queryParam.Keyword = words;
-  view.queryParam.Page = 1;
-  onSearch();
-};
-const viewPic = ref(false);
-
-const getImageList = async (Id: string) => {
-  const res = await DownImageList(Id);
-  if (res.Code === 200) {
-    Toast.success(res.Message);
-  } else {
-    Toast.fail(res.Message);
-  }
-};
-
-const previewPictures = async (item) => {
-  const toast = Toast.loading({
-    duration: 0, // 持续展示 toast
-    forbidClick: false, // 禁用背景点击
-    loadingType: "spinner",
-    message: "加载中...",
-  });
-  setTimeout(() => {
-    toast.clear();
-  }, 3000);
-  await loadDirInfo(item.Id);
-  toast.clear();
-
-  if (view.imageList && view.imageList.length > 0) {
-    ImagePreview({ images: view.imageList, closeable: true });
-  } else {
-    Toast.fail("无图");
-  }
-};
-const viewPictures = async (item) => {
-  const toast = Toast.loading({
-    duration: 0, // 持续展示 toast
-    forbidClick: false, // 禁用背景点击
-    loadingType: "spinner",
-    message: "加载中...",
-  });
-  setTimeout(() => {
-    toast.clear();
-  }, 3000);
-  await loadDirInfo(item.Id);
-  toast.clear();
-  if (view.imageList && view.imageList.length > 0) {
-    viewPic.value = true;
-  } else {
-    Toast.fail("无图");
-  }
-};
-const closeViewPicture = () => {
-  viewPic.value = false;
-};
-
-const loadDirInfo = async (id: string) => {
-  const res = await QueryDirImageBase64(id);
-  if (res && res.length > 0) {
-    view.imageList = [];
-    for (let i = 0; i < res.length; i++) {
-      if (res[i].FileType == "jpg" || res[i].FileType == "png") {
-        view.imageList.push(res[i].ImageBase);
-      }
-    }
-  }
-};
-
-const hiddenPlayVideo = () => {
-  view.videoVisible = false;
-};
-
-const closePlayVideo = () => {
-  view.videoVisible = false;
-  view.videoPlay = false;
-  options.src = null;
-  isPlaying.value = false;
-};
-
-const openFile = (item: any) => {
-  view.videoPlay = true;
-  view.currentFile = item;
-  isPlaying.value = true;
-  view.videoVisible = true;
-  const stream = getFileStream(item.Id);
-  console.log(stream);
-  options.title = item.Name;
-  options.src = stream;
-};
-const queryList = async (pageStart?: number) => {
-  let queryParam = { ...view.queryParam };
-  if (pageStart > 0) {
-    queryParam.Page = pageStart;
-    queryParam.PageSize = 1;
-  }
-  const res = await QueryFileList(queryParam);
-  const model = res as unknown as ResultList;
-  if (!model.Data || model.Data.length == 0) {
-    finished.value = false;
-    return;
-  }
-  model.Data.map((item) => {
-    if (item.Code == item.Actress) {
-      item.Code = "";
-      item.Actress = "";
-    }
-    if (item.Code.lastIndexOf("-") == item.Code.length - 1) {
-      item.Code = item.Code.substring(0, item.Code.length - 1);
-    }
-    item.name = item.Name.trim();
-    item.Name = item.Name.replace("[" + item.Code + "]", "");
-    item.Name = item.Name.replace("[" + item.Actress + "]", "");
-  });
-  const newList = [...view.ModelList, ...model.Data];
-  view.ModelList = newList;
-  view.TotalCnt = model.TotalCnt;
-  view.ResultCnt = model.ResultCnt;
-  view.loadCnt = view.loadCnt + model.Data.length;
-  refreshing.value = false;
-  loadingList.value = false;
-};
-
-const onSearch = async (clear?: Boolean) => {
-  view.queryParam.Page = 1;
-  view.ModelList = [];
-  view.loadCnt = 0;
-  await queryList();
-  // refreshing.value = false
-  // error.value = true
-};
-const onCancel = async () => {
-  console.log("onCancel");
-  await onSearch();
-};
-const keywordUpdate = () => {
-  if (view.queryParam.Keyword.length >= 2) {
-    view.queryParam.Page = 1;
-    onSearch();
-  }
-};
 onMounted(() => {
-  onSearch();
-  options.src = null;
-  transformThis();
-  loadSettingInfo();
-  // view.videoVisible = true
+  loadData()
 });
 
-const MovieTypeOptions = [
-  { value: "", text: "全部" },
-  { value: "骑兵", text: "骑兵" },
-  { value: "步兵", text: "步兵" },
-  { value: "斯巴达", text: "斯巴达" },
-  { value: "国产", text: "国产" },
-];
-const SortFieldOptions = [
-  { value: "MTime", text: "时间倒排" },
-  { value: "Name", text: "名称倒排" },
-  { value: "Size", text: "大小倒排" },
-];
-const SortTypeOptions = [
-  { value: "desc", text: "倒排" },
-  { value: "asc", text: "正排" },
-];
 </script>
 <style>
 .mainBody {
