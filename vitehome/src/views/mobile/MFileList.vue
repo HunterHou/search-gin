@@ -1,11 +1,17 @@
 <template>
   <div class="mainBody">
-    <NavBar title="搜索" left-text="返回" left-arrow @click-left="push('/home')">
+    <NavBar :title="title">
+      <template #left>
+        <div>
+          <span> 总数:{{ view.ResultCnt }} </span>
+        </div>
+      </template>
       <template #right>
         <div @click="showSearch = true">
           <Icon name="search" size="18" />
           <span> {{ view.queryParam.Keyword }} </span>
         </div>
+        <Icon v-if="view.queryParam.Keyword" name="revoke" @click="view.queryParam.Keyword = ''; onSearch()" />
       </template>
     </NavBar>
     <ActionSheet v-model:show="showSearch" title="搜索" :close-on-click-overlay="true" style="max-height: 60vh;">
@@ -16,11 +22,12 @@
         </template>
       </Search>
       <div style="margin-bottom: 0vh;">
-        <Button type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px" @click="
+        <Button type="warning" v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px;" size="small"
+          @click="
   searchKeyword(tag);
 showSearch = false;
-        ">
-          <span style="font-size: 12px">{{ tag }}</span>
+          ">
+          {{ tag }}
         </Button>
       </div>
     </ActionSheet>
@@ -170,10 +177,8 @@ showSearch = false;
           </div>
         </div>
       </SwipeCell>
-
-      <!-- </List> -->
-      <Button @click="onLoadMore" block type="primary">加载</Button>
     </PullRefresh>
+    <LoadMoreVue @loadMore="onLoadMore" :more="true" />
   </div>
 </template>
 
@@ -208,10 +213,11 @@ import { useRouter } from "vue-router";
 import { MovieModel, MovieQuery } from "../fileList";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
+import LoadMoreVue from "./LoadMore.vue";
 
 
 const systemProperty = useSystemProperty()
-const { push } = useRouter();
+const title = ref("总数")
 const { width } = useWindowSize();
 const isWide = computed(() => {
   return width.value > 600;
@@ -275,6 +281,7 @@ watch(finished, () => {
   console.log("finished", finished.value);
 });
 
+
 const showSearch = ref(false);
 
 const isTransform = ref(false);
@@ -285,12 +292,8 @@ const transformThis = () => {
   videoDiv.style.height = "100vh";
   if (isTransform.value) {
     videoDiv.style.transform = "rotate(90deg)";
-    // videoDiv.style.width = '100vw'
-    // videoDiv.style.height = '100vh'
   } else {
     videoDiv.style.transform = "rotate(0deg)";
-    // videoDiv.style.width = '100vw'
-    // videoDiv.style.height = '100vh'
   }
   isTransform.value = !isTransform.value;
 };
@@ -302,13 +305,6 @@ const loadSettingInfo = async () => {
   }
 };
 
-// const onLoad = async () => {
-//   if (!view.ModelList || view.ModelList.length == 0) {
-//     return await onSearch();
-//   }
-//   console.log("onLoad2", view.queryParam.Page);
-//   await queryList(view.loadCnt + 1);
-// };
 const onLoadMore = async () => {
   view.queryParam.Page += 1;
   await queryList();
@@ -409,6 +405,12 @@ const queryList = async (pageStart?: number) => {
   if (pageStart > 0) {
     queryParam.Page = pageStart;
     queryParam.PageSize = 1;
+  }
+  const { Keyword } = queryParam
+  if (Keyword) {
+    title.value = "搜索中..."
+  } else {
+    title.value = "文件"
   }
   systemProperty.syncSearchParam(queryParam);
   const res = await QueryFileList(queryParam);

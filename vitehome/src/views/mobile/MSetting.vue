@@ -1,9 +1,9 @@
 <template>
   <div class="mainBody">
-    <NavBar title="设置" left-text="返回" left-arrow @click-left="push('/home')">
+    <NavBar title="设置">
       <template #right>
         <div>
-          <Button type="primary" @click="submitForm">保存</Button>
+          <Button size="small" plain type="primary" @click="submitForm">保存</Button>
         </div>
       </template>
     </NavBar>
@@ -137,11 +137,7 @@
         </Button>
       </div> -->
     </Form>
-
-
-
-
-
+    <LoadMoreVue />
   </div>
 </template>
 
@@ -167,7 +163,7 @@ import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
-
+import LoadMoreVue from './LoadMore.vue'
 const { push, go } = useRouter();
 
 const videoSelect = ref(false)

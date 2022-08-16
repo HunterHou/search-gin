@@ -1,9 +1,14 @@
 <template>
   <div class="mainBody">
-    <NavBar title="脸谱" left-text="返回" left-arrow @click-left="push('/home')">
+    <NavBar title="脸谱">
+      <template #left>
+        <div>
+          <span> 总数:{{ view.TotalCnt }} </span>
+        </div>
+      </template>
       <template #right>
         <div @click="showSearch = true">
-          {{ view.TotalCnt }}
+          {{ }}
           <Icon name="search" size="18" />
           <span> {{ view.queryParam.Keyword }} </span>
         </div>
@@ -50,9 +55,8 @@
           </Image>
         </div>
       </div>
-
     </PullRefresh>
-    <Button style="margin-bottom:50px;" @click="onLoadMore" block type="primary">加载</Button>
+    <LoadMoreVue @loadMore="onLoadMore" :more="true" />
   </div>
 </template>
 
@@ -78,6 +82,7 @@ import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { MovieQuery } from "../fileList";
 import MobileBar from './MobileBar.vue'
+import LoadMoreVue from "./LoadMore.vue";
 
 const systemProperty = useSystemProperty()
 

@@ -42,14 +42,15 @@
       </Collapse>
 
     </PullRefresh>
+    <LoadMoreVue />
   </div>
+
 </template>
 
 <script setup lang="ts">
 import { RefreshIndex } from "@/api/file";
 import { ScanTime, TagSizeMap, TypeSizeMap } from "@/api/home";
 import { useSystemProperty } from "@/store/System";
-import { FullScreen } from "@element-plus/icons-vue";
 import {
   Button,
   Col,
@@ -67,6 +68,7 @@ import "vant/lib/index.css";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import MobileBar from './MobileBar.vue'
+import LoadMoreVue from './LoadMore.vue'
 
 const indexes = ref(['tag', 'scan', 'type'])
 const { push } = useRouter();
