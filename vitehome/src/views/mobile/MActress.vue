@@ -50,8 +50,9 @@
           </Image>
         </div>
       </div>
-      <Button style="margin-bottom:50px;" @click="onLoadMore" block type="primary">加载</Button>
+
     </PullRefresh>
+    <Button style="margin-bottom:50px;" @click="onLoadMore" block type="primary">加载</Button>
   </div>
 </template>
 

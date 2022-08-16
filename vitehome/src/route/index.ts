@@ -1,6 +1,7 @@
 import { App } from "vue";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import DefaultLayVue from "@/layout/DefaultLay.vue";
+import MobileLayVue from "@/layout/MobileLay.vue";
 
 export const staticRoutes: RouteRecordRaw[] = [
   {
@@ -124,6 +125,7 @@ export const staticRoutes: RouteRecordRaw[] = [
   {
     path: "/mhome",
     name: "mhome",
+    component: MobileLayVue,
     redirect:"/mhome",
     meta: {
       title: "搜索",

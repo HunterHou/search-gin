@@ -8,14 +8,14 @@
         </div>
       </template>
     </NavBar>
-    <ActionSheet v-model:show="showSearch" title="搜索" :close-on-click-overlay="true">
+    <ActionSheet v-model:show="showSearch" title="搜索" :close-on-click-overlay="true" style="max-height: 60vh;">
       <Search v-model="view.queryParam.Keyword" placeholder="请输入搜索" @search="onSearch" label="关键词" show-action
         @update:model-value="keywordUpdate" @cancel="onCancel" input-align="center">
         <template #action>
           <div @click="onCancel" style="margin: 2px 4px">搜索</div>
         </template>
       </Search>
-      <div style="margin-bottom: 10vh">
+      <div style="margin-bottom: 0vh;">
         <Button type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px" @click="
   searchKeyword(tag);
 showSearch = false;
@@ -209,6 +209,8 @@ import { MovieModel, MovieQuery } from "../fileList";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
 
+
+const systemProperty = useSystemProperty()
 const { push } = useRouter();
 const { width } = useWindowSize();
 const isWide = computed(() => {
@@ -408,6 +410,7 @@ const queryList = async (pageStart?: number) => {
     queryParam.Page = pageStart;
     queryParam.PageSize = 1;
   }
+  systemProperty.syncSearchParam(queryParam);
   const res = await QueryFileList(queryParam);
   const model = res as unknown as ResultList;
   if (!model.Data || model.Data.length == 0) {
@@ -446,7 +449,7 @@ const onCancel = async () => {
   await onSearch();
 };
 const keywordUpdate = () => {
-  if (view.queryParam.Keyword.length >= 2) {
+  if (view.queryParam.Keyword.length >= 2 || view.queryParam.Keyword.length == 0) {
     view.queryParam.Page = 1;
     onSearch();
   }
