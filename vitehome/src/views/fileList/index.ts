@@ -9,7 +9,8 @@ class MovieModel{
     Code:string
     MTime:Date
     SizeStr:Date
-    Name:Date
+    Name:string
+    originName:string
 
 
 }

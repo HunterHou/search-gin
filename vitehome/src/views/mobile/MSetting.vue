@@ -82,7 +82,9 @@
             </Col>
             <Col :span="18">
             <Col :span="18" @click="tagSelect = true">
-            <Tag v-for="item in view.form.Tags" :key="item" style="background: green;margin:2px 4px;">{{ item }}</Tag>
+            <Tag v-for="item in view.form.Tags" size="large" :key="item" style="background: green;margin:2px 4px;">{{
+                item
+            }}</Tag>
             </Col>
             </Col>
           </Row>
@@ -93,7 +95,8 @@
             视频类型
             </Col>
             <Col :span="18" @click="chooseVideoTypes">
-            <Tag v-for="item in view.form.VideoTypes" :key="item" style="background: green;margin:2px 4px;">{{ item }}
+            <Tag v-for="item in view.form.VideoTypes" size="large" :key="item"
+              style="background: green;margin:2px 4px;">{{ item }}
             </Tag>
             </Col>
           </Row>
@@ -102,7 +105,9 @@
             已选路徑
             </Col>
             <Col :span="18" @click="dirSelect = true">
-            <Tag v-for="item in view.form.Dirs" :key="item" style="background: green;margin:2px 4px;">{{ item }}</Tag>
+            <Tag v-for="item in view.form.Dirs" :key="item" size="large" style="background: green;margin:2px 4px;">{{
+                item
+            }}</Tag>
             </Col>
           </Row>
         </Tab>
@@ -112,7 +117,9 @@
             枚举标签
             </Col>
             <Col :span="18" @click="tagLibSelect = true">
-            <Tag v-for="item in view.form.TagsLib" :key="item" style="background: green;margin:2px 4px;">{{ item }}
+            <Tag v-for="item in view.form.TagsLib" :key="item" size="large" style="background: green;margin:2px 4px;">{{
+                item
+            }}
             </Tag>
             </Col>
           </Row>
@@ -121,7 +128,9 @@
             枚举文件类型
             </Col>
             <Col :span="18" @click="typeSelect = true">
-            <Tag v-for="item in view.form.Types" :key="item" style="background: green;margin:2px 4px;">{{ item }}</Tag>
+            <Tag v-for="item in view.form.Types" :key="item" size="large" style="background: green;margin:2px 4px;">{{
+                item
+            }}</Tag>
             </Col>
           </Row>
         </Tab>
