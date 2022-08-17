@@ -354,7 +354,7 @@ const renameFile = async () => {
     Toast.success('操作成功')
     await RefreshIndex()
     onSearch()
-    showTag.value = false
+    showRename.value = false
   } else {
     Toast.fail(res.Message)
   }
