@@ -2,7 +2,7 @@
   <div class="mainBody">
     <NavBar title="首页" left-text="返回" left-arrow @click-left="push('/home')">
       <template #right>
-        <Button size="small" round type="success" @click="refreshIndex">刷新索引</Button>
+        <Button size="small" round plain type="success" @click="refreshIndex">索引</Button>
       </template>
     </NavBar>
     <MobileBar></MobileBar>

@@ -1,6 +1,6 @@
 class MovieModel{
 
-    Id:number
+    Id:string
     Tags:string[]
     MovieType:string
     Jpg:string

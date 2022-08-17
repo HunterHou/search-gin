@@ -31,6 +31,29 @@ showSearch = false;
         </Button>
       </div>
     </ActionSheet>
+    <ActionSheet v-model:show="showTag" title="标签管理" :close-on-click-overlay="true" style="height: 60vh;">
+      <div style="margin-bottom: 0vh;">
+        <Row>
+          <Col>当前标签</Col>
+          <Col>
+          <Tag type="success" size="medium" style="margin: 2px 4px;" v-for="ta in view.currentFile.Tags" :key="ta"
+            closeable @close="removeCurrentFileTag(ta)">{{ ta
+            }}</Tag>
+          </Col>
+        </Row>
+      </div>
+      <div style="margin-bottom: 0vh;">
+        <Row>
+          <Col>可选标签</Col>
+        </Row>
+        <Row>
+          <Col>
+          <Tag type="success" size="medium" style="margin: 2px 4px;" v-for="ta in view.settingInfo.Tags" :key="ta"
+            @click="addCurrentFileTag(ta)">{{ ta }}</Tag>
+          </Col>
+        </Row>
+      </div>
+    </ActionSheet>
     <MobileBar></MobileBar>
     <teleport to="body">
       <div v-show="view.videoVisible" id="videoDiv" style="
@@ -156,19 +179,22 @@ showSearch = false;
                 </div>
               </Row>
 
+
               <SwipeCell>
+                <template #left>
+                  <Button square size="mini" type="warning" @click="getImageList(item)" text="刮图" />
+                </template>
                 <template #right>
-                  <Button square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
+                  <Button square size="mini" type="danger" @click="deleteFile(item.Id)" text="删除" />
                 </template>
                 <Row justify="space-around" style="button: 10px">
-                  <Col span="5">
-                  <Button v-if="isWide" square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
+                  <Col span="4">
+                  <Button square size="mini" type="success" @click="tagManage(item)" text="标签" />
                   </Col>
-
-                  <Col span="5">
+                  <Col span="4">
                   <Button square size="mini" type="primary" @click="openFile(item)">播放</Button>
                   </Col>
-                  <Col span="5">
+                  <Col span="4">
                   <Button square size="mini" type="primary" @click="viewPictures(item)">查看</Button>
                   </Col>
                 </Row>
@@ -183,7 +209,7 @@ showSearch = false;
 </template>
 
 <script setup lang="ts">
-import { DownImageList, QueryDirImageBase64, QueryFileList } from "@/api/file";
+import { AddTag, CloseTag, DeleteFile, DownImageList, QueryDirImageBase64, QueryFileList, RefreshIndex } from "@/api/file";
 import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
@@ -204,6 +230,7 @@ import {
   Search,
   Sticky,
   SwipeCell,
+  Field,
   Tag,
   Toast,
 } from "vant";
@@ -230,7 +257,7 @@ const view = reactive({
   settingInfo: new SettingInfo(),
   queryParam: {
     Page: 1,
-    PageSize: 10,
+    PageSize: 30,
     SortField: "MTime",
     SortType: "desc",
     MovieType: "",
@@ -243,6 +270,7 @@ const view = reactive({
   videoVisible: false,
   videoPlay: false,
   currentFile: new MovieModel(),
+  newTag: '',
   imageList: [],
 });
 
@@ -283,8 +311,59 @@ watch(finished, () => {
 
 
 const showSearch = ref(false);
+const showTag = ref(false);
 
 const isTransform = ref(false);
+
+const tagManage = (item: MovieModel) => {
+  showTag.value = true
+  view.currentFile = item
+
+}
+
+
+
+
+
+const deleteFile = async (Id: string) => {
+  const res = await DeleteFile(Id)
+  if (res.Code == 200) {
+    Toast.success('操作成功')
+    await RefreshIndex()
+    onSearch()
+    showTag.value = false
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+
+
+const removeCurrentFileTag = async (tag: string) => {
+  console.log(tag, view.currentFile)
+  const res = await CloseTag(view.currentFile.Id, tag)
+  if (res.Code == 200) {
+    Toast.success('操作成功')
+    await RefreshIndex()
+    onSearch()
+    showTag.value = false
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+
+
+const addCurrentFileTag = async (tag: string) => {
+  const res = await AddTag(view.currentFile.Id, tag)
+  if (res.Code == 200) {
+    Toast.success('操作成功')
+    await RefreshIndex()
+    onSearch()
+    showTag.value = false
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+
 const transformThis = () => {
   const videoDiv = document.getElementById("videoDiv");
   videoDiv.style.position = "fixed";
