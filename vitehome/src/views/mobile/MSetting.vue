@@ -70,13 +70,21 @@
     <Form v-on:submit="submitForm">
       <Tabs v-model:active="tabActive" type="card" swipeable>
         <Tab name="base" title="基础设置">
-          <Field v-model="view.form.ControllerHost" name="ControllerHost" label="请求服务器" placeholder="请求服务器" />
-          <Field v-model="view.form.ImageHost" name="ImageHost" label="图片服务器" placeholder="图片服务器" />
+          <Field style="width: 100%;margin: 8px auto;" v-model="view.form.ControllerHost" name="ControllerHost"
+            label="请求服务器" placeholder="请求服务器" />
+          <Row style="margin: 8px auto ;display:block;">
+            <Col :span="6">
+            <span>图片服务器</span>
+            </Col>
+            <Col :span="18">
+            <Field v-model="view.form.ImageHost" name="ImageHost" placeholder="图片服务器" />
+            </Col>
+          </Row>
           <Field v-model="view.form.StreamHost" name="StreamHost" label="流服务器" placeholder="流服务器" />
           <Field v-model="view.form.BaseUrl" name="BaseUrl" label="URL" placeholder="URL" />
           <Field v-model="view.form.OMUrl" name="OMUrl" label="OM-URL" placeholder="OM-URL" />
 
-          <Row>
+          <Row  style="margin: 8px auto ;">
             <Col :span="6">
             热门标签
             </Col>
