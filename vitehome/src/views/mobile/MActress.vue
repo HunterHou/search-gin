@@ -30,31 +30,34 @@
         refreshing = false;
       }
     ">
-      <div v-for="item in view.ModelList" :key="item.Id" style="
+      <SwipeCell>
+        <div v-for="item in view.ModelList" :key="item.Id" style="
           float: left;
           height: 16rem;
           display: flex;
           box-shadow: 0 0 4px grey;
         ">
-        <div style="margin: 8px auto">
-          <Image :src="getActressImage(item.JpgUrl)" :style="{
-            margin: '4px 8px',
-            height: '92%',
-          }">
-            <Row @click="gotoSearch(item.Name)">
-              <Col>
-              <Tag color="#7232dd"> {{ item.Name }}</Tag>
-              </Col>
-              <Col>
-              <Tag color="orange"> {{ item.SizeStr }}</Tag>
-              </Col>
-              <Col>
-              <Tag color="red"> {{ item.Cnt }}</Tag>
-              </Col>
-            </Row>
-          </Image>
+          <div style="margin: 8px auto">
+            <Image :src="getActressImage(item.JpgUrl)" :style="{
+              height: '92%',
+              width: 'auto',
+            }">
+              <Row @click="gotoSearch(item.Name)">
+                <Col>
+                <Tag color="#7232dd"> {{ item.Name }}</Tag>
+                </Col>
+                <Col>
+                <Tag color="orange"> {{ item.SizeStr }}</Tag>
+                </Col>
+                <Col>
+                <Tag color="red"> {{ item.Cnt }}</Tag>
+                </Col>
+              </Row>
+            </Image>
+          </div>
         </div>
-      </div>
+      </SwipeCell>
+
     </PullRefresh>
     <LoadMoreVue @loadMore="onLoadMore" :more="true" />
   </div>
@@ -94,7 +97,7 @@ const refreshing = ref(false);
 const view = reactive({
   queryParam: {
     Page: 1,
-    PageSize: 10,
+    PageSize: 30,
     SortField: "MTime",
     SortType: "desc",
     MovieType: "",

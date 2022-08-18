@@ -1,6 +1,6 @@
 class MovieModel{
 
-    Id:number
+    Id:string
     Tags:string[]
     MovieType:string
     Jpg:string
@@ -9,7 +9,8 @@ class MovieModel{
     Code:string
     MTime:Date
     SizeStr:Date
-    Name:Date
+    Name:string
+    originName:string
 
 
 }

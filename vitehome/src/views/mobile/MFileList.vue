@@ -22,7 +22,7 @@
         </template>
       </Search>
       <div style="margin-bottom: 0vh;">
-        <Button type="warning" v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px;" size="small"
+        <Button type="warning" v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px;" size="normal"
           @click="
   searchKeyword(tag);
 showSearch = false;
@@ -31,6 +31,43 @@ showSearch = false;
         </Button>
       </div>
     </ActionSheet>
+    <ActionSheet v-model:show="showTag" title="标签管理" :close-on-click-overlay="true" style="height: 60vh;">
+      <div style="margin-bottom: 0vh;">
+        <Row>
+          <Col>当前标签</Col>
+          <Col>
+          <Tag type="success" size="large" style="margin: 2px 4px;" v-for="ta in view.currentFile.Tags" :key="ta"
+            closeable @close="removeCurrentFileTag(ta)">{{ ta
+            }}</Tag>
+          </Col>
+        </Row>
+      </div>
+      <div style="margin-bottom: 0vh;">
+        <Row>
+          <Col>可选标签</Col>
+        </Row>
+        <Row>
+          <Col>
+          <Tag type="success" size="large" style="margin: 2px 4px;" v-for="ta in view.settingInfo.Tags" :key="ta"
+            @click="addCurrentFileTag(ta)">{{ ta }}</Tag>
+          </Col>
+        </Row>
+      </div>
+    </ActionSheet>
+    <ActionSheet v-model:show="showRename" title="重命名" :close-on-click-overlay="true" style="height: 60vh;">
+      <div style="margin-bottom: 0vh;">
+        <Row>
+          <Col>
+          <Field label="名称" rows="5" autosize type="textarea" v-model="view.currentFile.originName">
+          </Field>
+          </Col>
+        </Row>
+        <Row>
+          <Button style="margin:4px auto" size="large" type="primary" @click="renameFile">提交</Button>
+        </Row>
+      </div>
+    </ActionSheet>
+
     <MobileBar></MobileBar>
     <teleport to="body">
       <div v-show="view.videoVisible" id="videoDiv" style="
@@ -80,16 +117,16 @@ showSearch = false;
     </teleport>
 
     <Sticky v-if="isPlaying" :offsetTop="520" style="left: 450px; width: 400px">
-      <Button size="small" type="success" @click="
+      <Button size="normal" type="success" @click="
         () => {
           view.videoVisible = true;
         }
       ">
         正在播放：
         {{ view.currentFile?.Code || view.currentFile?.Actress || "无" }}
-        <Button size="small" type="success" :loading="true" loading-type="spinner"></Button>
+        <Button size="normal" type="success" :loading="true" loading-type="spinner"></Button>
       </Button>
-      <Button size="small" type="danger" @click="closePlayVideo">停止播放</Button>
+      <Button size="normal" type="danger" @click="closePlayVideo">停止播放</Button>
     </Sticky>
     <DropdownMenu>
       <DropdownItem v-model="view.queryParam.MovieType" :options="MovieTypeOptions" @change="onSearch">
@@ -155,21 +192,32 @@ showSearch = false;
                   <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
                 </div>
               </Row>
-
               <SwipeCell>
-                <template #right>
-                  <Button square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
-                </template>
-                <Row justify="space-around" style="button: 10px">
-                  <Col span="5">
-                  <Button v-if="isWide" square size="mini" type="danger" @click="getImageList(item.Id)" text="刮图" />
-                  </Col>
 
-                  <Col span="5">
-                  <Button square size="mini" type="primary" @click="openFile(item)">播放</Button>
+                <template #left>
+                  <Col>
+                  <Tag square size="large" type="warning" @click="getImageList(item)">刮图</Tag>
                   </Col>
-                  <Col span="5">
-                  <Button square size="mini" type="primary" @click="viewPictures(item)">查看</Button>
+                </template>
+                <template #right>
+                  <SwipeCell>
+                    <Tag square size="large" type="danger" @click="deleteFile(item.Id)">删除</Tag>
+                    <Tag square size="large" type="primary" @click="showRenameForm(item)">
+                      重命名</Tag>
+                    <Tag square size="large" type="success" @click="syncFile(item.Id)">同步</Tag>
+                  </SwipeCell>
+                </template>
+                <Row justify="space-around" style="button: 10px;width: 100%;">
+                  <Col>
+                  <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
+                  </Col>
+                  <Col>
+                  <!-- <Button square size="normal" type="primary" @click="openFile(item)">播放</Button> -->
+                  <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
+                  </Col>
+                  <Col>
+                  <!-- <Button square size="normal" type="primary" @click="viewPictures(item)">查看</Button> -->
+                  <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
                   </Col>
                 </Row>
               </SwipeCell>
@@ -180,16 +228,18 @@ showSearch = false;
     </PullRefresh>
     <LoadMoreVue @loadMore="onLoadMore" :more="true" />
   </div>
+
 </template>
 
 <script setup lang="ts">
-import { DownImageList, QueryDirImageBase64, QueryFileList } from "@/api/file";
+import { AddTag, CloseTag, DeleteFile, DownImageList, FileRename, QueryDirImageBase64, QueryFileList, RefreshIndex, SyncFileInfo } from "@/api/file";
 import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
 import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
 import { useWindowSize } from "@vueuse/core";
 import {
+  Dialog,
   ActionSheet,
   Button,
   Col,
@@ -204,6 +254,7 @@ import {
   Search,
   Sticky,
   SwipeCell,
+  Field,
   Tag,
   Toast,
 } from "vant";
@@ -226,11 +277,12 @@ const loadingList = ref(false);
 const finished = ref(false);
 const isPlaying = ref(false);
 const refreshing = ref(false);
+const showRename = ref(false);
 const view = reactive({
   settingInfo: new SettingInfo(),
   queryParam: {
     Page: 1,
-    PageSize: 10,
+    PageSize: 30,
     SortField: "MTime",
     SortType: "desc",
     MovieType: "",
@@ -243,6 +295,7 @@ const view = reactive({
   videoVisible: false,
   videoPlay: false,
   currentFile: new MovieModel(),
+  newTag: '',
   imageList: [],
 });
 
@@ -283,8 +336,89 @@ watch(finished, () => {
 
 
 const showSearch = ref(false);
+const showTag = ref(false);
 
 const isTransform = ref(false);
+
+const tagManage = (item: MovieModel) => {
+  showTag.value = true
+  view.currentFile = item
+
+}
+
+const renameFile = async () => {
+  const item = view.currentFile
+  item.Name = item.originName
+  const res = await FileRename(item)
+  if (res.Code == 200) {
+    Toast.success('操作成功')
+    await RefreshIndex()
+    onSearch()
+    showRename.value = false
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+const syncFile = async (id: string) => {
+  const res = await SyncFileInfo(id)
+  if (res.Code == 200) {
+    Toast.success('操作成功')
+    await RefreshIndex()
+    onSearch()
+    showTag.value = false
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+
+const showRenameForm = (item: MovieModel) => {
+  view.currentFile = item
+  console.log(item)
+  showRename.value = true;
+
+}
+
+
+
+const deleteFile = async (Id: string) => {
+  const res = await DeleteFile(Id)
+  if (res.Code == 200) {
+    Toast.success('操作成功')
+    await RefreshIndex()
+    onSearch()
+    showTag.value = false
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+
+
+const removeCurrentFileTag = async (tag: string) => {
+  console.log(tag, view.currentFile)
+  const res = await CloseTag(view.currentFile.Id, tag)
+  if (res.Code == 200) {
+    Toast.success('操作成功')
+    await RefreshIndex()
+    onSearch()
+    showTag.value = false
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+
+
+const addCurrentFileTag = async (tag: string) => {
+  const res = await AddTag(view.currentFile.Id, tag)
+  if (res.Code == 200) {
+    Toast.success('操作成功')
+    await RefreshIndex()
+    onSearch()
+    showTag.value = false
+  } else {
+    Toast.fail(res.Message)
+  }
+}
+
 const transformThis = () => {
   const videoDiv = document.getElementById("videoDiv");
   videoDiv.style.position = "fixed";
@@ -427,7 +561,7 @@ const queryList = async (pageStart?: number) => {
     if (item.Code.lastIndexOf("-") == item.Code.length - 1) {
       item.Code = item.Code.substring(0, item.Code.length - 1);
     }
-    item.name = item.Name.trim();
+    item.originName = item.Name.trim();
     item.Name = item.Name.replace("[" + item.Code + "]", "");
     item.Name = item.Name.replace("[" + item.Actress + "]", "");
   });
