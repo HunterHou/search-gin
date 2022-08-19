@@ -210,16 +210,18 @@ showSearch = false;
 
                 <template #left>
                   <Col>
-                  <Tag square size="large" type="warning" @click="getImageList(item)">刮图</Tag>
+                  <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
                   </Col>
                 </template>
                 <template #right>
                   <SwipeCell style="align-content:space-between;">
                     <Row>
-                      <Tag style="margin-left: 20px;" square size="large" type="danger" @click="deleteFile(item.Id)">删除</Tag>
+                      <Tag style="margin-left: 20px;" square size="large" type="danger" @click="deleteFile(item.Id)">删除
+                      </Tag>
                       <Tag style="margin-left: 20px;" square size="large" type="primary" @click="showRenameForm(item)">
                         重命名</Tag>
-                      <Tag style="margin-left: 20px;" square size="large" type="success" @click="syncFile(item.Id)">同步</Tag>
+                      <Tag style="margin-left: 20px;" square size="large" type="success" @click="syncFile(item.Id)">同步
+                      </Tag>
                     </Row>
                   </SwipeCell>
                 </template>
@@ -228,12 +230,26 @@ showSearch = false;
                   <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
                   </Col>
                   <Col>
-                  <!-- <Button square size="normal" type="primary" @click="openFile(item)">播放</Button> -->
                   <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
                   </Col>
                   <Col>
-                  <!-- <Button square size="normal" type="primary" @click="viewPictures(item)">查看</Button> -->
                   <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
+                  </Col>
+
+                  <Col v-if="isWide">
+                  <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+                  </Col>
+                  <Col v-if="isWide">
+                  <Tag  square size="large" type="danger" @click="deleteFile(item.Id)">删除
+                  </Tag>
+                  </Col>
+                  <Col v-if="isWide">
+                  <Tag  square size="large" type="primary" @click="showRenameForm(item)">
+                    重命名</Tag>
+                  </Col>
+                  <Col v-if="isWide">
+                  <Tag  square size="large" type="success" @click="syncFile(item.Id)">同步
+                  </Tag>
                   </Col>
                 </Row>
               </SwipeCell>
@@ -469,7 +485,9 @@ const searchKeyword = (words: string) => {
 };
 const viewPic = ref(false);
 
+
 const getImageList = async (Id: string) => {
+  console.log(Id)
   const res = await DownImageList(Id);
   if (res.Code === 200) {
     Toast.success(res.Message);
