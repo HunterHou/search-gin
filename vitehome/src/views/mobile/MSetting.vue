@@ -81,12 +81,10 @@
             <Col :span="6">
             热门标签
             </Col>
-            <Col :span="18">
             <Col :span="18" @click="tagSelect = true">
             <Tag v-for="item in view.form.Tags" size="large" :key="item" style="background: green;margin:2px 4px;">{{
                 item
             }}</Tag>
-            </Col>
             </Col>
           </Row>
         </Tab>
