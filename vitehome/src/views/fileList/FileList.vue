@@ -682,7 +682,7 @@ import {
   ElSpace,
 } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
-import { MovieModel, MovieQuery } from ".";
+import { MovieModel, MovieQuery,formMovieTypeChange } from ".";
 
 import "vue3-video-play/dist/style.css";
 
@@ -951,23 +951,6 @@ const editItemSubmit = async () => {
   }
 };
 
-const formMovieTypeChange = () => {
-  let { MovieType, Name, FileType } = view.formItem;
-  let newName = "";
-  if (Name.indexOf("{{") >= 0) {
-    const startC = Name.substr(0, Name.indexOf("{{"));
-    const endC = Name.substr(Name.indexOf("}}") + 2, Name.length);
-    newName = startC;
-    if (MovieType && MovieType !== "") {
-      newName += "{{" + MovieType + "}}";
-    }
-    newName += endC;
-  } else {
-    newName = Name.replaceAll("." + FileType, "");
-    newName = newName + "{{" + MovieType + "}}" + "." + FileType;
-  }
-  view.formItem.Name = newName;
-};
 
 const loadSettingInfo = async () => {
   const res = await systemProperty.getSettingInfo;

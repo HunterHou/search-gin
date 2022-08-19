@@ -61,7 +61,7 @@ showSearch = false;
           类型
           </Col>
           <Col :span="18">
-          <RadioGroup v-model="view.currentFile.MovieType" @change="formMovieTypeChange"  direction="horizontal">
+          <RadioGroup v-model="view.currentFile.MovieType" @change="formMovieTypeChange(view)" direction="horizontal">
             <Radio name="">全部</Radio>
             <Radio name="骑兵">骑兵</Radio>
             <Radio name="步兵">步兵</Radio>
@@ -215,10 +215,12 @@ showSearch = false;
                 </template>
                 <template #right>
                   <SwipeCell style="align-content:space-between;">
-                    <Tag square size="large" type="danger" @click="deleteFile(item.Id)">删除</Tag>
-                    <Tag square size="large" type="primary" @click="showRenameForm(item)">
-                      重命名</Tag>
-                    <Tag square size="large" type="success" @click="syncFile(item.Id)">同步</Tag>
+                    <Row>
+                      <Tag style="margin-left: 20px;" square size="large" type="danger" @click="deleteFile(item.Id)">删除</Tag>
+                      <Tag style="margin-left: 20px;" square size="large" type="primary" @click="showRenameForm(item)">
+                        重命名</Tag>
+                      <Tag style="margin-left: 20px;" square size="large" type="success" @click="syncFile(item.Id)">同步</Tag>
+                    </Row>
                   </SwipeCell>
                 </template>
                 <Row justify="space-around" style="button: 10px;width: 100%;">
@@ -277,7 +279,7 @@ import {
 import "vant/lib/index.css";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { MovieModel, MovieQuery } from "../fileList";
+import { MovieModel, MovieQuery, formMovieTypeChange } from "../fileList";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
 import LoadMoreVue from "./LoadMore.vue";
@@ -529,23 +531,6 @@ const loadDirInfo = async (id: string) => {
   }
 };
 
-const formMovieTypeChange = () => {
-  let { MovieType, originName, FileType } = view.currentFile;
-  let newName = "";
-  if (originName.indexOf("{{") >= 0) {
-    const startC = originName.substr(0, originName.indexOf("{{"));
-    const endC = originName.substr(originName.indexOf("}}") + 2, originName.length);
-    newName = startC;
-    if (MovieType && MovieType !== "") {
-      newName += "{{" + MovieType + "}}";
-    }
-    newName += endC;
-  } else {
-    newName = originName.replaceAll("." + FileType, "");
-    newName = newName + "{{" + MovieType + "}}" + "." + FileType;
-  }
-  view.currentFile.originName = newName;
-};
 
 
 const hiddenPlayVideo = () => {
