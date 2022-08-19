@@ -72,19 +72,12 @@
         <Tab name="base" title="基础设置">
           <Field style="width: 100%;margin: 8px auto;" v-model="view.form.ControllerHost" name="ControllerHost"
             label="请求服务器" placeholder="请求服务器" />
-          <Row style="margin: 8px auto ;display:block;">
-            <Col :span="6">
-            <span>图片服务器</span>
-            </Col>
-            <Col :span="18">
-            <Field v-model="view.form.ImageHost" name="ImageHost" placeholder="图片服务器" />
-            </Col>
-          </Row>
+          <Field v-model="view.form.ImageHost" label="图片服务器" name="ImageHost" placeholder="图片服务器" />
           <Field v-model="view.form.StreamHost" name="StreamHost" label="流服务器" placeholder="流服务器" />
           <Field v-model="view.form.BaseUrl" name="BaseUrl" label="URL" placeholder="URL" />
           <Field v-model="view.form.OMUrl" name="OMUrl" label="OM-URL" placeholder="OM-URL" />
 
-          <Row  style="margin: 8px auto ;">
+          <Row style="margin: 8px auto ;">
             <Col :span="6">
             热门标签
             </Col>
@@ -120,7 +113,7 @@
           </Row>
         </Tab>
         <Tab name="dict" title="字典设置">
-          <Row>
+          <Row class="rowStyle">
             <Col :span="6">
             枚举标签
             </Col>
@@ -245,5 +238,19 @@ onMounted(() => {
   float: none;
   z-index: 99;
   width: 100%;
+}
+.van-field__value {
+  border: dotted;
+  border-radius: 2px;
+}
+</style>
+<style scoped>
+
+
+.van-row {
+  margin: 18px;
+  border-bottom: dotted;
+  border-radius: 1px;
+
 }
 </style>

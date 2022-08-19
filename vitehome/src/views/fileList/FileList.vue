@@ -221,13 +221,15 @@
       <ElSpace wrap size="default">
         <div :class="isShowCover() ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
-            <li v-for="tag in item.Tags" :key="tag">
-              <ElTag closable effect="dark" :size="isShowCover() ? 'small' : 'small'" @close="closeTag(item.Id, tag)">
-                <el-link :underline="false" plain @click="gotoSearch(tag)">
-                  <span> {{ tag }}</span>
-                </el-link>
-              </ElTag>
-            </li>
+            <ul>
+              <li v-for="tag in item.Tags" :key="tag">
+                <ElTag closable effect="dark" :size="isShowCover() ? 'small' : 'small'" @close="closeTag(item.Id, tag)">
+                  <el-link :underline="false" plain @click="gotoSearch(tag)">
+                    <span> {{ tag }}</span>
+                  </el-link>
+                </ElTag>
+              </li>
+            </ul>
           </div>
           <ElPopover placement="bottom-start" width="auto" v-model="view.addTagShow" trigger="click" :auto-close="0">
             <template #reference>
@@ -771,7 +773,7 @@ watch(windowScrollHheight, () => {
   } else searchStyle.value = {};
 });
 watch(selectText.text, (newVal) => {
-  if (newVal) {
+  if (newVal && newVal.length > 3) {
     queryParam.Keyword = newVal;
   }
 });

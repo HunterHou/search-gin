@@ -3,6 +3,7 @@ class MovieModel{
     Id:string
     Tags:string[]
     MovieType:string
+    FileType:string
     Jpg:string
     Png:string
     Actress:string

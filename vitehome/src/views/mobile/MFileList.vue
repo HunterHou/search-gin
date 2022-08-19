@@ -57,8 +57,22 @@ showSearch = false;
     <ActionSheet v-model:show="showRename" title="重命名" :close-on-click-overlay="true" style="height: 60vh;">
       <div style="margin-bottom: 0vh;">
         <Row>
-          <Col>
-          <Field label="名称" rows="5" autosize type="textarea" v-model="view.currentFile.originName">
+          <Col :span="6">
+          类型
+          </Col>
+          <Col :span="18">
+          <RadioGroup v-model="view.currentFile.MovieType" @change="formMovieTypeChange"  direction="horizontal">
+            <Radio name="">全部</Radio>
+            <Radio name="骑兵">骑兵</Radio>
+            <Radio name="步兵">步兵</Radio>
+            <Radio name="斯巴达">斯巴达</Radio>
+            <Radio name="国产">国产</Radio>
+          </RadioGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col :span="24">
+          <Field label="名称" rows="5" style="width:100%" autosize type="textarea" v-model="view.currentFile.originName">
           </Field>
           </Col>
         </Row>
@@ -200,7 +214,7 @@ showSearch = false;
                   </Col>
                 </template>
                 <template #right>
-                  <SwipeCell>
+                  <SwipeCell style="align-content:space-between;">
                     <Tag square size="large" type="danger" @click="deleteFile(item.Id)">删除</Tag>
                     <Tag square size="large" type="primary" @click="showRenameForm(item)">
                       重命名</Tag>
@@ -257,6 +271,8 @@ import {
   Field,
   Tag,
   Toast,
+  RadioGroup,
+  Radio,
 } from "vant";
 import "vant/lib/index.css";
 import { computed, onMounted, reactive, ref, watch } from "vue";
@@ -513,6 +529,25 @@ const loadDirInfo = async (id: string) => {
   }
 };
 
+const formMovieTypeChange = () => {
+  let { MovieType, originName, FileType } = view.currentFile;
+  let newName = "";
+  if (originName.indexOf("{{") >= 0) {
+    const startC = originName.substr(0, originName.indexOf("{{"));
+    const endC = originName.substr(originName.indexOf("}}") + 2, originName.length);
+    newName = startC;
+    if (MovieType && MovieType !== "") {
+      newName += "{{" + MovieType + "}}";
+    }
+    newName += endC;
+  } else {
+    newName = originName.replaceAll("." + FileType, "");
+    newName = newName + "{{" + MovieType + "}}" + "." + FileType;
+  }
+  view.currentFile.originName = newName;
+};
+
+
 const hiddenPlayVideo = () => {
   view.videoVisible = false;
 };
@@ -636,5 +671,10 @@ const SortTypeOptions = [
   float: none;
   z-index: 99;
   width: 100%;
+}
+
+.van-field__value {
+  border: dotted;
+  border-radius: 2px;
 }
 </style>

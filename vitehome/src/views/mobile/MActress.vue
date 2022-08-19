@@ -33,24 +33,26 @@
       <SwipeCell>
         <div v-for="item in view.ModelList" :key="item.Id" style="
           float: left;
+          width: auto;
           height: 16rem;
           display: flex;
           box-shadow: 0 0 4px grey;
+          margin: 8px 8px;
         ">
-          <div style="margin: 8px auto">
+          <div style="margin: 0px auto" @click="gotoSearch(item.Name)">
             <Image :src="getActressImage(item.JpgUrl)" :style="{
-              height: '92%',
+              height: '90%',
               width: 'auto',
             }">
-              <Row @click="gotoSearch(item.Name)">
+              <Row style="height: 20px;width: 100%;position: relative;">
                 <Col>
-                <Tag color="#7232dd"> {{ item.Name }}</Tag>
+                <Tag color="#7232dd" style="height: 100%;"> {{ item.Name }}</Tag>
                 </Col>
                 <Col>
-                <Tag color="orange"> {{ item.SizeStr }}</Tag>
+                <Tag color="orange" style="height: 100%;"> {{ item.SizeStr }}</Tag>
                 </Col>
                 <Col>
-                <Tag color="red"> {{ item.Cnt }}</Tag>
+                <Tag color="red" style="height: 100%;"> {{ item.Cnt }}</Tag>
                 </Col>
               </Row>
             </Image>
