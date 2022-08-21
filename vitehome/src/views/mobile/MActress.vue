@@ -1,6 +1,6 @@
 <template>
   <div class="mainBody">
-    <NavBar title="脸谱">
+    <NavBar title="图鉴">
       <template #left>
         <div>
           <span> 总数:{{ view.TotalCnt }} </span>

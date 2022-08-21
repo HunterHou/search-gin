@@ -20,7 +20,7 @@ const view = reactive({
   dataList: [],
   loading: false,
 })
-document.title = "脸谱";
+document.title = "图鉴";
 
 const open = (name: string) => {
   systemProperty.setPage(1)

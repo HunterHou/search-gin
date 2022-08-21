@@ -372,7 +372,7 @@
           <el-radio-button label="斯巴达">欧</el-radio-button>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="脸谱">
+      <el-form-item label="图鉴">
         <el-input v-model="formItem.Actress" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="编码">

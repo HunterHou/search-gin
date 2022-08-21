@@ -4,7 +4,7 @@
         <TabbarItem name="filelist" to="/mfilelist" icon="search">
             搜索
         </TabbarItem>
-        <TabbarItem name="actress" to="/mactress" icon="friends-o">脸谱</TabbarItem>
+        <TabbarItem name="actress" to="/mactress" icon="friends-o">图鉴</TabbarItem>
         <TabbarItem name="setting" to="/msetting" icon="setting-o">设置</TabbarItem>
     </Tabbar>
 </template>

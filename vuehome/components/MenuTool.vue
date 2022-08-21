@@ -19,7 +19,7 @@
     </el-menu-item>
 
     <el-menu-item index="/actress">
-      <i class="el-icon-location"></i><span slot="title">脸谱</span>
+      <i class="el-icon-location"></i><span slot="title">图鉴</span>
     </el-menu-item>
 
     <el-menu-item index="/setting">

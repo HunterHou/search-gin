@@ -50,7 +50,7 @@ export const staticRoutes: RouteRecordRaw[] = [
     component: DefaultLayVue,
     name: "actress",
     meta: {
-      title: "脸谱",
+      title: "图鉴",
       hidden:false,
     },
     children: [
@@ -59,7 +59,7 @@ export const staticRoutes: RouteRecordRaw[] = [
         component: () => import("../views/actress/Actress.vue"),
         name: "actress",
         meta: {
-          title: "脸谱",
+          title: "图鉴",
         },
       },
     ],
@@ -154,7 +154,7 @@ export const staticRoutes: RouteRecordRaw[] = [
         component: () => import("../views/mobile/MActress.vue"),
         name: "mactress",
         meta: {
-          title: "脸谱",
+          title: "图鉴",
           hidden: true,
         },
       },

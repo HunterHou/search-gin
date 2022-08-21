@@ -129,11 +129,11 @@ export default {
     };
   },
   mounted() {
-    document.title = "脸谱";
+    document.title = "图鉴";
     this.$nextTick(() => {
       this.$nuxt.$loading.start();
       this.fetch();
-      document.title = "脸谱";
+      document.title = "图鉴";
       const no = this.$route.params.no;
       this.pageNo = no ? parseInt(no) : 1;
       this.queryButtom();
