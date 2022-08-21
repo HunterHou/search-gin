@@ -240,15 +240,15 @@ showSearch = false;
                   <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
                   </Col>
                   <Col v-if="isWide">
-                  <Tag  square size="large" type="danger" @click="deleteFile(item.Id)">删除
+                  <Tag square size="large" type="danger" @click="deleteFile(item)">删除
                   </Tag>
                   </Col>
                   <Col v-if="isWide">
-                  <Tag  square size="large" type="primary" @click="showRenameForm(item)">
+                  <Tag square size="large" type="primary" @click="showRenameForm(item)">
                     重命名</Tag>
                   </Col>
                   <Col v-if="isWide">
-                  <Tag  square size="large" type="success" @click="syncFile(item.Id)">同步
+                  <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
                   </Tag>
                   </Col>
                 </Row>
@@ -414,16 +414,24 @@ const showRenameForm = (item: MovieModel) => {
 
 
 
-const deleteFile = async (Id: string) => {
-  const res = await DeleteFile(Id)
-  if (res.Code == 200) {
-    Toast.success('操作成功')
-    await RefreshIndex()
-    onSearch()
-    showTag.value = false
-  } else {
-    Toast.fail(res.Message)
-  }
+const deleteFile = async (item: MovieModel) => {
+  Dialog.confirm({
+    title: "确认删除？",
+    message: item.Name
+  }).then(async() => {
+    const res = await DeleteFile(item.Id)
+    if (res.Code == 200) {
+      Toast.success('操作成功')
+      await RefreshIndex()
+      onSearch()
+      showTag.value = false
+    } else {
+      Toast.fail(res.Message)
+    }
+  }).catch(()=>{
+    Toast.fail("取消删除")
+  })
+
 }
 
 

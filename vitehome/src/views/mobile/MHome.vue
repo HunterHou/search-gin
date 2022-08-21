@@ -1,8 +1,8 @@
 <template>
   <div class="mainBody">
-    <NavBar title="首页" left-text="返回" left-arrow @click-left="push('/home')">
+    <NavBar title="首页" left-text="主页" left-arrow @click-left="push('/home')">
       <template #right>
-        <Button size="small" round plain type="success" @click="refreshIndex">索引</Button>
+        <Button size="small" round plain type="primary" @click="refreshIndex">索引</Button>
       </template>
     </NavBar>
     <MobileBar></MobileBar>
@@ -13,18 +13,23 @@
       }
     ">
       <Collapse v-model="indexes">
-        <div style="box-shadow: 4 4 8px grey;">
-          <Tag type="primary" plain v-for="tag in view.tagData" :key="tag" style="margin:3px 6px ;height:24px"
-            @click="folderGotoMenu(tag.Name)">
-            {{ tag.Name }} {{ tag.SizeStr }}
-          </Tag>
+        <div style="box-shadow: 4 4 8px grey;margin-top: 10px;">
+          <Badge v-for="tag in view.tagData" :key="tag" :content="tag.Cnt">
+            <Tag type="warning" plain round @click="folderGotoMenu(tag.Name)" style="margin:3px 6px ;height:24px; background: #f2f3f5;
+    border-radius: 4px;">
+              {{ tag.Name }}{{ tag.SizeStr }}
+            </Tag>
+          </Badge>
+
         </div>
         <CollapseItem title="扫描" name="scan">
           <Row v-for="item, index in view.scanTime" :key="item.Name"
             :style="{ color: (index % 2 == 0 ? '#07c160' : '#000000'), hover: 'mouse', height: '30px' }">
-            <Col :span="20" style="text-align:left;">{{ item.Name }}
+            <Col :span="16" style="text-align:left;">{{ item.Name }}
             </Col>
             <Col :span="4">{{ item.Size }}
+            </Col>
+            <Col :span="4">{{ item.Cnt }} ms
             </Col>
           </Row>
         </CollapseItem>
@@ -58,7 +63,7 @@ import {
   NavBar,
   PullRefresh,
   Row,
-  Cell,
+  Badge,
   CollapseItem,
   Collapse,
   Tag,

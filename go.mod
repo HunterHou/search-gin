@@ -11,6 +11,7 @@ require (
 	// github.com/huichen/sego v0.0.0-20210824061530-c87651ea5c76 // indirect
 	github.com/mattn/go-sqlite3 v1.14.14
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
+	golang.org/x/sys v0.0.0-20220731174439-a90be440212d // indirect
 	// github.com/tukdesk/bleve-sego-tokenizer v0.0.0-20150724062751-243218b987fe // indirect
 	// github.com/tukdesk/sego v0.0.0-20150902051113-989c2c845641 // indirect
 	xorm.io/xorm v1.3.1
@@ -34,7 +35,6 @@ require (
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/net v0.0.0-20220728211354-c7608f3a8462 // indirect
-	golang.org/x/sys v0.0.0-20220731174439-a90be440212d // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
