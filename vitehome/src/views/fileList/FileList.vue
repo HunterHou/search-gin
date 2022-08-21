@@ -154,82 +154,20 @@
         </div>
       </ElRow>
     </div>
-    <ElCard id="cmenu" class="cmenu" v-show="cmenuShow" ref="target" :body-style="{ padding: '4px' }">
-      <span>{{ view.contextmenuTarget.Code ?? view.contextmenuTarget.Name }}
-      </span>
-      &nbsp;&nbsp;
-      <ElButton type="danger" @click="cmenuClose" circle>
-        <ElIcon>
-          <CloseBold />
-        </ElIcon>
-      </ElButton>
-      <ElRow :span="2">
-        <ElCol>
-          <ElButton class="cmenuButton" @click="cmenuPlay">
-            <ElIcon>
-              <VideoPlay />
-            </ElIcon>
-            播放
-          </ElButton>
-        </ElCol>
-      </ElRow>
-      <ElRow :span="2">
-        <ElCol>
-          <ElButton class="cmenuButton" @click="cmenuSync">
-            <ElIcon>
-              <Refresh />
-            </ElIcon>
-            同步
-          </ElButton>
-        </ElCol>
-      </ElRow>
-      <ElRow :span="2">
-        <ElCol>
-          <ElButton class="cmenuButton" @click="cmenuCode">
-            <ElIcon>
-              <Share />
-            </ElIcon>
-            源链接
-          </ElButton>
-        </ElCol>
-      </ElRow>
 
-      <ElRow :span="2">
-        <ElCol>
-          <ElButton class="cmenuButton" @click="cmenuOpenDir">
-            <ElIcon>
-              <UserFilled />
-            </ElIcon>
-            打开
-          </ElButton>
-        </ElCol>
-      </ElRow>
-      <ElRow :span="2">
-        <ElCol>
-          <ElButton class="cmenuButton" @click="cmenuGetImageList">
-            <ElIcon>
-              <Magnet />
-            </ElIcon>
-            刮图
-          </ElButton>
-        </ElCol>
-      </ElRow>
-    </ElCard>
 
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
       style="min-height: 700px">
       <ElSpace wrap size="default">
         <div :class="isShowCover() ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
-            <ul>
-              <li v-for="tag in item.Tags" :key="tag">
-                <ElTag closable effect="dark" :size="isShowCover() ? 'small' : 'small'" @close="closeTag(item.Id, tag)">
-                  <el-link :underline="false" plain @click="gotoSearch(tag)">
-                    <span> {{ tag }}</span>
-                  </el-link>
-                </ElTag>
-              </li>
-            </ul>
+            <li v-for="tag in item.Tags" :key="tag" style="list-style-type:none;">
+              <ElTag closable effect="dark" :size="isShowCover() ? 'small' : 'small'" @close="closeTag(item.Id, tag)">
+                <el-link :underline="false" plain @click="gotoSearch(tag)">
+                  <span> {{ tag }}</span>
+                </el-link>
+              </ElTag>
+            </li>
           </div>
           <ElPopover placement="bottom-start" width="auto" v-model="view.addTagShow" trigger="click" :auto-close="0">
             <template #reference>
@@ -288,11 +226,7 @@
           }">
             <div v-if="item" :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'">
               <el-image style="width: 100%; height: 100%" :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
-                @click="openInfoWindow(item.Id)" @contextmenu.prevent.native="
-                  () => {
-                    imageContextmenu(item);
-                  }
-                " fit="contain" lazy />
+                @click="openInfoWindow(item.Id)" fit="contain" lazy />
             </div>
             <div class="image-tool">
               <ElSpace wrap>
@@ -482,7 +416,7 @@
         <el-button type="primary" size="large" @click="editItemSubmit">确 定</el-button>
       </div>
     </ElDialog>
-    <ElDialog width="66%" :modal="true" :title="'  ' + view.formItem.Code + ' '" v-model="view.dialogVisible"
+    <ElDialog width="66%" :modal="true" v-model="view.dialogVisible"
       :before-close="
         () => {
           innerVisibleFalse();
@@ -491,13 +425,76 @@
       " :destroy-on-close="true">
       <div v-if="view.formItem">
         <div>
-          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 80%; height: auto" @click="
+          <ElCard id="cmenu" class="cmenu" :body-style="{ padding: '4px' }">
+            
+            <ElRow :span="2">
+              <ElCol>
+                <ElButton class="cmenuButton" @click="cmenuPlay">
+                  <ElIcon>
+                    <VideoPlay />
+                  </ElIcon>
+                  播放
+                </ElButton>
+              </ElCol>
+            </ElRow>
+            <ElRow :span="2">
+              <ElCol>
+                <ElButton class="cmenuButton" @click="cmenuSync">
+                  <ElIcon>
+                    <Refresh />
+                  </ElIcon>
+                  同步
+                </ElButton>
+              </ElCol>
+            </ElRow>
+            <ElRow :span="2">
+              <ElCol>
+                <ElButton class="cmenuButton" @click="cmenuCode">
+                  <ElIcon>
+                    <Share />
+                  </ElIcon>
+                  源链接
+                </ElButton>
+              </ElCol>
+            </ElRow>
+
+            <ElRow :span="2">
+              <ElCol>
+                <ElButton class="cmenuButton" @click="cmenuOpenDir">
+                  <ElIcon>
+                    <UserFilled />
+                  </ElIcon>
+                  打开
+                </ElButton>
+              </ElCol>
+            </ElRow>
+            <ElRow :span="2">
+              <ElCol>
+                <ElButton class="cmenuButton" @click="cmenuGetImageList">
+                  <ElIcon>
+                    <Magnet />
+                  </ElIcon>
+                  刮图
+                </ElButton>
+              </ElCol>
+            </ElRow>
+            <span>{{ view.formItem.Code ?? view.formItem.Name }}
+            </span>
+            &nbsp;&nbsp;
+            <ElButton type="danger" @click="()=>{view.dialogVisible = false}" circle>
+              <ElIcon>
+                <CloseBold />
+              </ElIcon>
+            </ElButton>
+          </ElCard>
+          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 90%; height: auto" @click="
             () => {
               if (view.sourceList && view.sourceList.length > 0) {
                 view.innerVisible = true;
               }
             }
           " />
+
           <ElRow :gutter="24">
             <ElCol :span="4" tyle="text-align:right"> YY： </ElCol>
             <ElCol :span="8" tyle="text-align:right">
@@ -679,10 +676,11 @@ import {
   ElRadioButton,
   ElRadioGroup,
   ElRow,
+  ElCard,
   ElSpace,
 } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
-import { MovieModel, MovieQuery,formMovieTypeChange } from ".";
+import { MovieModel, MovieQuery, formMovieTypeChange } from ".";
 
 import "vue3-video-play/dist/style.css";
 
@@ -824,15 +822,6 @@ const startPlayVideo = () => {
 const innerVisibleFalse = () => {
   view.innerVisible = false;
 };
-const imageContextmenu = (item: MovieModel) => {
-  cmenuShow.value = false;
-  setTimeout(() => {
-    view.contextmenuTarget = item;
-    document.getElementById("cmenu").style.marginLeft = x.value - 30 + "px";
-    document.getElementById("cmenu").style.marginTop = y.value - 150 + "px";
-    cmenuShow.value = true;
-  }, 100);
-};
 
 const cmenuSync = async () => {
   await syncThis(view.contextmenuTarget.Id);
@@ -843,7 +832,6 @@ const cmenuCode = async () => {
   cmenuShow.value = false;
 };
 const cmenuPlay = async (item?) => {
-  // await playThis(view.contextmenuTarget.Id);
   if (item) {
     view.contextmenuTarget = item;
   }
@@ -1148,6 +1136,7 @@ const openInfoWindow = async (id: string) => {
   view.sourceList = [];
   if (res) {
     view.formItem = res;
+    view.contextmenuTarget = res;
     view.dialogVisible = true;
     loadDirInfo(view.formItem.Id, true);
   }
@@ -1508,7 +1497,7 @@ onMounted(() => {
 
 .cmenu {
   padding: 4px;
-  width: 180px;
+  width: 80px;
   height: auto;
   border: 1;
   z-index: 99;
