@@ -54,7 +54,7 @@ const SystemProperty = defineStore({
       return this.SettingInfo?.ControllerHost;
     },
     getSuggestions() {
-      return this.SettingInfo?.SearchSuggestions;
+      return this.SearchSuggestions;
     },
     getSearchParam() {
       return this.FileSearchParam;

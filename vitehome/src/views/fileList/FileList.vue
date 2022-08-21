@@ -1497,7 +1497,7 @@ onMounted(() => {
 
 .cmenu {
   padding: 4px;
-  width: 80px;
+  width: 140px;
   height: auto;
   border: 1;
   z-index: 99;
