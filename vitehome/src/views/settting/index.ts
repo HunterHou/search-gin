@@ -16,4 +16,5 @@ export class SettingInfo {
   ControllerHost: string;
   ImageHost: string;
   StreamHost: string;
+  IsDb: boolean;
 }

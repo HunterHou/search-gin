@@ -50,12 +50,11 @@ func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page
 func (fs FileService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
 
 	result := utils.NewPage()
-	result.SetProgress(cons.OverIndex())
 	if len(datasource.FileList) == 0 {
 		fs.ScanAll()
 		datasource.SortDataSourceMovies(searchParam.SortField, searchParam.SortType, true)
 	}
-	datasource.SortDataSourceMovies(searchParam.SortField, searchParam.SortType, false)
+	datasource.SortDataSourceMovies(searchParam.SortField, searchParam.SortType, true)
 	dataSource := datasource.FileList
 
 	if searchParam.OnlyRepeat {
@@ -504,7 +503,7 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 }
 
 func (fs FileService) FindOne(Id string) datamodels.Movie {
-	if cons.IndexOver {
+	if cons.OSSetting.IsDb {
 		db := CreateOrmService()
 		return db.Find(Id)
 	}
@@ -516,7 +515,7 @@ func (fs FileService) FindOne(Id string) datamodels.Movie {
 }
 
 func (fs FileService) UpdateOne(Id string, path string) {
-	if cons.IndexOver {
+	if cons.OSSetting.IsDb {
 		db := CreateOrmService()
 		db.UpdateOne(Id, path)
 	}
@@ -844,6 +843,9 @@ func (fs FileService) GetPage(files []datamodels.Movie, pageNo int, pageSize int
 func GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.Movie, int64) {
 	if len(files) == 0 {
 		return files, 0
+	}
+	if pageNo <= 0 {
+		pageNo = 1
 	}
 	length := len(files)
 	start := (pageNo - 1) * pageSize

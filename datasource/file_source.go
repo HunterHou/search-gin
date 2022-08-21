@@ -3,15 +3,13 @@ package datasource
 import (
 	"sort"
 
+	"searchGin/cons"
 	"searchGin/datamodels"
 	// "github.com/huichen/sego"
 )
 
 var DefSortField = "MTime"
 var DefSortType = "desc"
-
-var CurSortField = ""
-var CurSortType = ""
 
 var FileLib = map[string]datamodels.Movie{}
 var FileList []datamodels.Movie
@@ -23,22 +21,22 @@ var ActressList []datamodels.Actress
 var SupplierLib = map[string]datamodels.Supplier{}
 
 func SortMovieForce() {
-	if CurSortField == "" {
-		CurSortField = DefSortField
+	if cons.CurSortField == "" {
+		cons.CurSortField = DefSortField
 	}
-	if CurSortType == "" {
-		CurSortType = DefSortType
+	if cons.CurSortType == "" {
+		cons.CurSortType = DefSortType
 	}
-	SortDataSourceMovies(CurSortField, CurSortType, true)
+	SortDataSourceMovies(cons.CurSortField, cons.CurSortType, true)
 }
 
 func SortMovies(movies []datamodels.Movie, sF string, sT string, refresh bool) {
 
-	if sF == CurSortField && sT == CurSortType && !refresh {
+	if sF == cons.CurSortField && sT == cons.CurSortType && !refresh {
 		return
 	}
-	CurSortField = sF
-	CurSortType = sT
+	cons.CurSortField = sF
+	cons.CurSortType = sT
 	sort.Slice(movies, func(i, j int) bool {
 
 		if sF == "Code" && sT == "desc" {

@@ -1,6 +1,7 @@
 package datamodels
 
 type Setting struct {
+	IsDb       bool
 	SelfPath   string
 	BaseUrl    string
 	OMUrl      string

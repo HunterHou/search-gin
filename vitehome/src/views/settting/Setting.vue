@@ -10,6 +10,7 @@
         ">
         <ElTabs v-model="activeName" type="card" @tab-click="handleClick">
           <ElTabPane label="扫描设置" name="first">
+            <ElSwitch v-model="view.form.IsDb" size="large" active-text="数据库" inactive-text="算法" />
             <ElFormItem label="图片类型">
               <ElSelect v-model="view.form.ImageTypes" multiple placeholder="请选择" style="width: 90%">
                 <ElOption v-for="item in view.form.Types" :key="item" :label="item" :value="item">

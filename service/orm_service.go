@@ -115,7 +115,7 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 	startIndex := 0
 	var wg sync.WaitGroup
 	wg.Add(int(totalPage))
-	cons.IndexOver = false
+	cons.OSSetting.IsDb = false
 	o.DeleteAll()
 	for i := 0; i < int(totalPage); i++ {
 		lastIndex := startIndex + int(pageSize)
@@ -127,7 +127,7 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 		startIndex = lastIndex
 	}
 	wg.Wait()
-	cons.IndexOver = true
+	cons.OSSetting.IsDb = true
 	res := utils.NewSuccess()
 	res.EffectRows = total
 	return res

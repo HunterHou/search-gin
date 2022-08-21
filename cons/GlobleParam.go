@@ -2,7 +2,6 @@ package cons
 
 import (
 	"searchGin/datamodels"
-	"searchGin/datasource"
 	"searchGin/utils"
 	"sync"
 )
@@ -18,7 +17,8 @@ var PortNo3 = ":8083"
 var Port = "//" + PortNo
 var QueryTypes []string
 
-var IndexOver = false
+var CurSortField = ""
+var CurSortType = ""
 
 type MenuSize struct {
 	Name    string
@@ -111,20 +111,10 @@ func TagSizePlus(targetType string, targetSize int64) {
 	}
 }
 
-func OverIndex() bool {
-	libSize := len(datasource.FileList)
-	// if libSize == 0 {
-	// 	return false
-	// }
-	// pro := IndexProgress
-	// fmt.Printf("total:%d  progress:%d", libSize, pro)
-	// return pro >= libSize
-	return IndexOver && libSize > 0
-}
-
 var MovieFields = utils.InterfaceFields(datamodels.Movie{})
 
 var OSSetting = datamodels.Setting{
+	IsDb:           true,
 	SelfPath:       "setting.json",
 	ControllerHost: "127.0.0.1:8081",
 	ImageHost:      "127.0.0.1:8081",
