@@ -238,6 +238,11 @@ func (fs FileService) ClearTag(id string, tag string) utils.Result {
 func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
 	result := utils.Result{}
 	root := srcFile.DirPath
+
+	if toFile.Actress == "" && toFile.Code == "" {
+		result.Message = "信息不全"
+		return result
+	}
 	path := root + utils.PathSeparator + toFile.Actress
 	if toFile.Studio != "" {
 		path = path + utils.PathSeparator + toFile.Studio
@@ -253,6 +258,7 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 	filename := dirname + "." + utils.GetSuffux(srcFile.Path)
 	finalpath := dirpath + utils.PathSeparator + filename
 	jpgpath := utils.GetPng(finalpath, "jpg")
+	pngpath := utils.GetPng(finalpath, "png")
 	nfopath := utils.GetPng(finalpath, "nfo")
 	jpgOut, createErr := os.Create(jpgpath)
 	if createErr != nil {
@@ -295,18 +301,48 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 	}
 	jpgOut.Write(body)
 	jpgOut.Close()
-	pngErr := utils.ImageToPng(jpgpath)
-	if pngErr != nil {
-		result.Fail()
-		fmt.Println("pngErr:", pngErr)
-		os.Rename(finalpath, srcFile.Path)
-		result.Message = "png生成失败"
-		return result
+	if toFile.Png == "" {
+		pngErr := utils.ImageToPng(jpgpath)
+		if pngErr != nil {
+			result.Fail()
+			fmt.Println("pngErr:", pngErr)
+			os.Rename(finalpath, srcFile.Path)
+			result.Message = "png生成失败"
+			// return result
+		}
+	} else {
+		pngOut, createErr := os.Create(pngpath)
+		if createErr != nil {
+			result.Fail()
+			fmt.Println("downErr:", downErr)
+			os.Rename(finalpath, srcFile.Path)
+			result.Message = "png文件下载失败：" + toFile.Png
+			return result
+		}
+		resp, downErr := httpGet(url)
+		if downErr != nil {
+			result.Fail()
+			fmt.Println("downErr:", downErr)
+			os.Rename(finalpath, srcFile.Path)
+			result.Message = "文件下载失败：" + toFile.Jpg
+			return result
+		}
+		body, readErr := ioutil.ReadAll(resp.Body)
+		if readErr != nil {
+			result.Fail()
+			fmt.Println("readErr:", readErr)
+			os.Rename(finalpath, srcFile.Path)
+			result.Message = "请求读取response失败"
+			return result
+		}
+		pngOut.Write(body)
+		pngOut.Close()
 	}
+
 	os.Rename(srcFile.Path, finalpath)
 	toFile.Jpg = jpgpath
 	toFile.Nfo = nfopath
-	toFile.Png = utils.GetPng(finalpath, "png")
+	toFile.Png = pngpath
 	fs.MakeNfo(toFile)
 	result.Success()
 	result.Message = "【" + dirname + "】" + result.Message
@@ -412,7 +448,7 @@ func isOM(name string) bool {
 	return strings.Contains(name, "斯巴达")
 }
 
-func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
+func (fs FileService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
 
 	result := utils.Result{}
 	newFile := datamodels.Movie{}
@@ -497,6 +533,81 @@ func (fs FileService) RequestToFile(srcFile datamodels.Movie) (utils.Result, dat
 
 	})
 	newFile.ImageList = imageList
+	result.Success()
+	result.Data = newFile
+	return result, newFile
+}
+
+func (fs FileService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
+
+	result := utils.Result{}
+	newFile := datamodels.Movie{}
+	newFile.Id = srcFile.Id
+	if srcFile.Code == "" || isOM(srcFile.Name) {
+		result.Fail()
+		return result, newFile
+	}
+	// 搜索列表信息
+	url := "https://g60y.com/cn/vl_searchbyid.php?keyword=" + srcFile.Code
+	resp, err := httpGet(url)
+	if err != nil {
+		fmt.Println("err", err)
+		result.Fail()
+		return result, newFile
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		if strings.Contains(url, "_") {
+			url = strings.ReplaceAll(url, "_", "-")
+		} else if strings.Contains(url, "-") {
+			url = strings.ReplaceAll(url, "-", "_")
+		}
+		resp, _ = httpGet(url)
+		if resp.StatusCode != 200 {
+			fmt.Println("status error:", resp.StatusCode, resp.Status)
+			result.Fail()
+			result.Message = "请求失败：" + resp.Status + " url:" + url
+			return result, newFile
+		}
+	}
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		result.Fail()
+		result.Message = "html解析失败"
+		fmt.Println("err:", err)
+	}
+	targetUrl := ""
+	listVideo := doc.Find(" .videos .video")
+	fmt.Println(listVideo.Text())
+	listVideo.Each(func(i int, s *goquery.Selection) {
+		code := s.Find(".id").Text()
+		if strings.ToUpper(code) == strings.ToUpper(srcFile.Code) {
+			newFile.Code = code
+			newFile.Title = s.Find(".title").Text()
+			newFile.Png = s.Find("img").AttrOr("src", "")
+			targetUrl = s.Find("a").AttrOr("href", "")
+		}
+	})
+	var detailDoc *goquery.Document
+	if targetUrl == "" {
+		result.Fail()
+		result.Message = "未找到"
+		fmt.Println("err:", err)
+		return result, newFile
+	} else {
+		detailUrl := "https://g60y.com/cn/" + targetUrl
+		detailResp, err2 := httpGet(detailUrl)
+		if err2 != nil {
+			fmt.Println("err:", err2)
+		}
+		detailDoc, err2 = goquery.NewDocumentFromReader(detailResp.Body)
+	}
+	imageDiv := detailDoc.Find("#video_jacket_img")
+	newFile.Jpg = imageDiv.AttrOr("src", "")
+	actressDiv := detailDoc.Find(".star a")
+	makerDiv := detailDoc.Find(".maker a")
+	newFile.Studio = makerDiv.Text()
+	newFile.Actress = actressDiv.Text()
 	result.Success()
 	result.Data = newFile
 	return result, newFile

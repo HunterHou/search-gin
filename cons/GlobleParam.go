@@ -115,6 +115,7 @@ var MovieFields = utils.InterfaceFields(datamodels.Movie{})
 
 var OSSetting = datamodels.Setting{
 	IsDb:           true,
+	IsJavBus:       false,
 	SelfPath:       "setting.json",
 	ControllerHost: "127.0.0.1:8081",
 	ImageHost:      "127.0.0.1:8081",

@@ -277,20 +277,20 @@ func GetSync(c *gin.Context) {
 	id := c.Param("id")
 	serviceFile := service.CreateFileService()
 	curFile := serviceFile.FindOne(id)
-	result, newFile := serviceFile.RequestToFile(curFile)
+	result, newFile := serviceFile.RequestBusToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return
 	}
 	result = serviceFile.MoveCut(curFile, newFile)
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, newFile)
 }
 
 func GetImageList(c *gin.Context) {
 	id := c.Param("id")
 	serviceFile := service.CreateFileService()
 	curFile := serviceFile.FindOne(id)
-	result, newFile := serviceFile.RequestToFile(curFile)
+	result, newFile := serviceFile.RequestBusToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return

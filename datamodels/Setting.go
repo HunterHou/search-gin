@@ -2,6 +2,7 @@ package datamodels
 
 type Setting struct {
 	IsDb       bool
+	IsJavBus   bool
 	SelfPath   string
 	BaseUrl    string
 	OMUrl      string
