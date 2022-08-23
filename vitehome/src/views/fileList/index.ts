@@ -23,24 +23,3 @@ class MovieQuery extends MovieModel {
 }
 
 export { MovieQuery, MovieModel };
-
-export const formMovieTypeChange = (view:any) => {
-  let { MovieType, originName, FileType } = view.currentFile;
-  let newName = "";
-  if (originName.indexOf("{{") >= 0) {
-    const startC = originName.substr(0, originName.indexOf("{{"));
-    const endC = originName.substr(
-      originName.indexOf("}}") + 2,
-      originName.length
-    );
-    newName = startC;
-    if (MovieType && MovieType !== "") {
-      newName += "{{" + MovieType + "}}";
-    }
-    newName += endC;
-  } else {
-    newName = originName.replaceAll("." + FileType, "");
-    newName = newName + "{{" + MovieType + "}}" + "." + FileType;
-  }
-  view.currentFile.originName = newName;
-};

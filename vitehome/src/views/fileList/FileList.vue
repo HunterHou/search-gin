@@ -3,6 +3,10 @@
     <ElBacktop :bottom="100" style="width: 50px; height: 50px">
       <div class="up">UP</div>
     </ElBacktop>
+
+
+
+
     <ElButton style="position: fixed; bottom: 300px; z-index: 99; left: 5px" size="default" type="danger" round
       v-if="!loading && view.ResultCnt > queryParam.PageSize" @click="pageLoading(-1)"><i class="el-icon-back"></i>上一頁
     </ElButton>
@@ -108,7 +112,6 @@
             </template>
           </ElAutocomplete>
         </ElCol>
-        <!-- x:{{ x }} y:{{ y }} {{ pressed}} -->
       </ElRow>
       <ElRow>
         <ElCol :span="3">
@@ -159,31 +162,61 @@
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
       style="min-height: 700px">
       <ElSpace wrap size="default">
-        <div :class="isShowCover() ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
+        <div :class="isShowCover(view) ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
             <li v-for="tag in item.Tags" :key="tag" style="list-style-type:none;">
-              <ElTag closable effect="dark" :size="isShowCover() ? 'small' : 'small'" @close="closeTag(item.Id, tag)">
+              <ElTag closable effect="dark" :size="isShowCover(view) ? 'small' : 'small'"
+                @close="closeTag(item.Id, tag)">
                 <el-link :underline="false" plain @click="gotoSearch(tag)">
                   <span> {{ tag }}</span>
                 </el-link>
               </ElTag>
             </li>
           </div>
-          <ElPopover placement="bottom-start" width="auto" v-model="view.addTagShow" trigger="click" :auto-close="0">
+          <ElPopover :teleported="true" placement="bottom-start" popperClass="tagPopover" width="auto" v-model="view.addTagShow" trigger="click" :auto-close="0">
             <template #reference>
-              <ElButton :class="isShowCover() ? 'tag-buttom-cover' : 'tag-buttom'"
-                :size="isShowCover() ? 'default' : 'large'" type="warning" @click="
-                  () => {
-                    view.addTagShow = !view.addTagShow;
-                  }
-                ">
+              <ElButton :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
+                :size="isShowCover(view) ? 'default' : 'large'" type="warning" @click="cmenuClose(item)">
                 <b>
                   {{ item.MovieType ? item.MovieType : "无" }}
                 </b>
               </ElButton>
             </template>
             <template #default>
-              <div v-if="item.MovieType != ''" style="max-width: 400px">
+              <ElCard class="cmenu" :body-style="{ padding: '4px' }">
+                <ElButton class="cmenuButton" @click="cmenuPlay" >
+                  <ElIcon>
+                    <VideoPlay />
+                  </ElIcon>
+                  播放
+                </ElButton>
+                <ElButton class="cmenuButton" @click="cmenuSync"  >
+                  <ElIcon>
+                    <Refresh />
+                  </ElIcon>
+                  同步
+                </ElButton>
+                <ElButton class="cmenuButton" @click="cmenuCode" >
+                  <ElIcon>
+                    <Share />
+                  </ElIcon>
+                  源链接
+                </ElButton>
+                <ElButton class="cmenuButton" @click="cmenuOpenDir"  >
+                  <ElIcon>
+                    <UserFilled />
+                  </ElIcon>
+                  文件夹
+                </ElButton>
+                <ElButton class="cmenuButton" @click="cmenuGetImageList" >
+                  <ElIcon>
+                    <Magnet />
+                  </ElIcon>
+                  刮图
+                </ElButton>
+              </ElCard>
+              <div class="rightBtnPop">
+                <div v-if="item.MovieType != ''" style="max-width: 400px">
                 <ElButton type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px"
                   :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
                   <span style="font-size: 12px">{{ tag }}</span>
@@ -192,7 +225,7 @@
                 <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
                   @select="handleSelectTag" size="small" style="width: 240px">
                   <template #append>
-                    <ElButton size="default" type="primary" :disabled="customerTagEmpty()"
+                    <ElButton size="default" type="primary" :disabled="customerTagEmpty(view)"
                       @click="addCustomerTag(item.Id)" style="font-size: 16px">加
                     </ElButton>
                   </template>
@@ -217,6 +250,7 @@
                   <i class="el-icon-ship icon-style" title="欧美">斯巴达</i>
                 </ElButton>
               </div>
+              </div>
             </template>
           </ElPopover>
           <ElCard class="ecard" shadow="always" :body-style="{
@@ -224,9 +258,9 @@
             margin: '4px 2px',
             background: item.MovieType ? '' : 'rgb(205, 138, 50)',
           }">
-            <div v-if="item" :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'">
-              <el-image style="width: 100%; height: 100%" :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
-                @click="openInfoWindow(item.Id)" fit="contain" lazy />
+            <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
+              <el-image style="width: 100%; height: 100%" :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)"
+                @contextmenu="openMenu(item)" @click="openInfoWindow(item.Id)" fit="contain" lazy />
             </div>
             <div class="image-tool">
               <ElSpace wrap>
@@ -399,7 +433,7 @@
           <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
             @select="handleSelectTag" size="small" style="width: 160px">
             <template #append>
-              <ElButton size="default" type="primary" :disabled="customerTagEmpty()" @click="addThisCustomerTag"
+              <ElButton size="default" type="primary" :disabled="customerTagEmpty(view)" @click="addThisCustomerTag"
                 style="font-size: 12px">加
               </ElButton>
             </template>
@@ -416,77 +450,15 @@
         <el-button type="primary" size="large" @click="editItemSubmit">确 定</el-button>
       </div>
     </ElDialog>
-    <ElDialog width="66%" :modal="true" v-model="view.dialogVisible"
-      :before-close="
-        () => {
-          innerVisibleFalse();
-          view.dialogVisible = false;
-        }
-      " :destroy-on-close="true">
+    <ElDialog width="66%" :modal="true" v-model="view.dialogVisible" :before-close="
+      () => {
+        innerVisibleFalse();
+        view.dialogVisible = false;
+      }
+    " :destroy-on-close="true">
       <div v-if="view.formItem">
         <div>
-          <ElCard id="cmenu" class="cmenu" :body-style="{ padding: '4px' }">
-            
-            <ElRow :span="2">
-              <ElCol>
-                <ElButton class="cmenuButton" @click="cmenuPlay">
-                  <ElIcon>
-                    <VideoPlay />
-                  </ElIcon>
-                  播放
-                </ElButton>
-              </ElCol>
-            </ElRow>
-            <ElRow :span="2">
-              <ElCol>
-                <ElButton class="cmenuButton" @click="cmenuSync">
-                  <ElIcon>
-                    <Refresh />
-                  </ElIcon>
-                  同步
-                </ElButton>
-              </ElCol>
-            </ElRow>
-            <ElRow :span="2">
-              <ElCol>
-                <ElButton class="cmenuButton" @click="cmenuCode">
-                  <ElIcon>
-                    <Share />
-                  </ElIcon>
-                  源链接
-                </ElButton>
-              </ElCol>
-            </ElRow>
 
-            <ElRow :span="2">
-              <ElCol>
-                <ElButton class="cmenuButton" @click="cmenuOpenDir">
-                  <ElIcon>
-                    <UserFilled />
-                  </ElIcon>
-                  打开
-                </ElButton>
-              </ElCol>
-            </ElRow>
-            <ElRow :span="2">
-              <ElCol>
-                <ElButton class="cmenuButton" @click="cmenuGetImageList">
-                  <ElIcon>
-                    <Magnet />
-                  </ElIcon>
-                  刮图
-                </ElButton>
-              </ElCol>
-            </ElRow>
-            <span>{{ view.formItem.Code ?? view.formItem.Name }}
-            </span>
-            &nbsp;&nbsp;
-            <ElButton type="danger" @click="()=>{view.dialogVisible = false}" circle>
-              <ElIcon>
-                <CloseBold />
-              </ElIcon>
-            </ElButton>
-          </ElCard>
           <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 90%; height: auto" @click="
             () => {
               if (view.sourceList && view.sourceList.length > 0) {
@@ -565,14 +537,7 @@
           </div>
         </div>
       </teleport>
-
-      <!-- <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 10px auto">
-        <ElImage style="min-width: 800px;width: auto; margin: 0 auto" :src="item" lazy
-          @click="view.innerVisible = true">
-        </ElImage>
-      </div> -->
     </ElDialog>
-    <!--  -->
   </div>
   <teleport to="body">
     <div v-show="view.videoVisible" style="
@@ -623,7 +588,7 @@
       <!-- <video id="video" :src="view.videoUrl" controls style="right: 0;top: 0;position:absolute">
         您的浏览器不支持 video 标签。
       </video> -->
-      <vue3VideoPlay v-if="view.videoClose" v-bind="options" />
+      <vue3VideoPlay v-if="view.videoClose" v-bind="optionsPC" />
     </div>
   </teleport>
 </template>
@@ -680,9 +645,25 @@ import {
   ElSpace,
 } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
-import { MovieModel, MovieQuery, formMovieTypeChange } from ".";
+import { MovieModel, MovieQuery } from ".";
+import {
+  formMovieTypeChange,
+  optionsPC,
+  javSearch,
+  javCode,
+  notContainTag,
+  fetchSuggestion,
+  customerTagEmpty,
+  fetchTagsLib,
+  notQiBing,
+  notSiBaDa,
+  notNative,
+  formItemTagsChange,
+  notBuBing
+} from "./fileList";
 
 import "vue3-video-play/dist/style.css";
+import './filelist.css'
 
 const target = ref(null);
 const selectText = useTextSelection();
@@ -695,7 +676,6 @@ const loading = ref(false);
 const refreshIndexFlag = ref(false);
 const showStyle = ref("post");
 const systemProperty = useSystemProperty();
-const cmenuShow = ref(false);
 const source = ref("");
 const { copy } = useClipboard({ source });
 const { width: windowWidth, height: windowHeight } = useWindowSize();
@@ -716,32 +696,7 @@ const view = reactive<any>({
   ModelList: [],
   ResultCnt: 0,
 });
-const options = reactive({
-  width: "1200px", //播放器高度
-  height: "700px", //播放器高度
-  color: "#409eff", //主题色
-  title: "", //视频名称
-  src: "", //视频源
-  muted: false, //静音
-  webFullScreen: false,
-  speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
-  autoPlay: false, //自动播放
-  loop: false, //循环播放
-  mirror: false, //镜像画面
-  ligthOff: false, //关灯模式
-  volume: 0.8, //默认音量大小
-  control: true, //是否显示控制
-  controlBtns: [
-    "audioTrack",
-    "quality",
-    "speedRate",
-    "volume",
-    "setting",
-    "pip",
-    "pageFullScreen",
-    "fullScreen",
-  ], //显示所有按钮,
-});
+
 const queryParam = reactive<MovieQuery>(new MovieQuery());
 
 watch(windowWidth, (newWidth) => {
@@ -749,13 +704,13 @@ watch(windowWidth, (newWidth) => {
   if (newHeight > windowHeight.value) {
     newHeight = windowHeight.value;
   }
-  options.width = newWidth - 20 + "px";
-  options.height = newHeight - 14 + "px";
+  optionsPC.width = newWidth - 20 + "px";
+  optionsPC.height = newHeight - 14 + "px";
 });
 watch(windowHeight, (newHeight) => {
   const newWidth = (newHeight * 16) / 9;
-  options.width = newWidth - 20 + "px";
-  options.height = newHeight - 14 + "px";
+  optionsPC.width = newWidth - 20 + "px";
+  optionsPC.height = newHeight - 14 + "px";
 });
 watch(windowScrollHheight, () => {
   if (windowScrollHheight.value > 50) {
@@ -785,14 +740,20 @@ onKeyStroke(["Enter"], (e) => {
 
 const fullScreen = ref(true);
 const isPlaying = ref(false);
+const showMenu = ref(false);
+
+const openMenu = (item) => {
+  console.log(item)
+  showMenu.value = true
+}
 
 const fullPlayVideo = () => {
   if (fullScreen.value) {
-    options.width = windowWidth.value - 20 + "px";
-    options.height = windowHeight.value - 14 + "px";
+    optionsPC.width = windowWidth.value - 20 + "px";
+    optionsPC.height = windowHeight.value - 14 + "px";
   } else {
-    options.width = windowWidth.value * 0.988 + "px";
-    options.height = windowHeight.value * 0.988 + "px";
+    optionsPC.width = windowWidth.value * 0.988 + "px";
+    optionsPC.height = windowHeight.value * 0.988 + "px";
   }
   fullScreen.value = !fullScreen.value;
 };
@@ -804,7 +765,7 @@ const hiddenPlayVideo = () => {
 const closePlayVideo = () => {
   view.videoVisible = false;
   view.videoClose = false;
-  options.src = null;
+  optionsPC.src = null;
   isPlaying.value = false;
 };
 
@@ -813,8 +774,8 @@ const startPlayVideo = () => {
   fullScreen.value = false;
   fullPlayVideo();
   const stream = getFileStream(view.contextmenuTarget.Id);
-  options.title = view.contextmenuTarget.Name;
-  options.src = stream;
+  optionsPC.title = view.contextmenuTarget.Name;
+  optionsPC.src = stream;
   isPlaying.value = true;
   view.videoVisible = true;
 };
@@ -825,50 +786,43 @@ const innerVisibleFalse = () => {
 
 const cmenuSync = async () => {
   await syncThis(view.contextmenuTarget.Id);
-  cmenuShow.value = false;
+
 };
 const cmenuCode = async () => {
-  await javCode(view.contextmenuTarget.Code);
-  cmenuShow.value = false;
+  javCode(view.contextmenuTarget.Code);
+
 };
 const cmenuPlay = async (item?) => {
   if (item) {
     view.contextmenuTarget = item;
   }
   view.videoVisible = true;
-  cmenuShow.value = false;
+
   startPlayVideo();
 };
 const cmenuOpenDir = async () => {
   await openThisFolder(view.contextmenuTarget.Id);
-  cmenuShow.value = false;
+
 };
 const cmenuGetImageList = async () => {
   await getImageList(view.contextmenuTarget.Id);
-  cmenuShow.value = false;
+
 };
 
-const cmenuClose = async () => {
-  cmenuShow.value = false;
+const cmenuClose = async (item) => {
+  view.addTagShow = !view.addTagShow;
+  view.contextmenuTarget = item
 };
 
 const gotoContext = (id: string) => {
   console.log("gotoContext", id);
-};
-const javSearch = (actress: string) => {
-  const url = view.settingInfo.BaseUrl + "/search/" + actress;
-  window.open(url);
-};
-const javCode = (code: string) => {
-  const url = view.settingInfo.BaseUrl + "/" + code;
-  window.open(url);
 };
 
 const removeFormTag = (tag: string) => {
   const idx = view.formItem.Tags.indexOf(tag);
   view.formItem.Tags.splice(idx, 1);
   view.formItem.Name = view.formItem.Name.replaceAll(tag, "");
-  formItemTagsChange();
+  formItemTagsChange(view);
 };
 
 const addThisCustomerTag = () => {
@@ -877,29 +831,12 @@ const addThisCustomerTag = () => {
   }
   view.formItem.Tags.push(view.customerTag);
   view.customerTag = undefined;
-  formItemTagsChange();
+  formItemTagsChange(view);
 };
 
-const formItemTagsChange = () => {
-  let { Name, Tags, FileType } = view.formItem;
-  let newName = "";
-  if (Name.indexOf("《") >= 0) {
-    const startC = Name.substr(0, Name.indexOf("《") + 1);
-    const endC = Name.substr(Name.indexOf("》"), Name.length);
-    newName = startC;
-    if (Tags && Tags.length > 0) {
-      newName += Tags;
-    }
-    newName += endC;
-  } else {
-    newName = Name.replaceAll("." + FileType, "");
-    newName = newName + "《" + Tags + "》" + "." + FileType;
-  }
-  view.formItem.Name = newName;
-};
 
 const editItem = (item: MovieModel) => {
-  cmenuShow.value = false;
+
   view.formItem = item;
   view.dialogFormItemVisible = true;
 };
@@ -941,8 +878,7 @@ const editItemSubmit = async () => {
 
 
 const loadSettingInfo = async () => {
-  const res = await systemProperty.getSettingInfo;
-  //const res = await GetSettingInfo();
+  const res = systemProperty.getSettingInfo;
   if (res) {
     view.settingInfo = { DirsCnt: res.Dirs?.length, ...res };
   }
@@ -971,34 +907,13 @@ const settingSubmit = async () => {
   }
 };
 
-const notContainTag = (tags: string[], tag: string) => {
-  if (!tags || !tag) {
-    return true;
-  }
-  if (tags.indexOf(tag) < 0) {
-    return true;
-  }
-  return false;
-};
+
 
 const gotoSearch = (tag: string) => {
   queryParam.Keyword = tag;
   queryList();
 };
 
-const fetchTagsLib = (queryString, callback) => {
-  const suggrestTagsLib = view.settingInfo?.TagsLib;
-  const results = queryString
-    ? suggrestTagsLib.filter(createFilter(queryString))
-    : suggrestTagsLib;
-  callback(results);
-};
-const customerTagEmpty = () => {
-  if (view.customerTag) {
-    return false;
-  }
-  return true;
-};
 
 const addTag = async (clickId, title) => {
   const res = await AddTag(clickId, title);
@@ -1096,32 +1011,14 @@ const pageLoading = (num: number) => {
   queryList();
 };
 
-const fetchSuggestion = (queryString: string, callback) => {
-  // const sourceSuggestions = view.suggestions;
-  const sourceSuggestions = systemProperty.getSuggestions;
-  if (!sourceSuggestions) {
-    return;
-  }
-  const results = queryString
-    ? sourceSuggestions.filter(createFilter(queryString))
-    : sourceSuggestions;
-  // 调用 callback 返回建议列表的数据
-  const finalResults = results.slice(0, 50);
-  callback(finalResults);
-};
 
-const createFilter = (queryString) => {
-  return (res) => {
-    return res.toLowerCase().indexOf(queryString.toLowerCase()) >= 0;
-  };
-};
 
 const onlyRepeatQuery = () => {
   queryParam.OnlyRepeat = true;
   queryList();
 };
 
-const isShowCover = () => {
+const isShowCover = (view) => {
   if (showStyle.value == "cover") {
     view.showIconNum = 10;
     return true;
@@ -1131,7 +1028,7 @@ const isShowCover = () => {
 };
 
 const openInfoWindow = async (id: string) => {
-  cmenuShow.value = false;
+
   const res = await FindFileInfo(id);
   view.sourceList = [];
   if (res) {
@@ -1276,32 +1173,7 @@ const infoThis = async (id: string) => {
   }
 };
 
-const notQiBing = (movieType: string): boolean => {
-  if (movieType !== "骑兵") {
-    return true;
-  }
-  return false;
-};
 
-const notSiBaDa = (movieType: string): boolean => {
-  if (movieType !== "斯巴达") {
-    return true;
-  }
-  return false;
-};
-const notNative = (movieType: string): boolean => {
-  if (movieType !== "国产") {
-    return true;
-  }
-  return false;
-};
-
-const notBuBing = (movieType: string): boolean => {
-  if (movieType !== "步兵") {
-    return true;
-  }
-  return false;
-};
 
 const keywordChange = (value) => {
   queryParam.Keyword = value;
@@ -1319,15 +1191,7 @@ const handleSizeChange = (pageSize: number) => {
 
 setInterval(heartBeat, 10000);
 
-// const suggestionsInit = () => {
-//   const suggestionsCaches = localStorage.getItem("searchSuggestions");
-//   if (suggestionsCaches) {
-//     view.suggestions = suggestionsCaches.split(",");
-//   }
-// }
-
 onMounted(() => {
-  // suggestionsInit()
   loadSettingInfo();
   queryParam.Page = systemProperty.getSearchParam?.Page;
   queryParam.PageSize = systemProperty.getSearchParam.PageSize;
@@ -1340,174 +1204,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.searchRow {
-  padding: 0px;
-}
-
-.image-tool {
-  margin-top: 2px;
-  margin-bottom: 1px;
-}
-
-.redbackground {
-  background-color: rgb(205, 138, 50);
-}
-
-.icon-style {
-  font-size: 18px;
-  color: red;
-  margin-left: 2px;
-}
-
-.context-text {
-  font-size: 10px;
-  font-size-adjust: inherit;
-  margin-right: 1px;
-  margin-left: 1px;
-  position: relative;
-  height: 46px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.popperClass {
-  height: auto;
-  width: 400px;
-}
-
-.ecard {
-  padding: 0;
-  margin-bottom: 40px;
-  /* background: #e4e6d1; */
-}
-
-.list-item {
-  width: 220px;
-  height: 358px;
-  /* float: left; */
-  /* list-style: none; */
-}
-
-.image-tag {
-  position: fixed;
-}
-
-.img-list-item {
-  width: auto;
-  height: 270px;
-}
-
-.list-item-cover {
-  width: 420px;
-  height: 358px;
-  /* float: left; */
-  /* list-style: none; */
-}
-
-.img-list-item-cover {
-  width: auto;
-  height: 270px;
-}
-
-.pageTool {
-  position: fixed;
-  bottom: 4px;
-  z-index: 99;
-  margin-bottom: 8px;
-}
-
-.up {
-  height: 100%;
-  width: 100%;
-  background-color: #f2f5f6;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
-  text-align: center;
-  line-height: 40px;
-  color: #1989fa;
-}
-
-.tag-area {
-  position: absolute;
-  z-index: 99;
-  opacity: 1;
-  margin: 4px 4px;
-}
-
-.tag-buttom {
-  margin-left: 64px;
-  filter: alpha(opacity=100);
-  position: absolute;
-  z-index: 99;
-  height: 28px;
-  float: right;
-  text-align: justify;
-  text-align-last: justify;
-}
-
-.tag-buttom-cover {
-  margin-left: 156px;
-  filter: alpha(opacity=100);
-  opacity: 1;
-  position: absolute;
-  z-index: 99;
-  margin-top: 2px;
-  float: right;
-  text-align: justify;
-  text-align-last: justify;
-}
-
-.tag-area span {
-  filter: alpha(opacity=90);
-  opacity: 0.9;
-  background: #94df71;
-  margin-bottom: 0px;
-  z-index: 99;
-  height: 28px;
-  color: #000;
-  line-height: 28px;
-}
-
-.icon-button {
-  margin: 1px 2px;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  font-size: 16px;
-  text-align: center;
-}
-
-.mainButtomFloat {
-  top: 0px;
-  opacity: 1;
-  position: fixed;
-  z-index: 99;
-  width: 100%;
-  background: #b8aeae;
-}
-
-.mainButtomRowFloat {
-  margin: 8px auto;
-}
-
-.right-font {
-  font-size: 16px;
-}
-
-.cmenu {
-  padding: 4px;
-  width: 140px;
-  height: auto;
-  border: 1;
-  z-index: 99;
-  position: absolute;
-  background: white;
-  opacity: 1;
-}
-
-.cmenuButton {
-  width: 100%;
-  margin-top: 2px;
-}
 </style>

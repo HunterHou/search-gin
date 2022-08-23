@@ -295,7 +295,8 @@ import {
 import "vant/lib/index.css";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { MovieModel, MovieQuery, formMovieTypeChange } from "../fileList";
+import { MovieModel, MovieQuery } from "../fileList";
+import { formMovieTypeChange } from "../fileList/fileList";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
 import LoadMoreVue from "./LoadMore.vue";
@@ -418,7 +419,7 @@ const deleteFile = async (item: MovieModel) => {
   Dialog.confirm({
     title: "确认删除？",
     message: item.Name
-  }).then(async() => {
+  }).then(async () => {
     const res = await DeleteFile(item.Id)
     if (res.Code == 200) {
       Toast.success('操作成功')
@@ -428,7 +429,7 @@ const deleteFile = async (item: MovieModel) => {
     } else {
       Toast.fail(res.Message)
     }
-  }).catch(()=>{
+  }).catch(() => {
     Toast.fail("取消删除")
   })
 
