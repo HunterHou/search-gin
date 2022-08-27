@@ -215,11 +215,11 @@ showSearch = false;
                 </template>
                 <template #right>
                   <SwipeCell style="align-content:space-between;">
-                    <Tag style="margin-left: 20px;" square size="large" type="danger" @click="deleteFile(item.Id)">删除
+                    <Tag square size="large" type="danger" @click="deleteFile(item.Id)">删除
                     </Tag>
-                    <Tag style="margin-left: 20px;" square size="large" type="primary" @click="showRenameForm(item)">
+                    <Tag square size="large" type="primary" @click="showRenameForm(item)">
                       重命名</Tag>
-                    <Tag style="margin-left: 20px;" square size="large" type="success" @click="syncFile(item.Id)">同步
+                    <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
                     </Tag>
                   </SwipeCell>
                 </template>
