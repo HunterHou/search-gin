@@ -160,7 +160,7 @@
 
 
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
-      style="min-height: 700px">
+      style="min-height: 650px">
       <ElSpace wrap size="default">
         <div :class="isShowCover(view) ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
@@ -190,11 +190,11 @@
                   </ElIcon>
                   播放
                 </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuSync"  >
+                <ElButton class="cmenuButton" @click="cmenuGetImageList" >
                   <ElIcon>
-                    <Refresh />
+                    <Magnet />
                   </ElIcon>
-                  同步
+                  刮图
                 </ElButton>
                 <ElButton class="cmenuButton" @click="cmenuCode" >
                   <ElIcon>
@@ -202,18 +202,19 @@
                   </ElIcon>
                   源链接
                 </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuOpenDir"  >
+                <ElButton class="cmenuButton" @click="cmenuSync"  >
                   <ElIcon>
-                    <UserFilled />
+                    <Refresh />
                   </ElIcon>
-                  文件夹
+                  同步
                 </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuGetImageList" >
+                <ElButton class="cmenuButton" @click="cmenuDelete"  >
                   <ElIcon>
-                    <Magnet />
+                    <DeleteFilled />
                   </ElIcon>
-                  刮图
+                  删除
                 </ElButton>
+                
               </ElCard>
               <div class="rightBtnPop">
                 <div v-if="item.MovieType != ''" style="max-width: 400px">
@@ -236,7 +237,7 @@
                   </template>
                 </ElAutocomplete>
               </div>
-              <div v-if="item.MovieType == ''" style="float: right">
+              <div v-if="item.MovieType == ''" style="float: right" class="rightBtnPop">
                 <ElButton plain size="default" @click="setMovieType(item.Id, 2)">
                   <i class="el-icon-bicycle icon-style" title="骑兵">骑兵</i>
                 </ElButton>
@@ -727,7 +728,7 @@ watch(windowScrollHheight, () => {
 });
 watch(selectText.text, (newVal) => {
   if (newVal && newVal.length > 3) {
-    queryParam.Keyword = newVal;
+    // queryParam.Keyword = newVal;
   }
 });
 
@@ -788,6 +789,9 @@ const cmenuSync = async () => {
   await syncThis(view.contextmenuTarget.Id);
 
 };
+const cmenuDelete = ()=>{
+  deleteThis(view.contextmenuTarget.Id)
+}
 const cmenuCode = async () => {
   javCode(view.contextmenuTarget.Code);
 
@@ -797,7 +801,6 @@ const cmenuPlay = async (item?) => {
     view.contextmenuTarget = item;
   }
   view.videoVisible = true;
-
   startPlayVideo();
 };
 const cmenuOpenDir = async () => {
@@ -1132,7 +1135,7 @@ const heartBeat = async () => {
     });
 };
 
-const deleteThis = async (id: string, a?: number) => {
+const deleteThis = async (id: string) => {
   ElMessageBox.alert("此操作将永久删除该文件, 是否继续?", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
