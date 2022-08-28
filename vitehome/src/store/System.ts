@@ -24,6 +24,24 @@ const SystemProperty = defineStore({
       logo:"",
       url: "/mfilelist",
     },
+    videoOptions:{
+      autoPlay:true,
+      volume:0.6,
+      control:true,
+      loop:true,
+      muted:true,
+      controlBtns: [
+        "audioTrack",
+        "quality",
+        "speedRate",
+        "volume",
+        "setting",
+        "pip",
+        "pageFullScreen",
+        "fullScreen",
+      ]
+
+    },
     FileSearchParam: {
       Page: 1,
       PageSize: 14,

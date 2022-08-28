@@ -4,9 +4,6 @@
       <div class="up">UP</div>
     </ElBacktop>
 
-
-
-
     <ElButton style="position: fixed; bottom: 300px; z-index: 99; left: 5px" size="default" type="danger" round
       v-if="!loading && view.ResultCnt > queryParam.PageSize" @click="pageLoading(-1)"><i class="el-icon-back"></i>上一頁
     </ElButton>
@@ -173,7 +170,8 @@
               </ElTag>
             </li>
           </div>
-          <ElPopover :teleported="true" placement="bottom-start" popperClass="tagPopover" width="auto" v-model="view.addTagShow" trigger="click" :auto-close="0">
+          <ElPopover :teleported="true" placement="bottom-start" popperClass="tagPopover" width="auto"
+            v-model="view.addTagShow" trigger="click" :auto-close="0">
             <template #reference>
               <ElButton :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
                 :size="isShowCover(view) ? 'default' : 'large'" type="warning" @click="cmenuClose(item)">
@@ -184,73 +182,73 @@
             </template>
             <template #default>
               <ElCard class="cmenu" :body-style="{ padding: '4px' }">
-                <ElButton class="cmenuButton" @click="cmenuPlay" >
+                <ElButton class="cmenuButton" @click="cmenuPlay">
                   <ElIcon>
                     <VideoPlay />
                   </ElIcon>
                   播放
                 </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuGetImageList" >
+                <ElButton class="cmenuButton" @click="cmenuGetImageList">
                   <ElIcon>
                     <Magnet />
                   </ElIcon>
                   刮图
                 </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuCode" >
+                <ElButton class="cmenuButton" @click="cmenuCode">
                   <ElIcon>
                     <Share />
                   </ElIcon>
                   源链接
                 </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuSync"  >
+                <ElButton class="cmenuButton" @click="cmenuSync">
                   <ElIcon>
                     <Refresh />
                   </ElIcon>
                   同步
                 </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuDelete"  >
+                <ElButton class="cmenuButton" @click="cmenuDelete">
                   <ElIcon>
                     <DeleteFilled />
                   </ElIcon>
                   删除
                 </ElButton>
-                
+
               </ElCard>
               <div class="rightBtnPop">
                 <div v-if="item.MovieType != ''" style="max-width: 400px">
-                <ElButton type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px"
-                  :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
-                  <span style="font-size: 12px">{{ tag }}</span>
-                </ElButton>
-                <br /><br />
-                <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
-                  @select="handleSelectTag" size="small" style="width: 240px">
-                  <template #append>
-                    <ElButton size="default" type="primary" :disabled="customerTagEmpty(view)"
-                      @click="addCustomerTag(item.Id)" style="font-size: 16px">加
-                    </ElButton>
-                  </template>
-                  <template #default="{ item }">
-                    <div v-if="item" style="font-size: 16px" class="value">
-                      {{ item }}
-                    </div>
-                  </template>
-                </ElAutocomplete>
-              </div>
-              <div v-if="item.MovieType == ''" style="float: right" class="rightBtnPop">
-                <ElButton plain size="default" @click="setMovieType(item.Id, 2)">
-                  <i class="el-icon-bicycle icon-style" title="骑兵">骑兵</i>
-                </ElButton>
-                <ElButton plain size="default" @click="setMovieType(item.Id, 1)">
-                  <i class="el-icon-sunny icon-style" title="步兵">步兵</i>
-                </ElButton>
-                <ElButton plain size="default" @click="setMovieType(item.Id, 4)">
-                  <i class="el-icon-location icon-style" title="国产">国产</i>
-                </ElButton>
-                <ElButton plain size="default" @click="setMovieType(item.Id, 3)">
-                  <i class="el-icon-ship icon-style" title="欧美">斯巴达</i>
-                </ElButton>
-              </div>
+                  <ElButton type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px"
+                    :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
+                    <span style="font-size: 12px">{{ tag }}</span>
+                  </ElButton>
+                  <br /><br />
+                  <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
+                    @select="handleSelectTag" size="small" style="width: 240px">
+                    <template #append>
+                      <ElButton size="default" type="primary" :disabled="customerTagEmpty(view)"
+                        @click="addCustomerTag(item.Id)" style="font-size: 16px">加
+                      </ElButton>
+                    </template>
+                    <template #default="{ item }">
+                      <div v-if="item" style="font-size: 16px" class="value">
+                        {{ item }}
+                      </div>
+                    </template>
+                  </ElAutocomplete>
+                </div>
+                <div v-if="item.MovieType == ''" style="float: right" class="rightBtnPop">
+                  <ElButton plain size="default" @click="setMovieType(item.Id, 2)">
+                    <i class="el-icon-bicycle icon-style" title="骑兵">骑兵</i>
+                  </ElButton>
+                  <ElButton plain size="default" @click="setMovieType(item.Id, 1)">
+                    <i class="el-icon-sunny icon-style" title="步兵">步兵</i>
+                  </ElButton>
+                  <ElButton plain size="default" @click="setMovieType(item.Id, 4)">
+                    <i class="el-icon-location icon-style" title="国产">国产</i>
+                  </ElButton>
+                  <ElButton plain size="default" @click="setMovieType(item.Id, 3)">
+                    <i class="el-icon-ship icon-style" title="欧美">斯巴达</i>
+                  </ElButton>
+                </div>
               </div>
             </template>
           </ElPopover>
@@ -352,7 +350,7 @@
                             <Ship />
                           </ElIcon>欧美
                         </ElDropdownItem>
-                        <ElDropdownItem @click="deleteThis(item.Id, 2)">
+                        <ElDropdownItem @click="deleteThis(item.Id)">
                           <ElIcon type="info" plain class="icon-button">
                             <DeleteFilled />
                           </ElIcon>删除
@@ -589,7 +587,15 @@
       <!-- <video id="video" :src="view.videoUrl" controls style="right: 0;top: 0;position:absolute">
         您的浏览器不支持 video 标签。
       </video> -->
-      <vue3VideoPlay v-if="view.videoClose" v-bind="optionsPC" />
+      <div>
+        <ElSpace wrap size="default">
+          <vue3VideoPlay v-if="view.videoClose" v-bind="optionsPC" @volumechange="volumechange" @play="onPlay" />
+          <ElCard v-for="play in view.playlist" :key="play" style="width:250px;height: auto;">
+            <ElImage :src="getPng(play.Id)" @click="startPlayVideo(play)"></ElImage>
+            <span class="context-text" style="overflow: hidden; text-overflow: ellipsis;">{{ play.Name }}</span>
+          </ElCard>
+        </ElSpace>
+      </div>
     </div>
   </teleport>
 </template>
@@ -645,11 +651,10 @@ import {
   ElCard,
   ElSpace,
 } from "element-plus";
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, pushScopeId, reactive, ref, watch } from "vue";
 import { MovieModel, MovieQuery } from ".";
 import {
   formMovieTypeChange,
-  optionsPC,
   javSearch,
   javCode,
   notContainTag,
@@ -685,6 +690,7 @@ const searchStyle = ref({});
 
 const view = reactive<any>({
   videoUrl: null,
+  playlist: [],
   videoVisible: false,
   videoClose: false,
   innerVisible: false,
@@ -699,6 +705,24 @@ const view = reactive<any>({
 });
 
 const queryParam = reactive<MovieQuery>(new MovieQuery());
+
+const optionsPC = reactive({
+  width: "1200px", //播放器高度
+  height: "700px", //播放器高度
+  color: "#409eff", //主题色
+  title: "", //视频名称
+  src: "", //视频源
+  muted: false, //静音
+  webFullScreen: false,
+  speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
+  autoPlay: true, //自动播放
+  loop: true, //循环播放
+  mirror: false, //镜像画面
+  ligthOff: true, //关灯模式
+  volume: 0.6, //默认音量大小systemProperty.videoOptions.volume
+  control: true, //是否显示控制
+  controlBtns: systemProperty.videoOptions.controlBtns, //显示所有按钮,
+});
 
 watch(windowWidth, (newWidth) => {
   let newHeight = (newWidth * 9) / 16;
@@ -770,16 +794,40 @@ const closePlayVideo = () => {
   isPlaying.value = false;
 };
 
-const startPlayVideo = () => {
+const playSource = async (item) => {
+  const stream = getFileStream(item.Id);
+  optionsPC.title = item.Name;
+  optionsPC.src = stream;
+
+  const palyParam = {
+    ...queryParam,
+    PageSize:1000,
+    Page:1,
+    Keyword: view.contextmenuTarget.Actress
+  }
+  const res = await QueryFileList(palyParam)
+  const model = res as unknown as ResultList;
+  view.playlist = []
+  view.playlist.push(item)
+  view.playlist = [...view.playlist, ...model.Data]
+}
+const startPlayVideo = (item: MovieModel) => {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0
   view.videoClose = true;
   fullScreen.value = false;
-  fullPlayVideo();
-  const stream = getFileStream(view.contextmenuTarget.Id);
-  optionsPC.title = view.contextmenuTarget.Name;
-  optionsPC.src = stream;
+  playSource(item)
   isPlaying.value = true;
   view.videoVisible = true;
 };
+
+
+
+const onPlay = () => {
+  optionsPC.muted = false
+  optionsPC.volume = systemProperty.videoOptions.volume
+  console.log(optionsPC)
+}
 
 const innerVisibleFalse = () => {
   view.innerVisible = false;
@@ -789,7 +837,7 @@ const cmenuSync = async () => {
   await syncThis(view.contextmenuTarget.Id);
 
 };
-const cmenuDelete = ()=>{
+const cmenuDelete = () => {
   deleteThis(view.contextmenuTarget.Id)
 }
 const cmenuCode = async () => {
@@ -801,7 +849,7 @@ const cmenuPlay = async (item?) => {
     view.contextmenuTarget = item;
   }
   view.videoVisible = true;
-  startPlayVideo();
+  startPlayVideo(view.contextmenuTarget);
 };
 const cmenuOpenDir = async () => {
   await openThisFolder(view.contextmenuTarget.Id);
@@ -839,7 +887,6 @@ const addThisCustomerTag = () => {
 
 
 const editItem = (item: MovieModel) => {
-
   view.formItem = item;
   view.dialogFormItemVisible = true;
 };

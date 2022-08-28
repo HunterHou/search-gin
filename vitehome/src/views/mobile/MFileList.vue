@@ -85,20 +85,24 @@ showSearch = false;
     <MobileBar></MobileBar>
     <teleport to="body">
       <div v-show="view.videoVisible" id="videoDiv" style="
-          width: 100vw;
-          height: 100vh;
+          width: 100%;
+          height: 100%;
           z-index: 9999;
           position: fixed;
           overflow: auto;
           background-color: rgba(0, 0, 0, 0.7);
-          float: left;
         ">
-        <div style="right: 10vw; height: 10vh; position: absolute; z-index: 9999">
+        <div style="right: 10vw; height: 10vh; position: relative;top:40px;right: 20px; z-index: 9999">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-          <ElButton type="primary" @click="transformThis">旋转</ElButton>
         </div>
-        <vue3VideoPlay v-if="view.videoPlay" v-bind="options" />
+        <vue3VideoPlay v-if="view.videoPlay" v-bind="options" @volumechange="volumechange" />
+        <SwipeCell>
+          <Image v-for="item in view.playlist" :key="item.Id" :src="getPng(item.Id)" style=" height: auto;
+              width: 180px;margin: auto;" @click="openFile(item)">
+          </Image>
+        </SwipeCell>
+
       </div>
     </teleport>
     <teleport to="body">
@@ -262,7 +266,17 @@ showSearch = false;
 </template>
 
 <script setup lang="ts">
-import { AddTag, CloseTag, DeleteFile, DownImageList, FileRename, QueryDirImageBase64, QueryFileList, RefreshIndex, SyncFileInfo } from "@/api/file";
+import {
+  AddTag,
+  CloseTag,
+  DeleteFile,
+  DownImageList,
+  FileRename,
+  QueryDirImageBase64,
+  QueryFileList,
+  RefreshIndex,
+  SyncFileInfo
+} from "@/api/file";
 import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
@@ -294,7 +308,7 @@ import "vant/lib/index.css";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { MovieModel, MovieQuery } from "../fileList";
-import { formMovieTypeChange } from "../fileList/fileList";
+import { formMovieTypeChange, volumechange } from "../fileList/fileList";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
 import LoadMoreVue from "./LoadMore.vue";
@@ -313,6 +327,7 @@ const refreshing = ref(false);
 const showRename = ref(false);
 const view = reactive({
   settingInfo: new SettingInfo(),
+  playlist: [],
   queryParam: {
     Page: 1,
     PageSize: 30,
@@ -334,30 +349,20 @@ const view = reactive({
 
 const options = reactive({
   width: "100%", //播放器高度
-  height: "100%", //播放器高度
+  height: 'auto', //播放器高度
   color: "#409eff", //主题色
   title: "", //视频名称
   src: "http://192.168.3.38:8083/api/file/F~emby~emby-rename~井川ゆい柳田やよい~YeLLOW~[川い田よ]EO29人中しンィスッン 川い柳やい~[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv", //视频源
   muted: false, //静音
   webFullScreen: false,
   speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
-
-  autoPlay: true, //自动播放
+  autoPlay: systemProperty.videoOptions.autoPlay, //自动播放
   loop: true, //循环播放
   mirror: false, //镜像画面
   ligthOff: false, //关灯模式
-  volume: 0.8, //默认音量大小
+  volume: systemProperty.videoOptions.volume, //默认音量大小
   control: true, //是否显示控制
-  controlBtns: [
-    "audioTrack",
-    "quality",
-    "speedRate",
-    "volume",
-    "setting",
-    "pip",
-    "pageFullScreen",
-    "fullScreen",
-  ], //显示所有按钮,
+  controlBtns: systemProperty.videoOptions.controlBtns, //显示所有按钮,
 });
 
 watch(loadingList, () => {
@@ -411,8 +416,6 @@ const showRenameForm = (item: MovieModel) => {
 
 }
 
-
-
 const deleteFile = async (item: MovieModel) => {
   Dialog.confirm({
     title: "确认删除？",
@@ -460,18 +463,18 @@ const addCurrentFileTag = async (tag: string) => {
   }
 }
 
-const transformThis = () => {
-  const videoDiv = document.getElementById("videoDiv");
-  videoDiv.style.position = "fixed";
-  videoDiv.style.width = "100vw";
-  videoDiv.style.height = "100vh";
-  if (isTransform.value) {
-    videoDiv.style.transform = "rotate(90deg)";
-  } else {
-    videoDiv.style.transform = "rotate(0deg)";
-  }
-  isTransform.value = !isTransform.value;
-};
+// const transformThis = () => {
+//   const videoDiv = document.getElementById("videoDiv");
+//   videoDiv.style.position = "fixed";
+//   videoDiv.style.width = "100vw";
+//   videoDiv.style.height = "100vh";
+//   if (isTransform.value) {
+//     videoDiv.style.transform = "rotate(90deg)";
+//   } else {
+//     videoDiv.style.transform = "rotate(0deg)";
+//   }
+//   isTransform.value = !isTransform.value;
+// };
 
 const loadSettingInfo = async () => {
   const res = await GetSettingInfo();
@@ -569,15 +572,29 @@ const closePlayVideo = () => {
   isPlaying.value = false;
 };
 
+const playSource = async (item) => {
+  const stream = getFileStream(item.Id);
+  options.title = item.Name;
+  options.src = stream;
+
+  const palyParam = {
+    ...view.queryParam,
+    PageSize: 1000,
+    Page: 1,
+    Keyword: item.Actress
+  }
+  const res = await QueryFileList(palyParam)
+  const model = res as unknown as ResultList;
+  view.playlist = []
+  view.playlist = [...view.playlist, ...model.Data]
+}
+
 const openFile = (item: any) => {
   view.videoPlay = true;
   view.currentFile = item;
   isPlaying.value = true;
   view.videoVisible = true;
-  const stream = getFileStream(item.Id);
-  console.log(stream);
-  options.title = item.Name;
-  options.src = stream;
+  playSource(item)
 };
 const queryList = async (pageStart?: number) => {
   let queryParam = { ...view.queryParam };
@@ -649,7 +666,7 @@ onMounted(() => {
   initQuery()
   onSearch();
   options.src = null;
-  transformThis();
+  // transformThis();
   loadSettingInfo();
 });
 
