@@ -590,6 +590,7 @@ const playSource = async (item) => {
 }
 
 const openFile = (item: any) => {
+  view.videoVisible = false;
   view.videoPlay = true;
   view.currentFile = item;
   isPlaying.value = true;
