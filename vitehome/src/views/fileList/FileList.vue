@@ -181,39 +181,6 @@
               </ElButton>
             </template>
             <template #default>
-              <ElCard class="cmenu" :body-style="{ padding: '4px' }">
-                <ElButton class="cmenuButton" @click="cmenuPlay">
-                  <ElIcon>
-                    <VideoPlay />
-                  </ElIcon>
-                  播放
-                </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuGetImageList">
-                  <ElIcon>
-                    <Magnet />
-                  </ElIcon>
-                  刮图
-                </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuCode">
-                  <ElIcon>
-                    <Share />
-                  </ElIcon>
-                  源链接
-                </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuSync">
-                  <ElIcon>
-                    <Refresh />
-                  </ElIcon>
-                  同步
-                </ElButton>
-                <ElButton class="cmenuButton" @click="cmenuDelete">
-                  <ElIcon>
-                    <DeleteFilled />
-                  </ElIcon>
-                  删除
-                </ElButton>
-
-              </ElCard>
               <div class="rightBtnPop">
                 <div v-if="item.MovieType != ''" style="max-width: 400px">
                   <ElButton type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px"
@@ -257,10 +224,79 @@
             margin: '4px 2px',
             background: item.MovieType ? '' : 'rgb(205, 138, 50)',
           }">
-            <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
-              <el-image style="width: 100%; height: 100%" :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)"
-                @contextmenu="openMenu(item)" @click="openInfoWindow(item.Id)" fit="contain" lazy />
-            </div>
+            <ElPopover :teleported="true" placement="bottom-start" popperClass="cmenuPopover" width="400px"
+              v-model="view.addTagShow" trigger="click" :auto-close="0">
+              <template #reference>
+
+                <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
+                  <el-image style="width: 100%; height: 100%"
+                    :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)" @contextmenu="openInfoWindow(item.Id)"
+                    @click="() => { view.addTagShow = true }" fit="contain" lazy />
+                </div>
+                <!-- <ElImage style="width: 100%; height: 100%" :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)"
+                  @contextmenu="openInfoWindow(item.Id)" @close="() => { view.addTagShow = true }" fit="contain" lazy /> -->
+              </template>
+              <template #default>
+                <ElCard class="cmenu" :body-style="{ padding: '4px' }">
+                  <ElButton class="cmenuButton" @click="cmenuPlay">
+                    <ElIcon>
+                      <VideoPlay />
+                    </ElIcon>
+                    播放
+                  </ElButton>
+                  <ElButton class="cmenuButton" @click="cmenuGetImageList">
+                    <ElIcon>
+                      <Magnet />
+                    </ElIcon>
+                    刮图
+                  </ElButton>
+                  <ElButton class="cmenuButton" @click="cmenuCode">
+                    <ElIcon>
+                      <Share />
+                    </ElIcon>
+                    源链接
+                  </ElButton>
+                  <ElButton class="cmenuButton" @click="cmenuSync">
+                    <ElIcon>
+                      <Refresh />
+                    </ElIcon>
+                    同步
+                  </ElButton>
+                  <ElButton class="cmenuButton" @click="cmenuDelete">
+                    <ElIcon>
+                      <DeleteFilled />
+                    </ElIcon>
+                    删除
+                  </ElButton>
+                  <ElButton class="cmenuButton" @click="playThis(item.Id)">
+                    <ElIcon>
+                      <VideoPlay />
+                    </ElIcon>
+                    播放器
+                  </ElButton>
+                  <ElButton plain title="骑兵" @click="setMovieType(item.Id, 2)">
+                    <ElIcon>
+                      <Bicycle />
+                    </ElIcon>骑兵
+                  </ElButton>
+                  <ElButton plain title="步兵" @click="setMovieType(item.Id, 1)">
+                    <ElIcon>
+                      <Sunny />
+                    </ElIcon>步兵
+                  </ElButton>
+                  <ElButton plain title="国产" @click="setMovieType(item.Id, 4)">
+                    <ElIcon>
+                      <Location />
+                    </ElIcon>国产
+                  </ElButton>
+                  <ElButton plain title="欧美" @click="setMovieType(item.Id, 3)">
+                    <ElIcon>
+                      <Ship />
+                    </ElIcon>欧美
+                  </ElButton>
+                </ElCard>
+              </template>
+            </ElPopover>
             <div class="image-tool">
               <ElSpace wrap>
                 <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
@@ -801,8 +837,8 @@ const playSource = async (item) => {
 
   const palyParam = {
     ...queryParam,
-    PageSize:1000,
-    Page:1,
+    PageSize: 1000,
+    Page: 1,
     Keyword: view.contextmenuTarget.Actress
   }
   const res = await QueryFileList(palyParam)
