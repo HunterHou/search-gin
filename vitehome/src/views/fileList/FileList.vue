@@ -174,7 +174,7 @@
             v-model="view.addTagShow" trigger="click" :auto-close="0">
             <template #reference>
               <ElButton :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
-                :size="isShowCover(view) ? 'default' : 'large'" type="warning" >
+                :size="isShowCover(view) ? 'default' : 'large'" type="warning">
                 <b>
                   {{ item.MovieType ? item.MovieType : "无" }}
                 </b>
@@ -224,17 +224,23 @@
             margin: '4px 2px',
             background: item.MovieType ? '' : 'rgb(205, 138, 50)',
           }">
-            <ElPopover :teleported="true" placement="bottom-start" popperClass="cmenuPopover" width="250px"
-              v-model="view.addTagShow" trigger="click" :auto-close="0">
+            <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
+              <div style="position: absolute;width: 100%; height: 150px;margin-bottom:-150px;z-index: 1;"
+                @click="openInfoWindow(item.Id)">
+              </div>
+              <ElImage style="width: 100%; height: 100%;z-index: 0;"
+                :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)" fit="contain" lazy />
+            </div>
+            <ElPopover :teleported="true" placement="bottom-start" width="280px" 
+              v-model="view.toolShow" trigger="hover" :auto-close="0">
               <template #reference>
-                <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
-                  <el-image style="width: 100%; height: 100%"
-                    :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)"
-                    @click="() => { view.addTagShow = true }" fit="contain" lazy />
+                <div style="position: absolute;width: 100%; height: 60px;margin-top:-60px;z-index: 1;"
+                @click="()=>{view.toolShow=true}"
+                  >
                 </div>
               </template>
               <template #default>
-                <ElCard class="cmenu" :body-style="{ padding: '4px' }">
+                <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="()=>{view.toolShow=false}">
                   <ElRow>
                     <ElButton type="success" plain class="cmenuButton" @click="cmenuPlay(item)">
                       <ElIcon>
@@ -246,7 +252,7 @@
                         <VideoPlay />
                       </ElIcon>
                     </ElButton>
-                    <ElButton type="success" plain class="cmenuButton" @click="javCode(item)">
+                    <ElButton type="success" plain class="cmenuButton" @click="javCode(item.Code)">
                       <ElIcon>
                         <Share />
                       </ElIcon>
@@ -256,7 +262,7 @@
                         <FolderOpened />
                       </ElIcon>
                     </ElButton>
-                    <ElButton plain type="success" @click="openInfoWindow(item.Id)">
+                    <ElButton plain type="success" @click="previewPicture(item.Id)">
                       <ElIcon>
                         <QuestionFilled />
                       </ElIcon>
@@ -436,7 +442,7 @@
                       {{ item.Name }}</span>
                   </template>
                 </ElPopover>
-                <span @click="openInfoWindow(item.Id)">{{ item.Name }}</span>
+                <span>{{ item.Name }}</span>
               </div>
             </div>
           </ElCard>
@@ -500,16 +506,9 @@
       }
     " :destroy-on-close="true">
       <div v-if="view.formItem">
-        <div>
-
-          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 90%; height: auto" @click="
-            () => {
-              if (view.sourceList && view.sourceList.length > 0) {
-                view.innerVisible = true;
-              }
-            }
-          " />
-
+        <div style="margin-top:-40px">
+          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 680px; height: auto"
+            @click="previewPicture(view.formItem.Id)" />
           <ElRow :gutter="24">
             <ElCol :span="4" tyle="text-align:right"> YY： </ElCol>
             <ElCol :span="8" tyle="text-align:right">
@@ -558,8 +557,11 @@
           <el-divider></el-divider>
         </div>
       </div>
-      <teleport to="body">
-        <div v-show="view.innerVisible" style="
+
+    </ElDialog>
+  </div>
+  <teleport to="body">
+    <div v-show="view.innerVisible" style="
             width: 100%;
             height: 100%;
             z-index: 9999;
@@ -567,32 +569,21 @@
             position: fixed;
             overflow: auto;
           " @click="innerVisibleFalse">
-          <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
-            <ElImage style="
+      <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
+        <ElImage style="
                 min-width: 1200px;
                 width: auto;
                 margin: 0 auto;
                 opacity: 9;
                 z-index: 9999;
               " :src="item">
-              @click.stop="innerVisibleFalse"
-            </ElImage>
-          </div>
-        </div>
-      </teleport>
-    </ElDialog>
-  </div>
+          @click.stop="innerVisibleFalse"
+        </ElImage>
+      </div>
+    </div>
+  </teleport>
   <teleport to="body">
-    <div v-show="view.videoVisible" style="
-        width: 100%;
-        height: 100%;
-        z-index: 9999;
-        top: 0;
-        position: fixed;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.7);
-        float: left;
-      " id="videoDiv">
+    <div v-show="view.videoVisible" class="playDiv" id="videoDiv">
       <div style="
           top: 0;
           height: 2rem;
@@ -709,7 +700,8 @@ import {
   notSiBaDa,
   notNative,
   formItemTagsChange,
-  notBuBing
+  notBuBing,
+  volumechange
 } from "./fileList";
 
 import "vue3-video-play/dist/style.css";
@@ -756,15 +748,16 @@ const optionsPC = reactive({
   color: "#409eff", //主题色
   title: "", //视频名称
   src: "", //视频源
-  muted: false, //静音
+  muted: true, //静音
+  preload: true,
   webFullScreen: false,
-  speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
-  autoPlay: true, //自动播放
+  speedRate: ["1.0", "1.25", "1.5", "2.0"], //播放倍速
+  autoPlay: systemProperty.videoOptions.autoPlay, //自动播放
   loop: true, //循环播放
   mirror: false, //镜像画面
   ligthOff: true, //关灯模式
-  volume: 0.6, //默认音量大小systemProperty.videoOptions.volume
-  control: true, //是否显示控制
+  volume: systemProperty.videoOptions.volume, //默认音量大小
+  control: systemProperty.videoOptions.control, //是否显示控制
   controlBtns: systemProperty.videoOptions.controlBtns, //显示所有按钮,
 });
 
@@ -811,9 +804,10 @@ const fullScreen = ref(true);
 const isPlaying = ref(false);
 const showMenu = ref(false);
 
-const openMenu = (item) => {
-  console.log(item)
-  showMenu.value = true
+const previewPicture = (id: string) => {
+
+  loadDirInfo(id, true)
+  view.innerVisible = true;
 }
 
 const fullPlayVideo = () => {
@@ -845,7 +839,7 @@ const playSource = async (item) => {
 
   const palyParam = {
     ...queryParam,
-    PageSize: 1000,
+    PageSize: 100,
     Page: 1,
     Keyword: item.Actress
   }
@@ -1042,7 +1036,7 @@ const queryList = async (params?: any) => {
   if (res) {
     loading.value = false;
     const model = res as unknown as ResultList;
-    model.Data.map((item) => {
+    model && model.Data && model.Data.map((item) => {
       if (item.Code == item.Actress) {
         item.Code = "";
         item.Actress = "";
@@ -1098,16 +1092,15 @@ const isShowCover = (view) => {
 const openInfoWindow = async (id: string) => {
 
   const res = await FindFileInfo(id);
-  view.sourceList = [];
   if (res) {
     view.formItem = res;
     view.contextmenuTarget = res;
     view.dialogVisible = true;
-    loadDirInfo(view.formItem.Id, true);
   }
 };
 
 const loadDirInfo = async (id: string, loading: boolean) => {
+  view.sourceList = [];
   const res = await QueryDirImageBase64(id);
   if (res && res.length > 0) {
     view.imageList = [];

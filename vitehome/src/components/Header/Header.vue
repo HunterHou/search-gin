@@ -6,7 +6,6 @@ import { useRouter } from 'vue-router'
 import { staticRoutes } from '../../route'
 import { useSystemProperty } from '../../store/System'
 import { ref } from 'vue'
-import { on } from 'events';
 const { push } = useRouter()
 const systemProperty = useSystemProperty()
 const activeIndex = ref('1')

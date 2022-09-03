@@ -12,13 +12,13 @@ const { currentRoute } = useRouter()
 watch(currentRoute, () => {
 
   const routerName = currentRoute.value?.meta?.title as string
-  console.log('app', currentRoute.value)
+  // console.log('app', currentRoute.value)
   if (routerName) {
     title.value = routerName
   }
 })
 const key = computed(() => {
-  console.log('key', useRoute().path)
+  // console.log('key', useRoute().path)
   return useRoute().path
 })
 
