@@ -231,16 +231,15 @@
               <ElImage style="width: 100%; height: 100%;z-index: 0;"
                 :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)" fit="contain" lazy />
             </div>
-            <ElPopover :teleported="true" placement="bottom-start" width="280px" 
-              v-model="view.toolShow" trigger="click" :auto-close="0">
+            <ElPopover :teleported="true" placement="bottom-start" width="280px" v-model="view.toolShow" trigger="click"
+              :auto-close="0">
               <template #reference>
                 <div style="position: absolute;width: 100%; height: 60px;margin-top:-60px;z-index: 1;"
-                @click="()=>{view.toolShow=true}"
-                  >
+                  @click="() => { view.toolShow = true }">
                 </div>
               </template>
               <template #default>
-                <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="()=>{view.toolShow=false}">
+                <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="() => { view.toolShow = false }">
                   <ElRow>
                     <ElButton type="success" plain class="cmenuButton" @click="cmenuPlay(item)">
                       <ElIcon>
@@ -427,6 +426,7 @@
                     <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
                     <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                     <span style="color: red">【{{ item.SizeStr }}】</span>
+                    
                     {{
                         useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
                           locales: "zh-cn",
@@ -442,7 +442,8 @@
                       {{ item.Name }}</span>
                   </template>
                 </ElPopover>
-                <span>{{ item.Name }}</span>
+
+                <span> &nbsp;{{ item.Name }}</span>
               </div>
             </div>
           </ElCard>
@@ -457,7 +458,7 @@
       :close-on-click-modal="false">
       <ElForm label-position="right" :model="view.formItem" size="large" label-width="18%">
         <ElFormItem label="类型">
-          <el-radio-group v-model="view.formItem.MovieType" @change="formMovieTypeChange" size="large">
+          <el-radio-group v-model="view.formItem.MovieType" @change="formMovieTypeChange(view)" size="large">
             <el-radio-button label="">无</el-radio-button>
             <el-radio-button label="骑兵">骑</el-radio-button>
             <el-radio-button label="步兵">步</el-radio-button>

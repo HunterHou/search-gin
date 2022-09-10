@@ -22,13 +22,14 @@ export const formItemTagsChange = (view) => {
 };
 
 export const formMovieTypeChange = (view: any) => {
-  let { MovieType, originName, FileType } = view.currentFile;
+  console.log(view.formItem)
+  let { MovieType, Name, FileType } = view.formItem;
   let newName = "";
-  if (originName.indexOf("{{") >= 0) {
-    const startC = originName.substr(0, originName.indexOf("{{"));
-    const endC = originName.substr(
-      originName.indexOf("}}") + 2,
-      originName.length
+  if (Name.indexOf("{{") >= 0) {
+    const startC = Name.substr(0, Name.indexOf("{{"));
+    const endC = Name.substr(
+      Name.indexOf("}}") + 2,
+      Name.length
     );
     newName = startC;
     if (MovieType && MovieType !== "") {
@@ -36,10 +37,10 @@ export const formMovieTypeChange = (view: any) => {
     }
     newName += endC;
   } else {
-    newName = originName.replaceAll("." + FileType, "");
+    newName = Name.replaceAll("." + FileType, "");
     newName = newName + "{{" + MovieType + "}}" + "." + FileType;
   }
-  view.currentFile.originName = newName;
+  view.formItem.Name = newName;
 };
 
 export const javSearch = (actress: string) => {

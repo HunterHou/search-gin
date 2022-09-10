@@ -1141,8 +1141,8 @@ func WalkInnter(baseDir string, types []string, totalSize int64) ([]datamodels.M
 			}
 		}
 	} else {
-		emptyFile, _ := os.Stat(baseDir)
-		if emptyFile.ModTime().Day() == (time.Now().Day() - 1) {
+		emptyFile, er := os.Stat(baseDir)
+		if er == nil && emptyFile.ModTime().Day() == (time.Now().Day()-1) {
 			os.Remove(baseDir)
 		}
 
