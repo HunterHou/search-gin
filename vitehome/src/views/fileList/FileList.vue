@@ -234,7 +234,7 @@
             <ElPopover :teleported="true" placement="bottom-start" width="280px" v-model="view.toolShow" trigger="click"
               :auto-close="0">
               <template #reference>
-                <div style="position: absolute;width: 100%; height: 60px;margin-top:-60px;z-index: 1;"
+                <div :class="isShowCover(view) ? 'hidder-tool-cover' : 'hidder-tool-post'"
                   @click="() => { view.toolShow = true }">
                 </div>
               </template>
