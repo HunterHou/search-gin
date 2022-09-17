@@ -81,7 +81,7 @@
             <ElRadioButton label="asc">正</ElRadioButton>
           </ElRadioGroup>
         </ElCol>
-        <ElCol :span="5">
+        <ElCol :span="6">
           <ElRadioGroup v-model="queryParam.MovieType" @change="queryList" size="default">
             <ElRadioButton label="">全</ElRadioButton>
             <ElRadioButton label="骑兵">骑</ElRadioButton>
@@ -159,7 +159,7 @@
 
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
       style="min-height: 650px">
-      <ElSpace wrap size="default">
+      <ElSpace wrap size="small">
         <div :class="isShowCover(view) ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
             <li v-for="tag in item.Tags" :key="tag" style="list-style-type:none;">
@@ -183,7 +183,7 @@
             </template>
             <template #default>
               <div class="rightBtnPop">
-                <div v-if="item.MovieType != '' && item.MovieType != '无'" style="max-width: 400px">
+                <div v-if="!noMovieType(item.MovieType)" style="max-width: 400px">
                   <ElButton type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px"
                     :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
                     <span style="font-size: 12px">{{ tag }}</span>
@@ -203,7 +203,7 @@
                     </template>
                   </ElAutocomplete>
                 </div>
-                <div v-if="item.MovieType == '' || item.MovieType == '无'" style="float: right" class="rightBtnPop">
+                <div v-if="noMovieType(item.MovieType)" style="float: right" class="rightBtnPop">
                   <ElButton plain size="default" @click="setMovieType(item.Id, 2)">
                     <i class="el-icon-bicycle icon-style" title="骑兵">骑兵</i>
                   </ElButton>
@@ -223,7 +223,7 @@
           <ElCard class="ecard" shadow="always" :body-style="{
             padding: '0px',
             margin: '4px 2px',
-            background: item.MovieType ? '' : 'rgb(205, 138, 50)',
+            
           }">
             <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
               <div :class="isShowCover(view) ? 'hidder-open-cover' : 'hidder-open-post'"
@@ -315,7 +315,7 @@
                 </ElCard>
               </template>
             </ElPopover>
-            <div class="image-tool">
+            <div class="image-tool" :style="{background: !noMovieType(item.MovieType) ? '' : 'rgb(205, 138, 50)',}">
               <ElSpace wrap>
                 <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
                   <ElIcon>
@@ -329,7 +329,7 @@
                   </ElIcon>
                 </ElButton>
 
-                <ElButton type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
+                <ElButton v-if="!noMovieType(item.MovieType)" type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
                   <ElIcon>
                     <UserFilled />
                   </ElIcon>
@@ -345,7 +345,7 @@
                   </ElIcon>
                 </ElButton>
 
-                <ElButton v-if="!item.MovieType" type="danger" plain class="icon-button" title="同步"
+                <ElButton v-if="noMovieType(item.MovieType)" type="danger" plain class="icon-button" title="同步"
                   @click="syncThis(item.Id)">
                   <ElIcon>
                     <Refresh />
@@ -419,7 +419,8 @@
                       <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}
                       </ElLink>
                       <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
-                      <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ codeFormat(item.Code)  }}</ElLink>
+                      <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ codeFormat(item.Code)
+                      }}</ElLink>
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       {{ item.SizeStr }}
                     </span>
@@ -456,7 +457,7 @@
         </div>
       </ElSpace>
       <ElPagination class="pageTool" v-model:currentPage="queryParam.Page" v-model:page-size="queryParam.PageSize"
-        :page-sizes="[12, 16, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
+        :page-sizes="[10,12, 16, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
         :background="true" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
 
@@ -745,7 +746,7 @@ const view = reactive<any>({
   showIconNum: 6,
   ModelList: [],
   ResultCnt: 0,
-  allPage:1,
+  allPage: 1,
 });
 
 const queryParam = reactive<MovieQuery>(new MovieQuery());
@@ -845,13 +846,13 @@ const playSource = async (item) => {
   optionsPC.title = item.Name;
   optionsPC.src = stream;
 
-  const pageSize = item.Actress?100:30
+  const pageSize = item.Actress ? 100 : 30
   const palyParam = {
     ...queryParam,
     PageSize: pageSize,
     Page: 1,
     Keyword: item.Actress,
-    MovieType:item.MovieType
+    MovieType: item.MovieType
   }
   const res = await QueryFileList(palyParam)
   const model = res as unknown as ResultList;
@@ -879,6 +880,13 @@ const innerVisibleFalse = () => {
   view.innerVisible = false;
 };
 
+const noMovieType = (type: string) => {
+  if (!type || type === "无") {
+    return true
+  }
+  return false
+}
+
 const cmenuPlay = async (item?) => {
   if (item) {
     view.contextmenuTarget = item;
@@ -888,10 +896,10 @@ const cmenuPlay = async (item?) => {
 };
 
 
-const codeFormat=(code:string)=>{
-  
-  if(code && code.length >= 8){
-    const newCode = code.slice(0,6)+"..."
+const codeFormat = (code: string) => {
+
+  if (code && code.length >= 11) {
+    const newCode = code.slice(0, 10) + "..."
     return newCode
   }
   return code
@@ -926,8 +934,8 @@ const editItem = (item: MovieModel) => {
 const editItemSubmit = async () => {
   const { Id, Name, Code, Actress, Tags } = view.formItem;
   let code = Code.trim();
-  if(code && code.indexOf("-")<0){
-    code="-"+code
+  if (code && code.indexOf("-") < 0) {
+    code = "-" + code
   }
   let name = "";
   if (Actress.length != 0) {
@@ -1050,8 +1058,8 @@ const queryList = async (params?: any) => {
   if (queryParam.Keyword && queryParam.Keyword !== "") {
   } else {
     title = "文件";
-    queryParam.Page= view.allPage
-    console.log("view.allPage",view.allPage)
+    queryParam.Page = view.allPage
+    console.log("view.allPage", view.allPage)
   }
   document.title = title;
   view.ModelList = [];
@@ -1099,7 +1107,7 @@ const pageLoading = (num: number) => {
     queryParam.Page = 1;
   }
   queryParam.Page += num;
-  if(!queryParam.Keyword){
+  if (!queryParam.Keyword) {
     view.allPage = queryParam.Page
   }
   queryList();
@@ -1276,7 +1284,7 @@ const keywordChange = (value) => {
 
 const handleCurrentChange = (page: number) => {
   queryParam.Page = page;
-  if(!queryParam.Keyword){
+  if (!queryParam.Keyword) {
     view.allPage = page
   }
   queryList();
