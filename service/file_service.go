@@ -664,7 +664,8 @@ func (fs FileService) GetJpg(c *gin.Context) {
 
 }
 func writeNoPic(c *gin.Context) {
-	response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
+	// response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
+	response, err := http.Get("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.bianminchewu.com%2Fimgs%2F18%2F0804%2F1533370482927057.png&refer=http%3A%2F%2Fwww.bianminchewu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666008344&t=9da005a04a6c6209595f46dd05477c0f")
 	if err != nil || response.StatusCode != http.StatusOK {
 		c.Status(http.StatusServiceUnavailable)
 		return
