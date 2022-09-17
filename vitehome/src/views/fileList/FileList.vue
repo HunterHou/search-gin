@@ -83,11 +83,12 @@
         </ElCol>
         <ElCol :span="5">
           <ElRadioGroup v-model="queryParam.MovieType" @change="queryList" size="default">
-            <ElRadioButton label="">~</ElRadioButton>
+            <ElRadioButton label="">全</ElRadioButton>
             <ElRadioButton label="骑兵">骑</ElRadioButton>
             <ElRadioButton label="步兵">步</ElRadioButton>
             <ElRadioButton label="国产">国</ElRadioButton>
             <ElRadioButton label="斯巴达">欧</ElRadioButton>
+            <ElRadioButton label="无">无</ElRadioButton>
           </ElRadioGroup>
         </ElCol>
 
@@ -176,13 +177,13 @@
               <ElButton :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
                 :size="isShowCover(view) ? 'default' : 'large'" type="warning">
                 <b>
-                  {{ item.MovieType ? item.MovieType : "无" }}
+                  {{ item.MovieType }}
                 </b>
               </ElButton>
             </template>
             <template #default>
               <div class="rightBtnPop">
-                <div v-if="item.MovieType != ''" style="max-width: 400px">
+                <div v-if="item.MovieType != '' && item.MovieType != '无'" style="max-width: 400px">
                   <ElButton type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px"
                     :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
                     <span style="font-size: 12px">{{ tag }}</span>
@@ -202,7 +203,7 @@
                     </template>
                   </ElAutocomplete>
                 </div>
-                <div v-if="item.MovieType == ''" style="float: right" class="rightBtnPop">
+                <div v-if="item.MovieType == '' || item.MovieType == '无'" style="float: right" class="rightBtnPop">
                   <ElButton plain size="default" @click="setMovieType(item.Id, 2)">
                     <i class="el-icon-bicycle icon-style" title="骑兵">骑兵</i>
                   </ElButton>
@@ -225,7 +226,7 @@
             background: item.MovieType ? '' : 'rgb(205, 138, 50)',
           }">
             <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
-              <div style="position: absolute;width: 100%; height: 150px;margin-bottom:-150px;z-index: 1;"
+              <div :class="isShowCover(view) ? 'hidder-open-cover' : 'hidder-open-post'"
                 @click="openInfoWindow(item.Id)">
               </div>
               <ElImage style="width: 100%; height: 100%;z-index: 0;"
@@ -428,7 +429,7 @@
                     <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}
                     </ElLink>
                     <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
-                    <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ codeFormat(item.Code) }}</ElLink>
+                    <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
                     <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                     <span style="color: red">【{{ item.SizeStr }}】</span>
 
@@ -744,6 +745,7 @@ const view = reactive<any>({
   showIconNum: 6,
   ModelList: [],
   ResultCnt: 0,
+  allPage:1,
 });
 
 const queryParam = reactive<MovieQuery>(new MovieQuery());
@@ -843,11 +845,13 @@ const playSource = async (item) => {
   optionsPC.title = item.Name;
   optionsPC.src = stream;
 
+  const pageSize = item.Actress?100:30
   const palyParam = {
     ...queryParam,
-    PageSize: 100,
+    PageSize: pageSize,
     Page: 1,
-    Keyword: item.Actress
+    Keyword: item.Actress,
+    MovieType:item.MovieType
   }
   const res = await QueryFileList(palyParam)
   const model = res as unknown as ResultList;
@@ -1046,6 +1050,8 @@ const queryList = async (params?: any) => {
   if (queryParam.Keyword && queryParam.Keyword !== "") {
   } else {
     title = "文件";
+    queryParam.Page= view.allPage
+    console.log("view.allPage",view.allPage)
   }
   document.title = title;
   view.ModelList = [];
@@ -1093,7 +1099,9 @@ const pageLoading = (num: number) => {
     queryParam.Page = 1;
   }
   queryParam.Page += num;
-
+  if(!queryParam.Keyword){
+    view.allPage = queryParam.Page
+  }
   queryList();
 };
 
@@ -1262,11 +1270,15 @@ const infoThis = async (id: string) => {
 
 const keywordChange = (value) => {
   queryParam.Keyword = value;
+  queryParam.Page = 1;
   queryList();
 };
 
 const handleCurrentChange = (page: number) => {
   queryParam.Page = page;
+  if(!queryParam.Keyword){
+    view.allPage = page
+  }
   queryList();
 };
 const handleSizeChange = (pageSize: number) => {
