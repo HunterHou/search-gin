@@ -452,13 +452,17 @@ func (fs FileService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result, 
 
 	result := utils.Result{}
 	newFile := datamodels.Movie{}
-	if srcFile.Code == "" {
+	code := srcFile.Code
+	if code == "" {
 		result.Fail()
 		return result, newFile
 	}
-	url := cons.OSSetting.BaseUrl + srcFile.Code
+	if strings.Contains(code, "{{") {
+		code = strings.Split(code, "{{")[0]
+	}
+	url := cons.OSSetting.BaseUrl + code
 	if isOM(srcFile.Name) {
-		url = cons.OSSetting.OMUrl + srcFile.Code
+		url = cons.OSSetting.OMUrl + code
 		url = strings.ReplaceAll(url, "{{斯巴达}}", "")
 	}
 

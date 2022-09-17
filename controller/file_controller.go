@@ -283,7 +283,7 @@ func GetSync(c *gin.Context) {
 		return
 	}
 	result = serviceFile.MoveCut(curFile, newFile)
-	c.JSON(http.StatusOK, newFile)
+	c.JSON(http.StatusOK, result)
 }
 
 func GetImageList(c *gin.Context) {

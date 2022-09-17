@@ -52,7 +52,7 @@ const loadTypeSize = async () => {
 const loadTagSize = async () => {
   const res = await TagSizeMap();
   if (res) {
-    tagData.value = res;
+    tagData.value = res.splice(0,70);
   }
 };
 const loadScanTime = async () => {

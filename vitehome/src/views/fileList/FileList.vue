@@ -143,7 +143,7 @@
             播放中： 【
             <ElButton type="success" plain size="large" loading :link="true" />
             {{
-                view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
+            view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
             }}
             <ElButton type="success" plain size="large" loading :link="true" />
             】
@@ -411,26 +411,31 @@
               </ElSpace>
 
               <div class="context-text" style="font-size: 13px">
-                <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}</ElLink>
-                <ElDivider direction="vertical"></ElDivider>
-                <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
-                <ElDivider direction="vertical"></ElDivider>
+
                 <ElPopover placement="top" width="400px" trigger="hover" :auto-close="1" :show-after="500">
                   <template #reference>
-                    <span style="color: red"> {{ item.SizeStr }}</span>
+                    <span style="color: red">
+                      <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}
+                      </ElLink>
+                      <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
+                      <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ codeFormat(item.Code)  }}</ElLink>
+                      <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
+                      {{ item.SizeStr }}
+                    </span>
+
                   </template>
                   <template #default>
                     <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}
                     </ElLink>
                     <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
-                    <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
+                    <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ codeFormat(item.Code) }}</ElLink>
                     <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                     <span style="color: red">【{{ item.SizeStr }}】</span>
-                    
+
                     {{
-                        useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
-                          locales: "zh-cn",
-                        })
+                    useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
+                    locales: "zh-cn",
+                    })
                     }}
                     <hr />
                     <span style="
@@ -535,7 +540,7 @@
             <ElCol :span="8">
               <span @click="gotoContext(view.formItem.Id)">【{{ view.formItem.SizeStr }}】</span>
               <span>{{
-                  useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
+              useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
               }}</span>
             </ElCol>
           </ElRow>
@@ -878,6 +883,16 @@ const cmenuPlay = async (item?) => {
   startPlayVideo(view.contextmenuTarget);
 };
 
+
+const codeFormat=(code:string)=>{
+  
+  if(code && code.length >= 8){
+    const newCode = code.slice(0,6)+"..."
+    return newCode
+  }
+  return code
+}
+
 const gotoContext = (id: string) => {
   console.log("gotoContext", id);
 };
@@ -906,7 +921,10 @@ const editItem = (item: MovieModel) => {
 
 const editItemSubmit = async () => {
   const { Id, Name, Code, Actress, Tags } = view.formItem;
-  const code = Code.trim();
+  let code = Code.trim();
+  if(code && code.indexOf("-")<0){
+    code="-"+code
+  }
   let name = "";
   if (Actress.length != 0) {
     name += "[" + Actress.trim() + "]";
@@ -1045,7 +1063,12 @@ const queryList = async (params?: any) => {
       if (item.Code.lastIndexOf("-") == item.Code.length - 1) {
         item.Code = item.Code.substring(0, item.Code.length - 1);
       }
+      if (item.Code.indexOf("-") == 0) {
+        item.Code = item.Code.substring(1, item.Code.length);
+      }
       item.name = item.Name.trim();
+      item.Name = item.Name.replace("[-" + item.Code + "]", "");
+      item.Name = item.Name.replace("[" + item.Code + "-]", "");
       item.Name = item.Name.replace("[" + item.Code + "]", "");
       item.Name = item.Name.replace("[" + item.Actress + "]", "");
     });
@@ -1093,7 +1116,7 @@ const isShowCover = (view) => {
 const openInfoWindow = async (id: string) => {
 
   const res = await FindFileInfo(id);
-  if (res) {
+  if (res && res.Id) {
     view.formItem = res;
     view.contextmenuTarget = res;
     view.dialogVisible = true;
@@ -1266,4 +1289,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 </style>
