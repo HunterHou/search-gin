@@ -79,7 +79,7 @@ func (fs FileService) SearchDataSource(searchParam datamodels.SearchParam) utils
 func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) utils.Result {
 
 	//video
-	if movie.MovieType != "" {
+	if movie.MovieType != "" && movie.MovieType != "无" {
 		originVideoType := utils.GetMovieType(movie.Path)
 		if originVideoType == movieType {
 			return utils.NewSuccessByMsg("执行成功")
