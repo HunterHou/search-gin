@@ -110,6 +110,56 @@
             </template>
           </ElAutocomplete>
         </ElCol>
+        <div style="margin-left: 10px;">
+          <ElPopover :width="400" trigger="hover">
+            <template #reference>
+              <ElButton text link bg>历史</ElButton>
+            </template>
+            <template #default>
+              <div style="max-height:800px">
+                <div>
+                  <ElLink @click="()=>{systemProperty.History=[]}">清空历史</ElLink>
+                </div>
+                <hr>
+                <div>
+                  <span style="width:80%;float: left;" v-for="item,index in systemProperty.History" :key="index">
+                    <ElLink @click="addFavorite(item)"> 收藏</ElLink>&nbsp;
+                    <ElButton link bg @click="gotoHistory(item)">
+                      【{{item.SortField}}-{{item.SortType}}】- {{item.Page}}-{{item.PageSize}}
+                      {{item.Keyword}}
+                      -{{item.MovieType}}
+                    </ElButton>
+                  </span>
+
+                </div>
+              </div>
+            </template>
+          </ElPopover>
+          <ElPopover :width="400" trigger="hover">
+            <template #reference>
+              <ElButton text link>收藏</ElButton>
+            </template>
+            <template #default>
+              <div style="max-height:800px">
+                <div>
+                  <ElLink @click="()=>{systemProperty.Favorite=[]}">清空收藏</ElLink>
+                </div>
+                <hr>
+                <div>
+                  <span style="width:80%;float: left;" v-for="item,index in systemProperty.Favorite" :key="index">
+                    <ElButton text @click="gotoHistory(item)">
+                      【{{item.SortField}}-{{item.SortType}}】- {{item.Page}}-{{item.PageSize}}
+                      {{item.Keyword}}
+                      -{{item.MovieType}}
+                    </ElButton>
+
+                  </span>
+
+                </div>
+              </div>
+            </template>
+          </ElPopover>
+        </div>
       </ElRow>
       <ElRow>
         <ElCol :span="3">
@@ -138,6 +188,9 @@
           <span> 页：{{ view.CurSize }}({{ view.CurCnt }})</span>
           <ElDivider direction="vertical"></ElDivider>
         </ElCol>
+
+
+
         <div v-if="isPlaying">
           <ElLink type="success" plain size="large" @click="view.videoVisible = true" :underline="false"
             style="font-size: 16px">
@@ -153,6 +206,7 @@
             关闭
           </ElLink>
         </div>
+
       </ElRow>
     </div>
 
@@ -329,7 +383,8 @@
                   </ElIcon>
                 </ElButton>
 
-                <ElButton v-if="!noMovieType(item.MovieType)" type="warning" plain class="icon-button" title="优优" @click="thisActress(item.Actress)">
+                <ElButton v-if="!noMovieType(item.MovieType)" type="warning" plain class="icon-button" title="优优"
+                  @click="thisActress(item.Actress)">
                   <ElIcon>
                     <UserFilled />
                   </ElIcon>
@@ -675,6 +730,7 @@ import {
   useWindowSize,
 } from "@vueuse/core";
 import {
+  ElAffix,
   ElBacktop,
   ElCol,
   ElDialog,
@@ -1173,6 +1229,20 @@ const syncThis = async (id: string) => {
   }
 };
 
+const gotoHistory = (history: MovieQuery) => {
+  const { Page, PageSize, MovieType, SortField, SortType, Keyword } = history;
+  queryParam.Page = Page
+  queryParam.PageSize = PageSize
+  queryParam.MovieType = MovieType
+  queryParam.SortField = SortField
+  queryParam.SortField = SortField
+  queryParam.SortType = SortType
+  queryParam.Keyword = Keyword
+  queryList()
+}
+const addFavorite = (history: MovieQuery) => {
+  systemProperty.addFavorite(history)
+}
 const setMovieType = async (id: string, typeId: number) => {
   const movieType =
     typeId == 4

@@ -21,15 +21,15 @@ const SystemProperty = defineStore({
   state: () => ({
     Logo: {
       title: "M系统",
-      logo:"",
+      logo: "",
       url: "/mfilelist",
     },
-    videoOptions:{
-      autoPlay:true,
-      volume:0.6,
-      control:true,
-      loop:true,
-      muted:true,
+    videoOptions: {
+      autoPlay: true,
+      volume: 0.6,
+      control: true,
+      loop: true,
+      muted: true,
       controlBtns: [
         "audioTrack",
         "quality",
@@ -39,9 +39,10 @@ const SystemProperty = defineStore({
         "pip",
         "pageFullScreen",
         "fullScreen",
-      ]
-
+      ],
     },
+    History: [],
+    Favorite: [],
     FileSearchParam: {
       Page: 1,
       PageSize: 14,
@@ -59,6 +60,12 @@ const SystemProperty = defineStore({
     SearchSuggestions: [],
   }),
   getters: {
+    getHistory() {
+      return this.History;
+    },
+    getFavorite() {
+      return this.Favorite;
+    },
     getSettingInfo() {
       return this.SettingInfo as SettingInfo;
     },
@@ -80,17 +87,64 @@ const SystemProperty = defineStore({
   },
   actions: {
     syncSearchParam(param: MovieQuery) {
-      this.FileSearchParam.Page = param.Page;
-      this.FileSearchParam.PageSize = param.PageSize;
-      this.FileSearchParam.MovieType = param.MovieType;
-      this.FileSearchParam.SortField = param.SortField;
-      this.FileSearchParam.SortType = param.SortType;
-      this.FileSearchParam.Keyword = param.Keyword;
+      const { Page, PageSize, MovieType, SortField, SortType, Keyword } = param;
+      this.FileSearchParam.Page = Page;
+      this.FileSearchParam.PageSize = PageSize;
+      this.FileSearchParam.MovieType = MovieType;
+      this.FileSearchParam.SortField = SortField;
+      this.FileSearchParam.SortType = SortType;
+      this.FileSearchParam.Keyword = Keyword;
       if (param.Keyword) {
         this.addSuggestions(param.Keyword);
       }
+      this.addHistory(param);
     },
-
+    addHistory(his: MovieQuery) {
+      let has = false;
+      for (let i = 0; i < this.History.length; i++) {
+        if (
+          this.History[i].Page == his.Page &&
+          this.History[i].PageSize == his.PageSize &&
+          this.History[i].Keyword == his.Keyword &&
+          this.History[i].SortField == his.SortField &&
+          this.History[i].SortType == his.SortType &&
+          this.History[i].MovieType == his.MovieType
+        ) {
+          has = true;
+          break;
+        }
+      }
+      if (!has) {
+        console.log("this.History has", this.History);
+        this.History.unshift({ ...his });
+        console.log("this.History unshift", this.History);
+      }
+      if (this.History.length > 50) {
+        this.History.splice(0, 49);
+      }
+    },
+    addFavorite(his: MovieQuery) {
+      let has = false;
+      for (let i = 0; i < this.Favorite.length; i++) {
+        if (
+          this.Favorite[i].Page == his.Page &&
+          this.Favorite[i].PageSize == his.PageSize &&
+          this.Favorite[i].Keyword == his.Keyword &&
+          this.Favorite[i].SortField == his.SortField &&
+          this.Favorite[i].SortType == his.SortType &&
+          this.Favorite[i].MovieType == his.MovieType
+        ) {
+          has = true;
+          break;
+        }
+      }
+      if (!has) {
+        this.Favorite.unshift({ ...his });
+      }
+      if (this.Favorite.length > 50) {
+        this.Favorite.splice(0, 49);
+      }
+    },
     setSettingInfo(settingInfo: SettingInfo) {
       this.SettingInfo = settingInfo;
     },
