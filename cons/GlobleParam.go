@@ -11,9 +11,9 @@ import (
 // false 打包二进制文佳 (要求打包html目录)
 //初始化 扫描路径
 
-var PortNo = ":18081"
-var PortNo2 = ":18082"
-var PortNo3 = ":18083"
+var PortNo = ":10081"
+var PortNo2 = ":10082"
+var PortNo3 = ":10083"
 var Port = "//" + PortNo
 var QueryTypes []string
 
