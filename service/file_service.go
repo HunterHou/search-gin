@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -644,6 +645,8 @@ func (fs FileService) GetPng(c *gin.Context) {
 		c.File(file.Png)
 	} else if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
+	} else if !file.IsNull() && utils.ExistsFiles(file.Gif) {
+		c.File(file.Gif)
 	} else {
 		writeNoPic(c)
 	}
@@ -658,23 +661,33 @@ func (fs FileService) GetJpg(c *gin.Context) {
 		c.File(file.Jpg)
 	} else if !file.IsNull() && utils.ExistsFiles(file.Png) {
 		c.File(file.Png)
+	} else if !file.IsNull() && utils.ExistsFiles(file.Gif) {
+		c.File(file.Gif)
 	} else {
 		writeNoPic(c)
 	}
 
 }
-func writeNoPic(c *gin.Context) {
-	// response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
-	response, err := http.Get("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.bianminchewu.com%2Fimgs%2F18%2F0804%2F1533370482927057.png&refer=http%3A%2F%2Fwww.bianminchewu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666008344&t=9da005a04a6c6209595f46dd05477c0f")
-	if err != nil || response.StatusCode != http.StatusOK {
-		c.Status(http.StatusServiceUnavailable)
-		return
-	}
 
-	reader := response.Body
+var noPic io.ReadCloser
+var contentLength int64
+var contentType string
+
+func writeNoPic(c *gin.Context) {
+
+	if noPic == nil {
+		// response, err := http.Get("https://images-cn.ssl-images-amazon.cn/images/I/613FYYzEjGL._AC_SX679_.jpg")
+		response, err := http.Get("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.bianminchewu.com%2Fimgs%2F18%2F0804%2F1533370482927057.png&refer=http%3A%2F%2Fwww.bianminchewu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666008344&t=9da005a04a6c6209595f46dd05477c0f")
+		if err != nil || response.StatusCode != http.StatusOK {
+			c.Status(http.StatusServiceUnavailable)
+			return
+		}
+		noPic = response.Body
+		contentLength = response.ContentLength
+		contentType = response.Header.Get("Content-Type")
+	}
+	reader := noPic
 	defer reader.Close()
-	contentLength := response.ContentLength
-	contentType := response.Header.Get("Content-Type")
 
 	extraHeaders := map[string]string{
 		"Content-Disposition": `jpeg; filename="gopher.png"`,
@@ -837,20 +850,20 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	// utils.PKIdRest()
 	datasource.FileLib = make(map[string]datamodels.Movie)
 	files := Walks(baseDir, types)
+	go updateDataMap(files)
+	// 添加索引
+	db := CreateOrmService()
+	go db.InsertBatchPage(files)
+
+}
+
+func updateDataMap(files []datamodels.Movie) {
 	fileMap, actressMap, _, fileSize := ArrayToMap(files)
 	var newFiles []datamodels.Movie
 	for _, item := range fileMap {
 		newFiles = append(newFiles, item)
 
 	}
-	datasource.FileLib = fileMap
-	datasource.FileList = newFiles
-
-	datasource.ActressLib = actressMap
-	// 添加索引
-	db := CreateOrmService()
-	go db.InsertBatchPage(newFiles)
-
 	var newActress []datamodels.Actress
 	for _, item := range actressMap {
 		if item.Cnt > 1 {
@@ -858,10 +871,11 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 		}
 
 	}
+	datasource.FileLib = fileMap
+	datasource.FileList = newFiles
+	datasource.ActressLib = actressMap
 	datasource.ActressList = newActress
-	//datasource.SupplierLib = supplierMap
 	datasource.FileSize = fileSize
-
 }
 
 func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {

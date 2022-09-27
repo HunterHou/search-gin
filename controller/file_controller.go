@@ -227,7 +227,7 @@ func GetDirInfo(c *gin.Context) {
 	fileService := service.CreateFileService()
 	file := fileService.FindOne(id)
 
-	files := service.Walk(file.DirPath, cons.Types, false)
+	files := service.Walk(file.DirPath, cons.Images, false)
 	for i := 0; i < len(files); i++ {
 		files[i].SetImageBase64()
 	}

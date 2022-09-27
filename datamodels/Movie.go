@@ -17,6 +17,7 @@ type Movie struct {
 	Nfo       string `xorm:"Text"  json:"Nfo,omitempty"`
 	Srt       string `xorm:"Text" json:"Srt,omitempty"`
 	Jpg       string `xorm:"Text"`
+	Gif       string `xorm:"Text"`
 	Actress   string `xorm:"Text"`
 	FileType  string `xorm:"Text"`
 	DirPath   string `xorm:"Text"`
@@ -58,6 +59,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		Nfo:       utils.GetPng(path, "nfo"),
 		Jpg:       utils.GetPng(path, "jpg"),
 		Srt:       utils.GetPng(path, "srt"),
+		Gif:       utils.GetPng(path, "gif"),
 		Tags:      utils.GetTags(path, ""),
 		Actress:   Actress,
 		FileType:  fileType,
