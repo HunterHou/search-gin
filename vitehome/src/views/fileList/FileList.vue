@@ -1201,7 +1201,9 @@ const loadDirInfo = async (id: string, loading: boolean) => {
   if (res && res.length > 0) {
     view.imageList = [];
     for (let i = 0; i < res.length; i++) {
-      if (res[i].FileType == "jpg" || res[i].FileType == "png") {
+      if (res[i].FileType === "jpg" || 
+        res[i].FileType === "png" || 
+          res[i].FileType === "gif" ) {
         // view.imageList.push(res[i].ImageBase);
         view.imageList.push(getFileStream(res[i].Id));
       }
