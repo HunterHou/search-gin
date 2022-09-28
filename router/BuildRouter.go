@@ -37,7 +37,7 @@ func BuildRouter() *gin.Engine {
 	router.POST("/api/movieList", controller.PostSearch)
 	router.GET("/api/refresh", controller.GetFresh)
 	router.POST("/api/actressList", controller.PostActess)
-	router.GET("/api/actressImgae/:path", controller.GetActessImage)
+	router.GET("/api/actressImgae/:path", controller.GetActressImage)
 
 	router.GET("/api/play/:id", controller.GetPlay)
 	router.GET("/api/file/:id", controller.GetFile)
@@ -50,8 +50,8 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/dir/:id", controller.GetDirInfo)
 	router.GET("/api/delete/:id", controller.GetDelete)
 	router.GET("/api/sync/:id", controller.GetSync)
-	router.GET("/api/openFolder/:id", controller.GetOpenFoler)
-	router.POST("/api/OpenFolerByPath", controller.PostOpenFolerByPath)
+	router.GET("/api/openFolder/:id", controller.GetOpenFolder)
+	router.POST("/api/OpenFolerByPath", controller.PostOpenFolderByPath)
 	router.POST("/api/DeleteFolerByPath", controller.PostDeleteFolerByPath)
 
 	router.GET("/api/infoNext/:id", controller.GetNextInfo)
@@ -61,7 +61,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/jpg/:path", controller.GetJpg)
 
 	router.GET("/api/buttoms", controller.GetSettingInfo)
-	router.GET("/api/refreshIndex", controller.GetRefresIndex)
+	router.GET("/api/refreshIndex", controller.GetRefreshIndex)
 	router.GET("/api/settingInfo", controller.GetSettingInfo)
 	router.POST("/api/setting", controller.PostSetting)
 

@@ -25,7 +25,7 @@ func GetFile(c *gin.Context) {
 	}
 }
 
-func GetActessImage(c *gin.Context) {
+func GetActressImage(c *gin.Context) {
 	path := c.Param("path")
 	list := datasource.ActressLib
 	actress, ok := list[path]
@@ -47,15 +47,6 @@ func GetJpg(c *gin.Context) {
 	fs := service.CreateFileService()
 	fs.GetJpg(c)
 
-}
-
-func PostStream(c *gin.Context) {
-	path := c.Param("path")
-	if utils.ExistsFiles(path) {
-		c.File(path)
-	} else {
-		c.File(path)
-	}
 }
 
 func PostSearch(c *gin.Context) {
@@ -167,13 +158,6 @@ func GetFresh(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func GetButtom(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"baseUrl": cons.OSSetting.BaseUrl,
-		"Tags":    cons.OSSetting.Tags,
-		"TagsLib": cons.OSSetting.TagsLib,
-	})
-}
 func GetPlay(c *gin.Context) {
 	//id := c.Param("id")
 	id := c.Param("id")
@@ -234,7 +218,7 @@ func GetDirInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, files)
 }
 
-func GetOpenFoler(c *gin.Context) {
+func GetOpenFolder(c *gin.Context) {
 	id := c.Param("id")
 	service := service.CreateFileService()
 	file := service.FindOne(id)
@@ -244,7 +228,7 @@ func GetOpenFoler(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func PostOpenFolerByPath(c *gin.Context) {
+func PostOpenFolderByPath(c *gin.Context) {
 
 	forms := make(map[string]string)
 	c.ShouldBindJSON(&forms)
@@ -308,7 +292,7 @@ func GetImageList(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func GetRefresIndex(c *gin.Context) {
+func GetRefreshIndex(c *gin.Context) {
 	service := service.CreateFileService()
 	service.ScanAll()
 	datasource.SortMovieForce()

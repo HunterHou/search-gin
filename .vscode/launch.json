@@ -9,7 +9,11 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}"
+      "program": "${workspaceFolder}",
+      "env": {
+        "GOROOT": "C:\\Program Files\\Go",
+        "GOPATH": "D:\\go"
+      }
     },
     {
       "command": "cd vuehome && npm run dev",

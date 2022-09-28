@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -35,7 +34,7 @@ func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page
 	result.PageNo = searchParam.Page
 	result.PageSize = searchParam.PageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
-
+	fmt.Printf("query over :searchParam", searchParam)
 	pageList, pageSize := db.query(searchParam)
 	searchCount, searchSize := db.queryCount(searchParam)
 	result.ResultSize = utils.GetSizeStr(searchSize)
@@ -358,11 +357,11 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 	wg.Add(1)
 	wg.Add(len(toFile.ImageList))
 
-	jpgUrl := toFile.JpgUrl
-	if !strings.HasPrefix(jpgUrl, "http") {
-		jpgUrl = cons.OSSetting.BaseUrl + strings.Replace(jpgUrl, "/", "", 1)
-	}
-	go downImageItem(jpgUrl, toFile.DirPath, toFile.Actress, "", &wg)
+	//jpgUrl := toFile.JpgUrl
+	//if !strings.HasPrefix(jpgUrl, "http") {
+	//	jpgUrl = cons.OSSetting.BaseUrl + strings.Replace(jpgUrl, "/", "", 1)
+	//}
+	//go downImageItem(jpgUrl, toFile.DirPath, toFile.Actress, "", &wg)
 	for i := 0; i < len(toFile.ImageList); i++ {
 		go downImageItem(toFile.ImageList[i], toFile.DirPath, toFile.Code, fmt.Sprintf("%d", i), &wg)
 	}
@@ -529,7 +528,7 @@ func (fs FileService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result, 
 		}
 	})
 	waterFall := doc.Find(".sample-box")
-	var imageList = []string{}
+	var imageList []string
 	waterFall.Each(func(_ int, selection *goquery.Selection) {
 		item := selection.AttrOr("href", "")
 		if len(item) > 0 {
@@ -669,7 +668,7 @@ func (fs FileService) GetJpg(c *gin.Context) {
 
 }
 
-var noPic io.ReadCloser
+var noPic []byte
 var contentLength int64
 var contentType string
 
@@ -682,18 +681,13 @@ func writeNoPic(c *gin.Context) {
 			c.Status(http.StatusServiceUnavailable)
 			return
 		}
-		noPic = response.Body
+		response.Body.Read(noPic)
+		defer response.Body.Close()
 		contentLength = response.ContentLength
 		contentType = response.Header.Get("Content-Type")
 	}
 	reader := noPic
-	defer reader.Close()
-
-	extraHeaders := map[string]string{
-		"Content-Disposition": `jpeg; filename="gopher.png"`,
-	}
-
-	c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
+	c.Data(http.StatusOK, contentType, reader)
 }
 
 func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
