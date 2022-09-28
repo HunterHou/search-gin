@@ -844,11 +844,10 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	// utils.PKIdRest()
 	datasource.FileLib = make(map[string]datamodels.Movie)
 	files := Walks(baseDir, types)
-	go updateDataMap(files)
+	updateDataMap(files)
 	// 添加索引
 	db := CreateOrmService()
-
-	go db.InsertBatchPage(files)
+	db.InsertBatchPage(files)
 
 }
 

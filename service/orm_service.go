@@ -117,7 +117,6 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 	wg.Add(int(totalPage))
 	cons.OSSetting.IsDb = false
 	o.DeleteAll()
-
 	for i := 0; i < int(totalPage); i++ {
 		lastIndex := startIndex + int(pageSize)
 		if lastIndex > int(total) {
