@@ -1095,7 +1095,7 @@ var this = FileService{}
 func HeartBeat() {
 	time.After(1 * time.Second)
 	this.ScanAll()
-	time.AfterFunc(30*time.Second, HeartBeat)
+	// time.AfterFunc(180*time.Second, HeartBeat)
 }
 
 // Walk 遍历目录 获取文件库
