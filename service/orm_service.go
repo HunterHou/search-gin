@@ -122,9 +122,10 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 		if lastIndex > int(total) {
 			lastIndex = int(total)
 		}
-
+		pageNo := i + 1
+		fmt.Printf("开始启动，页码：%d", pageNo)
 		curMovies := movies[startIndex:lastIndex]
-		go o.InsertBatch(curMovies, &wg)
+		go o.InsertBatch(curMovies, &wg, pageNo)
 		startIndex = lastIndex
 	}
 	wg.Wait()
@@ -134,14 +135,33 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 	return res
 }
 
-func (o *OrmService) InsertBatch(movies []datamodels.Movie, wg *sync.WaitGroup) utils.Result {
+func (o *OrmService) InsertBatch(movies []datamodels.Movie, wg *sync.WaitGroup, pageNo int) utils.Result {
 	defer wg.Done()
 	effectRows, err := dbEngine.Insert(&movies)
 	if err != nil {
-		fmt.Println("insert error", err)
-		return utils.NewFailByMsg(err.Error())
+		fmt.Println("insert error:", pageNo, err)
+		var repeat datamodels.Movie
+		errorMap := make(map[string]datamodels.Movie)
+		for i := 0; i < len(movies); i++ {
+			current := movies[i]
+			target, ok := errorMap[current.Id]
+			if ok {
+				fmt.Println("----------------------------")
+				fmt.Println("----------------------------")
+				fmt.Printf("key repeat:%s \n", current.Path)
+				fmt.Printf("key repeat:%s \n", target.Path)
+				fmt.Printf("key repeat:%s \n", current.Id)
+				fmt.Printf("key repeat:%s \n", target.Id)
+				fmt.Println("----------------------------")
+				fmt.Println("----------------------------")
+				repeat = target
+			} else {
+				errorMap[current.Id] = current
+			}
+		}
+		return utils.NewFailByMsg(repeat.Path + err.Error())
 	}
-	fmt.Printf("insert over:%d \n", len(movies))
+	fmt.Printf("pageNo:%d , insert total:%d \n", pageNo, len(movies))
 	res := utils.NewSuccess()
 	res.EffectRows = effectRows
 	return res

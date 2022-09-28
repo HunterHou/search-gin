@@ -846,8 +846,6 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	files := Walks(baseDir, types)
 	updateDataMap(files)
 	// 添加索引
-	db := CreateOrmService()
-	db.InsertBatchPage(files)
 
 }
 
@@ -997,9 +995,11 @@ func (fs FileService) DataSize(data []datamodels.Movie) int64 {
 
 func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[string]datamodels.Actress, map[string]datamodels.Supplier, int64) {
 	filemap := make(map[string]datamodels.Movie)
+	filemapCount := make(map[string]int)
 	actessmap := make(map[string]datamodels.Actress)
 	suppliermap := make(map[string]datamodels.Supplier)
 	var size int64
+	var toInsert []datamodels.Movie
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
 		cons.TypeSizePlus(curFile.MovieType, curFile.Size)
@@ -1009,15 +1009,20 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 			}
 
 		}
-		//curFile.SetId("pk" + string(i))
 		size = size + curFile.Size
-		existMoive, ok := filemap[curFile.Id]
+		_, ok := filemap[curFile.Id]
 		if ok {
 			//重名处理
-			existMoive.SetId(utils.PKId(existMoive.Path))
-			filemap[existMoive.Id] = existMoive
+			count := filemapCount[curFile.Id]
+			count++
+			curFile.SetId(utils.PKId(curFile.Path + fmt.Sprintf("repeat(%d)", count)))
+			filemap[curFile.Id] = curFile
+			toInsert = append(toInsert, curFile)
 		} else {
 			filemap[curFile.Id] = curFile
+			filemapCount[curFile.Id] = 1
+
+			toInsert = append(toInsert, curFile)
 		}
 
 		curActress, ok := actessmap[curFile.Actress]
@@ -1037,6 +1042,8 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 		}
 
 	}
+	db := CreateOrmService()
+	go db.InsertBatchPage(toInsert)
 	return filemap, actessmap, suppliermap, size
 }
 func Walks(baseDir []string, types []string) []datamodels.Movie {

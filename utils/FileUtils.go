@@ -31,12 +31,12 @@ func DirpathForId(path string) (string, string) {
 	res = strings.ReplaceAll(res, PathSeparator+PathSeparator, PathSeparator)
 	res = strings.ReplaceAll(res, PathSeparator, "~")
 	res = strings.ReplaceAll(res, PathSeparator, "~")
-	res = strings.ReplaceAll(res, ":", "")
-	res = strings.ReplaceAll(res, ".", "")
-	res = strings.ReplaceAll(res, ",", "")
-	res = strings.ReplaceAll(res, "!", "")
-	res = strings.ReplaceAll(res, "》", "")
-	res = strings.ReplaceAll(res, "《", "")
+	res = strings.ReplaceAll(res, ":", "1")
+	res = strings.ReplaceAll(res, ".", "2")
+	res = strings.ReplaceAll(res, ",", "3")
+	res = strings.ReplaceAll(res, "!", "4")
+	res = strings.ReplaceAll(res, "》", "5")
+	res = strings.ReplaceAll(res, "《", "6")
 	arr := strings.Split(res, "~")
 	newpath := ""
 	for i := 0; i < len(arr); i++ {
@@ -45,13 +45,13 @@ func DirpathForId(path string) (string, string) {
 		if i != 0 {
 			newpath += "~"
 		}
-		if length > 100 {
+		if length > 30 {
 			// newpath += curArr[0:100]
 			// newpath += fmt.Sprintf("%d", (length))
 			// newpath += curArr[length-100 : length]
 			j := 0
 			for _, value := range curArr {
-				if j%2 == 0 {
+				if j%4 == 0 {
 					newpath += string(value)
 				}
 				j++

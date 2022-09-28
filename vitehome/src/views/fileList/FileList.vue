@@ -1356,7 +1356,7 @@ const handleSizeChange = (pageSize: number) => {
   queryList();
 };
 
-setInterval(heartBeat, 10000);
+setInterval(heartBeat, 30000);
 
 onMounted(() => {
   loadSettingInfo();

@@ -44,7 +44,7 @@ type Movie struct {
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
-	_, id := utils.DirpathForId(path)
+	id, _ := utils.DirpathForId(path)
 	code := utils.GetCode(name)
 	Actress := utils.GetActress(name)
 	_, name_1 := utils.DirpathForId(name)
