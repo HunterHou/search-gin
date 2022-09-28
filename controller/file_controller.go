@@ -14,6 +14,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func GetTempImage(c *gin.Context) {
+	id := c.Param("path")
+	file := cons.TempImage[id]
+	if utils.ExistsFiles(file.Path) {
+		c.File(file.Path)
+	} else {
+		return
+	}
+}
+
 func GetFile(c *gin.Context) {
 	service := service.CreateFileService()
 	id := c.Param("id")
@@ -24,7 +34,16 @@ func GetFile(c *gin.Context) {
 		return
 	}
 }
+func GetPng(c *gin.Context) {
+	service := service.CreateFileService()
+	service.GetPng(c)
+}
 
+func GetJpg(c *gin.Context) {
+	fs := service.CreateFileService()
+	fs.GetJpg(c)
+
+}
 func GetActressImage(c *gin.Context) {
 	path := c.Param("path")
 	list := datasource.ActressLib
@@ -36,16 +55,6 @@ func GetActressImage(c *gin.Context) {
 			return
 		}
 	}
-
-}
-func GetPng(c *gin.Context) {
-	service := service.CreateFileService()
-	service.GetPng(c)
-}
-
-func GetJpg(c *gin.Context) {
-	fs := service.CreateFileService()
-	fs.GetJpg(c)
 
 }
 
@@ -207,14 +216,18 @@ func GetClearTag(c *gin.Context) {
 }
 
 func GetDirInfo(c *gin.Context) {
+	if len(cons.TempImage) > 1000 {
+		cons.TempImage = make(map[string]datamodels.Movie)
+	}
 	id := c.Param("id")
 	fileService := service.CreateFileService()
 	file := fileService.FindOne(id)
 
 	files := service.Walk(file.DirPath, cons.Images, false)
-	// for i := 0; i < len(files); i++ {
-	// 	files[i].SetImageBase64()
-	// }
+	for i := 0; i < len(files); i++ {
+		// files[i].SetImageBase64()
+		cons.TempImage[files[i].Id] = files[i]
+	}
 	c.JSON(http.StatusOK, files)
 }
 

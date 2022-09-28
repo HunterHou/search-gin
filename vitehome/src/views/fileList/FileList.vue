@@ -717,7 +717,7 @@ import {
 import { PostSettingInfo } from "@/api/setting";
 
 import { useSystemProperty } from "@/store/System";
-import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
+import { getFileStream, getJpg, getPng ,getTempImage} from "@/utils/ImageUtils";
 import { ResultList } from "@/utils/ResultResponse";
 import { Eleme } from "@element-plus/icons-vue";
 import {
@@ -1205,7 +1205,7 @@ const loadDirInfo = async (id: string, loading: boolean) => {
         res[i].FileType === "png" || 
           res[i].FileType === "gif" ) {
         // view.imageList.push(res[i].ImageBase);
-        view.imageList.push(getFileStream(res[i].Id));
+        view.imageList.push(getTempImage(res[i].Id));
       }
     }
     if (loading) {

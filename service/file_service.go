@@ -621,13 +621,13 @@ func (fs FileService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, 
 }
 
 func (fs FileService) FindOne(Id string) datamodels.Movie {
-	if cons.OSSetting.IsDb {
-		db := CreateOrmService()
-		return db.Find(Id)
-	}
-	if len(datasource.FileLib) == 0 {
-		fs.ScanAll()
-	}
+	// if cons.OSSetting.IsDb {
+	// 	db := CreateOrmService()
+	// 	return db.Find(Id)
+	// }
+	// if len(datasource.FileLib) == 0 {
+	// 	fs.ScanAll()
+	// }
 	curFile := datasource.FileLib[Id]
 	return curFile
 }

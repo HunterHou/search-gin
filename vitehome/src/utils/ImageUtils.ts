@@ -17,6 +17,10 @@ export const getFileStream = (id: string) => {
   return settingInfo.value.StreamHost + "/api/file/" + id;
 };
 
+export const getTempImage = (id: string) => {
+  return settingInfo.value.StreamHost + "/api/tempimage/" + id;
+};
+
 export const getActressImage = (actressUrl: string) => {
   return settingInfo.value.ImageHost + actressUrl;
 };

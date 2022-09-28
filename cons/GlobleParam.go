@@ -153,6 +153,8 @@ const XML = "xml"
 var Types = []string{PNG, JPG, GIF, XLSX, TXT, MP4, WMV, MKV, AVI, JAVA, XML}
 var Images = []string{PNG, JPG, GIF}
 
+var TempImage = make(map[string]datamodels.Movie)
+
 var IndexHtml = "./vitehome/dist/index.html"
 var StaticFs = map[string]string{
 	"/css": "./vitehome/dist/css",

@@ -280,7 +280,7 @@ import {
 import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
-import { getFileStream, getJpg, getPng } from "@/utils/ImageUtils";
+import { getFileStream, getJpg, getPng,getTempImage } from "@/utils/ImageUtils";
 import { useWindowSize } from "@vueuse/core";
 import {
   Dialog,
@@ -554,7 +554,7 @@ const loadDirInfo = async (id: string) => {
     for (let i = 0; i < res.length; i++) {
       if (res[i].FileType == "jpg" || res[i].FileType == "png") {
         // view.imageList.push(res[i].ImageBase);
-        view.imageList.push(getFileStream(res[i].Id));
+        view.imageList.push(getTempImage(res[i].Id));
       }
     }
   }
