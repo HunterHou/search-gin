@@ -212,9 +212,9 @@ func GetDirInfo(c *gin.Context) {
 	file := fileService.FindOne(id)
 
 	files := service.Walk(file.DirPath, cons.Images, false)
-	for i := 0; i < len(files); i++ {
-		files[i].SetImageBase64()
-	}
+	// for i := 0; i < len(files); i++ {
+	// 	files[i].SetImageBase64()
+	// }
 	c.JSON(http.StatusOK, files)
 }
 

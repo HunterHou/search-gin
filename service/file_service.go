@@ -34,7 +34,6 @@ func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page
 	result.PageNo = searchParam.Page
 	result.PageSize = searchParam.PageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
-	fmt.Printf("query over :searchParam", searchParam)
 	pageList, pageSize := db.query(searchParam)
 	searchCount, searchSize := db.queryCount(searchParam)
 	result.ResultSize = utils.GetSizeStr(searchSize)
@@ -585,7 +584,8 @@ func (fs FileService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, 
 	fmt.Println(listVideo.Text())
 	listVideo.Each(func(i int, s *goquery.Selection) {
 		code := s.Find(".id").Text()
-		if strings.ToUpper(code) == strings.ToUpper(srcFile.Code) {
+		if strings.EqualFold(code, srcFile.Code) {
+			// if strings.ToUpper(code) == strings.ToUpper(srcFile.Code) {
 			newFile.Code = code
 			newFile.Title = s.Find(".title").Text()
 			newFile.Png = s.Find("img").AttrOr("src", "")
@@ -605,6 +605,9 @@ func (fs FileService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, 
 			fmt.Println("err:", err2)
 		}
 		detailDoc, err2 = goquery.NewDocumentFromReader(detailResp.Body)
+		if err2 != nil {
+			fmt.Println("err:", err2)
+		}
 	}
 	imageDiv := detailDoc.Find("#video_jacket_img")
 	newFile.Jpg = imageDiv.AttrOr("src", "")
@@ -669,7 +672,6 @@ func (fs FileService) GetJpg(c *gin.Context) {
 }
 
 var noPic []byte
-var contentLength int64
 var contentType string
 
 func writeNoPic(c *gin.Context) {
@@ -681,13 +683,11 @@ func writeNoPic(c *gin.Context) {
 			c.Status(http.StatusServiceUnavailable)
 			return
 		}
-		response.Body.Read(noPic)
 		defer response.Body.Close()
-		contentLength = response.ContentLength
+		noPic, _ = ioutil.ReadAll(response.Body)
 		contentType = response.Header.Get("Content-Type")
 	}
-	reader := noPic
-	c.Data(http.StatusOK, contentType, reader)
+	c.Data(http.StatusOK, contentType, noPic)
 }
 
 func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
@@ -847,17 +847,13 @@ func (fs FileService) ScanDisk(baseDir []string, types []string) {
 	go updateDataMap(files)
 	// 添加索引
 	db := CreateOrmService()
+
 	go db.InsertBatchPage(files)
 
 }
 
 func updateDataMap(files []datamodels.Movie) {
 	fileMap, actressMap, _, fileSize := ArrayToMap(files)
-	var newFiles []datamodels.Movie
-	for _, item := range fileMap {
-		newFiles = append(newFiles, item)
-
-	}
 	var newActress []datamodels.Actress
 	for _, item := range actressMap {
 		if item.Cnt > 1 {
@@ -866,7 +862,7 @@ func updateDataMap(files []datamodels.Movie) {
 
 	}
 	datasource.FileLib = fileMap
-	datasource.FileList = newFiles
+	datasource.FileList = files
 	datasource.ActressLib = actressMap
 	datasource.ActressList = newActress
 	datasource.FileSize = fileSize
@@ -1099,7 +1095,7 @@ var this = FileService{}
 func HeartBeat() {
 	time.After(1 * time.Second)
 	this.ScanAll()
-	time.AfterFunc(5*time.Second, HeartBeat)
+	// time.AfterFunc(30*time.Second, HeartBeat)
 }
 
 // Walk 遍历目录 获取文件库

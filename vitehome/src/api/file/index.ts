@@ -1,6 +1,7 @@
 import { useAxios } from "../../hooks/userAxios";
 import { ResultList } from "@/utils/ResultResponse";
 import { ResultEdit } from "@/config/ResultModel";
+import { MovieModel } from "@/views/fileList";
 
 const request = useAxios();
 
@@ -11,15 +12,15 @@ export const QueryFileList = async (data: any): Promise<ResultList> => {
 
 export const FindFileInfo = async (data: string) => {
   const res = await request.get({ url: `/api/info/${data}` });
-  return res as unknown as ResultEdit;
+  return res as unknown as MovieModel;
 };
 
-export const QueryDirImageBase64 = async (data: string):Promise<any> => {
+export const QueryDirImageBase64 = async (data: string): Promise<any> => {
   const res = await request.get({ url: `/api/dir/${data}` });
   return res;
 };
 
-export const PlayMovie = async (data: string):Promise<ResultEdit> => {
+export const PlayMovie = async (data: string): Promise<ResultEdit> => {
   const res = await request.get({ url: `/api/play/${data}` });
   return res as unknown as ResultEdit;
 };
@@ -51,7 +52,7 @@ export const RefreshIndex = async () => {
   return res as unknown as ResultEdit;
 };
 
-export const DownImageList = async (data: string):Promise<any>  => {
+export const DownImageList = async (data: string): Promise<any> => {
   const res = await request.get({ url: `/api/imageList/${data}` });
   return res as unknown as ResultEdit;
 };
@@ -82,7 +83,7 @@ export const DeleteFolerByPath = async (data: any) => {
   return res as unknown as ResultEdit;
 };
 
-export const CloseTag = async (id: string,title:string) => {
+export const CloseTag = async (id: string, title: string) => {
   const res = await request.get({ url: `/api/file/clearTag//${id}/${title}` });
   return res as unknown as ResultEdit;
 };

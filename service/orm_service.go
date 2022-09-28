@@ -117,11 +117,13 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 	wg.Add(int(totalPage))
 	cons.OSSetting.IsDb = false
 	o.DeleteAll()
+
 	for i := 0; i < int(totalPage); i++ {
 		lastIndex := startIndex + int(pageSize)
 		if lastIndex > int(total) {
 			lastIndex = int(total)
 		}
+
 		curMovies := movies[startIndex:lastIndex]
 		go o.InsertBatch(curMovies, &wg)
 		startIndex = lastIndex
@@ -135,11 +137,13 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 
 func (o *OrmService) InsertBatch(movies []datamodels.Movie, wg *sync.WaitGroup) utils.Result {
 	defer wg.Done()
-
+	fmt.Printf("insert ready:%d firstSample:%s \n", len(movies), movies[0].Id)
 	effectRows, err := dbEngine.Insert(&movies)
 	if err != nil {
+		fmt.Println("insert error", err)
 		return utils.NewFailByMsg(err.Error())
 	}
+	fmt.Printf("insert over:%d", len(movies))
 	res := utils.NewSuccess()
 	res.EffectRows = effectRows
 	return res

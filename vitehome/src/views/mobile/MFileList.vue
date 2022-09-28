@@ -553,7 +553,8 @@ const loadDirInfo = async (id: string) => {
     view.imageList = [];
     for (let i = 0; i < res.length; i++) {
       if (res[i].FileType == "jpg" || res[i].FileType == "png") {
-        view.imageList.push(res[i].ImageBase);
+        // view.imageList.push(res[i].ImageBase);
+        view.imageList.push(getFileStream(res[i].Id));
       }
     }
   }

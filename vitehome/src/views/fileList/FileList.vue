@@ -1202,7 +1202,8 @@ const loadDirInfo = async (id: string, loading: boolean) => {
     view.imageList = [];
     for (let i = 0; i < res.length; i++) {
       if (res[i].FileType == "jpg" || res[i].FileType == "png") {
-        view.imageList.push(res[i].ImageBase);
+        // view.imageList.push(res[i].ImageBase);
+        view.imageList.push(getFileStream(res[i].Id));
       }
     }
     if (loading) {
@@ -1328,15 +1329,6 @@ const deleteThis = async (id: string) => {
 
 const getImageList = async (params: string) => {
   const res = await DownImageList(params);
-  if (res.Code === 200) {
-    ElMessage.success(res.Message);
-  } else {
-    ElMessage.error(res.Message);
-  }
-};
-
-const infoThis = async (id: string) => {
-  const res = await FindFileInfo(id);
   if (res.Code === 200) {
     ElMessage.success(res.Message);
   } else {
