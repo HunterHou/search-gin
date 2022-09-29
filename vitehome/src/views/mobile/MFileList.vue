@@ -3,7 +3,7 @@
     <NavBar :title="title">
       <template #left>
         <div>
-          <span> 总数:{{ view.ResultCnt }} </span>
+          <span @click="refreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
         </div>
       </template>
       <template #right>
@@ -34,6 +34,9 @@ showSearch = false;
     <ActionSheet v-model:show="showTag" title="标签管理" :close-on-click-overlay="true" style="height: 60vh;">
       <div style="margin-bottom: 0vh;">
         <Row>
+          <Col>
+          <Tag type="success" @click="refreshIndex">总数:{{ view.ResultCnt }}</Tag>
+          </Col>
           <Col>当前标签</Col>
           <Col>
           <Tag type="success" size="large" style="margin: 2px 4px;" v-for="ta in view.currentFile.Tags" :key="ta"
@@ -72,7 +75,19 @@ showSearch = false;
         </Row>
         <Row>
           <Col :span="24">
-          <Field label="名称" rows="5" style="width:100%" autosize type="textarea" v-model="view.currentFile.originName">
+          <Field label="编码" style="width:100%" v-model="view.currentFile.Code">
+          </Field>
+          </Col>
+        </Row>
+        <Row>
+          <Col :span="24">
+          <Field label="图鉴" style="width:100%" v-model="view.currentFile.Actress">
+          </Field>
+          </Col>
+        </Row>
+        <Row>
+          <Col :span="24">
+          <Field label="名称" rows="5" style="width:100%" autosize type="textarea" v-model="view.currentFile.Name">
           </Field>
           </Col>
         </Row>
@@ -280,7 +295,7 @@ import {
 import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
-import { getFileStream, getJpg, getPng,getTempImage } from "@/utils/ImageUtils";
+import { getFileStream, getJpg, getPng, getTempImage } from "@/utils/ImageUtils";
 import { useWindowSize } from "@vueuse/core";
 import {
   Dialog,
@@ -384,9 +399,16 @@ const tagManage = (item: MovieModel) => {
 
 }
 
+const refreshIndex = async () => {
+  await RefreshIndex()
+  onSearch()
+  showRename.value = false
+}
+
 const renameFile = async () => {
   const item = view.currentFile
-  item.Name = item.originName
+  const { Code, Actress, Name } = item
+  item.Name = "[" + Actress + "][" + Code + "]" + Name;
   const res = await FileRename(item)
   if (res.Code == 200) {
     Toast.success('操作成功')
@@ -456,8 +478,8 @@ const addCurrentFileTag = async (tag: string) => {
   if (res.Code == 200) {
     Toast.success('操作成功')
     await RefreshIndex()
-    onSearch()
-    showTag.value = false
+    // onSearch()
+    // showTag.value = false
   } else {
     Toast.fail(res.Message)
   }

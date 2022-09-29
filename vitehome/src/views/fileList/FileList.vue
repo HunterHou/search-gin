@@ -64,9 +64,10 @@
           </ElPopover>
         </ElCol>
         <ElCol :span="1">
-          <ElLink style="color: green">
+          <ElCheckbox v-model="queryParam.OnlyRepeat" label="重" size="large" @change="onlyRepeatQuery()" />
+          <!-- <ElLink style="color: green">
             <i :underline="true" class="ElIcon-zoom-out" title="重复" @click="onlyRepeatQuery()">重</i>
-          </ElLink>
+          </ElLink> -->
         </ElCol>
         <ElCol :span="3">
           <ElRadioGroup v-model="queryParam.SortField" @change="queryList" size="default">
@@ -116,7 +117,7 @@
               <ElButton text link bg>历史</ElButton>
             </template>
             <template #default>
-              <div style="max-height:800px">
+              <div style="max-height:600px;overflow: auto;">
                 <div>
                   <ElLink @click="()=>{systemProperty.History=[]}">清空历史</ElLink>
                 </div>
@@ -128,7 +129,11 @@
                       【{{item.SortField}}-{{item.SortType}}】- {{item.Page}}-{{item.PageSize}}
                       {{item.Keyword}}
                       -{{item.MovieType}}
+
                     </ElButton>
+                    <span style="color:blue">{{useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
+                    locales: "zh-cn",
+                    })}}</span>
                   </span>
 
                 </div>
@@ -152,7 +157,9 @@
                       {{item.Keyword}}
                       -{{item.MovieType}}
                     </ElButton>
-
+                    <span style="color:blue">{{useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
+                    locales: "zh-cn",
+                    })}}</span>
                   </span>
 
                 </div>
@@ -717,7 +724,7 @@ import {
 import { PostSettingInfo } from "@/api/setting";
 
 import { useSystemProperty } from "@/store/System";
-import { getFileStream, getJpg, getPng ,getTempImage} from "@/utils/ImageUtils";
+import { getFileStream, getJpg, getPng, getTempImage } from "@/utils/ImageUtils";
 import { ResultList } from "@/utils/ResultResponse";
 import { Eleme } from "@element-plus/icons-vue";
 import {
@@ -746,6 +753,7 @@ import {
   ElPopover,
   ElRadioButton,
   ElRadioGroup,
+  ElCheckbox,
   ElRow,
   ElCard,
   ElSpace,
@@ -1115,7 +1123,6 @@ const queryList = async (params?: any) => {
   } else {
     title = "文件";
     queryParam.Page = view.allPage
-    console.log("view.allPage", view.allPage)
   }
   document.title = title;
   view.ModelList = [];
@@ -1172,7 +1179,7 @@ const pageLoading = (num: number) => {
 
 
 const onlyRepeatQuery = () => {
-  queryParam.OnlyRepeat = true;
+  // queryParam.OnlyRepeat = true;
   queryList();
 };
 
@@ -1201,9 +1208,9 @@ const loadDirInfo = async (id: string, loading: boolean) => {
   if (res && res.length > 0) {
     view.imageList = [];
     for (let i = 0; i < res.length; i++) {
-      if (res[i].FileType === "jpg" || 
-        res[i].FileType === "png" || 
-          res[i].FileType === "gif" ) {
+      if (res[i].FileType === "jpg" ||
+        res[i].FileType === "png" ||
+        res[i].FileType === "gif") {
         // view.imageList.push(res[i].ImageBase);
         view.imageList.push(getTempImage(res[i].Id));
       }
@@ -1358,7 +1365,7 @@ const handleSizeChange = (pageSize: number) => {
   queryList();
 };
 
-setInterval(heartBeat, 30000);
+setInterval(heartBeat, 60000);
 
 onMounted(() => {
   loadSettingInfo();

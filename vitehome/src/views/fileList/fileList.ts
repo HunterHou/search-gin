@@ -4,7 +4,7 @@ import { reactive } from "vue";
 const systemProperty = useSystemProperty();
 
 export const formItemTagsChange = (view) => {
-  let { Name, Tags, FileType } = view.formItem;
+  let { Name, Tags, FileType, Code, Actress } = view.formItem;
   let newName = "";
   if (Name.indexOf("《") >= 0) {
     const startC = Name.substr(0, Name.indexOf("《") + 1);
@@ -18,19 +18,19 @@ export const formItemTagsChange = (view) => {
     newName = Name.replaceAll("." + FileType, "");
     newName = newName + "《" + Tags + "》" + "." + FileType;
   }
-  view.formItem.Name = newName;
+  view.formItem.originName = newName;
 };
 
 export const formMovieTypeChange = (view: any) => {
-  console.log(view.formItem)
-  let { MovieType, Name, FileType } = view.formItem;
+  console.log(view.currentFile);
+  if (!view) {
+    return;
+  }
+  let { MovieType, Name, FileType } = view.currentFile || {};
   let newName = "";
   if (Name.indexOf("{{") >= 0) {
     const startC = Name.substr(0, Name.indexOf("{{"));
-    const endC = Name.substr(
-      Name.indexOf("}}") + 2,
-      Name.length
-    );
+    const endC = Name.substr(Name.indexOf("}}") + 2, Name.length);
     newName = startC;
     if (MovieType && MovieType !== "") {
       newName += "{{" + MovieType + "}}";
@@ -40,7 +40,8 @@ export const formMovieTypeChange = (view: any) => {
     newName = Name.replaceAll("." + FileType, "");
     newName = newName + "{{" + MovieType + "}}" + "." + FileType;
   }
-  view.formItem.Name = newName;
+  view.currentFile.Name = newName;
+  view.currentFile.originName = newName;
 };
 
 export const javSearch = (actress: string) => {

@@ -115,9 +115,7 @@ const SystemProperty = defineStore({
         }
       }
       if (!has) {
-        console.log("this.History has", this.History);
-        this.History.unshift({ ...his });
-        console.log("this.History unshift", this.History);
+        this.History.unshift({ ...his, createTime: new Date() });
       }
       if (this.History.length > 50) {
         this.History.splice(0, 49);
