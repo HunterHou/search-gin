@@ -1027,7 +1027,7 @@ const editItemSubmit = async () => {
   if (res.Code == 200) {
     view.formItem = {};
     view.dialogFormItemVisible = false;
-    refreshIndex();
+    queryList();;
   } else {
     ElMessage.error(res.Message);
   }
@@ -1103,14 +1103,14 @@ const closeTag = async (clickId: string, title: string) => {
   const res = await CloseTag(clickId, title);
   if (res.Code == 200) {
     ElMessage.success(res.Message);
-    for (var i = 0; i < view.ModelList.length; i++) {
-      if (view.ModelList[i].Id == clickId) {
-        const idx = view.ModelList[i].Tags.indexOf(title);
-        view.ModelList[i].Tags.splice(idx, 1);
-      }
-      return;
-    }
-    refreshIndex();
+    // for (var i = 0; i < view.ModelList.length; i++) {
+    //   if (view.ModelList[i].Id == clickId) {
+    //     const idx = view.ModelList[i].Tags.indexOf(title);
+    //     view.ModelList[i].Tags.splice(idx, 1);
+    //   }
+    //   return;
+    // }
+    queryList();
   } else {
     ElMessage.error(res.Message);
   }

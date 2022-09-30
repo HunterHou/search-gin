@@ -92,6 +92,9 @@ func (o *OrmService) NewSessionBySearchParam(param datamodels.SearchParam) *xorm
 	if param.GetMovieType() != "" {
 		session.And("movie_type = ?", param.GetMovieType())
 	}
+	if param.DirPath != "" {
+		session.And("dir_path = ?", param.DirPath)
+	}
 	if param.GetKeywords() != "" {
 		session.And("(name like ?  or path like ? )", param.GetFuzzyKeywords(), param.GetFuzzyKeywords())
 	}
@@ -108,7 +111,8 @@ func (o *OrmService) queryCount(param datamodels.SearchParam) (int64, int64) {
 
 }
 
-func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
+//全部删除 并添加
+func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 	total := int64(len(movies))
 	pageSize := int64(1000)
 	totalPage := total/pageSize + 1
@@ -135,8 +139,13 @@ func (o *OrmService) InsertBatchPage(movies []datamodels.Movie) utils.Result {
 	return res
 }
 
+// 批量添加
 func (o *OrmService) InsertBatch(movies []datamodels.Movie, wg *sync.WaitGroup, pageNo int) utils.Result {
 	defer wg.Done()
+	return o.InsertS(movies, pageNo)
+}
+
+func (o *OrmService) InsertS(movies []datamodels.Movie, pageNo int) utils.Result {
 	effectRows, err := dbEngine.Insert(&movies)
 	if err != nil {
 		fmt.Println("insert error:", pageNo, err)
@@ -167,6 +176,7 @@ func (o *OrmService) InsertBatch(movies []datamodels.Movie, wg *sync.WaitGroup, 
 	return res
 }
 
+// 全部删除
 func (o *OrmService) DeleteAll() utils.Result {
 
 	effectRows, err := dbEngine.Where("1=1").Delete(new(datamodels.Movie))
@@ -175,6 +185,27 @@ func (o *OrmService) DeleteAll() utils.Result {
 	}
 	res := utils.NewSuccess()
 	res.EffectRows = effectRows
+	return res
+}
+
+// 删除指定文件夹下的数据
+func (o *OrmService) DeleteByDirPath(dirPath string) utils.Result {
+
+	queryParam := datamodels.SearchParam{
+		DirPath:  dirPath,
+		Page:     1,
+		PageSize: 10000,
+	}
+	res := utils.NewSuccess()
+	dirMovies, _ := o.query(queryParam)
+	if len(dirMovies) > 0 {
+		for i := 0; i < len(dirMovies); i++ {
+			_, err := dbEngine.ID(dirMovies[i].Id).Delete(new(datamodels.Movie))
+			if err != nil {
+				fmt.Println("delete error", err)
+			}
+		}
+	}
 	return res
 }
 

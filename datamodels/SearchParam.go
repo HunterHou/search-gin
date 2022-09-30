@@ -10,6 +10,7 @@ type SearchParam struct {
 	Keyword    string
 	OnlyRepeat bool
 	MovieType  string
+	DirPath    string
 	Page       int
 	PageSize   int
 	SortField  string
@@ -86,7 +87,7 @@ func (p *SearchParam) GetSort() []string {
 
 func (p *SearchParam) GetSortField() string {
 	if p.SortField == "" {
-		p.SortField = "mtime"
+		p.SortField = "m_time"
 	}
 	return p.SortField + " "
 }

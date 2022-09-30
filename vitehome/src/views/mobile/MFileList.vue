@@ -35,7 +35,7 @@ showSearch = false;
       <div style="margin-bottom: 0vh;">
         <Row>
           <Col>
-          <Tag type="success" @click="refreshIndex">总数:{{ view.ResultCnt }}</Tag>
+          <Tag type="success" @click="onSearch">总数:{{ view.ResultCnt }}</Tag>
           </Col>
           <Col>当前标签</Col>
           <Col>
@@ -412,7 +412,6 @@ const renameFile = async () => {
   const res = await FileRename(item)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    await RefreshIndex()
     onSearch()
     showRename.value = false
   } else {
@@ -423,7 +422,6 @@ const syncFile = async (id: string) => {
   const res = await SyncFileInfo(id)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    await RefreshIndex()
     onSearch()
     showTag.value = false
   } else {
@@ -446,7 +444,6 @@ const deleteFile = async (item: MovieModel) => {
     const res = await DeleteFile(item.Id)
     if (res.Code == 200) {
       Toast.success('操作成功')
-      await RefreshIndex()
       onSearch()
       showTag.value = false
     } else {
@@ -464,7 +461,6 @@ const removeCurrentFileTag = async (tag: string) => {
   const res = await CloseTag(view.currentFile.Id, tag)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    await RefreshIndex()
     onSearch()
     showTag.value = false
   } else {
@@ -477,8 +473,8 @@ const addCurrentFileTag = async (tag: string) => {
   const res = await AddTag(view.currentFile.Id, tag)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    await RefreshIndex()
-    // onSearch()
+    // await RefreshIndex()
+    onSearch()
     // showTag.value = false
   } else {
     Toast.fail(res.Message)

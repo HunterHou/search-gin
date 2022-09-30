@@ -157,6 +157,7 @@ func (fs FileService) AddTag(id string, tag string) utils.Result {
 		if err != nil {
 			fmt.Println(err)
 		}
+		fs.ScanTarget(movie.DirPath)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 
@@ -174,7 +175,6 @@ func (fs FileService) AddTag(id string, tag string) utils.Result {
 		fmt.Println(err)
 		return utils.NewFailByMsg(err.Error())
 	}
-	fs.UpdateOne(id, newName)
 	//png
 	if utils.ExistsFiles(movie.Png) {
 		suffix = "." + utils.GetSuffux(movie.Png)
@@ -199,7 +199,7 @@ func (fs FileService) AddTag(id string, tag string) utils.Result {
 		os.Rename(movie.Nfo, newName)
 
 	}
-
+	fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
 func (fs FileService) ClearTag(id string, tag string) utils.Result {
@@ -231,6 +231,7 @@ func (fs FileService) ClearTag(id string, tag string) utils.Result {
 	os.Rename(movie.Png, path)
 	path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
 	os.Rename(movie.Nfo, path)
+	fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
 
@@ -621,13 +622,13 @@ func (fs FileService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, 
 }
 
 func (fs FileService) FindOne(Id string) datamodels.Movie {
-	// if cons.OSSetting.IsDb {
-	// 	db := CreateOrmService()
-	// 	return db.Find(Id)
-	// }
-	// if len(datasource.FileLib) == 0 {
-	// 	fs.ScanAll()
-	// }
+	if cons.OSSetting.IsDb {
+		db := CreateOrmService()
+		return db.Find(Id)
+	}
+	if len(datasource.FileLib) == 0 {
+		fs.ScanAll()
+	}
 	curFile := datasource.FileLib[Id]
 	return curFile
 }
@@ -736,7 +737,7 @@ func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 	if utils.ExistsFiles(oldPath) {
 		os.Rename(oldPath, newPath)
 	}
-
+	fs.ScanTarget(movieLib.DirPath)
 	return res
 }
 
@@ -768,6 +769,7 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 
 }
 
+//全局扫描
 func (fs FileService) ScanAll() {
 	//统计初始化
 	cons.TypeMenu = sync.Map{}
@@ -783,11 +785,32 @@ func (fs FileService) ScanAll() {
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
 	fs.ScanDisk(dirList, cons.QueryTypes)
 }
+
+//扫描指定文佳佳
+func (fs FileService) ScanTarget(dirPath string) {
+	//统计初始化
+	cons.TypeMenu = sync.Map{}
+	cons.TagMenu = sync.Map{}
+	cons.SmallDir = []cons.MenuSize{}
+	//初始化查询条件
+	setting := cons.OSSetting
+	cons.QueryTypes = []string{}
+	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
+	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
+	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
+	targetFiles, _ := WalkInnter(dirPath, cons.QueryTypes, 0)
+	db := CreateOrmService()
+	db.DeleteByDirPath(dirPath)
+	db.InsertS(targetFiles, 1)
+
+}
+
 func (fs FileService) Delete(id string) {
 	file := fs.FindOne(id)
 	DeleteOne(file.DirPath, file.Title)
-
+	fs.ScanTarget(file.DirPath)
 }
+
 func DeleteOne(dirName string, fileName string) {
 	if len(fileName) == 0 {
 		return
@@ -1043,7 +1066,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 
 	}
 	db := CreateOrmService()
-	go db.InsertBatchPage(toInsert)
+	go db.InsertAllIndex(toInsert)
 	return filemap, actessmap, suppliermap, size
 }
 func Walks(baseDir []string, types []string) []datamodels.Movie {
