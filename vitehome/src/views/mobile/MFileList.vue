@@ -234,7 +234,7 @@ showSearch = false;
                 </template>
                 <template #right>
                   <SwipeCell style="align-content:space-between;">
-                    <Tag square size="large" type="danger" @click="deleteFile(item.Id)">删除
+                    <Tag square size="large" type="danger" @click="deleteFile(item)">删除
                     </Tag>
                     <Tag square size="large" type="primary" @click="showRenameForm(item)">
                       重命名</Tag>
