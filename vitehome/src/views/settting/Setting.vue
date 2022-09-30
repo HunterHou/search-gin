@@ -186,14 +186,14 @@ const goMenu = () => {
 }
 
 const handleClick = () => {
-  console.log('val')
+  // console.log('val')
 }
 const handleCheckAllChange = (val) => {
   view.form.Dirs = val ? view.form.DirsLib : [];
   view.isIndeterminate = false;
 }
 const handleCheckedCitiesChange = (value) => {
-  console.log(value);
+  // console.log(value);
 
   // let checkedCount = value.length
   // checkAll = checkedCount === view.form.Dirs.length;
@@ -203,7 +203,7 @@ const handleCheckedCitiesChange = (value) => {
 const submitForm = async () => {
   const postForm = { ...view.form, BaseDir: view.form.Dirs };
   view.loading = true;
-  console.log(postForm);
+  // console.log(postForm);
   const res = await PostSettingInfo(postForm)
   if (res) {
     go(0)

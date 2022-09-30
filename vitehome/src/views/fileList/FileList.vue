@@ -937,7 +937,6 @@ const startPlayVideo = (item: MovieModel) => {
 const onPlay = () => {
   optionsPC.muted = false
   optionsPC.volume = systemProperty.videoOptions.volume
-  console.log(optionsPC)
 }
 
 const innerVisibleFalse = () => {
@@ -970,7 +969,7 @@ const codeFormat = (code: string) => {
 }
 
 const gotoContext = (id: string) => {
-  console.log("gotoContext", id);
+  // console.log("gotoContext", id);
 };
 
 const removeFormTag = (tag: string) => {

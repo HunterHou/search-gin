@@ -13,7 +13,6 @@ const props = defineProps({
 const { more } = props
 const emit = defineEmits(['loadMore'])
 const onLoadMore = () => {
-    console.log('loadMore', more);
     emit('loadMore')
 }
 </script>

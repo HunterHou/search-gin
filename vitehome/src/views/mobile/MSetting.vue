@@ -83,7 +83,7 @@
             </Col>
             <Col :span="18" @click="tagSelect = true">
             <Tag v-for="item in view.form.Tags" size="large" :key="item" style="background: green;margin:2px 4px;">{{
-                item
+            item
             }}</Tag>
             </Col>
           </Row>
@@ -105,7 +105,7 @@
             </Col>
             <Col :span="18" @click="dirSelect = true">
             <Tag v-for="item in view.form.Dirs" :key="item" size="large" style="background: green;margin:2px 4px;">{{
-                item
+            item
             }}</Tag>
             </Col>
           </Row>
@@ -117,7 +117,7 @@
             </Col>
             <Col :span="18" @click="tagLibSelect = true">
             <Tag v-for="item in view.form.TagsLib" :key="item" size="large" style="background: green;margin:2px 4px;">{{
-                item
+            item
             }}
             </Tag>
             </Col>
@@ -128,7 +128,7 @@
             </Col>
             <Col :span="18" @click="typeSelect = true">
             <Tag v-for="item in view.form.Types" :key="item" size="large" style="background: green;margin:2px 4px;">{{
-                item
+            item
             }}</Tag>
             </Col>
           </Row>
@@ -202,13 +202,13 @@ const addTagLib = () => {
   }
 }
 const chooseVideoTypes = () => {
-  console.log('chooseVideoTypes')
+  // console.log('chooseVideoTypes')
   videoSelect.value = true
 }
 
 const submitForm = async () => {
   const postForm = { ...view.form, BaseDir: view.form.Dirs };
-  console.log(postForm);
+  // console.log(postForm);
   const res = await PostSettingInfo(postForm)
   if (res) {
     go(0)
@@ -237,14 +237,13 @@ onMounted(() => {
   z-index: 99;
   width: 100%;
 }
+
 .van-field__value {
   border: dotted;
   border-radius: 2px;
 }
 </style>
 <style scoped>
-
-
 .van-row {
   margin: 18px;
   border-bottom: dotted;

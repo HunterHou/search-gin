@@ -926,7 +926,6 @@ export default {
     },
     fetchTagsLib(queryString, callback) {
       const suggrestTagsLib = this.settingInfo.TagsLib;
-      console.log(suggrestTagsLib);
       const results = queryString
         ? suggrestTagsLib.filter(this.createFilter(queryString))
         : suggrestTagsLib;

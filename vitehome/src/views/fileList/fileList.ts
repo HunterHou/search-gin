@@ -22,7 +22,6 @@ export const formItemTagsChange = (view) => {
 };
 
 export const formMovieTypeChange = (view: any) => {
-  console.log(view.currentFile);
   if (!view) {
     return;
   }

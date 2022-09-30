@@ -119,7 +119,6 @@ const onLoadMore = async () => {
 };
 
 const gotoSearch = (actress: string) => {
-  console.log(actress)
   systemProperty.setKeyword(actress)
   systemProperty.setPage(1)
   push("/mfilelist")
@@ -164,7 +163,6 @@ const onSearch = async (clear?: Boolean) => {
   await queryList();
 };
 const onCancel = async () => {
-  console.log("onCancel");
   await onSearch();
 };
 const keywordUpdate = () => {
@@ -175,7 +173,6 @@ const keywordUpdate = () => {
 };
 onMounted(() => {
   const { currentRoute } = useRouter()
-  console.log(currentRoute.value.meta.title)
   onSearch();
 });
 </script>

@@ -381,10 +381,10 @@ const options = reactive({
 });
 
 watch(loadingList, () => {
-  console.log("loadingListWatch", loadingList.value);
+  // console.log("loadingListWatch", loadingList.value);
 });
 watch(finished, () => {
-  console.log("finished", finished.value);
+  // console.log("finished", finished.value);
 });
 
 
@@ -431,7 +431,6 @@ const syncFile = async (id: string) => {
 
 const showRenameForm = (item: MovieModel) => {
   view.currentFile = item
-  console.log(item)
   showRename.value = true;
 
 }
@@ -457,7 +456,6 @@ const deleteFile = async (item: MovieModel) => {
 
 
 const removeCurrentFileTag = async (tag: string) => {
-  console.log(tag, view.currentFile)
   const res = await CloseTag(view.currentFile.Id, tag)
   if (res.Code == 200) {
     Toast.success('操作成功')
@@ -515,7 +513,6 @@ const viewPic = ref(false);
 
 
 const getImageList = async (Id: string) => {
-  console.log(Id)
   const res = await DownImageList(Id);
   if (res.Code === 200) {
     Toast.success(res.Message);
@@ -663,7 +660,6 @@ const onSearch = async (clear?: Boolean) => {
   await queryList();
 };
 const onCancel = async () => {
-  console.log("onCancel");
   await onSearch();
 };
 const keywordUpdate = () => {
