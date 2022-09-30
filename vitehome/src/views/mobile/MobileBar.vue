@@ -14,8 +14,8 @@ import { ref } from 'vue';
 
 const tabbarActive = ref("fileList")
 
-const tabbarChange=(index)=>{
-    console.log(index,tabbarActive.value)
+const tabbarChange = (index) => {
+    // console.log(index,tabbarActive.value)
 }
 
 </script>
