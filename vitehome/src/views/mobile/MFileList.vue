@@ -401,7 +401,7 @@ const tagManage = (item: MovieModel) => {
 
 const refreshIndex = async () => {
   await RefreshIndex()
-  onSearch()
+  await onSearch()
   showRename.value = false
 }
 
@@ -412,7 +412,7 @@ const renameFile = async () => {
   const res = await FileRename(item)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    onSearch()
+    await onSearch()
     showRename.value = false
   } else {
     Toast.fail(res.Message)
@@ -422,7 +422,7 @@ const syncFile = async (id: string) => {
   const res = await SyncFileInfo(id)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    onSearch()
+    await onSearch()
     showTag.value = false
   } else {
     Toast.fail(res.Message)
@@ -443,7 +443,7 @@ const deleteFile = async (item: MovieModel) => {
     const res = await DeleteFile(item.Id)
     if (res.Code == 200) {
       Toast.success('操作成功')
-      onSearch()
+      await onSearch()
       showTag.value = false
     } else {
       Toast.fail(res.Message)
