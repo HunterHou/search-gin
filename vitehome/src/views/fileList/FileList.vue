@@ -1076,16 +1076,17 @@ const addTag = async (clickId, title) => {
   const res = await AddTag(clickId, title);
   if (res.Code == 200) {
     view.addTagShow = false;
-    for (var i = 0; i < view.ModelList.length; i++) {
-      if (view.ModelList[i].Id == clickId) {
-        if (!view.ModelList[i].Tags) {
-          view.ModelList[i].Tags = [];
-        }
-        view.ModelList[i].Tags.push(title);
-        return;
-      }
-    }
+    // for (var i = 0; i < view.ModelList.length; i++) {
+    //   if (view.ModelList[i].Id == clickId) {
+    //     if (!view.ModelList[i].Tags) {
+    //       view.ModelList[i].Tags = [];
+    //     }
+    //     view.ModelList[i].Tags.push(title);
+    //     return;
+    //   }
+    // }
     ElMessage.success(res.Message);
+    queryList()
   } else {
     ElMessage.error(res.Message);
   }
