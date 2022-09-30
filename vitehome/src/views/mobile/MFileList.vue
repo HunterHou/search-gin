@@ -212,7 +212,7 @@ showSearch = false;
                 </Col>
               </Row>
 
-              <Row>
+              <Row style="max-height:32px;overflow:hidden">
                 <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
               </Row>
               <Row>
@@ -475,7 +475,7 @@ const addCurrentFileTag = async (tag: string) => {
     Toast.success('操作成功')
     // await RefreshIndex()
     onSearch()
-    // showTag.value = false
+    showTag.value = false
   } else {
     Toast.fail(res.Message)
   }
