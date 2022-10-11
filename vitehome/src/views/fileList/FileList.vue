@@ -1085,7 +1085,9 @@ const addTag = async (clickId, title) => {
     //   }
     // }
     ElMessage.success(res.Message);
-    queryList()
+    setTimeout(() => {
+      queryList()
+    }, 1000);
   } else {
     ElMessage.error(res.Message);
   }
@@ -1110,7 +1112,9 @@ const closeTag = async (clickId: string, title: string) => {
     //   }
     //   return;
     // }
-    queryList();
+    setTimeout(() => {
+      queryList()
+    }, 1000);
   } else {
     ElMessage.error(res.Message);
   }
