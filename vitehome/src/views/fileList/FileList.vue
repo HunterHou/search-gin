@@ -1026,7 +1026,9 @@ const editItemSubmit = async () => {
   if (res.Code == 200) {
     view.formItem = {};
     view.dialogFormItemVisible = false;
-    queryList();;
+    setTimeout(
+      queryList,500
+    )
   } else {
     ElMessage.error(res.Message);
   }
