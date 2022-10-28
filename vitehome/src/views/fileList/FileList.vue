@@ -577,7 +577,7 @@
     " :destroy-on-close="true">
       <div v-if="view.formItem">
         <div style="margin-top:-40px">
-          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 680px; height: auto"
+          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 680px;max-height: 600px; : auto"
             @click="previewPicture(view.formItem.Id)" />
           <ElRow :gutter="24">
             <ElCol :span="4" tyle="text-align:right"> YY： </ElCol>
@@ -1027,7 +1027,7 @@ const editItemSubmit = async () => {
     view.formItem = {};
     view.dialogFormItemVisible = false;
     setTimeout(
-      queryList,500
+      queryList,1000
     )
   } else {
     ElMessage.error(res.Message);
