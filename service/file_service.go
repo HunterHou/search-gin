@@ -91,6 +91,8 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) uti
 		os.Rename(movie.Png, path)
 		path = strings.ReplaceAll(movie.Nfo, originVideoType, movieType)
 		os.Rename(movie.Nfo, path)
+		// 执行当前目录搜索
+		fs.ScanTarget(movie.DirPath)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 	newMovieType := "{{" + movieType + "}}"
@@ -123,6 +125,8 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) uti
 		os.Rename(movie.Nfo, newName)
 
 	}
+	// 执行当前目录搜索
+	fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
 
@@ -157,6 +161,7 @@ func (fs FileService) AddTag(id string, tag string) utils.Result {
 		if err != nil {
 			fmt.Println(err)
 		}
+		// 执行当前目录搜索
 		fs.ScanTarget(movie.DirPath)
 		return utils.NewSuccessByMsg("执行成功")
 	}
@@ -199,6 +204,7 @@ func (fs FileService) AddTag(id string, tag string) utils.Result {
 		os.Rename(movie.Nfo, newName)
 
 	}
+	// 执行当前目录搜索
 	fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
@@ -231,6 +237,7 @@ func (fs FileService) ClearTag(id string, tag string) utils.Result {
 	os.Rename(movie.Png, path)
 	path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
 	os.Rename(movie.Nfo, path)
+	// 执行当前目录搜索
 	fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
@@ -354,9 +361,10 @@ func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
 		return utils.NewFailByMsg("No Image avaliable")
 	}
 	var wg sync.WaitGroup
-	wg.Add(1)
 	wg.Add(len(toFile.ImageList))
 
+	//主图下载
+	// wg.Add(1)
 	//jpgUrl := toFile.JpgUrl
 	//if !strings.HasPrefix(jpgUrl, "http") {
 	//	jpgUrl = cons.OSSetting.BaseUrl + strings.Replace(jpgUrl, "/", "", 1)
@@ -798,7 +806,7 @@ func (fs FileService) ScanTarget(dirPath string) {
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
-	targetFiles, _ := WalkInnter(dirPath, cons.QueryTypes, 0)
+	targetFiles, _ := WalkInnter(dirPath, cons.QueryTypes, 0, false)
 	db := CreateOrmService()
 	db.DeleteByDirPath(dirPath)
 	db.InsertS(targetFiles, 1)
@@ -1107,7 +1115,7 @@ func Walks(baseDir []string, types []string) []datamodels.Movie {
 func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
-	files, _ := WalkInnter(baseDir, types, 0)
+	files, _ := WalkInnter(baseDir, types, 0, true)
 	datas <- files
 	ti := time.Since(start)
 	thisTime := cons.MenuSize{
@@ -1154,7 +1162,15 @@ func Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
 
 	return result
 }
-func WalkInnter(baseDir string, types []string, totalSize int64) ([]datamodels.Movie, int64) {
+
+//文件夹搜索
+/**
+baseDir 文件夹路径
+types 扫描类型
+totalSize 总数
+queryChild 是否递归
+*/
+func WalkInnter(baseDir string, types []string, totalSize int64, queryChild bool) ([]datamodels.Movie, int64) {
 	var result []datamodels.Movie
 	currentSize := int64(0)
 	files, _ := ioutil.ReadDir(baseDir)
@@ -1162,8 +1178,8 @@ func WalkInnter(baseDir string, types []string, totalSize int64) ([]datamodels.M
 		for _, path := range files {
 
 			pathAbs := filepath.Join(baseDir, path.Name())
-			if path.IsDir() {
-				childResult, innerSize := WalkInnter(pathAbs, types, currentSize)
+			if path.IsDir() && queryChild {
+				childResult, innerSize := WalkInnter(pathAbs, types, currentSize, queryChild)
 				result = ExpandsMovie(result, childResult)
 				currentSize += innerSize
 			} else {

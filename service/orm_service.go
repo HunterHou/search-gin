@@ -119,7 +119,7 @@ func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 	startIndex := 0
 	var wg sync.WaitGroup
 	wg.Add(int(totalPage))
-	cons.OSSetting.IsDb = false
+	cons.Indexing = false
 	o.DeleteAll()
 	for i := 0; i < int(totalPage); i++ {
 		lastIndex := startIndex + int(pageSize)
@@ -133,7 +133,7 @@ func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 		startIndex = lastIndex
 	}
 	wg.Wait()
-	cons.OSSetting.IsDb = true
+	cons.Indexing = true
 	res := utils.NewSuccess()
 	res.EffectRows = total
 	return res
