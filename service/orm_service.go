@@ -93,6 +93,7 @@ func (o *OrmService) NewSessionBySearchParam(param datamodels.SearchParam) *xorm
 		session.And("movie_type = ?", param.GetMovieType())
 	}
 	if param.DirPath != "" {
+		param.DirPath = strings.ReplaceAll(param.DirPath, "\\\\", "\\")
 		session.And("dir_path = ?", param.DirPath)
 	}
 	if param.GetKeywords() != "" {
@@ -119,7 +120,7 @@ func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 	startIndex := 0
 	var wg sync.WaitGroup
 	wg.Add(int(totalPage))
-	cons.Indexing = false
+	cons.IndexDone = false
 	o.DeleteAll()
 	for i := 0; i < int(totalPage); i++ {
 		lastIndex := startIndex + int(pageSize)
@@ -133,7 +134,7 @@ func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 		startIndex = lastIndex
 	}
 	wg.Wait()
-	cons.Indexing = true
+	cons.IndexDone = true
 	res := utils.NewSuccess()
 	res.EffectRows = total
 	return res
@@ -198,15 +199,23 @@ func (o *OrmService) DeleteByDirPath(dirPath string) utils.Result {
 	}
 	res := utils.NewSuccess()
 	dirMovies, _ := o.query(queryParam)
+	var wg sync.WaitGroup
+	wg.Add(int(len(dirMovies)))
 	if len(dirMovies) > 0 {
 		for i := 0; i < len(dirMovies); i++ {
-			_, err := dbEngine.ID(dirMovies[i].Id).Delete(new(datamodels.Movie))
-			if err != nil {
-				fmt.Println("delete error", err)
-			}
+			go deleteOne(dirMovies[i].Id, &wg)
 		}
 	}
+	wg.Wait()
 	return res
+}
+
+func deleteOne(id string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	_, err := dbEngine.ID(id).Delete(new(datamodels.Movie))
+	if err != nil {
+		fmt.Println("delete error", err)
+	}
 }
 
 func (o *OrmService) SyncMovieTable() utils.Result {

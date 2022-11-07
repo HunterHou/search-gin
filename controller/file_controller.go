@@ -61,7 +61,7 @@ func GetActressImage(c *gin.Context) {
 // 文件搜索入口
 func PostSearch(c *gin.Context) {
 
-	if cons.OSSetting.IsDb && cons.Indexing {
+	if cons.OSSetting.IsDb && cons.IndexDone {
 		//当使用db 且索引已完成更新  使用sqlite 查询
 		PostSearchMovie(c)
 	} else {

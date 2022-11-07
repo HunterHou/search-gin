@@ -809,7 +809,9 @@ func (fs FileService) ScanTarget(dirPath string) {
 	targetFiles, _ := WalkInnter(dirPath, cons.QueryTypes, 0, false)
 	db := CreateOrmService()
 	db.DeleteByDirPath(dirPath)
+	fmt.Println("删除文件夹:" + dirPath)
 	db.InsertS(targetFiles, 1)
+	fmt.Printf("添加文件:%d", len(targetFiles))
 
 }
 

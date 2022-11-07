@@ -114,7 +114,7 @@ func TagSizePlus(targetType string, targetSize int64) {
 var MovieFields = utils.InterfaceFields(datamodels.Movie{})
 
 // 索引构建中标记
-var Indexing = false
+var IndexDone = true
 
 //系统配置信息
 var OSSetting = datamodels.Setting{
