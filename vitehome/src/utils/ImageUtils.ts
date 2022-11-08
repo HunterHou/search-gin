@@ -22,5 +22,5 @@ export const getTempImage = (id: string) => {
 };
 
 export const getActressImage = (actressUrl: string) => {
-  return settingInfo.value.ImageHost + actressUrl;
+  return settingInfo.value.ImageHost + "/api/actressImgae/" + actressUrl;
 };

@@ -31,16 +31,9 @@
       }
     ">
       <SwipeCell>
-        <div v-for="item in view.ModelList" :key="item.Id" style="
-          float: left;
-          width: auto;
-          height: 16rem;
-          display: flex;
-          box-shadow: 0 0 4px grey;
-          margin: 8px 8px;
-        ">
+        <div v-for="item in view.ModelList" :key="item.Id" class="actressDiv">
           <div style="margin: 0px auto" @click="gotoSearch(item.Name)">
-            <Image :src="getActressImage(item.JpgUrl)" :style="{
+            <Image :src="getActressImage(item.Name)" :style="{
               height: '90%',
               width: 'auto',
             }">
@@ -181,6 +174,15 @@ onMounted(() => {
   width: 100%;
   position: absolute;
   display: block;
+}
+
+.actressDiv {
+  float: left;
+  width: auto;
+  height: 16rem;
+  display: flex;
+  box-shadow: 0 0 4px grey;
+  margin: 8px 8px;
 }
 
 .mlist {

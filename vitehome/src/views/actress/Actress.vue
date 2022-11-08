@@ -114,7 +114,7 @@ onMounted(() => {
         <div v-if="item" class="img-list-item" @click="open(item.Name)">
           <el-link>
             <el-badge :value="item.Cnt">
-              <el-image :src="getActressImage(item.JpgUrl)" lazy round></el-image>
+              <el-image :src="getActressImage(item.Name)" lazy round></el-image>
             </el-badge>
           </el-link>
           {{ item.Name ? item.Name : "" }} 【{{ item.SizeStr }}】
