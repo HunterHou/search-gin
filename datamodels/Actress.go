@@ -1,6 +1,8 @@
 package datamodels
 
-import "searchGin/utils"
+import (
+	"searchGin/utils"
+)
 
 type Actress struct {
 	Name    string
@@ -9,6 +11,7 @@ type Actress struct {
 	Size    int64
 	SizeStr string
 	JpgUrl  string
+	Images  []string
 }
 
 func NewActres(name string, url string, size int64) Actress {
@@ -19,6 +22,7 @@ func NewActres(name string, url string, size int64) Actress {
 		Size:    size,
 		SizeStr: utils.GetSizeStr(size),
 		JpgUrl:  "/api/actressImgae/" + name,
+		Images:  []string{url},
 	}
 }
 func (act *Actress) PlusCnt() {
@@ -29,11 +33,16 @@ func (act *Actress) PlusSize(size int64) {
 	act.Size = act.Size + size
 	act.SizeStr = utils.GetSizeStr(act.Size)
 }
-
-func (act Actress) PngBase64() string {
-	path := act.Url
-	if !utils.ExistsFiles(path) {
-		path = act.Url
+func (act *Actress) AddImage(image string) {
+	if !utils.HasItem(act.Images, image) {
+		act.Images = append(act.Images, image)
 	}
-	return utils.ImageToString(path)
 }
+
+// func (act Actress) PngBase64() string {
+// 	path := act.Url
+// 	if !utils.ExistsFiles(path) {
+// 		path = act.Url
+// 	}
+// 	return utils.ImageToString(path)
+// }
