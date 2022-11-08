@@ -1062,6 +1062,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 		if ok {
 			curActress.PlusCnt()
 			curActress.PlusSize(curFile.Size)
+			curActress.AddImage(curFile.Png)
 			curActress.AddImage(curFile.Jpg)
 			actessmap[curFile.Actress] = curActress
 		} else {
