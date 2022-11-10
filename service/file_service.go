@@ -699,6 +699,7 @@ func writeNoPic(c *gin.Context) {
 	c.Data(http.StatusOK, contentType, noPic)
 }
 
+// 文件重命名 或移动
 func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 	res := utils.NewSuccess()
 	movieLib := fs.FindOne(movie.Id)
@@ -712,28 +713,35 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 		return res
 	}
 
-	newPath := movieLib.DirPath
 	newDir := movieLib.DirPath
 	if movie.MoveOut {
-		// os.MkdirAll(movie.Actress, os.ModePerm)
 		if movie.Actress != "" {
 			newDir += utils.PathSeparator + movie.Actress
-			newPath += utils.PathSeparator + movie.Actress
 		}
+
 		if movie.Title != "" {
 			newDir += utils.PathSeparator + movie.Title
-			newPath += utils.PathSeparator + movie.Title
 		}
-		err := os.MkdirAll(newDir, os.ModePerm)
-		if err != nil {
-			fmt.Printf("err: %v\n", err)
-			res.FailByMsg("执行失败")
-			res.Data = err
-			return res
+		if movie.Code != "" {
+			newDir += movie.Code
 		}
+
 	}
-	newPath = newDir + utils.PathSeparator + movie.Name
-	err := os.Rename(oldPath, newPath)
+	err := os.MkdirAll(newDir, os.ModePerm)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		res.FailByMsg("文件夹创建失败：" + newDir)
+		res.Data = err
+		return res
+	}
+	newPath := newDir + utils.PathSeparator + movie.Name
+	err = os.Rename(oldPath, newPath)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		res.FailByMsg("文件重命名失败：" + newPath)
+		res.Data = err
+		return res
+	}
 	//png
 	suffix := "." + utils.GetSuffux(oldPath)
 	oldPng := strings.ReplaceAll(oldPath, suffix, ".png")
@@ -819,6 +827,7 @@ func (fs FileService) ScanTarget(dirPath string) {
 	db.DeleteByDirPath(dirPath)
 	fmt.Println("删除文件夹:" + dirPath)
 	db.InsertS(targetFiles, 1)
+	cons.IndexDone = true
 	fmt.Printf("添加文件:%d", len(targetFiles))
 
 }
