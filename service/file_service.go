@@ -699,7 +699,7 @@ func writeNoPic(c *gin.Context) {
 	c.Data(http.StatusOK, contentType, noPic)
 }
 
-func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
+func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 	res := utils.NewSuccess()
 	movieLib := fs.FindOne(movie.Id)
 	if movieLib.IsNull() {
@@ -711,11 +711,19 @@ func (fs FileService) Rename(movie datamodels.Movie) utils.Result {
 		res.FailByMsg("文件不存在")
 		return res
 	}
-	newPath := movieLib.DirPath + utils.PathSeparator + movie.Name
+	newPath := movieLib.DirPath
+	if movie.MoveOut {
+		if movie.Actress != "" {
+			newPath = newPath + utils.PathSeparator + movie.Actress
+		}
+
+	}
+	newPath = newPath + utils.PathSeparator + movie.Name
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 		res.FailByMsg("执行失败")
+		res.Data = err
 		return res
 	}
 

@@ -119,21 +119,22 @@
             <template #default>
               <div style="max-height:600px;overflow: auto;">
                 <div>
-                  <ElLink @click="()=>{systemProperty.History=[]}">清空历史</ElLink>
+                  <ElLink @click="() => { systemProperty.History = [] }">清空历史</ElLink>
                 </div>
                 <hr>
                 <div>
-                  <span style="width:80%;float: left;" v-for="item,index in systemProperty.History" :key="index">
+                  <span style="width:80%;float: left;" v-for="item, index in systemProperty.History" :key="index">
                     <ElLink @click="addFavorite(item)"> 收藏</ElLink>&nbsp;
                     <ElButton link bg @click="gotoHistory(item)">
-                      【{{item.SortField}}-{{item.SortType}}】- {{item.Page}}-{{item.PageSize}}
-                      {{item.Keyword}}
-                      -{{item.MovieType}}
+                      【{{ item.SortField }}-{{ item.SortType }}】- {{ item.Page }}-{{ item.PageSize }}
+                      {{ item.Keyword }}
+                      -{{ item.MovieType }}
 
                     </ElButton>
-                    <span style="color:blue">{{useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
+                    <span style="color:blue">{{ useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
                     locales: "zh-cn",
-                    })}}</span>
+                    })
+                    }}</span>
                   </span>
 
                 </div>
@@ -147,19 +148,20 @@
             <template #default>
               <div style="max-height:800px">
                 <div>
-                  <ElLink @click="()=>{systemProperty.Favorite=[]}">清空收藏</ElLink>
+                  <ElLink @click="() => { systemProperty.Favorite = [] }">清空收藏</ElLink>
                 </div>
                 <hr>
                 <div>
-                  <span style="width:80%;float: left;" v-for="item,index in systemProperty.Favorite" :key="index">
+                  <span style="width:80%;float: left;" v-for="item, index in systemProperty.Favorite" :key="index">
                     <ElButton text @click="gotoHistory(item)">
-                      【{{item.SortField}}-{{item.SortType}}】- {{item.Page}}-{{item.PageSize}}
-                      {{item.Keyword}}
-                      -{{item.MovieType}}
+                      【{{ item.SortField }}-{{ item.SortType }}】- {{ item.Page }}-{{ item.PageSize }}
+                      {{ item.Keyword }}
+                      -{{ item.MovieType }}
                     </ElButton>
-                    <span style="color:blue">{{useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
+                    <span style="color:blue">{{ useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
                     locales: "zh-cn",
-                    })}}</span>
+                    })
+                    }}</span>
                   </span>
 
                 </div>
@@ -284,7 +286,7 @@
           <ElCard class="ecard" shadow="always" :body-style="{
             padding: '0px',
             margin: '4px 2px',
-            
+          
           }">
             <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
               <div :class="isShowCover(view) ? 'hidder-open-cover' : 'hidder-open-post'"
@@ -376,7 +378,7 @@
                 </ElCard>
               </template>
             </ElPopover>
-            <div class="image-tool" :style="{background: !noMovieType(item.MovieType) ? '' : 'rgb(205, 138, 50)',}">
+            <div class="image-tool" :style="{ background: !noMovieType(item.MovieType) ? '' : 'rgb(205, 138, 50)', }">
               <ElSpace wrap>
                 <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
                   <ElIcon>
@@ -489,26 +491,28 @@
 
                   </template>
                   <template #default>
-                    <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}
-                    </ElLink>
-                    <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
-                    <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
-                    <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
-                    <span style="color: red">【{{ item.SizeStr }}】</span>
-
-                    {{
-                    useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
-                    locales: "zh-cn",
-                    })
-                    }}
-                    <hr />
-                    <span style="
-                        margin-buttom: 30px;
-                        margin-top: 30px;
-                        margin-left: 30px;
-                        margin-right: 30px;
-                      ">
-                      {{ item.Name }}</span>
+                    <ElRow>
+                      <ElLink v-if="item.Actress" style="color: green" @click="copy(item.Actress)">{{ item.Actress }}
+                      </ElLink>
+                      <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
+                      <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
+                      <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
+                      {{
+                      useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
+                      locales: "zh-cn",
+                      })
+                      }}
+                      <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
+                      <span style="color: red">【{{ item.SizeStr }}】</span>
+                    </ElRow>
+                    <ElRow>
+                      <span style="margin-bottom: 30px;margin-top: 30px;margin-left: 30px;margin-right: 30px;">
+                        {{ item.Name }}</span>
+                    </ElRow>
+                    <ElRow>
+                      <span style="font-size: 10px;color: darkred;" @click="copy(item.Title)">
+                        {{ item.Title }}</span>
+                    </ElRow>
                   </template>
                 </ElPopover>
 
@@ -519,7 +523,7 @@
         </div>
       </ElSpace>
       <ElPagination class="pageTool" v-model:currentPage="queryParam.Page" v-model:page-size="queryParam.PageSize"
-        :page-sizes="[10,12, 16, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
+        :page-sizes="[10, 12, 16, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
         :background="true" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
 
@@ -565,6 +569,7 @@
         </ElFormItem>
       </ElForm>
       <div slot="footer" class="dialog-footer">
+        <el-button type="success" size="large" @click="editMoveout">同步移动</el-button>
         <el-button size="large" @click="view.dialogFormItemVisible = false">取 消</el-button>
         <el-button type="primary" size="large" @click="editItemSubmit">确 定</el-button>
       </div>
@@ -791,7 +796,7 @@ const refreshIndexFlag = ref(false);
 const showStyle = ref("post");
 const systemProperty = useSystemProperty();
 const source = ref("");
-const { copy } = useClipboard({ source });
+const { copy, copied, text } = useClipboard({ source });
 const { width: windowWidth, height: windowHeight } = useWindowSize();
 
 const searchStyle = ref({});
@@ -833,6 +838,11 @@ const optionsPC = reactive({
   control: systemProperty.videoOptions.control, //是否显示控制
   controlBtns: systemProperty.videoOptions.controlBtns, //显示所有按钮,
 });
+
+watch(text, (newtext) => {
+  console.log('text', newtext)
+  ElMessage.warning('已复制：' + newtext);
+})
 
 watch(windowWidth, (newWidth) => {
   let newHeight = (newWidth * 9) / 16;
@@ -994,8 +1004,13 @@ const editItem = (item: MovieModel) => {
   view.dialogFormItemVisible = true;
 };
 
+const editMoveout = async () => {
+  view.formItem.MoveOut = true
+  editItemSubmit()
+}
+
 const editItemSubmit = async () => {
-  const { Id, Name, Code, Actress, Tags } = view.formItem;
+  const { Id, Name, Code, Actress, Tags, MoveOut } = view.formItem;
   let code = Code.trim();
   if (code && code.indexOf("-") < 0) {
     code = "-" + code
@@ -1021,13 +1036,13 @@ const editItemSubmit = async () => {
       name += " " + strNew;
     }
   }
-  const param = { Id, Name: name, Code: code, Actress };
+  const param = { Id, Name: name, Code: code, Actress, MoveOut };
   const res = await FileRename(param);
   if (res.Code == 200) {
     view.formItem = {};
     view.dialogFormItemVisible = false;
     setTimeout(
-      queryList,1000
+      queryList, 1000
     )
   } else {
     ElMessage.error(res.Message);

@@ -215,7 +215,7 @@ func GetInfo(c *gin.Context) {
 
 // 改名
 func PostRename(c *gin.Context) {
-	currentFile := datamodels.Movie{}
+	currentFile := datamodels.MovieEdit{}
 	c.ShouldBindJSON(&currentFile)
 	service := service.CreateFileService()
 	res := service.Rename(currentFile)

@@ -42,6 +42,12 @@ type Movie struct {
 	JpgUrl   string `json:"JpgUrl,omitempty" xorm:"Text"`
 }
 
+// 文件修改模型
+type MovieEdit struct {
+	Movie
+	MoveOut bool
+}
+
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
 	id, _ := utils.DirpathForId(path)
