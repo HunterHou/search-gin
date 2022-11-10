@@ -132,8 +132,8 @@
 
                     </ElButton>
                     <span style="color:blue">{{ useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
-                    locales: "zh-cn",
-                    })
+                        locales: "zh-cn",
+                      })
                     }}</span>
                   </span>
 
@@ -159,8 +159,8 @@
                       -{{ item.MovieType }}
                     </ElButton>
                     <span style="color:blue">{{ useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
-                    locales: "zh-cn",
-                    })
+                        locales: "zh-cn",
+                      })
                     }}</span>
                   </span>
 
@@ -206,7 +206,7 @@
             播放中： 【
             <ElButton type="success" plain size="large" loading :link="true" />
             {{
-            view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
+                view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
             }}
             <ElButton type="success" plain size="large" loading :link="true" />
             】
@@ -498,9 +498,9 @@
                       <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       {{
-                      useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
-                      locales: "zh-cn",
-                      })
+                          useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
+                            locales: "zh-cn",
+                          })
                       }}
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       <span style="color: red">【{{ item.SizeStr }}】</span>
@@ -569,7 +569,7 @@
         </ElFormItem>
       </ElForm>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" size="large" @click="editMoveout">同步移动</el-button>
+        <el-button type="success" size="large" @click="editMoveout">移动到图鉴</el-button>
         <el-button size="large" @click="view.dialogFormItemVisible = false">取 消</el-button>
         <el-button type="primary" size="large" @click="editItemSubmit">确 定</el-button>
       </div>
@@ -609,7 +609,7 @@
             <ElCol :span="8">
               <span @click="gotoContext(view.formItem.Id)">【{{ view.formItem.SizeStr }}】</span>
               <span>{{
-              useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
+                  useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
               }}</span>
             </ElCol>
           </ElRow>
@@ -1006,7 +1006,8 @@ const editItem = (item: MovieModel) => {
 
 const editMoveout = async () => {
   view.formItem.MoveOut = true
-  editItemSubmit()
+  await editItemSubmit()
+  view.formItem.MoveOut = false
 }
 
 const editItemSubmit = async () => {
@@ -1036,7 +1037,7 @@ const editItemSubmit = async () => {
       name += " " + strNew;
     }
   }
-  const param = { Id, Name: name, Code: code, Actress, MoveOut };
+  const param = { Id, Name: name, Code: code, Actress, MoveOut, Title: arr[0] };
   const res = await FileRename(param);
   if (res.Code == 200) {
     view.formItem = {};
