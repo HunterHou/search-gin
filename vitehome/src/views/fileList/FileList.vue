@@ -131,7 +131,7 @@
                       -{{ item.MovieType }}
 
                     </ElButton>
-                    <span style="color:blue">{{ useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
+                    <span style="color:blue">{{ useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
                         locales: "zh-cn",
                       })
                     }}</span>
@@ -158,7 +158,7 @@
                       {{ item.Keyword }}
                       -{{ item.MovieType }}
                     </ElButton>
-                    <span style="color:blue">{{ useDateFormat(item.createTime, "YYYY-MM-DD HH:MM:ss", {
+                    <span style="color:blue">{{ useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
                         locales: "zh-cn",
                       })
                     }}</span>
@@ -378,7 +378,7 @@
                 </ElCard>
               </template>
             </ElPopover>
-            <div class="image-tool" :style="{ background: !noMovieType(item.MovieType) ? '' : 'rgb(205, 138, 50)', }">
+            <div class="image-tool" :style="{ background: !noMovieType(item.MovieType) ? '' : 'rgb(239 251 219)', }">
               <ElSpace wrap>
                 <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
                   <ElIcon>
@@ -392,7 +392,7 @@
                   </ElIcon>
                 </ElButton>
 
-                <ElButton v-if="!noMovieType(item.MovieType)" type="warning" plain class="icon-button" title="优优"
+                <ElButton v-if="item.Actress" type="warning" plain class="icon-button" title="优优"
                   @click="thisActress(item.Actress)">
                   <ElIcon>
                     <UserFilled />
