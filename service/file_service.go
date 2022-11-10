@@ -711,9 +711,18 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 		res.FailByMsg("文件不存在")
 		return res
 	}
+
 	newPath := movieLib.DirPath
 	if movie.MoveOut {
+		// os.MkdirAll(movie.Actress, os.ModePerm)
 		if movie.Actress != "" {
+			err := os.MkdirAll(movieLib.DirPath+utils.PathSeparator+movie.Actress, os.ModePerm)
+			if err != nil {
+				fmt.Printf("err: %v\n", err)
+				res.FailByMsg("执行失败")
+				res.Data = err
+				return res
+			}
 			newPath = newPath + utils.PathSeparator + movie.Actress
 		}
 

@@ -796,7 +796,7 @@ const refreshIndexFlag = ref(false);
 const showStyle = ref("post");
 const systemProperty = useSystemProperty();
 const source = ref("");
-const { copy, copied, text } = useClipboard({ source });
+const { copy, text } = useClipboard({ source });
 const { width: windowWidth, height: windowHeight } = useWindowSize();
 
 const searchStyle = ref({});
@@ -839,8 +839,8 @@ const optionsPC = reactive({
   controlBtns: systemProperty.videoOptions.controlBtns, //显示所有按钮,
 });
 
+//监控剪切板变化
 watch(text, (newtext) => {
-  console.log('text', newtext)
   ElMessage.warning('已复制：' + newtext);
 })
 
