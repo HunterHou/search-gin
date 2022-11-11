@@ -814,34 +814,7 @@ func (fs FileService) ScanTarget(dirPath string) {
 	db.InsertS(targetFiles, 1)
 	fmt.Printf("添加文件:%d", len(targetFiles))
 
-	go datasourceFileMapUpdateFileList(dirPath, targetFiles)
-
-}
-
-// 根据datasource map 更新datasource
-func datasourceFileMapUpdateFileList(dirPath string, targetFiles []datamodels.Movie) {
-	// 声明新文件列表
-	newList := []datamodels.Movie{}
-	// 删除数据源map中指定文件夹的文件
-	for _, v := range datasource.FileLib {
-		if v.DirPath == dirPath {
-			delete(datasource.FileLib, v.Id)
-			datasource.FileSize -= v.Size
-		} else {
-			newList = append(newList, v)
-		}
-	}
-	//添加新文件到 数据源map
-	for _, value := range targetFiles {
-		if val, ok := datasource.FileLib[value.Id]; !ok {
-			datasource.FileLib[value.Id] = val
-		}
-		newList = append(newList, value)
-		datasource.FileSize += value.Size
-	}
-	//排序
-	datasource.SortMovieForce()
-	datasource.FileList = newList
+	go fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
 
 }
 

@@ -22,12 +22,14 @@ var contentType string
 
 var this = CreateFileService()
 
+// 心跳与定时
 func HeartBeat() {
 	time.After(1 * time.Second)
 	this.ScanAll()
 	// time.AfterFunc(180*time.Second, HeartBeat)
 }
 
+// 无图流设置
 func writeNoPic(c *gin.Context) {
 
 	if noPic == nil {
@@ -44,6 +46,7 @@ func writeNoPic(c *gin.Context) {
 	c.Data(http.StatusOK, contentType, noPic)
 }
 
+// 删除指定文件夹下的 指定文件名的文件
 func DeleteOne(dirName string, fileName string) {
 	if len(fileName) == 0 {
 		return
@@ -61,12 +64,12 @@ func DeleteOne(dirName string, fileName string) {
 	// 删除父文件夹
 	filesThen, _ := ioutil.ReadDir(dirName)
 	if len(filesThen) == 0 {
-		UpDeleteDir(dirName)
+		UpDirClear(dirName)
 	}
 
 }
 
-//删除文件夹
+//删除递归文件夹
 func DownDeleteDir(dirname string) {
 	files2, _ := ioutil.ReadDir(dirname)
 	if len(files2) > 0 {
@@ -79,12 +82,12 @@ func DownDeleteDir(dirname string) {
 			}
 		}
 	}
-	UpDeleteDir(dirname)
+	UpDirClear(dirname)
 
 }
 
-//递归向上删除
-func UpDeleteDir(dirname string) {
+//递归向上处理空文件夹
+func UpDirClear(dirname string) {
 	files2, _ := ioutil.ReadDir(dirname)
 	if len(files2) == 0 {
 		err := os.Remove(dirname)
@@ -92,11 +95,38 @@ func UpDeleteDir(dirname string) {
 			fmt.Println(err)
 		}
 		newpath := dirname[0:strings.LastIndex(dirname, utils.PathSeparator)]
-		UpDeleteDir(newpath)
+		UpDirClear(newpath)
 	} else {
 		return
 
 	}
+
+}
+
+// 根据datasource map 更新datasource
+func fileMapUpdateFileListFromDatasource(dirPath string, targetFiles []datamodels.Movie) {
+	// 声明新文件列表
+	newList := []datamodels.Movie{}
+	// 删除数据源map中指定文件夹的文件
+	for _, v := range datasource.FileLib {
+		if v.DirPath == dirPath {
+			delete(datasource.FileLib, v.Id)
+			datasource.FileSize -= v.Size
+		} else {
+			newList = append(newList, v)
+		}
+	}
+	//添加新文件到 数据源map
+	for _, value := range targetFiles {
+		if val, ok := datasource.FileLib[value.Id]; !ok {
+			datasource.FileLib[value.Id] = val
+		}
+		newList = append(newList, value)
+		datasource.FileSize += value.Size
+	}
+	//排序
+	datasource.SortMovieForce()
+	datasource.FileList = newList
 
 }
 
@@ -117,56 +147,7 @@ func makeDatasourceMap(files []datamodels.Movie) {
 	datasource.FileSize = fileSize
 }
 
-func Walks(baseDir []string, types []string) []datamodels.Movie {
-
-	var wg sync.WaitGroup
-	var dataMovie = make(chan []datamodels.Movie, 10000)
-	var scanTime = make(chan cons.MenuSize, 100)
-	var result []datamodels.Movie
-	wg.Add(len(baseDir))
-	for i := 0; i < len(baseDir); i++ {
-		go goWalk(baseDir[i], types, &wg, dataMovie, scanTime)
-	}
-	wg.Wait()
-	close(dataMovie)
-	close(scanTime)
-	for {
-		data, ok := <-dataMovie
-		if !ok {
-			break
-		}
-		result = ExpandsMovie(result, data)
-	}
-	cons.InitFolderTime()
-	for {
-		data, ok := <-scanTime
-		if !ok {
-			break
-		}
-		if data.Cnt > 0 {
-			cons.FolderTime = append(cons.FolderTime, data)
-		}
-
-	}
-	return result
-
-}
-
-func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
-	defer wg.Done()
-	start := time.Now()
-	files, _ := WalkInnter(baseDir, types, 0, true)
-	datas <- files
-	ti := time.Since(start)
-	thisTime := cons.MenuSize{
-		Name: baseDir,
-		Cnt:  int64(ti.Milliseconds()),
-		Size: int64(len(files)),
-	}
-	scanTime <- thisTime
-
-}
-
+// 总文件 转不同数据模型
 func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[string]datamodels.Actress, map[string]datamodels.Supplier, int64) {
 	filemap := make(map[string]datamodels.Movie)
 	filemapCount := make(map[string]int)
@@ -221,6 +202,92 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 	db := CreateOrmService()
 	go db.InsertAllIndex(toInsert)
 	return filemap, actessmap, suppliermap, size
+}
+
+//合并文件数组
+func ExpandsMovie(originArr []datamodels.Movie, insertArr []datamodels.Movie) []datamodels.Movie {
+	if len(insertArr) == 0 {
+		return originArr
+	}
+
+	for i := 0; i < len(insertArr); i++ {
+		originArr = append(originArr, insertArr[i])
+	}
+	return originArr
+}
+
+// func ExpandsActess(originArr []datamodels.Actress, insertArr []datamodels.Actress) []datamodels.Actress {
+// 	if len(insertArr) == 0 {
+// 		return originArr
+// 	}
+
+// 	for i := 0; i < len(insertArr); i++ {
+// 		originArr = append(originArr, insertArr[i])
+// 	}
+// 	return originArr
+// }
+
+// func ExpandsSupplier(originArr []datamodels.Supplier, insertArr []datamodels.Supplier) []datamodels.Supplier {
+// 	if len(insertArr) == 0 {
+// 		return originArr
+// 	}
+
+// 	for i := 0; i < len(insertArr); i++ {
+// 		originArr = append(originArr, insertArr[i])
+// 	}
+// 	return originArr
+// }
+
+// 并发扫描多文件夹 并返回所有文件
+func Walks(baseDir []string, types []string) []datamodels.Movie {
+
+	var wg sync.WaitGroup
+	var dataMovie = make(chan []datamodels.Movie, 10000)
+	var scanTime = make(chan cons.MenuSize, 100)
+	var result []datamodels.Movie
+	wg.Add(len(baseDir))
+	for i := 0; i < len(baseDir); i++ {
+		go goWalk(baseDir[i], types, &wg, dataMovie, scanTime)
+	}
+	wg.Wait()
+	close(dataMovie)
+	close(scanTime)
+	for {
+		data, ok := <-dataMovie
+		if !ok {
+			break
+		}
+		result = ExpandsMovie(result, data)
+	}
+	cons.InitFolderTime()
+	for {
+		data, ok := <-scanTime
+		if !ok {
+			break
+		}
+		if data.Cnt > 0 {
+			cons.FolderTime = append(cons.FolderTime, data)
+		}
+
+	}
+	return result
+
+}
+
+//  协程方法 扫描单个文件夹并送入管道
+func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
+	defer wg.Done()
+	start := time.Now()
+	files, _ := WalkInnter(baseDir, types, 0, true)
+	datas <- files
+	ti := time.Since(start)
+	thisTime := cons.MenuSize{
+		Name: baseDir,
+		Cnt:  int64(ti.Milliseconds()),
+		Size: int64(len(files)),
+	}
+	scanTime <- thisTime
+
 }
 
 // Walk 遍历目录 获取文件库
@@ -295,35 +362,4 @@ func WalkInnter(baseDir string, types []string, totalSize int64, queryChild bool
 		cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(baseDir, int64(currentSize), true))
 	}
 	return result, currentSize
-}
-
-func ExpandsMovie(originArr []datamodels.Movie, insertArr []datamodels.Movie) []datamodels.Movie {
-	if len(insertArr) == 0 {
-		return originArr
-	}
-
-	for i := 0; i < len(insertArr); i++ {
-		originArr = append(originArr, insertArr[i])
-	}
-	return originArr
-}
-func ExpandsActess(originArr []datamodels.Actress, insertArr []datamodels.Actress) []datamodels.Actress {
-	if len(insertArr) == 0 {
-		return originArr
-	}
-
-	for i := 0; i < len(insertArr); i++ {
-		originArr = append(originArr, insertArr[i])
-	}
-	return originArr
-}
-func ExpandsSupplier(originArr []datamodels.Supplier, insertArr []datamodels.Supplier) []datamodels.Supplier {
-	if len(insertArr) == 0 {
-		return originArr
-	}
-
-	for i := 0; i < len(insertArr); i++ {
-		originArr = append(originArr, insertArr[i])
-	}
-	return originArr
 }
