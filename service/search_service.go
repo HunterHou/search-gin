@@ -814,7 +814,7 @@ func (fs FileService) ScanTarget(dirPath string) {
 	db.InsertS(targetFiles, 1)
 	fmt.Printf("添加文件:%d", len(targetFiles))
 
-	go fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
+	fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
 
 }
 

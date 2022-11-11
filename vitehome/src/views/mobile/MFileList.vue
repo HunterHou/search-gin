@@ -459,7 +459,7 @@ const removeCurrentFileTag = async (tag: string) => {
   const res = await CloseTag(view.currentFile.Id, tag)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    onSearch()
+    await queryList();
     showTag.value = false
   } else {
     Toast.fail(res.Message)
@@ -472,7 +472,7 @@ const addCurrentFileTag = async (tag: string) => {
   if (res.Code == 200) {
     Toast.success('操作成功')
     // await RefreshIndex()
-    onSearch()
+    await queryList();
     showTag.value = false
   } else {
     Toast.fail(res.Message)
@@ -613,7 +613,7 @@ const openFile = (item: any) => {
   view.videoVisible = true;
   playSource(item)
 };
-const queryList = async (pageStart?: number) => {
+const queryList = async (concat?: boolean, pageStart?: number) => {
   let queryParam = { ...view.queryParam };
   if (pageStart > 0) {
     queryParam.Page = pageStart;
@@ -644,8 +644,14 @@ const queryList = async (pageStart?: number) => {
     item.Name = item.Name.replace("[" + item.Code + "]", "");
     item.Name = item.Name.replace("[" + item.Actress + "]", "");
   });
-  const newList = [...view.ModelList, ...model.Data];
-  view.ModelList = newList;
+
+  if (concat) {
+    const newList = [...view.ModelList, ...model.Data];
+    view.ModelList = newList;
+  } else {
+    view.ModelList = model.Data;
+  }
+
   view.TotalCnt = model.TotalCnt;
   view.ResultCnt = model.ResultCnt;
   view.loadCnt = view.loadCnt + model.Data.length;
@@ -657,10 +663,10 @@ const onSearch = async (clear?: Boolean) => {
   view.queryParam.Page = 1;
   view.ModelList = [];
   view.loadCnt = 0;
-  await queryList();
+  await queryList(false);
 };
 const onCancel = async () => {
-  await onSearch();
+  await onSearch(false);
 };
 const keywordUpdate = () => {
   if (view.queryParam.Keyword.length >= 2 || view.queryParam.Keyword.length == 0) {

@@ -70,20 +70,20 @@
           </ElLink> -->
         </ElCol>
         <ElCol :span="3">
-          <ElRadioGroup v-model="queryParam.SortField" @change="queryList" size="default">
+          <ElRadioGroup v-model="queryParam.SortField" @change="refreshData" size="default">
             <ElRadioButton label="Code">名</ElRadioButton>
             <ElRadioButton label="MTime">时</ElRadioButton>
             <ElRadioButton label="Size">容</ElRadioButton>
           </ElRadioGroup>
         </ElCol>
         <ElCol :span="2">
-          <ElRadioGroup v-model="queryParam.SortType" @change="queryList" size="default">
+          <ElRadioGroup v-model="queryParam.SortType" @change="refreshData" size="default">
             <ElRadioButton label="desc">倒</ElRadioButton>
             <ElRadioButton label="asc">正</ElRadioButton>
           </ElRadioGroup>
         </ElCol>
         <ElCol :span="6">
-          <ElRadioGroup v-model="queryParam.MovieType" @change="queryList" size="default">
+          <ElRadioGroup v-model="queryParam.MovieType" @change="refreshData" size="default">
             <ElRadioButton label="">全</ElRadioButton>
             <ElRadioButton label="骑兵">骑</ElRadioButton>
             <ElRadioButton label="步兵">步</ElRadioButton>
@@ -1043,7 +1043,7 @@ const editItemSubmit = async () => {
     view.formItem = {};
     view.dialogFormItemVisible = false;
     setTimeout(
-      queryList, 1000
+      refreshData, 1000
     )
   } else {
     ElMessage.error(res.Message);
@@ -1103,7 +1103,7 @@ const addTag = async (clickId, title) => {
     //   }
     // }
     ElMessage.success(res.Message);
-    queryList()
+    refreshData()
   } else {
     ElMessage.error(res.Message);
   }
@@ -1128,13 +1128,13 @@ const closeTag = async (clickId: string, title: string) => {
     //   }
     //   return;
     // }
-    queryList();
+    refreshData();
   } else {
     ElMessage.error(res.Message);
   }
 };
 
-const queryList = async (params?: any) => {
+const refreshData = async (params?: any) => {
   let title = queryParam.Keyword;
   systemProperty.syncSearchParam(queryParam);
   if (queryParam.Keyword && queryParam.Keyword !== "") {
@@ -1143,8 +1143,8 @@ const queryList = async (params?: any) => {
     queryParam.Page = view.allPage
   }
   document.title = title;
-  view.ModelList = [];
-  loading.value = true;
+
+
   const res = await QueryFileList(queryParam);
 
   if (res) {
@@ -1176,11 +1176,18 @@ const queryList = async (params?: any) => {
     view.ResultSize = model.ResultSize;
     view.CurSize = model.CurSize;
   }
+}
+
+const queryList = async (params?: any) => {
+  view.ModelList = [];
+  loading.value = true;
+  await refreshData(params)
+  loading.value = false;
 };
 
 const selectSuggestion = (item) => {
   queryParam.Keyword = item;
-  queryList();
+  refreshData();
 };
 
 const pageLoading = (num: number) => {
@@ -1293,7 +1300,7 @@ const refreshIndex = async () => {
   const res = await RefreshIndex();
   if (res.Code === 200) {
     ElMessage.success(res.Message);
-    await queryList();
+    await refreshData();
     refreshIndexFlag.value = false;
   } else {
     ElMessage.error(res.Message);
@@ -1303,7 +1310,7 @@ const refreshIndex = async () => {
 const thisActress = async (actress: string) => {
   queryParam.Keyword = actress;
   queryParam.Page = 1;
-  queryList();
+  refreshData();
 };
 
 const openThisFolder = async (id: string, a?: number) => {
@@ -1376,11 +1383,11 @@ const handleCurrentChange = (page: number) => {
   if (!queryParam.Keyword) {
     view.allPage = page
   }
-  queryList();
+  refreshData();
 };
 const handleSizeChange = (pageSize: number) => {
   queryParam.PageSize = pageSize;
-  queryList();
+  refreshData();
 };
 
 setInterval(heartBeat, 60000);
