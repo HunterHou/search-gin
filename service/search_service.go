@@ -90,7 +90,7 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) uti
 		path = strings.ReplaceAll(movie.Nfo, originVideoType, movieType)
 		os.Rename(movie.Nfo, path)
 		// 执行当前目录搜索
-		fs.ScanTarget(movie.DirPath)
+		// fs.ScanTarget(movie.DirPath)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 	newMovieType := "{{" + movieType + "}}"
@@ -124,7 +124,7 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) uti
 
 	}
 	// 执行当前目录搜索
-	fs.ScanTarget(movie.DirPath)
+	// fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
 
@@ -697,11 +697,10 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 		// os.MkdirAll(movie.Actress, os.ModePerm)
 		if movie.Actress != "" {
 			newDir += utils.PathSeparator + movie.Actress
-			newPath += utils.PathSeparator + movie.Actress
 		}
+
 		if movie.Title != "" {
-			newDir += utils.PathSeparator + movie.Title
-			newPath += utils.PathSeparator + movie.Title
+			newDir += utils.PathSeparator + choose2To1(movie.Actress != "", "["+movie.Actress+"]", "") + choose2To1(movie.Code != "", "["+movie.Code+"]", "") + movie.Title
 		}
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
@@ -748,6 +747,14 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 	}
 	fs.ScanTarget(movieLib.DirPath)
 	return res
+}
+
+func choose2To1(tr bool, str1 string, str2 string) string {
+	if tr {
+		return str1
+	} else {
+		return str2
+	}
 }
 
 func (fs FileService) FindNext(Id string, sourceLib []datamodels.Movie, offset int) datamodels.Movie {
