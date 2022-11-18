@@ -745,7 +745,9 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 	if utils.ExistsFiles(oldPath) {
 		os.Rename(oldPath, newPath)
 	}
-	fs.ScanTarget(movieLib.DirPath)
+	if !movie.NoRefresh {
+		fs.ScanTarget(movieLib.DirPath)
+	}
 	return res
 }
 

@@ -45,7 +45,8 @@ type Movie struct {
 // 文件修改模型
 type MovieEdit struct {
 	Movie
-	MoveOut bool
+	MoveOut   bool
+	NoRefresh bool
 }
 
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
