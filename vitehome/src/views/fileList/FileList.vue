@@ -1408,14 +1408,16 @@ onMounted(() => {
     queryParam.SortField = SortField[0];
     queryParam.SortType = SortType[0];
     queryParam.Keyword = Keyword[0];
+  }else{
+    queryParam.Page = systemProperty.getSearchParam?.Page;
+    queryParam.PageSize = systemProperty.getSearchParam.PageSize;
+    queryParam.MovieType = systemProperty.getSearchParam.MovieType;
+    queryParam.SortField = systemProperty.getSearchParam.SortField;
+    queryParam.SortType = systemProperty.getSearchParam.SortType;
+    queryParam.Keyword = systemProperty.getSearchParam.Keyword;
   }
 
-  queryParam.Page = systemProperty.getSearchParam?.Page;
-  queryParam.PageSize = systemProperty.getSearchParam.PageSize;
-  queryParam.MovieType = systemProperty.getSearchParam.MovieType;
-  queryParam.SortField = systemProperty.getSearchParam.SortField;
-  queryParam.SortType = systemProperty.getSearchParam.SortType;
-  queryParam.Keyword = systemProperty.getSearchParam.Keyword;
+ 
   setTimeout(queryList, 200);
 });
 </script>
