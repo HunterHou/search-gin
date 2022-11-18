@@ -132,8 +132,8 @@
 
                     </ElButton>
                     <span style="color:blue">{{ useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
-                        locales: "zh-cn",
-                      })
+                    locales: "zh-cn",
+                    })
                     }}</span>
                   </span>
 
@@ -159,8 +159,8 @@
                       -{{ item.MovieType }}
                     </ElButton>
                     <span style="color:blue">{{ useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
-                        locales: "zh-cn",
-                      })
+                    locales: "zh-cn",
+                    })
                     }}</span>
                   </span>
 
@@ -206,7 +206,7 @@
             播放中： 【
             <ElButton type="success" plain size="large" loading :link="true" />
             {{
-                view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
+            view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
             }}
             <ElButton type="success" plain size="large" loading :link="true" />
             】
@@ -498,9 +498,9 @@
                       <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       {{
-                          useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
-                            locales: "zh-cn",
-                          })
+                      useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
+                      locales: "zh-cn",
+                      })
                       }}
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       <span style="color: red">【{{ item.SizeStr }}】</span>
@@ -609,7 +609,7 @@
             <ElCol :span="8">
               <span @click="gotoContext(view.formItem.Id)">【{{ view.formItem.SizeStr }}】</span>
               <span>{{
-                  useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
+              useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
               }}</span>
             </ElCol>
           </ElRow>
@@ -783,6 +783,10 @@ import {
 
 import "vue3-video-play/dist/style.css";
 import './filelist.css'
+import { useRoute, useRouter } from "vue-router";
+
+const thisRoute = useRoute()
+const { replace } = useRouter()
 
 const target = ref(null);
 const selectText = useTextSelection();
@@ -1136,6 +1140,7 @@ const closeTag = async (clickId: string, title: string) => {
 
 const refreshData = async (params?: any) => {
   let title = queryParam.Keyword;
+  replace({ path: thisRoute.path, params: { ...queryParam } })
   systemProperty.syncSearchParam(queryParam);
   if (queryParam.Keyword && queryParam.Keyword !== "") {
   } else {
@@ -1394,6 +1399,17 @@ setInterval(heartBeat, 60000);
 
 onMounted(() => {
   loadSettingInfo();
+
+  const { Page, PageSize, MovieType, SortField, SortType, Keyword } = thisRoute.query;
+  if (Page && PageSize) {
+    queryParam.Page = Number(Page);
+    queryParam.PageSize = Number(PageSize);;
+    queryParam.MovieType = MovieType[0];
+    queryParam.SortField = SortField[0];
+    queryParam.SortType = SortType[0];
+    queryParam.Keyword = Keyword[0];
+  }
+
   queryParam.Page = systemProperty.getSearchParam?.Page;
   queryParam.PageSize = systemProperty.getSearchParam.PageSize;
   queryParam.MovieType = systemProperty.getSearchParam.MovieType;

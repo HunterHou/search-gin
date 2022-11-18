@@ -501,7 +501,7 @@ const loadSettingInfo = async () => {
 
 const onLoadMore = async () => {
   view.queryParam.Page += 1;
-  await queryList();
+  await queryList(true);
 };
 
 const searchKeyword = (words: string) => {
