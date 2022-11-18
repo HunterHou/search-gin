@@ -1140,7 +1140,7 @@ const closeTag = async (clickId: string, title: string) => {
 
 const refreshData = async (params?: any) => {
   let title = queryParam.Keyword;
-  replace({ path: thisRoute.path, params: { ...queryParam } })
+  replace({ path: thisRoute.path, query: { ...queryParam } })
   systemProperty.syncSearchParam(queryParam);
   if (queryParam.Keyword && queryParam.Keyword !== "") {
   } else {
