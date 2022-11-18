@@ -1404,10 +1404,10 @@ onMounted(() => {
   if (Page && PageSize) {
     queryParam.Page = Number(Page);
     queryParam.PageSize = Number(PageSize);;
-    queryParam.MovieType = MovieType[0];
-    queryParam.SortField = SortField[0];
-    queryParam.SortType = SortType[0];
-    queryParam.Keyword = Keyword[0];
+    queryParam.MovieType = MovieType as string;
+    queryParam.SortField = SortField as string;
+    queryParam.SortType = SortType as string;
+    queryParam.Keyword = Keyword as string;
   }else{
     queryParam.Page = systemProperty.getSearchParam?.Page;
     queryParam.PageSize = systemProperty.getSearchParam.PageSize;
