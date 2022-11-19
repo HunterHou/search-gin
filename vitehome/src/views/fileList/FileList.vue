@@ -495,7 +495,7 @@
                       }}</ElLink>
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       <span style="color: red" @click="copy(item.Title)"> {{ item.SizeStr }}</span>
-                      <span> &nbsp;{{ item.Name }}</span>
+                    
                     </span>
 
                   </template>
@@ -524,7 +524,7 @@
                     </ElRow>
                   </template>
                 </ElPopover>
-
+                <span> &nbsp;{{ item.Name }}</span>
 
               </div>
             </div>
@@ -1055,9 +1055,7 @@ const editItemSubmit = async () => {
   if (res.Code == 200) {
     view.formItem = {};
     view.dialogFormItemVisible = false;
-    setTimeout(
-      refreshData, 2000
-    )
+    refreshData()
   } else {
     ElMessage.error(res.Message);
   }
@@ -1066,9 +1064,8 @@ const editItemSubmit = async () => {
 const moveThis = async (item) => {
   const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
   if (res.Code == 200) {
-    setTimeout(
-      refreshData, 2000
-    )
+    ElMessage.success(res.Message);
+    refreshData
   } else {
     ElMessage.error(res.Message);
   }
