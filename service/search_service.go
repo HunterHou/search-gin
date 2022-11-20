@@ -846,10 +846,11 @@ func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
 	var result []datamodels.Movie
 	codeMap := make(map[string]datamodels.Movie)
 	for _, movie := range files {
-		if movie.Code == "" {
+		forCode := movie.Code
+		if forCode == "" {
 			continue
 		}
-		forCode := strings.ReplaceAll(movie.Code, "-", "")
+		forCode = strings.ReplaceAll(movie.Code, "-", "")
 		forCode = strings.ReplaceAll(movie.Code, "_", "")
 		ele, ok := codeMap[forCode]
 		if ok {
