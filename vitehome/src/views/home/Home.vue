@@ -12,7 +12,9 @@ import {
 
 import { RefreshIndex, OpenFolerByPath, DeleteFolerByPath } from "@/api/file";
 import { TypeSizeMap, TagSizeMap, ScanTime } from "@/api/home";
-
+import {
+  onKeyStroke
+} from "@vueuse/core";
 import { useSystemProperty } from "@/store/System";
 
 const { push, go } = useRouter();
@@ -27,12 +29,18 @@ const tableData = ref([]);
 const tagData = ref([]);
 const scanTime = ref([]);
 
+onKeyStroke(["`"], (e) => {
+  refreshIndex();
+});
+
+
 const folderGotoMenu = (Name) => {
   systemProperty.setPage(1);
   systemProperty.setKeyword(Name);
   systemProperty.setMovieType("");
   push("/filelist");
 };
+
 const gotoMenu = (data) => {
   const { IsDir, Name } = data;
   const movieType = (!IsDir && Name !== '全部') ? Name : "";

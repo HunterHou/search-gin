@@ -1050,12 +1050,12 @@ const editItemSubmit = async () => {
       name += " " + strNew;
     }
   }
-  const param = { Id, Name: name, Code: code, Actress, MoveOut, Title: arr[0] };
+  const param = { Id, Name: name, Code: code, Actress, MoveOut, Title: arr[0],NoRefresh: true };
   const res = await FileRename(param);
   if (res.Code == 200) {
     view.formItem = {};
     view.dialogFormItemVisible = false;
-    refreshData()
+    refreshIndex()
   } else {
     ElMessage.error(res.Message);
   }
@@ -1321,8 +1321,10 @@ const refreshIndex = async () => {
   const res = await RefreshIndex();
   if (res.Code === 200) {
     ElMessage.success(res.Message);
-    await refreshData();
-    refreshIndexFlag.value = false;
+    setTimeout(() => {
+      refreshData();
+      refreshIndexFlag.value = false;
+    }, 1000);
   } else {
     ElMessage.error(res.Message);
   }
