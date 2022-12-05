@@ -850,8 +850,8 @@ func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
 		if forCode == "" {
 			continue
 		}
-		forCode = strings.ReplaceAll(movie.Code, "-", "")
-		forCode = strings.ReplaceAll(movie.Code, "_", "")
+		forCode = strings.ReplaceAll(forCode, "-", "")
+		forCode = strings.ReplaceAll(forCode, "_", "")
 		ele, ok := codeMap[forCode]
 		if ok {
 			result = append(result, ele)
