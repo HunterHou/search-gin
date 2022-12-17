@@ -384,7 +384,10 @@ func downImageItem(url string, dirPath string, prefix string, sufix string, wg *
 		filepath = filepath + "-" + sufix + ".jpg"
 	}
 	filepath = filepath + ".jpg"
-	fmt.Println(filepath)
+	if !strings.HasPrefix(url, "http") {
+		url = cons.OSSetting.BaseUrl + url
+	}
+	fmt.Println("jpg url:", url)
 	jpgOut, createErr := os.Create(filepath)
 	if createErr != nil {
 		result.Message = "png生成失败"
