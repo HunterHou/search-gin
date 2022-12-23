@@ -1,13 +1,12 @@
 <template>
   <div align="center" style="margin-top: -30px;">
     <ElForm label-width="160px" ref="form" :model="view.form" label-position="right">
-      <h5 align="center">{{ formatted }}</h5>
+      <h5 align="center"><a :href="'http://'+view.ipAddr+':10081'">{{ view.ipAddr }}</a>   {{ formatted }}  </h5>
       <div style="
           margin: 8px 20px;
           width: 90%;
           background: white;
-          min-height: 650px;
-        ">
+          min-height: 650px;">
         <ElTabs v-model="activeName" type="card" @tab-click="handleClick">
           <ElTabPane label="扫描设置" name="first">
             <ElSwitch v-model="view.form.IsDb" size="large" active-text="数据库" inactive-text="算法" />
@@ -152,7 +151,7 @@ import {
   ElLink,
   ElTabPane
 } from 'element-plus'
-import { PostSettingInfo, GetSettingInfo } from '@/api/setting'
+import { PostSettingInfo, GetSettingInfo, GetIpAddr } from '@/api/setting'
 import { computed } from 'vue'
 import { useNow, useDateFormat } from '@vueuse/core'
 import { SettingInfo } from "@/views/settting/index";
@@ -163,6 +162,7 @@ const formatted = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss')
 const { go } = useRouter()
 const view = reactive({
   form: new SettingInfo(),
+  ipAddr:"",
   inputVisible: false,
   isIndeterminateDir: false,
   inputVisibleFile: false,
@@ -259,11 +259,18 @@ const loadData = async () => {
   view.form = res;
   makeTabLibData()
 }
+const loadIpAddr =async ()=>{
+  const res = await GetIpAddr()
+  console.log(res)
+  view.ipAddr = res.Data
+}
 
 
 onMounted(() => {
   document.title = "設置"
   loadData()
+  loadIpAddr()
+
 })
 
 </script>

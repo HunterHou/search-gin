@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -101,6 +102,18 @@ func UpDirClear(dirname string) {
 
 	}
 
+}
+
+func GetIpAddr() string {
+	conn, err := net.Dial("udp", "8.8.8.8:53")
+	if err != nil {
+		fmt.Println(err)
+		return "127.0.0.1"
+	}
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	// 192.168.1.20:61085
+	ip := strings.Split(localAddr.String(), ":")[0]
+	return ip
 }
 
 // 根据datasource map 更新datasource

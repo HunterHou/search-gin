@@ -1,12 +1,13 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/service"
 	"searchGin/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetSettingInfo(c *gin.Context) {
@@ -19,5 +20,12 @@ func PostSetting(c *gin.Context) {
 	cons.OSSetting = setInfo
 	service.FlushDictionart(cons.OSSetting.SelfPath)
 	res := utils.NewSuccess()
+	c.JSON(http.StatusOK, res)
+}
+
+// GetIpAddr2 获取本地IP地址 利用udp
+func GetIpAddr2(c *gin.Context) {
+	res := utils.NewSuccess()
+	res.Data = service.GetIpAddr()
 	c.JSON(http.StatusOK, res)
 }

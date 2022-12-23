@@ -29,7 +29,12 @@ func init() {
 	settingPath := curDir + utils.PathSeparator + cons.OSSetting.SelfPath
 	dict := service.ReadDictionaryFromJson(settingPath)
 	dict.SelfPath = osSetting.SelfPath
+	ip := service.GetIpAddr()
+	dict.ControllerHost = "http://" + ip + cons.PortNo
+	dict.ImageHost = "http://" + ip + cons.PortNo2
+	dict.StreamHost = "http://" + ip + cons.PortNo3
 	cons.OSSetting = dict
+
 	// staticDir = curDir + "/static"
 }
 
