@@ -703,7 +703,10 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 		}
 
 		if movie.Title != "" {
-			newDir += utils.PathSeparator + choose2To1(movie.Actress != "", "["+movie.Actress+"]", "") + choose2To1(movie.Code != "", "["+movie.Code+"]", "") + movie.Title
+			newDir += utils.PathSeparator
+			newDir += choose2To1(!strings.Contains(movie.Title, "["+movie.Actress+"]"), choose2To1(movie.Actress != "", "["+movie.Actress+"]", ""), "")
+			newDir += choose2To1(!strings.Contains(movie.Title, "["+movie.Actress+"]"), choose2To1(movie.Code != "", "["+movie.Code+"]", ""), "")
+			newDir += movie.Title
 		}
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
