@@ -1,6 +1,11 @@
 <template>
   <div class="mainBody">
     <NavBar title="设置">
+      <template #left>
+        <div>
+          <Button size="small" plain type="danger" @click="shutDownHandler">关机</Button>
+        </div>
+      </template>
       <template #right>
         <div>
           <Button size="small" plain type="primary" @click="submitForm">保存</Button>
@@ -150,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { GetSettingInfo, PostSettingInfo } from "@/api/setting";
+import { GetSettingInfo, GetShutDown, PostSettingInfo } from "@/api/setting";
 import {
   Button,
   Col,
@@ -165,6 +170,7 @@ import {
   Tabs,
   Tab,
   Search,
+Toast,
 } from "vant";
 import "vant/lib/index.css";
 import { onMounted, reactive, ref } from "vue";
@@ -218,6 +224,13 @@ const submitForm = async () => {
 const loadData = async () => {
   const res = await GetSettingInfo()
   view.form = res
+}
+
+const shutDownHandler = async () => {
+  const res = await GetShutDown()
+  console.log(res)
+  Toast(res.Message);
+  
 }
 
 onMounted(() => {
