@@ -1,12 +1,12 @@
 <template>
   <div align="center" style="margin-top: -30px;">
     <ElForm label-width="160px" ref="form" :model="view.form" label-position="right">
-      <h5 align="center"><a :href="'http://'+view.ipAddr+':10081'">{{ view.ipAddr }}</a>   {{ formatted }}  </h5>
-      <div style="
-          margin: 8px 20px;
-          width: 90%;
-          background: white;
-          min-height: 650px;">
+      <h3>
+        <a style="float: left;" :href="'http://' + view.ipAddr + ':10081'">{{ view.ipAddr + ':10081' }}</a>
+        <span>{{ formatted }} </span>
+        <ElButton style="float: right;" type="danger" @click="shutDownHandler" >关机</ElButton>
+      </h3>
+      <div class="container">
         <ElTabs v-model="activeName" type="card" @tab-click="handleClick">
           <ElTabPane label="扫描设置" name="first">
             <ElSwitch v-model="view.form.IsDb" size="large" active-text="数据库" inactive-text="算法" />
@@ -149,9 +149,10 @@ import {
   ElButton,
   ElTag,
   ElLink,
-  ElTabPane
+  ElTabPane,
+ElMessage
 } from 'element-plus'
-import { PostSettingInfo, GetSettingInfo, GetIpAddr } from '@/api/setting'
+import { PostSettingInfo, GetSettingInfo, GetIpAddr, GetShutDown } from '@/api/setting'
 import { computed } from 'vue'
 import { useNow, useDateFormat } from '@vueuse/core'
 import { SettingInfo } from "@/views/settting/index";
@@ -162,7 +163,7 @@ const formatted = useDateFormat(useNow(), 'YYYY-MM-DD HH:mm:ss')
 const { go } = useRouter()
 const view = reactive({
   form: new SettingInfo(),
-  ipAddr:"",
+  ipAddr: "",
   inputVisible: false,
   isIndeterminateDir: false,
   inputVisibleFile: false,
@@ -254,15 +255,24 @@ const makeTabLibData = () => {
   }
   view.form.tagLibData = dataLib;
 }
+
 const loadData = async () => {
   const res = await GetSettingInfo()
   view.form = res;
   makeTabLibData()
 }
-const loadIpAddr =async ()=>{
+
+const loadIpAddr = async () => {
   const res = await GetIpAddr()
   console.log(res)
   view.ipAddr = res.Data
+}
+
+const shutDownHandler = async () => {
+  const res = await GetShutDown()
+  console.log(res)
+  ElMessage.success(res.Message);
+  
 }
 
 
@@ -283,6 +293,13 @@ onMounted(() => {
   overflow: auto;
   z-index: 999;
   left: 40%;
+}
+
+.container {
+  margin: 8px 20px;
+  width: 90%;
+  background: white;
+  min-height: 650px;
 }
 
 .submit {

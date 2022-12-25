@@ -29,3 +29,10 @@ func GetIpAddr2(c *gin.Context) {
 	res.Data = service.GetIpAddr()
 	c.JSON(http.StatusOK, res)
 }
+
+// 系统关机
+func GetShutdown(c *gin.Context) {
+	res := utils.NewSuccess()
+	utils.ExecCmd("", "shutdown /s")
+	c.JSON(http.StatusOK, res)
+}

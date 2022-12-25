@@ -65,6 +65,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/settingInfo", controller.GetSettingInfo)
 	router.POST("/api/setting", controller.PostSetting)
 	router.GET("/api/GetIpAddr", controller.GetIpAddr2)
+	router.GET("/api/shutDown", controller.GetShutdown)
 
 	router.GET("/api/typeSizeMap", controller.GetTypeSize)
 	router.GET("/api/tagSizeMap", controller.GetTagSize)

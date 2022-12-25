@@ -18,3 +18,9 @@ export const GetIpAddr= async () => {
   const res = await request.get({ url: "/api/GetIpAddr" });
   return res as unknown as ResultEdit;
 };
+
+export const GetShutDown= async () => {
+  const res = await request.get({ url: "/api/shutDown" });
+  return res as unknown as ResultEdit;
+};
+
