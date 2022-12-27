@@ -221,12 +221,12 @@
 
 
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
-      style="min-height: 650px;margin:0px auto">
+      style="min-height: 650px;margin:10px auto">
       <ElSpace wrap size="small">
         <div :class="isShowCover(view) ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
             <li v-for="tag in item.Tags" :key="tag" style="list-style-type:none;">
-              <ElTag closable effect="dark" :size="isShowCover(view) ? 'small' : 'small'"
+              <ElTag closable effect="dark" :size="isShowCover(view) ? 'default' : 'default'"
                 @close="closeTag(item.Id, tag)">
                 <el-link :underline="false" plain @click="gotoSearch(tag)">
                   <span> {{ tag }}</span>
@@ -253,7 +253,7 @@
                   </ElButton>
                   <br /><br />
                   <ElAutocomplete placeholder="新标签" v-model="view.customerTag" :fetch-suggestions="fetchTagsLib"
-                    @select="handleSelectTag" size="small" style="width: 240px">
+                    @select="handleSelectTag" size="default" style="width: 240px">
                     <template #append>
                       <ElButton size="default" type="primary" :disabled="customerTagEmpty(view)"
                         @click="addCustomerTag(item.Id)" style="font-size: 16px">加
@@ -266,7 +266,7 @@
                     </template>
                   </ElAutocomplete>
                 </div>
-                <div v-if="noMovieType(item.MovieType)" style="float: right" class="rightBtnPop">
+                <div v-if="noMovieType(item.MovieType)" class="rightBtnPop">
                   <ElButton plain size="default" @click="setMovieType(item.Id, 2)">
                     <i class="el-icon-bicycle icon-style" title="骑兵">骑兵</i>
                   </ElButton>
