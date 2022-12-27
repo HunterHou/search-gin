@@ -99,11 +99,11 @@
             :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
             <template #append>
               <ElButton slot="append" type="primary" size="default" icon="ElIcon-search" @click="
-                () => {
-                  queryParam.Page = 1;
-                  queryList();
-                }
-              ">Enter
+  () => {
+    queryParam.Page = 1;
+    queryList();
+  }
+">Enter
               </ElButton>
             </template>
             <template #default="{ item }">
@@ -132,9 +132,9 @@
 
                     </ElButton>
                     <span style="color:blue">{{ useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
-                        locales: "zh-cn",
-                      })
-                    }}</span>
+    locales: "zh-cn",
+  })
+}}</span>
                   </span>
 
                 </div>
@@ -159,9 +159,9 @@
                       -{{ item.MovieType }}
                     </ElButton>
                     <span style="color:blue">{{ useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
-                        locales: "zh-cn",
-                      })
-                    }}</span>
+    locales: "zh-cn",
+  })
+}}</span>
                   </span>
 
                 </div>
@@ -182,12 +182,12 @@
           <span v-if="!running" style="color: red">运行异常</span>
           <ElDivider v-if="!running" direction="vertical"></ElDivider>
           <ElLink :underline="false" @click="
-            (e) => {
-              queryParam.Page = 1;
-              queryParam.Keyword = '';
-              queryList();
-            }
-          ">
+  (e) => {
+    queryParam.Page = 1;
+    queryParam.Keyword = '';
+    queryList();
+  }
+">
             <span> 总：{{ view.TotalSize }}({{ view.TotalCnt }}) </span>
           </ElLink>
 
@@ -206,8 +206,8 @@
             播放中： 【
             <ElButton type="success" plain size="large" loading :link="true" />
             {{
-                view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
-            }}
+    view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
+}}
             <ElButton type="success" plain size="large" loading :link="true" />
             】
           </ElLink>
@@ -221,7 +221,7 @@
 
 
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
-      style="min-height: 650px">
+      style="min-height: 650px;margin:0px auto">
       <ElSpace wrap size="small">
         <div :class="isShowCover(view) ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
@@ -284,27 +284,26 @@
             </template>
           </ElPopover>
           <ElCard class="ecard" shadow="always" :body-style="{
-            padding: '0px',
-            margin: '4px 2px',
-          
-          }">
+  padding: '0px',
+  margin: '4px 2px',
+
+}">
             <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
               <div :class="isShowCover(view) ? 'hidder-open-cover' : 'hidder-open-post'"
                 @click="openInfoWindow(item.Id)">
               </div>
-              <ElImage style="width: 100%; height: 100%;z-index: 0;"
-                :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)" fit="contain" lazy />
+              <ElImage style=" height: 100%;z-index: 0;" :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)"
+                fit="cover" />
             </div>
-            <ElPopover  placement="bottom-start" width="280px" :visible="item.toolShow" trigger="click"
-              :auto-close="0">
+            <ElPopover placement="top-start" width="280px" :visible="item.toolShow" trigger="hover" :auto-close="0">
               <template #reference>
                 <div :class="isShowCover(view) ? 'hidder-tool-cover' : 'hidder-tool-post'"
                   @click="() => { item.toolShow = true }">
                 </div>
               </template>
               <template #default>
-                <ElCard class="cmenu" :body-style="{ padding: '4px' }"  @click="() => { item.toolShow = false }">
-                  <div >
+                <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="() => { item.toolShow = false }">
+                  <div>
                     <ElRow>
                       <ElButton type="success" plain class="cmenuButton" @click="cmenuPlay(item)">
                         <ElIcon>
@@ -492,10 +491,10 @@
                       </ElLink>
                       <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
                       <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ codeFormat(item.Code)
-                      }}</ElLink>
+}}</ElLink>
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       <span style="color: red" @click="copy(item.Title)"> {{ item.SizeStr }}</span>
-                    
+
                     </span>
 
                   </template>
@@ -507,10 +506,10 @@
                       <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       {{
-                          useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
-                            locales: "zh-cn",
-                          })
-                      }}
+    useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
+      locales: "zh-cn",
+    })
+}}
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       <span style="color: red" @click="copy(item.Title)">【{{ item.SizeStr }}】</span>
                     </ElRow>
@@ -584,11 +583,11 @@
       </div>
     </ElDialog>
     <ElDialog width="66%" :modal="true" v-model="view.dialogVisible" :before-close="
-      () => {
-        innerVisibleFalse();
-        view.dialogVisible = false;
-      }
-    " :destroy-on-close="true">
+  () => {
+    innerVisibleFalse();
+    view.dialogVisible = false;
+  }
+" :destroy-on-close="true">
       <div v-if="view.formItem">
         <div style="margin-top:-40px">
           <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 680px;max-height: 600px; : auto"
@@ -604,7 +603,7 @@
             <ElCol :span="4" tyle="text-align:right"> Code </ElCol>
             <ElCol :span="8">
               <a href="javascript:void(0);" @click="javCode(view.formItem.Code)"><span>{{ view.formItem.Code
-              }}</span></a>
+}}</span></a>
             </ElCol>
           </ElRow>
           <ElRow :gutter="24">
@@ -618,8 +617,8 @@
             <ElCol :span="8">
               <span @click="gotoContext(view.formItem.Id)">【{{ view.formItem.SizeStr }}】</span>
               <span>{{
-                  useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
-              }}</span>
+    useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
+}}</span>
             </ElCol>
           </ElRow>
           <ElRow :gutter="20">
@@ -1050,7 +1049,7 @@ const editItemSubmit = async () => {
       name += " " + strNew;
     }
   }
-  const param = { Id, Name: name, Code: code, Actress, MoveOut, Title: arr[0],NoRefresh: true };
+  const param = { Id, Name: name, Code: code, Actress, MoveOut, Title: arr[0], NoRefresh: true };
   const res = await FileRename(param);
   if (res.Code == 200) {
     view.formItem = {};
