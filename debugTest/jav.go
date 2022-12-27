@@ -21,7 +21,7 @@ func TestInfoHtml(test *testing.T) {
 		return
 	}
 	defer resp.Body.Close()
-	if 200 != resp.StatusCode {
+	if resp.StatusCode != 200 {
 		fmt.Println("status error:", resp.StatusCode, resp.Status)
 	}
 	doc, err := goquery.NewDocumentFromReader(resp.Body)

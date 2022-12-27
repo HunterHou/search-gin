@@ -5,13 +5,14 @@ go 1.17
 // go 1.18
 
 require (
+	github.com/CodyGuo/win v1.2.3
 	github.com/PuerkitoBio/goquery v1.8.0
 	// github.com/blevesearch/bleve v1.0.14
 	github.com/gin-gonic/gin v1.8.1
 	// github.com/huichen/sego v0.0.0-20210824061530-c87651ea5c76 // indirect
 	github.com/mattn/go-sqlite3 v1.14.14
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
-	golang.org/x/sys v0.0.0-20220731174439-a90be440212d // indirect
+	golang.org/x/sys v0.0.0-20220731174439-a90be440212d
 	// github.com/tukdesk/bleve-sego-tokenizer v0.0.0-20150724062751-243218b987fe // indirect
 	// github.com/tukdesk/sego v0.0.0-20150902051113-989c2c845641 // indirect
 	xorm.io/xorm v1.3.1

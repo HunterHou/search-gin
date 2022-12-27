@@ -2,8 +2,9 @@ package debugTest
 
 import (
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
 	"testing"
+
+	_ "github.com/mattn/go-sqlite3"
 	"xorm.io/xorm"
 )
 
@@ -28,12 +29,12 @@ func TestXorm(t *testing.T) {
 	if err != nil {
 		t.Log(err)
 	}
-	err = engine.Sync(new(Libb))
+	_ = engine.Sync(new(Libb))
 	todo := []Libb{}
 	for i := 0; i < 10; i++ {
 		todo = append(todo, Libb{fmt.Sprintf("%d", i), fmt.Sprintf("value %d ", i)})
 	}
-	affectRows, err := engine.Insert(&todo)
+	affectRows, _ := engine.Insert(&todo)
 	if affectRows > 0 {
 		t.Log(affectRows)
 	}
@@ -45,6 +46,6 @@ type Libb struct {
 	Value string
 }
 
-func (l *Libb) toString() string {
-	return fmt.Sprintf(" key: %v,value:%v", l.Key, l.Value)
-}
+// func (l *Libb) toString() string {
+// 	return fmt.Sprintf(" key: %v,value:%v", l.Key, l.Value)
+// }
