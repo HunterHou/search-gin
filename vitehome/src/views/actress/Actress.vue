@@ -103,7 +103,7 @@ onMounted(() => {
         <div v-if="item && item.Name" class="img-list-item" @click="open(item.Name)">
           <el-link>
             <el-badge :value="item.Cnt">
-              <el-image :src="getActressImage(item.Name)" fit="cover" round></el-image>
+              <el-image :src="getActressImage(item.Name)" fit="fill" round></el-image>
             </el-badge>
           </el-link>
           {{ item.Name ? item.Name : "" }} 【{{ item.SizeStr }}】

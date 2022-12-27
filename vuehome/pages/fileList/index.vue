@@ -222,7 +222,7 @@
       <div :class="[theme]" v-contextmenu:contextmenu :key="item.Id" :code="item.Code">
         <div v-if="item" :class="isShowCover() ? 'img-list-item-cover' : 'img-list-item'">
           <el-image style="width: 100%; height: 100%" :src="isShowCover() ? getJpg(item.Id) : getPng(item.Id)"
-            @click="openWin(item.Id)" fit="contain" lazy />
+            @click="openWin(item.Id)" fit="fill" lazy />
         </div>
       </div>
 
