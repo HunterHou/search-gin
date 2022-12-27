@@ -293,7 +293,7 @@
                 @click="openInfoWindow(item.Id)">
               </div>
               <ElImage style=" height: 100%;z-index: 0;" :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)"
-                fit="cover" />
+                fit="fill" />
             </div>
             <ElPopover placement="top-start" width="280px" :visible="item.toolShow" trigger="hover" :auto-close="0">
               <template #reference>
