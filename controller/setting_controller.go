@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"os/exec"
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/service"
@@ -33,6 +35,10 @@ func GetIpAddr2(c *gin.Context) {
 // 系统关机
 func GetShutdown(c *gin.Context) {
 	res := utils.NewSuccess()
-	utils.ExecCmd("", "shutdown /s")
+	// err := exec.Command("cmd", "/C", "shutdown -s -t 0").Run()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	utils.ExecCmd("", "shutdown /s -t 0")
 	c.JSON(http.StatusOK, res)
 }
