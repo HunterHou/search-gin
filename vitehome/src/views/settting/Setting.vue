@@ -2,28 +2,28 @@
   <div align="center" style="margin-top: -30px;">
     <ElForm label-width="160px" ref="form" :model="view.form" label-position="right">
       <h3>
-        <a style="float: left;" :href="'http://' + view.ipAddr + ':10081'">{{ view.ipAddr + ':10081' }}</a>
-        <span>{{ formatted }} </span>
-        <ElButton style="float: right;" type="danger" @click="shutDownHandler" >关机</ElButton>
+        <ElButton style="float: left;" size="default" type="danger" @click="shutDownHandler">关闭计算机</ElButton>
+        <a :href="'http://' + view.ipAddr + ':10081'">{{ view.ipAddr + ':10081' }}</a>
+        <span style="float: right;">{{ formatted }} </span>
       </h3>
       <div class="container">
         <ElTabs v-model="activeName" type="card" @tab-click="handleClick">
           <ElTabPane label="扫描设置" name="first">
-            <ElSwitch v-model="view.form.IsDb" size="large" active-text="数据库" inactive-text="算法" />
+            <ElSwitch v-model="view.form.IsDb" size="default" active-text="数据库" inactive-text="算法" />
             <ElFormItem label="图片类型">
-              <ElSelect v-model="view.form.ImageTypes" multiple placeholder="请选择" style="width: 90%">
+              <ElSelect v-model="view.form.ImageTypes" multiple placeholder="请选择" style="width: 90%" size="default">
                 <ElOption v-for="item in view.form.Types" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="文档类型">
-              <ElSelect v-model="view.form.DocsTypes" multiple placeholder="请选择" style="width: 90%">
+              <ElSelect v-model="view.form.DocsTypes" multiple placeholder="请选择" style="width: 90%" size="default">
                 <ElOption v-for="item in view.form.Types" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="视频类型">
-              <ElSelect v-model="view.form.VideoTypes" multiple placeholder="请选择" style="width: 90%">
+              <ElSelect v-model="view.form.VideoTypes" multiple placeholder="请选择" style="width: 90%" size="default">
                 <ElOption v-for="item in view.form.Types" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
@@ -35,7 +35,7 @@
                 >{{ iteTag }} <el-divider direction="vertical"></el-divider
               ></span> -->
 
-                <ElTag v-for="iteTag in view.form.Tags" :key="iteTag" closable style="margin-right: 5px"
+                <ElTag v-for="iteTag in view.form.Tags" size="default" :key="iteTag" closable style="margin-right: 5px"
                   @close="removeTag(iteTag)">
                   {{ iteTag }}
                 </ElTag>
@@ -43,10 +43,10 @@
                 <ElPopover placement="left" width="400px;" trigger="click">
                   <template #reference>
                     <ElLink type="success" icon="el-icon-edit" round @click="() => {
-                      makeTabLibData();
-                      view.popTagLibData = view.form.tagLibData;
-                    }
-                    ">添加
+  makeTabLibData();
+  view.popTagLibData = view.form.tagLibData;
+}
+">添加
                     </ElLink>
                   </template>
                   <template #default>
@@ -59,10 +59,12 @@
             </ElFormItem>
 
             <ElFormItem label="已选路徑">
-              <ElCheckbox :indeterminate="view.isIndeterminateDir" v-model="checkAll" @change="handleCheckAllChange">全选
+              <ElCheckbox size="default" :indeterminate="view.isIndeterminateDir" v-model="checkAll"
+                @change="handleCheckAllChange">全选
               </ElCheckbox>
               <ElCheckboxGroup v-model="view.form.Dirs" @change="handleCheckedCitiesChange">
-                <ElCheckbox v-for="dir in view.form.DirsLib" :label="dir" :key="dir">{{ dir }}</ElCheckbox>
+                <ElCheckbox size="default" v-for="dir in view.form.DirsLib" :label="dir" :key="dir">{{ dir }}
+                </ElCheckbox>
               </ElCheckboxGroup>
             </ElFormItem>
             <ElFormItem label="备注">
@@ -73,37 +75,37 @@
 
           <ElTabPane label="基础配置" name="second">
             <ElFormItem label="请求服务器">
-              <ElInput v-model="view.form.ControllerHost" style="width: 90%"></ElInput>
+              <ElInput v-model="view.form.ControllerHost" style="width: 90%" size="default"></ElInput>
             </ElFormItem>
             <ElFormItem label="图片服务器">
-              <ElInput v-model="view.form.ImageHost" style="width: 90%"></ElInput>
+              <ElInput v-model="view.form.ImageHost" style="width: 90%" size="default"></ElInput>
             </ElFormItem>
             <ElFormItem label="流服务器">
-              <ElInput v-model="view.form.StreamHost" style="width: 90%"></ElInput>
+              <ElInput v-model="view.form.StreamHost" style="width: 90%" size="default"></ElInput>
             </ElFormItem>
             <ElFormItem label="URL">
-              <ElInput v-model="view.form.BaseUrl" style="width: 90%"></ElInput>
+              <ElInput v-model="view.form.BaseUrl" style="width: 90%" size="default"></ElInput>
             </ElFormItem>
             <ElFormItem label="OM-URL">
-              <ElInput v-model="view.form.OMUrl" style="width: 90%"></ElInput>
+              <ElInput v-model="view.form.OMUrl" style="width: 90%" size="default"></ElInput>
             </ElFormItem>
             <ElFormItem label="枚举文件类型">
-              <ElSelect v-model="view.form.Types" multiple filterable allowCreate defaultFirstOption placeholder="请添加类型"
-                style="width: 90%" size="small">
+              <ElSelect v-model="view.form.Types" :persistent="false" multiple allowCreate filterable
+                placeholder="请添加类型" tagType="success" automaticDropdown style="width: 90%" size="default">
                 <ElOption v-for="item in view.form.Types" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="标签库">
-              <ElSelect v-model="view.form.TagsLib" multiple filterable allowCreate defaultFirstOption
-                placeholder="请添加标签" style="width: 90%" size="small">
+              <ElSelect v-model="view.form.TagsLib" :persistent="false" multiple allowCreate filterable
+                placeholder="请添加标签" tagType="success" automaticDropdown style="width: 90%" size="default">
                 <ElOption v-for="item in view.form.Tags" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="路徑库">
-              <ElSelect v-model="view.form.DirsLib" multiple :filterable="true" allowCreate defaultFirstOption
-                placeholder="请添加路径" style="width: 90%">
+              <ElSelect v-model="view.form.DirsLib" :persistent="false" multiple allowCreate filterable
+                placeholder="请添加路径" tagType="success" automaticDropdown style="width: 90%" size="default">
                 <ElOption v-for="item in view.form.Dirs" :key="item" :label="item" :value="item">
                 </ElOption>
               </ElSelect>
@@ -133,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   ElForm,
@@ -150,7 +152,7 @@ import {
   ElTag,
   ElLink,
   ElTabPane,
-ElMessage
+  ElMessage
 } from 'element-plus'
 import { PostSettingInfo, GetSettingInfo, GetIpAddr, GetShutDown } from '@/api/setting'
 import { computed } from 'vue'
@@ -175,8 +177,9 @@ const view = reactive({
 })
 const activeName = ref('second')
 
-let checkAll = computed(() => {
-  return (view.form?.Dirs?.length === view.form?.DirsLib?.length)
+
+const checkAll = computed(() => {
+  return view.form?.Dirs?.length === view.form?.DirsLib?.length
 })
 const removeTag = (val) => {
   const idx = view.form.Tags.indexOf(val);
@@ -192,15 +195,23 @@ const handleClick = () => {
 const handleCheckAllChange = (val) => {
   view.form.Dirs = val ? view.form.DirsLib : [];
   view.isIndeterminate = false;
+  // if (view.form?.Dirs?.length === view.form?.DirsLib?.length) {
+  //   checkAll.value = true
+  // } else {
+  //   checkAll.value = false
+  // }
 }
 const handleCheckedCitiesChange = (value) => {
-  // console.log(value);
-
-  // let checkedCount = value.length
-  // checkAll = checkedCount === view.form.Dirs.length;
-  // view.isIndeterminate =
-  //   checkedCount > 0 && checkedCount < view.form.Dirs.length;
+  console.log(view.form?.Dirs.length, view.form?.Dirs)
+  console.log(view.form?.DirsLib.length, view.form?.DirsLib)
+  // if (view.form?.Dirs?.length === view.form?.DirsLib?.length) {
+  //   checkAll.value = true
+  // } else {
+  //   checkAll.value = false
+  // }
 }
+
+
 const submitForm = async () => {
   const postForm = { ...view.form, BaseDir: view.form.Dirs };
   view.loading = true;
@@ -249,30 +260,33 @@ const handleInputConfirmFile = () => {
 }
 const makeTabLibData = () => {
   const dataLib = [];
-  const { TagsLib } = view.form;
-  for (var i = 0; i < TagsLib.length; i++) {
-    dataLib.push({ key: TagsLib[i], label: TagsLib[i] });
+  const { TagsLib = [] } = view.form;
+  if (TagsLib) {
+    for (var i = 0; i < TagsLib.length; i++) {
+      dataLib.push({ key: TagsLib[i], label: TagsLib[i] });
+    }
   }
   view.form.tagLibData = dataLib;
 }
 
 const loadData = async () => {
   const res = await GetSettingInfo()
-  view.form = res;
-  makeTabLibData()
+  if (res) {
+    view.form = res;
+    makeTabLibData()
+  }
+
 }
 
 const loadIpAddr = async () => {
   const res = await GetIpAddr()
-  console.log(res)
   view.ipAddr = res.Data
 }
 
 const shutDownHandler = async () => {
   const res = await GetShutDown()
-  console.log(res)
   ElMessage.success(res.Message);
-  
+
 }
 
 

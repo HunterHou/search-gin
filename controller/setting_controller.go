@@ -35,10 +35,9 @@ func GetIpAddr2(c *gin.Context) {
 // 系统关机
 func GetShutdown(c *gin.Context) {
 	res := utils.NewSuccess()
-	// err := exec.Command("cmd", "/C", "shutdown -s -t 0").Run()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	utils.ExecCmd("", "shutdown /s -t 0")
+	err := exec.Command("cmd", "/C", "shutdown -s -t 0").Run()
+	if err != nil {
+		fmt.Println(err)
+	}
 	c.JSON(http.StatusOK, res)
 }
