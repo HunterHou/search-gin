@@ -19,6 +19,7 @@ const SystemProperty = defineStore({
     ],
   },
   state: () => ({
+    isFullScreen:false,
     Logo: {
       title: "M系统",
       logo: "",
@@ -60,6 +61,9 @@ const SystemProperty = defineStore({
     SearchSuggestions: [],
   }),
   getters: {
+    getIsFullScreen(){
+      return this.isFullScreen
+    },
     getHistory() {
       return this.History;
     },
@@ -178,7 +182,12 @@ const SystemProperty = defineStore({
     setOnlyRepeat(OnlyRepeat: boolean) {
       this.FileSearchParam.OnlyRepeat = OnlyRepeat;
     },
-
+    exitFull(){
+      this.isFullScreen=false
+    },
+    enterFull(){
+      this.isFullScreen=true
+    },
     addSuggestions(queryParam: string) {
       if (!queryParam) {
         return;

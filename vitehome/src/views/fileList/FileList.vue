@@ -13,7 +13,7 @@
       @click="pageLoading(1)">下一頁<i class="el-icon-right"></i>
     </ElButton>
 
-    <div class="searchRow"  :style="searchStyle">
+    <div class="searchRow" :style="searchStyle">
       <ElRow :span="24">
         <ElCol :span="2">
           <ElButton type="success" size="default" :loading-icon="Eleme" :loading="refreshIndexFlag"
@@ -110,6 +110,7 @@
               <div class="value">{{ item }}</div>
             </template>
           </ElAutocomplete>
+          <ElButton text link @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
         </ElCol>
         <div style="margin-left: 10px;">
           <ElPopover :width="400" trigger="hover">
@@ -169,13 +170,7 @@
             </template>
           </ElPopover>
         </div>
-        <ElLink @click="()=>{
-          if(isFullscreen){
-            exit()
-          }else{
-            enter()
-          }
-        }">{{ !isFullscreen?'全屏':'还原' }}</ElLink>
+        
       </ElRow>
       <ElRow>
         <ElCol :span="3">
@@ -771,7 +766,7 @@ import {
   ElCard,
   ElSpace,
 } from "element-plus";
-import { onMounted, pushScopeId, reactive, ref, watch } from "vue";
+import { computed, onMounted, pushScopeId, reactive, ref, watch } from "vue";
 import { MovieModel, MovieQuery } from ".";
 import {
   formMovieTypeChange,
@@ -792,9 +787,6 @@ import {
 import "vue3-video-play/dist/style.css";
 import './filelist.css'
 import { useRoute, useRouter } from "vue-router";
-import { useFullscreen } from '@vueuse/core'
-
-
 
 
 const thisRoute = useRoute()
@@ -805,7 +797,9 @@ const selectText = useTextSelection();
 const { y: windowScrollHheight } = useWindowScroll();
 const { x, y, isOutside } = useMouseInElement(target);
 const pagePress = ref(null);
-const { isFullscreen, enter, exit, toggle } = useFullscreen(pagePress)
+
+
+
 
 const running = ref(true);
 const loading = ref(false);
@@ -817,6 +811,23 @@ const { copy, text } = useClipboard({ source });
 const { width: windowWidth, height: windowHeight } = useWindowSize();
 
 const searchStyle = ref({});
+
+const isFullscreen= computed(()=>{ return systemProperty.getIsFullScreen})
+
+const changeScreen = () => {
+  const element = document.documentElement
+  if (isFullscreen.value) {
+    if(element.requestFullscreen){
+      document.exitFullscreen()
+    }
+    systemProperty.enterFull()
+  } else {
+    
+    element.requestFullscreen()
+  }
+  systemProperty.isFullScreen = !systemProperty.isFullScreen
+}
+
 
 const view = reactive<any>({
   videoUrl: null,

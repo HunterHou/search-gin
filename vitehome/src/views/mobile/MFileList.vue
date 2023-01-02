@@ -3,13 +3,7 @@
     <NavBar :title="title">
       <template #left>
         <div>
-          <Button  size="small" plain  @click="()=>{
-          if(isFullscreen){
-            exit()
-          }else{
-            enter()
-          }
-        }">{{ !isFullscreen?'全屏':'还原' }}</Button>
+          <Button link size="small" plain  @click="changeScreen">{{ !isFullscreen?'全屏':'还原' }}</Button>
           <span @click="refreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
         </div>
       </template>
@@ -350,7 +344,24 @@ const isPlaying = ref(false);
 const refreshing = ref(false);
 const showRename = ref(false);
 const pagePress = ref(null);
-const { isFullscreen, enter, exit, toggle } = useFullscreen(pagePress)
+
+const isFullscreen= computed(()=>{ return systemProperty.getIsFullScreen})
+
+const changeScreen = () => {
+  const element = document.documentElement
+  if (isFullscreen.value) {
+    if(element.requestFullscreen){
+      document.exitFullscreen()
+    }
+    systemProperty.enterFull()
+  } else {
+    
+    element.requestFullscreen()
+  }
+  systemProperty.isFullScreen = !systemProperty.isFullScreen
+}
+
+
 const view = reactive({
   settingInfo: new SettingInfo(),
   playlist: [],
@@ -397,7 +408,6 @@ watch(loadingList, () => {
 watch(finished, () => {
   // console.log("finished", finished.value);
 });
-
 
 const showSearch = ref(false);
 const showTag = ref(false);
