@@ -169,13 +169,13 @@
             </template>
           </ElPopover>
         </div>
-        <ElButton @click="()=>{
+        <ElLink @click="()=>{
           if(isFullscreen){
             exit()
           }else{
             enter()
           }
-        }">{{ !isFullscreen?'全屏':'还原' }}</ElButton>
+        }">{{ !isFullscreen?'全屏':'还原' }}</ElLink>
       </ElRow>
       <ElRow>
         <ElCol :span="3">
