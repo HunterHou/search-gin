@@ -492,9 +492,9 @@
         :background="true" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
         <div class="totalRow">
         <ElRow :gutter="24">
-            <ElButton type="danger" @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
+            <ElButton type="danger" size="default" @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
             <ElDivider  direction="vertical"></ElDivider>
-            <el-radio-group v-model="showStyle" size="small">
+            <el-radio-group v-model="showStyle" size="default">
               <el-radio-button label="cover">封面</el-radio-button>
               <el-radio-button label="post">海报</el-radio-button>
             </el-radio-group>
