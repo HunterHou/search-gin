@@ -110,7 +110,7 @@
               <div class="value">{{ item }}</div>
             </template>
           </ElAutocomplete>
-         
+
         </ElCol>
         <div style="margin-left: 10px;">
           <ElPopover :width="400" trigger="hover">
@@ -170,56 +170,10 @@
             </template>
           </ElPopover>
         </div>
-        
+
       </ElRow>
-      <ElRow>
-        <ElCol :span="3">
-          <el-radio-group v-model="showStyle" size="small">
-            <el-radio-button label="cover">封面</el-radio-button>
-            <el-radio-button label="post">海报</el-radio-button>
-          </el-radio-group>
-        </ElCol>
+      
 
-        <ElCol :span="12">
-          <span v-if="!running" style="color: red">运行异常</span>
-          <ElDivider v-if="!running" direction="vertical"></ElDivider>
-          <ElLink :underline="false" @click="
-  (e) => {
-    queryParam.Page = 1;
-    queryParam.Keyword = '';
-    queryList();
-  }
-">
-            <span> 总：{{ view.TotalSize }}({{ view.TotalCnt }}) </span>
-          </ElLink>
-
-          <ElDivider direction="vertical"></ElDivider>
-          <span> 搜：{{ view.ResultSize }}({{ view.ResultCnt }}) </span>
-          <ElDivider direction="vertical"></ElDivider>
-          <span> 页：{{ view.CurSize }}({{ view.CurCnt }})</span>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton text link @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
-        </ElCol>
-
-
-
-        <div v-if="isPlaying">
-          <ElLink type="success" plain size="large" @click="view.videoVisible = true" :underline="false"
-            style="font-size: 16px">
-            播放中： 【
-            <ElButton type="success" plain size="large" loading :link="true" />
-            {{
-    view.contextmenuTarget.Code + "-" + view.contextmenuTarget.Actress
-}}
-            <ElButton type="success" plain size="large" loading :link="true" />
-            】
-          </ElLink>
-          <ElLink type="danger" plain size="large" @click="closePlayVideo" :underline="false" style="font-size: 16px">
-            关闭
-          </ElLink>
-        </div>
-        
-      </ElRow>
     </div>
 
 
@@ -534,8 +488,35 @@
         </div>
       </ElSpace>
       <ElPagination class="pageTool" v-model:currentPage="queryParam.Page" v-model:page-size="queryParam.PageSize"
-        :page-sizes="[10, 12, 16, 30, 50, 200]" layout="total, sizes, prev, pager, next, jumper" :total="view.ResultCnt"
+        :page-sizes="[10, 12, 16, 30, 50, 200]" layout="sizes, prev, pager, next, jumper" :total="view.ResultCnt"
         :background="true" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+        <div class="totalRow">
+        <ElRow :gutter="24">
+            <ElButton type="danger" @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
+            <ElDivider  direction="vertical"></ElDivider>
+            <el-radio-group v-model="showStyle" size="small">
+              <el-radio-button label="cover">封面</el-radio-button>
+              <el-radio-button label="post">海报</el-radio-button>
+            </el-radio-group>
+            <ElDivider direction="vertical"></ElDivider>
+            <span v-if="!running" style="color: red">运行异常</span>
+            <ElDivider v-if="!running" direction="vertical"></ElDivider>
+            <span> 总：{{ view.TotalSize }}({{ view.TotalCnt }}) </span>
+            <ElDivider direction="vertical"></ElDivider>
+            <span> 搜：{{ view.ResultSize }}({{ view.ResultCnt }}) </span>
+          <div v-if="isPlaying">
+            <ElLink type="success" plain size="large" @click="view.videoVisible = true" :underline="false"
+              style="font-size: 16px">
+              <ElButton type="success" plain size="large" loading :link="true" />
+              {{ view.contextmenuTarget.Code}} -
+              {{ view.contextmenuTarget.Actress }}
+            </ElLink>
+            <ElLink type="danger" plain  @click="closePlayVideo" :underline="false" style="font-size: 16px">
+              关闭
+            </ElLink>
+          </div>
+        </ElRow>
+      </div>
     </div>
 
     <ElDialog title="文件信息" v-model="view.dialogFormItemVisible" :close-on-press-escape="false"
@@ -813,17 +794,17 @@ const { width: windowWidth, height: windowHeight } = useWindowSize();
 
 const searchStyle = ref({});
 
-const isFullscreen= computed(()=>{ return systemProperty.getIsFullScreen})
+const isFullscreen = computed(() => { return systemProperty.getIsFullScreen })
 
 const changeScreen = () => {
   const element = document.documentElement
   if (isFullscreen.value) {
-    if(element.requestFullscreen){
+    if (element.requestFullscreen) {
       document.exitFullscreen()
     }
     systemProperty.enterFull()
   } else {
-    
+
     element.requestFullscreen()
   }
   systemProperty.isFullScreen = !systemProperty.isFullScreen

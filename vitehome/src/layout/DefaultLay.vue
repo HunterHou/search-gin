@@ -33,7 +33,7 @@ html {
 
 .main {
   padding-right: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 25px;
   padding-left: 20px;
 }
 </style>
