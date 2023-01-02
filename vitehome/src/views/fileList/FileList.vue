@@ -110,7 +110,7 @@
               <div class="value">{{ item }}</div>
             </template>
           </ElAutocomplete>
-          <ElButton text link @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
+         
         </ElCol>
         <div style="margin-left: 10px;">
           <ElPopover :width="400" trigger="hover">
@@ -198,6 +198,7 @@
           <ElDivider direction="vertical"></ElDivider>
           <span> 页：{{ view.CurSize }}({{ view.CurCnt }})</span>
           <ElDivider direction="vertical"></ElDivider>
+          <ElButton text link @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
         </ElCol>
 
 
@@ -217,7 +218,7 @@
             关闭
           </ElLink>
         </div>
-
+        
       </ElRow>
     </div>
 
