@@ -1,8 +1,15 @@
 <template>
-  <div class="mainBody">
+  <div ref="pagePress" class="mainBody">
     <NavBar :title="title">
       <template #left>
         <div>
+          <Button  size="small" plain  @click="()=>{
+          if(isFullscreen){
+            exit()
+          }else{
+            enter()
+          }
+        }">{{ !isFullscreen?'全屏':'还原' }}</Button>
           <span @click="refreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
         </div>
       </template>
@@ -296,7 +303,9 @@ import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
 import { getFileStream, getJpg, getPng, getTempImage } from "@/utils/ImageUtils";
-import { useWindowSize } from "@vueuse/core";
+import { useWindowSize ,useFullscreen} from "@vueuse/core";
+
+
 import {
   Dialog,
   ActionSheet,
@@ -340,6 +349,8 @@ const finished = ref(false);
 const isPlaying = ref(false);
 const refreshing = ref(false);
 const showRename = ref(false);
+const pagePress = ref(null);
+const { isFullscreen, enter, exit, toggle } = useFullscreen(pagePress)
 const view = reactive({
   settingInfo: new SettingInfo(),
   playlist: [],
@@ -714,6 +725,7 @@ const SortTypeOptions = [
   width: 100%;
   position: absolute;
   display: block;
+  overflow: auto;
 }
 
 .mlist {

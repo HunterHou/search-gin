@@ -1,5 +1,5 @@
 <template>
-  <div ref="pagePress">
+  <div style="overflow:auto" ref="pagePress">
     <ElBacktop :bottom="100" style="width: 50px; height: 50px">
       <div class="up">UP</div>
     </ElBacktop>
@@ -13,7 +13,7 @@
       @click="pageLoading(1)">下一頁<i class="el-icon-right"></i>
     </ElButton>
 
-    <div class="searchRow" :style="searchStyle">
+    <div class="searchRow"  :style="searchStyle">
       <ElRow :span="24">
         <ElCol :span="2">
           <ElButton type="success" size="default" :loading-icon="Eleme" :loading="refreshIndexFlag"
@@ -169,6 +169,13 @@
             </template>
           </ElPopover>
         </div>
+        <ElButton @click="()=>{
+          if(isFullscreen){
+            exit()
+          }else{
+            enter()
+          }
+        }">{{ !isFullscreen?'全屏':'还原' }}</ElButton>
       </ElRow>
       <ElRow>
         <ElCol :span="3">
@@ -644,14 +651,7 @@
     </ElDialog>
   </div>
   <teleport to="body">
-    <div v-show="view.innerVisible" style="
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            top: 0px;
-            position: fixed;
-            overflow: auto;
-          " @click="innerVisibleFalse">
+    <div v-show="view.innerVisible" class="imageBloswerList" @click="innerVisibleFalse">
       <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
         <ElImage style="
                 min-width: 1200px;
@@ -792,6 +792,10 @@ import {
 import "vue3-video-play/dist/style.css";
 import './filelist.css'
 import { useRoute, useRouter } from "vue-router";
+import { useFullscreen } from '@vueuse/core'
+
+
+
 
 const thisRoute = useRoute()
 const { replace } = useRouter()
@@ -801,6 +805,7 @@ const selectText = useTextSelection();
 const { y: windowScrollHheight } = useWindowScroll();
 const { x, y, isOutside } = useMouseInElement(target);
 const pagePress = ref(null);
+const { isFullscreen, enter, exit, toggle } = useFullscreen(pagePress)
 
 const running = ref(true);
 const loading = ref(false);
