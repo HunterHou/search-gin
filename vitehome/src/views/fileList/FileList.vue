@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow:auto" ref="pagePress">
+  <div ref="pagePress">
     <ElBacktop :bottom="100" style="width: 50px; height: 50px">
       <div class="up">UP</div>
     </ElBacktop>
