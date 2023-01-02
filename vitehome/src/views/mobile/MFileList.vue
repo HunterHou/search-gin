@@ -346,15 +346,16 @@ const showRename = ref(false);
 const pagePress = ref(null);
 
 const element = document.documentElement
-const isFullscreen = computed(() => { if(element.requestFullscreen)return true; else return false; })
+const isFullscreen = computed(() => { return systemProperty.isFullscreen })
 const changeScreen = () => {
   if (isFullscreen.value) {
-    if (element.requestFullscreen) {
+    if (element.requestFullscreen && element.requestFullscreen) {
       document.exitFullscreen()
     }
   } else {
     element.requestFullscreen()
   }
+  systemProperty.isFullscreen = !systemProperty.isFullscreen
 }
 
 

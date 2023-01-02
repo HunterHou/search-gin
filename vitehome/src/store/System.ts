@@ -19,6 +19,7 @@ const SystemProperty = defineStore({
     ],
   },
   state: () => ({
+    isFullscreen:false,
     Logo: {
       title: "M系统",
       logo: "",

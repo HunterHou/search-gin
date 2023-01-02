@@ -793,16 +793,19 @@ const { copy, text } = useClipboard({ source });
 const { width: windowWidth, height: windowHeight } = useWindowSize();
 
 const searchStyle = ref({});
+
+
 const element = document.documentElement
-const isFullscreen = computed(() => { if(element.requestFullscreen)return true; else return false; })
+const isFullscreen = computed(() => { return systemProperty.isFullscreen })
 const changeScreen = () => {
   if (isFullscreen.value) {
-    if (element.requestFullscreen) {
+    if (element.requestFullscreen && element.requestFullscreen) {
       document.exitFullscreen()
     }
   } else {
     element.requestFullscreen()
   }
+  systemProperty.isFullscreen = !systemProperty.isFullscreen
 }
 
 
