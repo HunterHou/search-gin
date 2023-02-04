@@ -3,7 +3,7 @@
     <NavBar title="设置">
       <template #left>
         <div>
-          <Button link size="small" plain @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</Button>
+          <Button plain type="danger" size="small" @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</Button>
           <Button size="small" plain type="danger" @click="shutDownHandler">关机</Button>
         </div>
       </template>
@@ -89,7 +89,7 @@
             </Col>
             <Col :span="18" @click="tagSelect = true">
             <Tag v-for="item in view.form.Tags" size="large" :key="item" style="background: green;margin:2px 4px;">{{
-            item
+              item
             }}</Tag>
             </Col>
           </Row>
@@ -111,7 +111,7 @@
             </Col>
             <Col :span="18" @click="dirSelect = true">
             <Tag v-for="item in view.form.Dirs" :key="item" size="large" style="background: green;margin:2px 4px;">{{
-            item
+              item
             }}</Tag>
             </Col>
           </Row>
@@ -123,7 +123,7 @@
             </Col>
             <Col :span="18" @click="tagLibSelect = true">
             <Tag v-for="item in view.form.TagsLib" :key="item" size="large" style="background: green;margin:2px 4px;">{{
-            item
+              item
             }}
             </Tag>
             </Col>
@@ -134,7 +134,7 @@
             </Col>
             <Col :span="18" @click="typeSelect = true">
             <Tag v-for="item in view.form.Types" :key="item" size="large" style="background: green;margin:2px 4px;">{{
-            item
+              item
             }}</Tag>
             </Col>
           </Row>
@@ -171,10 +171,10 @@ import {
   Tabs,
   Tab,
   Search,
-Toast,
+  Toast,
 } from "vant";
 import "vant/lib/index.css";
-import { onMounted, reactive, ref,computed } from "vue";
+import { onMounted, reactive, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
@@ -245,7 +245,7 @@ const shutDownHandler = async () => {
   const res = await GetShutDown()
   console.log(res)
   Toast(res.Message);
-  
+
 }
 
 onMounted(() => {
