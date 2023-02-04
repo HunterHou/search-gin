@@ -3,7 +3,6 @@
     <NavBar :title="title">
       <template #left>
         <div>
-          <Button link size="small" plain  @click="changeScreen">{{ !isFullscreen?'全屏':'还原' }}</Button>
           <span @click="refreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
         </div>
       </template>
@@ -41,7 +40,8 @@ showSearch = false;
           <Col>当前标签</Col>
           <Col>
           <Tag type="success" size="large" style="margin: 2px 4px;" v-for="ta in view.currentFile.Tags" :key="ta"
-            closeable @close="removeCurrentFileTag(ta)">{{ ta
+            closeable @close="removeCurrentFileTag(ta)">{{
+              ta
             }}</Tag>
           </Col>
         </Row>
@@ -171,15 +171,8 @@ showSearch = false;
       </DropdownItem>
     </DropdownMenu>
 
-    <PullRefresh v-model="refreshing" @refresh="
-      () => {
-        view.queryParam.Page = 1;
-        onSearch();
-        refreshing = false;
-      }
-    ">
-      <SwipeCell>
-        <div v-for="item in view.ModelList" :key="item.Id" style="
+    <SwipeCell>
+      <div v-for="item in view.ModelList" :key="item.Id" style="
           width: 96vw;
           float: left;
           height: 12rem;
@@ -187,95 +180,94 @@ showSearch = false;
           display: flex;
           box-shadow: 0 0 4px grey;
         ">
-          <div style="width: 40vw; margin: 8px auto">
-            <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
-              height: '100%',
-              width: isWide ? '100%' : 'auto',
-              'max-width': '350px',
-              'min-width': '122px',
-              margin: '2px auto',
-            }">
-            </Image>
-          </div>
+        <div style="width: 40vw; margin: 8px auto">
+          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
+            height: '100%',
+            width: isWide ? '100%' : 'auto',
+            'max-width': '350px',
+            'min-width': '122px',
+            margin: '2px auto',
+          }">
+          </Image>
+        </div>
 
-          <div style="width: 55vw; margin: 8px auto; float: right">
-            <div style="margin: 1px auto">
-              <Row>
-                <Col>
-                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-                </Col>
-                <Col span="12">
-                <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
-                </a>
-                </Col>
-                <Col>
-                <span v-if="item.Code">{{ item.Code }}</span>
-                </Col>
-              </Row>
+        <div style="width: 55vw; margin: 8px auto; float: right">
+          <div style="margin: 1px auto">
+            <Row>
+              <Col>
+              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+              </Col>
+              <Col span="12">
+              <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
+              </a>
+              </Col>
+              <Col>
+              <span v-if="item.Code">{{ item.Code }}</span>
+              </Col>
+            </Row>
 
-              <Row style="max-height:32px;overflow:hidden">
-                <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
-              </Row>
-              <Row>
-                <div style="
+            <Row style="max-height:32px;overflow:hidden">
+              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
+            </Row>
+            <Row>
+              <div style="
                   margin: 1px auto;
                   font-size: 12px;
                   color: gray;
                   max-height: 5rem;
                 " class="van-multi-ellipsis--l4">
-                  <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
-                </div>
-              </Row>
-              <SwipeCell>
+                <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
+              </div>
+            </Row>
+            <SwipeCell>
 
-                <template #left>
-                  <Col>
-                  <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
-                  </Col>
-                </template>
-                <template #right>
-                  <SwipeCell style="align-content:space-between;">
-                    <Tag square size="large" type="danger" @click="deleteFile(item)">删除
-                    </Tag>
-                    <Tag square size="large" type="primary" @click="showRenameForm(item)">
-                      重命名</Tag>
-                    <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
-                    </Tag>
-                  </SwipeCell>
-                </template>
-                <Row justify="space-around" style="button: 10px;width: 100%;">
-                  <Col>
-                  <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
-                  </Col>
-                  <Col>
-                  <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
-                  </Col>
-                  <Col>
-                  <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
-                  </Col>
-
-                  <Col v-if="isWide">
-                  <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
-                  </Col>
-                  <Col v-if="isWide">
+              <template #left>
+                <Col>
+                <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+                </Col>
+              </template>
+              <template #right>
+                <SwipeCell style="align-content:space-between;">
                   <Tag square size="large" type="danger" @click="deleteFile(item)">删除
                   </Tag>
-                  </Col>
-                  <Col v-if="isWide">
                   <Tag square size="large" type="primary" @click="showRenameForm(item)">
                     重命名</Tag>
-                  </Col>
-                  <Col v-if="isWide">
                   <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
                   </Tag>
-                  </Col>
-                </Row>
-              </SwipeCell>
-            </div>
+                </SwipeCell>
+              </template>
+              <Row justify="space-around" style="button: 10px;width: 100%;">
+                <Col>
+                <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
+                </Col>
+                <Col>
+                <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
+                </Col>
+                <Col>
+                <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
+                </Col>
+
+                <Col v-if="isWide">
+                <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="danger" @click="deleteFile(item)">删除
+                </Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="primary" @click="showRenameForm(item)">
+                  重命名</Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
+                </Tag>
+                </Col>
+              </Row>
+            </SwipeCell>
           </div>
         </div>
-      </SwipeCell>
-    </PullRefresh>
+      </div>
+    </SwipeCell>
     <LoadMoreVue @loadMore="onLoadMore" :more="true" />
   </div>
 
@@ -297,7 +289,7 @@ import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
 import { getFileStream, getJpg, getPng, getTempImage } from "@/utils/ImageUtils";
-import { useWindowSize ,useFullscreen} from "@vueuse/core";
+import { useWindowSize, useFullscreen } from "@vueuse/core";
 
 
 import {
@@ -345,18 +337,7 @@ const refreshing = ref(false);
 const showRename = ref(false);
 const pagePress = ref(null);
 
-const element = document.documentElement
-const isFullscreen = computed(() => { return systemProperty.isFullscreen })
-const changeScreen = () => {
-  if (isFullscreen.value) {
-    if (element.requestFullscreen && element.requestFullscreen) {
-      document.exitFullscreen()
-    }
-  } else {
-    element.requestFullscreen()
-  }
-  systemProperty.isFullscreen = !systemProperty.isFullscreen
-}
+
 
 
 const view = reactive({

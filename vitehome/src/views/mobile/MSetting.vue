@@ -3,6 +3,7 @@
     <NavBar title="设置">
       <template #left>
         <div>
+          <Button link size="small" plain @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</Button>
           <Button size="small" plain type="danger" @click="shutDownHandler">关机</Button>
         </div>
       </template>
@@ -173,11 +174,12 @@ import {
 Toast,
 } from "vant";
 import "vant/lib/index.css";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref,computed } from "vue";
 import { useRouter } from "vue-router";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
 import LoadMoreVue from './LoadMore.vue'
+import { useSystemProperty } from "@/store/System";
 const { push, go } = useRouter();
 
 const videoSelect = ref(false)
@@ -193,6 +195,19 @@ const view = reactive({
   form: new SettingInfo(),
 })
 
+const systemProperty = useSystemProperty()
+const element = document.documentElement
+const isFullscreen = computed(() => { return systemProperty.isFullscreen })
+const changeScreen = () => {
+  if (isFullscreen.value) {
+    if (element.requestFullscreen && element.requestFullscreen) {
+      document.exitFullscreen()
+    }
+  } else {
+    element.requestFullscreen()
+  }
+  systemProperty.isFullscreen = !systemProperty.isFullscreen
+}
 
 const addType = () => {
   if (newType.value && newType.value.length > 0) {
