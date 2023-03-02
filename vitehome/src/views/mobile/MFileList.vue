@@ -495,6 +495,7 @@ const onLoadMore = async () => {
 const searchKeyword = (words: string) => {
   view.queryParam.Keyword = words;
   view.queryParam.Page = 1;
+  PageNum.value = view.queryParam.Page
   onSearch();
 };
 const viewPic = ref(false);
@@ -605,6 +606,7 @@ const queryList = async (concat?: boolean, pageStart?: number) => {
   if (pageStart > 0) {
     queryParam.Page = pageStart;
     queryParam.PageSize = 1;
+    PageNum.value = view.queryParam.Page
   }
   const { Keyword } = queryParam
   if (Keyword) {
@@ -657,6 +659,7 @@ const onCancel = async () => {
 const keywordUpdate = () => {
   if (view.queryParam.Keyword.length >= 2 || view.queryParam.Keyword.length == 0) {
     view.queryParam.Page = 1;
+    PageNum.value = view.queryParam.Page
     onSearch();
   }
 };
