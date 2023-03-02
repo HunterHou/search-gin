@@ -18,5 +18,5 @@ const onLoadMore = () => {
 </script>
 <template>
     <Button v-if="more" @click="onLoadMore" block type="primary">加载</Button>
-    <div style="margin-bottom:50px;"></div>
+    <div style="margin-bottom:70px;height: 60px;"></div>
 </template>

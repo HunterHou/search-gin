@@ -3,11 +3,11 @@
     <NavBar :title="title">
       <template #left>
         <div>
-          <span @click="refreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
+          <span @click="loadRefreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
         </div>
       </template>
       <template #right>
-        <div @click="showSearch = true">
+        <div @click="view.queryParam.Page = 1 ; PageNum = 1; showSearch = true">
           <Icon name="search" size="18" />
           <span> {{ view.queryParam.Keyword }} </span>
         </div>
@@ -171,8 +171,8 @@ showSearch = false;
       </DropdownItem>
     </DropdownMenu>
 
-    <SwipeCell>
-      <div v-for="item in view.ModelList" :key="item.Id" style="
+
+    <div v-for="item in view.ModelList" :key="item.Id" style="
           width: 96vw;
           float: left;
           height: 12rem;
@@ -180,96 +180,95 @@ showSearch = false;
           display: flex;
           box-shadow: 0 0 4px grey;
         ">
-        <div style="width: 40vw; margin: 8px auto">
-          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
-            height: '100%',
-            width: isWide ? '100%' : 'auto',
-            'max-width': '350px',
-            'min-width': '122px',
-            margin: '2px auto',
-          }">
-          </Image>
-        </div>
 
+      <div style="width: 40vw; margin: 8px auto">
+        <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
+          height: '100%',
+          width: isWide ? '100%' : 'auto',
+          'max-width': '350px',
+          'min-width': '122px',
+          margin: '2px auto',
+        }">
+        </Image>
+      </div>
+      <SwipeCell>
         <div style="width: 55vw; margin: 8px auto; float: right">
           <div style="margin: 1px auto">
-            <Row>
+            <Row style="display: flex;flex-direction: row;justify-content: space-around;">
               <Col>
               <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
               </Col>
-              <Col span="12">
-              <a v-if="item.Actress" @click="searchKeyword(item.Actress)">{{ item.Actress }}
+              <Col v-if="item.Actress?.length > 0">
+              <a @click="searchKeyword(item.Actress)">{{
+                item.Actress?.substring(0, 4)
+              }}
               </a>
               </Col>
-              <Col>
-              <span v-if="item.Code">{{ item.Code }}</span>
+              <Col v-if="item.Code?.length > 0">
+              <span>{{ item.Code }}</span>
               </Col>
             </Row>
 
             <Row style="max-height:32px;overflow:hidden">
               <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
             </Row>
-            <Row>
-              <div style="
+            <Row style="
+                  overflow: hidden;
                   margin: 1px auto;
                   font-size: 12px;
                   color: gray;
-                  max-height: 5rem;
-                " class="van-multi-ellipsis--l4">
-                <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
-              </div>
+                  max-height: 7rem;
+                ">
+              <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
             </Row>
-            <SwipeCell>
-
-              <template #left>
-                <Col>
-                <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
-                </Col>
-              </template>
-              <template #right>
-                <SwipeCell style="align-content:space-between;">
-                  <Tag square size="large" type="danger" @click="deleteFile(item)">删除
-                  </Tag>
-                  <Tag square size="large" type="primary" @click="showRenameForm(item)">
-                    重命名</Tag>
-                  <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
-                  </Tag>
-                </SwipeCell>
-              </template>
-              <Row justify="space-around" style="button: 10px;width: 100%;">
-                <Col>
-                <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
-                </Col>
-                <Col>
-                <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
-                </Col>
-                <Col>
-                <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
-                </Col>
-
-                <Col v-if="isWide">
-                <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
-                </Col>
-                <Col v-if="isWide">
-                <Tag square size="large" type="danger" @click="deleteFile(item)">删除
-                </Tag>
-                </Col>
-                <Col v-if="isWide">
-                <Tag square size="large" type="primary" @click="showRenameForm(item)">
-                  重命名</Tag>
-                </Col>
-                <Col v-if="isWide">
-                <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
-                </Tag>
-                </Col>
-              </Row>
-            </SwipeCell>
+            <Row justify="space-between">
+              <Col>
+              <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
+              </Col>
+              <Col>
+              <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
+              </Col>
+              <Col>
+              <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
+              </Col>
+              <Col v-if="isWide">
+              <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+              </Col>
+              <Col v-if="isWide">
+              <Tag square size="large" type="danger" @click="deleteFile(item)">删除
+              </Tag>
+              </Col>
+              <Col v-if="isWide">
+              <Tag square size="large" type="primary" @click="showRenameForm(item)">
+                重命名</Tag>
+              </Col>
+              <Col v-if="isWide">
+              <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
+              </Tag>
+              </Col>
+            </Row>
           </div>
         </div>
-      </div>
-    </SwipeCell>
+        <template #right>
+          <div
+            style="height:100px;display: flex;flex-direction: column;justify-content: space-between;margin: 10px 10px;">
+            <Tag square size="large" type="danger" @click="deleteFile(item)">删除
+            </Tag>
+            <Tag square size="large" type="primary" @click="showRenameForm(item)">
+              重命名</Tag>
+            <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
+            </Tag>
+            <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+          </div>
+        </template>
+      </SwipeCell>
+    </div>
+    <Pagination class="pageTools" v-model="PageNum" :total-items="view.TotalCnt" mode="simple"
+      :items-per-page="view.queryParam.PageSize" @change="pageChange">
+    </Pagination>
     <LoadMoreVue @loadMore="onLoadMore" :more="true" />
   </div>
+
 
 </template>
 
@@ -289,7 +288,7 @@ import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
 import { getFileStream, getJpg, getPng, getTempImage } from "@/utils/ImageUtils";
-import { useWindowSize, useFullscreen } from "@vueuse/core";
+import { useWindowSize } from "@vueuse/core";
 
 
 import {
@@ -299,11 +298,10 @@ import {
   Col,
   DropdownItem,
   DropdownMenu,
-  Icon,
   Image,
   ImagePreview,
   NavBar,
-  PullRefresh,
+  Pagination,
   Row,
   Search,
   Sticky,
@@ -312,11 +310,11 @@ import {
   Tag,
   Toast,
   RadioGroup,
+  Icon,
   Radio,
 } from "vant";
 import "vant/lib/index.css";
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { useRouter } from "vue-router";
 import { MovieModel, MovieQuery } from "../fileList";
 import { formMovieTypeChange, volumechange } from "../fileList/fileList";
 import { SettingInfo } from "../settting";
@@ -337,15 +335,13 @@ const refreshing = ref(false);
 const showRename = ref(false);
 const pagePress = ref(null);
 
-
-
-
+const PageNum = ref(1)
 const view = reactive({
   settingInfo: new SettingInfo(),
   playlist: [],
   queryParam: {
     Page: 1,
-    PageSize: 30,
+    PageSize: 10,
     SortField: "MTime",
     SortType: "desc",
     MovieType: "",
@@ -390,7 +386,6 @@ watch(finished, () => {
 const showSearch = ref(false);
 const showTag = ref(false);
 
-const isTransform = ref(false);
 
 const tagManage = (item: MovieModel) => {
   showTag.value = true
@@ -398,10 +393,17 @@ const tagManage = (item: MovieModel) => {
 
 }
 
-const refreshIndex = async () => {
-  await RefreshIndex()
-  await onSearch()
+const loadRefreshIndex = async () => {
   showRename.value = false
+  await RefreshIndex()
+  window.location.reload()
+}
+
+const pageChange = async (idx) => {
+  view.queryParam.Page = idx
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+  view.ModelList = []
+  queryList()
 }
 
 const renameFile = async () => {
@@ -411,8 +413,8 @@ const renameFile = async () => {
   const res = await FileRename(item)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    await onSearch()
     showRename.value = false
+    await loadRefreshIndex()
   } else {
     Toast.fail(res.Message)
   }
@@ -421,7 +423,7 @@ const syncFile = async (id: string) => {
   const res = await SyncFileInfo(id)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    await onSearch()
+    await queryList()
     showTag.value = false
   } else {
     Toast.fail(res.Message)
@@ -442,7 +444,7 @@ const deleteFile = async (item: MovieModel) => {
     const res = await DeleteFile(item.Id)
     if (res.Code == 200) {
       Toast.success('操作成功')
-      await onSearch()
+      await queryList()
       showTag.value = false
     } else {
       Toast.fail(res.Message)
@@ -458,8 +460,8 @@ const removeCurrentFileTag = async (tag: string) => {
   const res = await CloseTag(view.currentFile.Id, tag)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    await queryList();
     showTag.value = false
+    await loadRefreshIndex();
   } else {
     Toast.fail(res.Message)
   }
@@ -470,26 +472,12 @@ const addCurrentFileTag = async (tag: string) => {
   const res = await AddTag(view.currentFile.Id, tag)
   if (res.Code == 200) {
     Toast.success('操作成功')
-    // await RefreshIndex()
-    await queryList();
     showTag.value = false
+    await loadRefreshIndex();
   } else {
     Toast.fail(res.Message)
   }
 }
-
-// const transformThis = () => {
-//   const videoDiv = document.getElementById("videoDiv");
-//   videoDiv.style.position = "fixed";
-//   videoDiv.style.width = "100vw";
-//   videoDiv.style.height = "100vh";
-//   if (isTransform.value) {
-//     videoDiv.style.transform = "rotate(90deg)";
-//   } else {
-//     videoDiv.style.transform = "rotate(0deg)";
-//   }
-//   isTransform.value = !isTransform.value;
-// };
 
 const loadSettingInfo = async () => {
   const res = await GetSettingInfo();
@@ -500,6 +488,7 @@ const loadSettingInfo = async () => {
 
 const onLoadMore = async () => {
   view.queryParam.Page += 1;
+  PageNum.value = view.queryParam.Page
   await queryList(true);
 };
 
@@ -567,7 +556,6 @@ const loadDirInfo = async (id: string) => {
     view.imageList = [];
     for (let i = 0; i < res.length; i++) {
       if (res[i].FileType == "jpg" || res[i].FileType == "png") {
-        // view.imageList.push(res[i].ImageBase);
         view.imageList.push(getTempImage(res[i].Id));
       }
     }
@@ -644,12 +632,11 @@ const queryList = async (concat?: boolean, pageStart?: number) => {
     item.Name = item.Name.replace("[" + item.Actress + "]", "");
   });
 
-  if (concat) {
-    const newList = [...view.ModelList, ...model.Data];
-    view.ModelList = newList;
-  } else {
-    view.ModelList = model.Data;
+  if (!concat) {
+    view.ModelList = []
   }
+  const newList = [...view.ModelList, ...model.Data];
+  view.ModelList = newList;
 
   view.TotalCnt = model.TotalCnt;
   view.ResultCnt = model.ResultCnt;
@@ -659,9 +646,9 @@ const queryList = async (concat?: boolean, pageStart?: number) => {
 };
 
 const onSearch = async (clear?: Boolean) => {
-  view.queryParam.Page = 1;
   view.ModelList = [];
   view.loadCnt = 0;
+  showSearch.value = false
   await queryList(false);
 };
 const onCancel = async () => {
@@ -675,10 +662,11 @@ const keywordUpdate = () => {
 };
 const initQuery = () => {
   const systemProperty = useSystemProperty()
-  if (systemProperty.getSearchParam.Keyword) {
-    view.queryParam.Keyword = systemProperty.getSearchParam.Keyword
-    view.queryParam.MovieType = systemProperty.getSearchParam.MovieType
-    view.queryParam.Page = 1
+  if (systemProperty.getSearchParam) {
+    view.queryParam = systemProperty.getSearchParam
+    setTimeout(() => {
+      PageNum.value = systemProperty.getSearchParam.Page
+    }, 100)
   }
 
 
@@ -687,7 +675,6 @@ onMounted(() => {
   initQuery()
   onSearch();
   options.src = null;
-  // transformThis();
   loadSettingInfo();
 });
 
@@ -712,14 +699,19 @@ const SortTypeOptions = [
 .mainBody {
   width: 100%;
   position: absolute;
-  display: block;
   overflow: auto;
+}
+
+.pageTools {
+  position: fixed;
+  width: 100%;
+  background-color: blanchedalmond;
+  bottom: 50px;
 }
 
 .mlist {
   float: none;
-  z-index: 99;
-  width: 100%;
+  margin-bottom: 60px;
 }
 
 .van-field__value {

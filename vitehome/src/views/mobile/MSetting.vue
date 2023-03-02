@@ -180,7 +180,7 @@ import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
 import LoadMoreVue from './LoadMore.vue'
 import { useSystemProperty } from "@/store/System";
-const { push, go } = useRouter();
+const { go } = useRouter();
 
 const videoSelect = ref(false)
 const dirSelect = ref(false)
