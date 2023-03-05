@@ -4,7 +4,7 @@
       <template #left>
         <div>
           <span @click="loadRefreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
-          <Switch size="mini" v-model="easyMode" @change="easyModeChange" />
+          <Switch size="18px" v-model="easyMode" @change="easyModeChange" />
         </div>
       </template>
       <template #right>
