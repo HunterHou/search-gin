@@ -4,7 +4,7 @@
       <template #left>
         <div>
           <span @click="loadRefreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
-          <Switch v-model="easyMode" />
+          <Switch size="mini" v-model="easyMode" @change="easyModeChange" />
         </div>
       </template>
       <template #right>
@@ -27,7 +27,7 @@
           @click="
             searchKeyword(tag);
           showSearch = false;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ">
           {{ tag }}
         </Button>
       </div>
@@ -101,48 +101,43 @@
 
     <MobileBar></MobileBar>
     <teleport to="body">
-      <div v-show="view.videoVisible" id="videoDiv" style="
-                                                                                      width: 100%;
-                                                                                      height: 100%;
-                                                                                      z-index: 9999;
-                                                                                      position: fixed;
-                                                                                      overflow: auto;
-                                                                                      background-color: rgba(0, 0, 0, 0.7);
-                                                                                    ">
-        <div style="right: 10vw; height: 10vh; position: fixed;top:40px;right: 20px; z-index: 9999">
+      <div v-show="view.videoVisible" class="videoDiv">
+        <div style="left: 10px;  position: fixed;top:4px; z-index: 9999">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
         </div>
         <!-- <video style="width: 100%;height: auto;" v-if="view.videoPlay" :src="options.src" autoplay controls="controls"></video> -->
         <vue3VideoPlay ref="vue3VideoPlayRef" v-bind="options" @volumechange="volumechange" @play="onPlay" />
         <SwipeCell>
-          <Image v-for="item in view.playlist" :key="item.Id" :src="getPng(item.Id)" style=" height: auto;
-                                                                                          width: 180px;margin: auto;"
-            @click="openFile(item)">
+          <Image v-for="item in view.playlist" :key="item.Id" :src="getPng(item.Id)"
+            style=" height: auto;
+                                                                                                                              width: 180px;margin: auto;" @click="openFile(item)">
           </Image>
         </SwipeCell>
 
       </div>
     </teleport>
     <teleport to="body">
-      <div v-show="viewPic" style="
-                                                                                      width: 100%;
-                                                                                      height: 100%;
-                                                                                      z-index: 9999;
-                                                                                      top: 0px;
-                                                                                      button: 00px;
-                                                                                      position: fixed;
-                                                                                      overflow: auto;
-                                                                                      background-color: rgba(0, 0, 0, 0.9);
-                                                                                      min-height: 1200px;
-                                                                                    ">
-        <div style="
-                                                                                        right: 1rem;
-                                                                                        top: 20px;
-                                                                                        height: 2rem;
-                                                                                        position: fixed;
-                                                                                        z-index: 999;
-                                                                                      ">
+      <div v-show="viewPic"
+        style="
+                                                                                                                          width: 100%;
+                                                                                                                          height: 100%;
+                                                                                                                          z-index: 9999;
+                                                                                                                          top: 0px;
+                                                                                                                          button: 00px;
+                                                                                                                          position: fixed;
+                                                                                                                          overflow: auto;
+                                                                                                                          background-color: rgba(0, 0, 0, 0.9);
+                                                                                                                          min-height: 1200px;
+                                                                                                                        ">
+        <div
+          style="
+                                                                                                                            right: 1rem;
+                                                                                                                            top: 20px;
+                                                                                                                            height: 2rem;
+                                                                                                                            position: fixed;
+                                                                                                                            z-index: 999;
+                                                                                                                          ">
           <Button type="primary" @click="closeViewPicture">关闭</Button>
         </div>
         <div v-for="(item, index) in view.imageList" :key="index" style="display: flex; margin: 1px auto">
@@ -175,26 +170,21 @@
     </DropdownMenu>
 
     <div class="container" ref="loadRef">
-      <div v-if="easyMode">
-        <div v-for="item in view.ModelList">
-          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
-            maxHeight: '200rpx',
-            width: isWide ? '100%' : 'auto',
-            'max-width': '350px',
-            'min-width': '122px',
-            margin: '2px auto',
-          }">
+      <div v-if="easyMode" class="easyMode">
+        <div v-for="item in view.ModelList" class="easyModeItem">
+          <Image class="easyModeImg" :src="getPng(item.Id)" @click="openFile(item)">
           </Image>
         </div>
       </div>
-      <div v-if="!easyMode" v-for="item in view.ModelList" :key="item.Id" style="
-                                                                                      width: 96vw;
-                                                                                      float: left;
-                                                                                      height: 12rem;
-                                                                                      margin: 6px 8px;
-                                                                                      display: flex;
-                                                                                      box-shadow: 0 0 4px grey;
-                                                                                    ">
+      <div v-if="!easyMode" v-for="item in view.ModelList" :key="item.Id"
+        style="
+                                                                                                                          width: 96vw;
+                                                                                                                          float: left;
+                                                                                                                          height: 12rem;
+                                                                                                                          margin: 6px 8px;
+                                                                                                                          display: flex;
+                                                                                                                          box-shadow: 0 0 4px grey;
+                                                                                                                        ">
 
         <div style="width: 40vw; margin: 8px auto">
           <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
@@ -227,13 +217,14 @@
               <Row style="max-height:32px;overflow:hidden">
                 <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
               </Row>
-              <Row style="
-                                                                                              overflow: hidden;
-                                                                                              margin: 1px auto;
-                                                                                              font-size: 12px;
-                                                                                              color: gray;
-                                                                                              max-height: 7rem;
-                                                                                            ">
+              <Row
+                style="
+                                                                                                                                  overflow: hidden;
+                                                                                                                                  margin: 1px auto;
+                                                                                                                                  font-size: 12px;
+                                                                                                                                  color: gray;
+                                                                                                                                  max-height: 7rem;
+                                                                                                                                ">
                 <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
               </Row>
               <Row justify="space-between">
@@ -278,10 +269,10 @@
           </template>
         </SwipeCell>
       </div>
-      <LoadMoreVue @loadMore="onLoadMore" :more="loadMoreFlag && showPageController" />
+      <LoadMoreVue @loadMore="onLoadMore" :more="loadMoreFlag" />
     </div>
 
-    <Pagination v-if="showPageController" class="pageTools" v-model="PageNum" :total-items="view.TotalCnt" mode="simple"
+    <Pagination class=" pageTools" v-model="PageNum" :total-items="view.TotalCnt" mode="simple"
       :items-per-page="view.queryParam.PageSize" @change="pageChange">
     </Pagination>
 
@@ -355,14 +346,12 @@ const refreshing = ref(false);
 const showRename = ref(false);
 const pagePress = ref(null);
 const loadMoreFlag = ref(false)
-const vue3VideoPlayRef = ref(false)
+const vue3VideoPlayRef = ref(null)
 
 const loadRef = ref()
 const { y, arrivedState } = useScroll(loadRef)
 const { height } = useWindowSize()
-const showPageController = computed(() => {
-  return y.value > height.value
-})
+
 watch(y, () => {
   console.log(y.value, arrivedState.bottom, arrivedState.top)
 })
@@ -429,6 +418,15 @@ const loadRefreshIndex = async () => {
   showRename.value = false
   await RefreshIndex()
   window.location.reload()
+}
+
+const easyModeChange = (e) => {
+  if (e) {
+    view.queryParam.PageSize = 30
+    queryList()
+  } else {
+    view.queryParam.PageSize = 12
+  }
 }
 
 const pageChange = async (idx) => {
@@ -755,4 +753,32 @@ const SortTypeOptions = [
   border: dotted;
   border-radius: 2px;
 }
-</style>
+
+.videoDiv {
+  margin-top: 10px;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  position: fixed;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.easyMode {
+  columns: 2;
+  column-gap: 4px;
+}
+
+.easyModeItem {
+  display: flex;
+  margin: 4px;
+  border: solid grey 1px;
+  border-radius: 4px;
+  min-width: 82px;
+  overflow: hidden;
+  height: min-content
+}
+
+.easyModeImg {
+  border: solid grey 1px;
+}</style>
