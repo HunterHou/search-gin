@@ -4,6 +4,7 @@
       <template #left>
         <div>
           <span @click="loadRefreshIndex" style="color:blue">总数:{{ view.ResultCnt }}</span>
+          <Switch v-model="easyMode" />
         </div>
       </template>
       <template #right>
@@ -24,9 +25,9 @@
       <div style="margin-bottom: 0vh;">
         <Button type="warning" v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px;" size="normal"
           @click="
-  searchKeyword(tag);
-showSearch = false;
-          ">
+            searchKeyword(tag);
+          showSearch = false;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ">
           {{ tag }}
         </Button>
       </div>
@@ -101,21 +102,23 @@ showSearch = false;
     <MobileBar></MobileBar>
     <teleport to="body">
       <div v-show="view.videoVisible" id="videoDiv" style="
-          width: 100%;
-          height: 100%;
-          z-index: 9999;
-          position: fixed;
-          overflow: auto;
-          background-color: rgba(0, 0, 0, 0.7);
-        ">
-        <div style="right: 10vw; height: 10vh; position: relative;top:40px;right: 20px; z-index: 9999">
+                                                                                      width: 100%;
+                                                                                      height: 100%;
+                                                                                      z-index: 9999;
+                                                                                      position: fixed;
+                                                                                      overflow: auto;
+                                                                                      background-color: rgba(0, 0, 0, 0.7);
+                                                                                    ">
+        <div style="right: 10vw; height: 10vh; position: fixed;top:40px;right: 20px; z-index: 9999">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
         </div>
-        <vue3VideoPlay v-if="view.videoPlay" v-bind="options" @volumechange="volumechange" />
+        <!-- <video style="width: 100%;height: auto;" v-if="view.videoPlay" :src="options.src" autoplay controls="controls"></video> -->
+        <vue3VideoPlay ref="vue3VideoPlayRef" v-bind="options" @volumechange="volumechange" @play="onPlay" />
         <SwipeCell>
           <Image v-for="item in view.playlist" :key="item.Id" :src="getPng(item.Id)" style=" height: auto;
-              width: 180px;margin: auto;" @click="openFile(item)">
+                                                                                          width: 180px;margin: auto;"
+            @click="openFile(item)">
           </Image>
         </SwipeCell>
 
@@ -123,23 +126,23 @@ showSearch = false;
     </teleport>
     <teleport to="body">
       <div v-show="viewPic" style="
-          width: 100%;
-          height: 100%;
-          z-index: 9999;
-          top: 0px;
-          button: 00px;
-          position: fixed;
-          overflow: auto;
-          background-color: rgba(0, 0, 0, 0.9);
-          min-height: 1200px;
-        ">
+                                                                                      width: 100%;
+                                                                                      height: 100%;
+                                                                                      z-index: 9999;
+                                                                                      top: 0px;
+                                                                                      button: 00px;
+                                                                                      position: fixed;
+                                                                                      overflow: auto;
+                                                                                      background-color: rgba(0, 0, 0, 0.9);
+                                                                                      min-height: 1200px;
+                                                                                    ">
         <div style="
-            right: 1rem;
-            top: 20px;
-            height: 2rem;
-            position: fixed;
-            z-index: 999;
-          ">
+                                                                                        right: 1rem;
+                                                                                        top: 20px;
+                                                                                        height: 2rem;
+                                                                                        position: fixed;
+                                                                                        z-index: 999;
+                                                                                      ">
           <Button type="primary" @click="closeViewPicture">关闭</Button>
         </div>
         <div v-for="(item, index) in view.imageList" :key="index" style="display: flex; margin: 1px auto">
@@ -171,105 +174,118 @@ showSearch = false;
       </DropdownItem>
     </DropdownMenu>
 
-
-    <div v-for="item in view.ModelList" :key="item.Id" style="
-          width: 96vw;
-          float: left;
-          height: 12rem;
-          margin: 6px 8px;
-          display: flex;
-          box-shadow: 0 0 4px grey;
-        ">
-
-      <div style="width: 40vw; margin: 8px auto">
-        <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
-          height: '100%',
-          width: isWide ? '100%' : 'auto',
-          'max-width': '350px',
-          'min-width': '122px',
-          margin: '2px auto',
-        }">
-        </Image>
+    <div class="container" ref="loadRef">
+      <div v-if="easyMode">
+        <div v-for="item in view.ModelList">
+          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
+            maxHeight: '200rpx',
+            width: isWide ? '100%' : 'auto',
+            'max-width': '350px',
+            'min-width': '122px',
+            margin: '2px auto',
+          }">
+          </Image>
+        </div>
       </div>
-      <SwipeCell>
-        <div style="width: 55vw; margin: 8px auto; float: right">
-          <div style="margin: 1px auto">
-            <Row style="display: flex;flex-direction: row;justify-content: space-around;">
-              <Col>
-              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-              </Col>
-              <Col v-if="item.Actress?.length > 0">
-              <a @click="searchKeyword(item.Actress)">{{
-                item.Actress?.substring(0, 4)
-              }}
-              </a>
-              </Col>
-              <Col v-if="item.Code?.length > 0">
-              <span>{{ item.Code }}</span>
-              </Col>
-            </Row>
+      <div v-if="!easyMode" v-for="item in view.ModelList" :key="item.Id" style="
+                                                                                      width: 96vw;
+                                                                                      float: left;
+                                                                                      height: 12rem;
+                                                                                      margin: 6px 8px;
+                                                                                      display: flex;
+                                                                                      box-shadow: 0 0 4px grey;
+                                                                                    ">
 
-            <Row style="max-height:32px;overflow:hidden">
-              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
-            </Row>
-            <Row style="
-                  overflow: hidden;
-                  margin: 1px auto;
-                  font-size: 12px;
-                  color: gray;
-                  max-height: 7rem;
-                ">
-              <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
-            </Row>
-            <Row justify="space-between">
-              <Col>
-              <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
-              </Col>
-              <Col>
-              <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
-              </Col>
-              <Col>
-              <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
-              </Col>
-              <Col v-if="isWide">
-              <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
-              </Col>
-              <Col v-if="isWide">
+        <div style="width: 40vw; margin: 8px auto">
+          <Image :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)" :style="{
+            height: '100%',
+            width: isWide ? '100%' : 'auto',
+            'max-width': '350px',
+            'min-width': '122px',
+            margin: '2px auto',
+          }">
+          </Image>
+        </div>
+        <SwipeCell>
+          <div style="width: 55vw; margin: 8px auto; float: right">
+            <div style="margin: 1px auto">
+              <Row style="display: flex;flex-direction: row;justify-content: space-around;">
+                <Col>
+                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+                </Col>
+                <Col v-if="item.Actress?.length > 0">
+                <a @click="searchKeyword(item.Actress)">{{
+                  item.Actress?.substring(0, 4)
+                }}
+                </a>
+                </Col>
+                <Col v-if="item.Code?.length > 0">
+                <span>{{ item.Code }}</span>
+                </Col>
+              </Row>
+
+              <Row style="max-height:32px;overflow:hidden">
+                <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
+              </Row>
+              <Row style="
+                                                                                              overflow: hidden;
+                                                                                              margin: 1px auto;
+                                                                                              font-size: 12px;
+                                                                                              color: gray;
+                                                                                              max-height: 7rem;
+                                                                                            ">
+                <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
+              </Row>
+              <Row justify="space-between">
+                <Col>
+                <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
+                </Col>
+                <Col>
+                <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
+                </Col>
+                <Col>
+                <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="danger" @click="deleteFile(item)">删除
+                </Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="primary" @click="showRenameForm(item)">
+                  重命名</Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
+                </Tag>
+                </Col>
+              </Row>
+            </div>
+          </div>
+          <template #right>
+            <div
+              style="height:150px;display: flex;flex-direction: column;justify-content: space-between;margin: 10px 10px;">
               <Tag square size="large" type="danger" @click="deleteFile(item)">删除
               </Tag>
-              </Col>
-              <Col v-if="isWide">
               <Tag square size="large" type="primary" @click="showRenameForm(item)">
                 重命名</Tag>
-              </Col>
-              <Col v-if="isWide">
               <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
               </Tag>
-              </Col>
-            </Row>
-          </div>
-        </div>
-        <template #right>
-          <div
-            style="height:100px;display: flex;flex-direction: column;justify-content: space-between;margin: 10px 10px;">
-            <Tag square size="large" type="danger" @click="deleteFile(item)">删除
-            </Tag>
-            <Tag square size="large" type="primary" @click="showRenameForm(item)">
-              重命名</Tag>
-            <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
-            </Tag>
-            <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
-          </div>
-        </template>
-      </SwipeCell>
+              <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+            </div>
+          </template>
+        </SwipeCell>
+      </div>
+      <LoadMoreVue @loadMore="onLoadMore" :more="loadMoreFlag && showPageController" />
     </div>
-    <Pagination class="pageTools" v-model="PageNum" :total-items="view.TotalCnt" mode="simple"
+
+    <Pagination v-if="showPageController" class="pageTools" v-model="PageNum" :total-items="view.TotalCnt" mode="simple"
       :items-per-page="view.queryParam.PageSize" @change="pageChange">
     </Pagination>
-    <LoadMoreVue @loadMore="onLoadMore" :more="true" />
+
   </div>
-
-
 </template>
 
 <script setup lang="ts">
@@ -288,7 +304,7 @@ import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
 import { getFileStream, getJpg, getPng, getTempImage } from "@/utils/ImageUtils";
-import { useWindowSize } from "@vueuse/core";
+
 
 
 import {
@@ -312,6 +328,7 @@ import {
   RadioGroup,
   Icon,
   Radio,
+  Switch,
 } from "vant";
 import "vant/lib/index.css";
 import { computed, onMounted, reactive, ref, watch } from "vue";
@@ -320,6 +337,8 @@ import { formMovieTypeChange, volumechange } from "../fileList/fileList";
 import { SettingInfo } from "../settting";
 import MobileBar from './MobileBar.vue'
 import LoadMoreVue from "./LoadMore.vue";
+import { useWindowSize, useWindowScroll, useScroll } from "@vueuse/core";
+
 
 
 const systemProperty = useSystemProperty()
@@ -329,11 +348,24 @@ const isWide = computed(() => {
   return width.value > 600;
 });
 const loadingList = ref(false);
+const easyMode = ref(false);
 const finished = ref(false);
 const isPlaying = ref(false);
 const refreshing = ref(false);
 const showRename = ref(false);
 const pagePress = ref(null);
+const loadMoreFlag = ref(false)
+const vue3VideoPlayRef = ref(false)
+
+const loadRef = ref()
+const { y, arrivedState } = useScroll(loadRef)
+const { height } = useWindowSize()
+const showPageController = computed(() => {
+  return y.value > height.value
+})
+watch(y, () => {
+  console.log(y.value, arrivedState.bottom, arrivedState.top)
+})
 
 const PageNum = ref(1)
 const view = reactive({
@@ -362,12 +394,12 @@ const options = reactive({
   width: "100%", //播放器高度
   height: 'auto', //播放器高度
   color: "#409eff", //主题色
-  title: "", //视频名称
+  title: "123", //视频名称
   src: "http://192.168.3.38:8083/api/file/F~emby~emby-rename~井川ゆい柳田やよい~YeLLOW~[川い田よ]EO29人中しンィスッン 川い柳やい~[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv[川い田よ][L-8]妻出パテートキグ井ゆ 田よ{骑}誘丝mv", //视频源
   muted: false, //静音
   webFullScreen: false,
   speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
-  autoPlay: systemProperty.videoOptions.autoPlay, //自动播放
+  autoPlay: false, //自动播放
   loop: true, //循环播放
   mirror: false, //镜像画面
   ligthOff: false, //关灯模式
@@ -530,17 +562,8 @@ const previewPictures = async (item) => {
   }
 };
 const viewPictures = async (item) => {
-  const toast = Toast.loading({
-    duration: 0, // 持续展示 toast
-    forbidClick: false, // 禁用背景点击
-    loadingType: "spinner",
-    message: "加载中...",
-  });
-  setTimeout(() => {
-    toast.clear();
-  }, 3000);
+
   await loadDirInfo(item.Id);
-  toast.clear();
   if (view.imageList && view.imageList.length > 0) {
     viewPic.value = true;
   } else {
@@ -576,11 +599,15 @@ const closePlayVideo = () => {
   isPlaying.value = false;
 };
 
+
+const onPlay = () => {
+  options.muted = false
+}
 const playSource = async (item) => {
   const stream = getFileStream(item.Id);
-  options.title = item.Name;
+  options.title = item.Actress;
   options.src = stream;
-
+  vue3VideoPlayRef.value.play()
   const palyParam = {
     ...view.queryParam,
     PageSize: 1000,
@@ -642,6 +669,12 @@ const queryList = async (concat?: boolean, pageStart?: number) => {
 
   view.TotalCnt = model.TotalCnt;
   view.ResultCnt = model.ResultCnt;
+  if (model.Data.length === view.queryParam.PageSize) {
+    loadMoreFlag.value = true
+  } else {
+    loadMoreFlag.value = false
+  }
+
   view.loadCnt = view.loadCnt + model.Data.length;
   refreshing.value = false;
   loadingList.value = false;
@@ -702,7 +735,13 @@ const SortTypeOptions = [
 .mainBody {
   width: 100%;
   position: absolute;
-  overflow: auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  overflow: auto
 }
 
 .pageTools {
@@ -710,11 +749,6 @@ const SortTypeOptions = [
   width: 100%;
   background-color: blanchedalmond;
   bottom: 50px;
-}
-
-.mlist {
-  float: none;
-  margin-bottom: 60px;
 }
 
 .van-field__value {

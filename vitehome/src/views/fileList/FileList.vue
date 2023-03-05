@@ -45,8 +45,8 @@
                         <span>扫描路径：</span>
                       </ElCol>
                       <ElCol :span="20">
-                        <el-checkbox size="small" :indeterminate="view.isIndeterminateDir"
-                          v-model="view.settingCheckAll" @change="handleCheckAllChange">全选
+                        <el-checkbox size="small" :indeterminate="view.isIndeterminateDir" v-model="view.settingCheckAll"
+                          @change="handleCheckAllChange">全选
                         </el-checkbox>
                         <el-checkbox-group v-model="view.settingInfo.Dirs" @change="handleCheckedCitiesChange">
                           <el-checkbox v-for="dir in view.settingInfo.DirsLib" :label="dir" :key="dir">{{ dir }}
@@ -99,11 +99,11 @@
             :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
             <template #append>
               <ElButton slot="append" type="primary" size="default" icon="ElIcon-search" @click="
-  () => {
-    queryParam.Page = 1;
-    queryList();
-  }
-">Enter
+                () => {
+                  queryParam.Page = 1;
+                  queryList();
+                }
+              ">Enter
               </ElButton>
             </template>
             <template #default="{ item }">
@@ -133,9 +133,9 @@
 
                     </ElButton>
                     <span style="color:blue">{{ useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
-    locales: "zh-cn",
-  })
-}}</span>
+                      locales: "zh-cn",
+                    })
+                    }}</span>
                   </span>
 
                 </div>
@@ -160,9 +160,9 @@
                       -{{ item.MovieType }}
                     </ElButton>
                     <span style="color:blue">{{ useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
-    locales: "zh-cn",
-  })
-}}</span>
+                      locales: "zh-cn",
+                    })
+                    }}</span>
                   </span>
 
                 </div>
@@ -172,7 +172,7 @@
         </div>
 
       </ElRow>
-      
+
 
     </div>
 
@@ -241,13 +241,12 @@
             </template>
           </ElPopover>
           <ElCard class="ecard" shadow="always" :body-style="{
-  padding: '0px',
-  margin: '4px 2px',
+            padding: '0px',
+            margin: '4px 2px',
 
-}">
+          }">
             <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
-              <div :class="isShowCover(view) ? 'hidder-open-cover' : 'hidder-open-post'"
-                @click="openInfoWindow(item.Id)">
+              <div :class="isShowCover(view) ? 'hidder-open-cover' : 'hidder-open-post'" @click="openInfoWindow(item.Id)">
               </div>
               <ElImage style=" height: 100%;z-index: 0;" :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)"
                 fit="fill" />
@@ -448,7 +447,7 @@
                       </ElLink>
                       <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
                       <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ codeFormat(item.Code)
-}}</ElLink>
+                      }}</ElLink>
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       <span style="color: red" @click="copy(item.Title)"> {{ item.SizeStr }}</span>
 
@@ -463,10 +462,10 @@
                       <ElLink v-if="item.Code" style="color: orange" @click="copy(item.Code)">{{ item.Code }}</ElLink>
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       {{
-    useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
-      locales: "zh-cn",
-    })
-}}
+                        useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
+                          locales: "zh-cn",
+                        })
+                      }}
                       <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
                       <span style="color: red" @click="copy(item.Title)">【{{ item.SizeStr }}】</span>
                     </ElRow>
@@ -490,28 +489,28 @@
       <ElPagination class="pageTool" v-model:currentPage="queryParam.Page" v-model:page-size="queryParam.PageSize"
         :page-sizes="[10, 12, 16, 30, 50, 200]" layout="sizes, prev, pager, next, jumper" :total="view.ResultCnt"
         :background="true" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-        <div class="totalRow">
+      <div class="totalRow">
         <ElRow :gutter="24">
-            <ElButton type="danger" size="default" @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
-            <ElDivider  direction="vertical"></ElDivider>
-            <el-radio-group v-model="showStyle" size="default">
-              <el-radio-button label="cover">封面</el-radio-button>
-              <el-radio-button label="post">海报</el-radio-button>
-            </el-radio-group>
-            <ElDivider direction="vertical"></ElDivider>
-            <span v-if="!running" style="color: red">运行异常</span>
-            <ElDivider v-if="!running" direction="vertical"></ElDivider>
-            <span> 总：{{ view.TotalSize }}({{ view.TotalCnt }}) </span>
-            <ElDivider direction="vertical"></ElDivider>
-            <span> 搜：{{ view.ResultSize }}({{ view.ResultCnt }}) </span>
+          <ElButton type="danger" size="default" @click="changeScreen">{{ !isFullscreen ? '全屏' : '还原' }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <el-radio-group v-model="showStyle" size="default">
+            <el-radio-button label="cover">封面</el-radio-button>
+            <el-radio-button label="post">海报</el-radio-button>
+          </el-radio-group>
+          <ElDivider direction="vertical"></ElDivider>
+          <span v-if="!running" style="color: red">运行异常</span>
+          <ElDivider v-if="!running" direction="vertical"></ElDivider>
+          <span> 总：{{ view.TotalSize }}({{ view.TotalCnt }}) </span>
+          <ElDivider direction="vertical"></ElDivider>
+          <span> 搜：{{ view.ResultSize }}({{ view.ResultCnt }}) </span>
           <div v-if="isPlaying">
             <ElLink type="success" plain size="large" @click="view.videoVisible = true" :underline="false"
               style="font-size: 16px">
               <ElButton type="success" plain size="large" loading :link="true" />
-              {{ view.contextmenuTarget.Code}} -
+              {{ view.contextmenuTarget.Code }} -
               {{ view.contextmenuTarget.Actress }}
             </ElLink>
-            <ElLink type="danger" plain  @click="closePlayVideo" :underline="false" style="font-size: 16px">
+            <ElLink type="danger" plain @click="closePlayVideo" :underline="false" style="font-size: 16px">
               关闭
             </ElLink>
           </div>
@@ -567,11 +566,11 @@
       </div>
     </ElDialog>
     <ElDialog width="66%" :modal="true" v-model="view.dialogVisible" :before-close="
-  () => {
-    innerVisibleFalse();
-    view.dialogVisible = false;
-  }
-" :destroy-on-close="true">
+      () => {
+        innerVisibleFalse();
+        view.dialogVisible = false;
+      }
+    " :destroy-on-close="true">
       <div v-if="view.formItem">
         <div style="margin-top:-40px">
           <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 680px;max-height: 600px; : auto"
@@ -587,7 +586,7 @@
             <ElCol :span="4" tyle="text-align:right"> Code </ElCol>
             <ElCol :span="8">
               <a href="javascript:void(0);" @click="javCode(view.formItem.Code)"><span>{{ view.formItem.Code
-}}</span></a>
+              }}</span></a>
             </ElCol>
           </ElRow>
           <ElRow :gutter="24">
@@ -601,8 +600,8 @@
             <ElCol :span="8">
               <span @click="gotoContext(view.formItem.Id)">【{{ view.formItem.SizeStr }}】</span>
               <span>{{
-    useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
-}}</span>
+                useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
+              }}</span>
             </ElCol>
           </ElRow>
           <ElRow :gutter="20">
@@ -631,12 +630,12 @@
     <div v-show="view.innerVisible" class="imageBloswerList" @click="innerVisibleFalse">
       <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
         <ElImage style="
-                min-width: 1200px;
-                width: auto;
-                margin: 0 auto;
-                opacity: 9;
-                z-index: 9999;
-              " :src="item">
+                        min-width: 1200px;
+                        width: auto;
+                        margin: 0 auto;
+                        opacity: 9;
+                        z-index: 9999;
+                      " :src="item">
           @click.stop="innerVisibleFalse"
         </ElImage>
       </div>
@@ -645,20 +644,20 @@
   <teleport to="body">
     <div v-show="view.videoVisible" class="playDiv" id="videoDiv">
       <div style="
-          top: 0;
-          height: 2rem;
-          width: 100%;
-          margin: 1rem auto;
-          position: absolute;
-          color: white;
-          z-index: 9999;
-          float: right;
-        ">
+                  top: 0;
+                  height: 2rem;
+                  width: 100%;
+                  margin: 1rem auto;
+                  position: absolute;
+                  color: white;
+                  z-index: 9999;
+                  float: right;
+                ">
         <span style="
-            margin-left: 2rem;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          ">
+                    margin-left: 2rem;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                  ">
           <ElTag v-for="item in view.contextmenuTarget.Tags" key="default" type="danger" size="large"
             style="margin-left: 0.5rem">
             {{ item }}
@@ -668,12 +667,12 @@
           {{ view.contextmenuTarget.Name }}
         </span>
         <div style="
-            right: 1rem;
-            top: 0;
-            height: 2rem;
-            position: absolute;
-            z-index: 9999;
-          ">
+                    right: 1rem;
+                    top: 0;
+                    height: 2rem;
+                    position: absolute;
+                    z-index: 9999;
+                  ">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
@@ -684,7 +683,7 @@
       </video> -->
       <div>
         <ElSpace wrap size="default">
-          <vue3VideoPlay v-if="view.videoClose" v-bind="optionsPC" @volumechange="volumechange" @play="onPlay" />
+          <vue3VideoPlay ref="vue3VideoPlayRef" v-bind="optionsPC" @volumechange="volumechange" />
           <ElCard v-for="play in view.playlist" :key="play" style="width:250px;height: auto;">
             <ElImage :src="getPng(play.Id)" @click="startPlayVideo(play)"></ElImage>
             <span class="context-text" style="overflow: hidden; text-overflow: ellipsis;">{{ play.Name }}</span>
@@ -834,11 +833,11 @@ const optionsPC = reactive({
   color: "#409eff", //主题色
   title: "", //视频名称
   src: "", //视频源
-  muted: true, //静音
-  preload: true,
+  muted: false, //静音
+  preload: "false",
   webFullScreen: false,
   speedRate: ["1.0", "1.25", "1.5", "2.0"], //播放倍速
-  autoPlay: systemProperty.videoOptions.autoPlay, //自动播放
+  autoPlay: false, //自动播放
   loop: true, //循环播放
   mirror: false, //镜像画面
   ligthOff: true, //关灯模式
@@ -892,8 +891,8 @@ onKeyStroke(["Enter"], (e) => {
 });
 
 const fullScreen = ref(true);
+const vue3VideoPlayRef = ref(null);
 const isPlaying = ref(false);
-const showMenu = ref(false);
 
 const previewPicture = (id: string) => {
 
@@ -927,7 +926,7 @@ const playSource = async (item) => {
   const stream = getFileStream(item.Id);
   optionsPC.title = item.Name;
   optionsPC.src = stream;
-
+  vue3VideoPlayRef.value.play()
   const pageSize = item.Actress ? 100 : 30
   const palyParam = {
     ...queryParam,
@@ -952,10 +951,6 @@ const startPlayVideo = (item: MovieModel) => {
   view.videoVisible = true;
 };
 
-const onPlay = () => {
-  optionsPC.muted = false
-  optionsPC.volume = systemProperty.videoOptions.volume
-}
 
 const innerVisibleFalse = () => {
   view.innerVisible = false;
@@ -1435,6 +1430,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

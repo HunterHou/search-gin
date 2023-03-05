@@ -10,13 +10,12 @@ const props = defineProps({
         default: false
     }
 })
-const { more } = props
 const emit = defineEmits(['loadMore'])
 const onLoadMore = () => {
     emit('loadMore')
 }
 </script>
 <template>
-    <Button v-if="more" @click="onLoadMore" block type="primary">加载</Button>
-    <div style="margin-bottom:70px;height: 60px;"></div>
+    <Button v-if="props.more" @click="onLoadMore" type="primary">加载</Button>
+    <div style="margin-bottom:10px;"></div>
 </template>
