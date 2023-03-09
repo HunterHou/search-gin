@@ -65,9 +65,6 @@
         </ElCol>
         <ElCol :span="1">
           <ElCheckbox v-model="queryParam.OnlyRepeat" label="重" size="large" @change="onlyRepeatQuery()" />
-          <!-- <ElLink style="color: green">
-            <i :underline="true" class="ElIcon-zoom-out" title="重复" @click="onlyRepeatQuery()">重</i>
-          </ElLink> -->
         </ElCol>
         <ElCol :span="3">
           <ElRadioGroup v-model="queryParam.SortField" @change="refreshData" size="default">
@@ -245,198 +242,170 @@
             margin: '4px 2px',
 
           }">
-            <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'">
-              <div :class="isShowCover(view) ? 'hidder-open-cover' : 'hidder-open-post'" @click="openInfoWindow(item.Id)">
-              </div>
+            <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'"
+              @click="openInfoWindow(item.Id)">
               <ElImage style=" height: 100%;z-index: 0;" :src="isShowCover(view) ? getJpg(item.Id) : getPng(item.Id)"
                 fit="fill" />
             </div>
-            <ElPopover placement="top-start" width="280px" :visible="item.toolShow" trigger="hover" :auto-close="0">
-              <template #reference>
-                <div :class="isShowCover(view) ? 'hidder-tool-cover' : 'hidder-tool-post'"
-                  @click="() => { item.toolShow = true }">
-                </div>
-              </template>
-              <template #default>
-                <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="() => { item.toolShow = false }">
-                  <div>
-                    <ElRow>
-                      <ElButton type="success" plain class="cmenuButton" @click="cmenuPlay(item)">
-                        <ElIcon>
-                          <VideoPlay />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton type="warning" plain class="cmenuButton" @click="playThis(item.Id)">
-                        <ElIcon>
-                          <VideoPlay />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton type="success" plain class="cmenuButton" @click="javCode(item.Code)">
-                        <ElIcon>
-                          <Share />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton type="success" plain @click="openThisFolder(item.Id, 2)">
-                        <ElIcon>
-                          <FolderOpened />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton plain type="success" @click="previewPicture(item.Id)">
-                        <ElIcon>
-                          <QuestionFilled />
-                        </ElIcon>
-                      </ElButton>
-                    </ElRow>
-                    <ElRow>
-                      <ElButton plain class="cmenuButton" @click="setMovieType(item.Id, 2)">
-                        <ElIcon>
-                          <Bicycle />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton plain class="cmenuButton" @click="setMovieType(item.Id, 1)">
-                        <ElIcon>
-                          <Sunny />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton plain class="cmenuButton" @click="setMovieType(item.Id, 4)">
-                        <ElIcon>
-                          <Location />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton plain class="cmenuButton" @click="setMovieType(item.Id, 3)">
-                        <ElIcon>
-                          <Ship />
-                        </ElIcon>
-                      </ElButton>
-                    </ElRow>
-                    <ElRow>
-                      <ElButton type="primary" plain class="cmenuButton" @click="getImageList(item.Id)">
-                        <ElIcon>
-                          <Magnet />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton plain type="success" @click="editItem(item)">
-                        <ElIcon>
-                          <Edit />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton type="warning" plain class="cmenuButton" @click="syncThis(item.Id)">
-                        <ElIcon>
-                          <Refresh />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton type="danger" plain class="cmenuButton" @click="deleteThis(item.Id)">
-                        <ElIcon>
-                          <DeleteFilled />
-                        </ElIcon>
-                      </ElButton>
-                      <ElButton type="danger" plain class="cmenuButton" @click="moveThis(item)">
-                        <ElIcon>
-                          <Position />
-                        </ElIcon>
-                      </ElButton>
-                    </ElRow>
-                  </div>
-
-                </ElCard>
-              </template>
-            </ElPopover>
             <div class="image-tool" :style="{ background: !noMovieType(item.MovieType) ? '' : 'rgb(239 251 219)', }">
-              <ElSpace wrap>
-                <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
-                  <ElIcon>
-                    <VideoPlay />
-                  </ElIcon>
-                </ElButton>
+              <ElPopover placement="top-start" width="280px" :visible="item.toolShow" trigger="hover" :auto-close="0">
+                <template #reference>
+                  <ElSpace wrap>
+                    <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
+                      <ElIcon>
+                        <VideoPlay />
+                      </ElIcon>
+                    </ElButton>
 
-                <ElButton type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
-                  <ElIcon>
-                    <VideoPlay />
-                  </ElIcon>
-                </ElButton>
+                    <ElButton type="primary" plain class="icon-button" title="播放" @click="playThis(item.Id)">
+                      <ElIcon>
+                        <VideoPlay />
+                      </ElIcon>
+                    </ElButton>
 
-                <ElButton v-if="item.Actress" type="warning" plain class="icon-button" title="优优"
-                  @click="thisActress(item.Actress)">
-                  <ElIcon>
-                    <UserFilled />
-                  </ElIcon>
-                </ElButton>
-                <ElButton type="success" plain class="icon-button" title="文件夹" @click="openThisFolder(item.Id, 2)">
-                  <ElIcon>
-                    <FolderOpened />
-                  </ElIcon>
-                </ElButton>
-                <ElButton plain type="success" class="icon-button" title="编辑" @click="editItem(item)">
-                  <ElIcon>
-                    <Edit />
-                  </ElIcon>
-                </ElButton>
+                    <ElButton v-if="item.Actress" type="warning" plain class="icon-button" title="优优"
+                      @click="thisActress(item.Actress)">
+                      <ElIcon>
+                        <UserFilled />
+                      </ElIcon>
+                    </ElButton>
+                    <ElButton type="success" plain class="icon-button" title="文件夹" @click="openThisFolder(item.Id, 2)">
+                      <ElIcon>
+                        <FolderOpened />
+                      </ElIcon>
+                    </ElButton>
+                    <ElButton plain type="success" class="icon-button" title="编辑" @click="editItem(item)">
+                      <ElIcon>
+                        <Edit />
+                      </ElIcon>
+                    </ElButton>
 
-                <ElButton v-if="noMovieType(item.MovieType)" type="danger" plain class="icon-button" title="同步"
-                  @click="syncThis(item.Id)">
-                  <ElIcon>
-                    <Refresh />
-                  </ElIcon>
-                </ElButton>
-                <ElButton type="info" plain class="icon-button" v-if="7 < view.showIconNum && notQiBing(item.MovieType)"
-                  title="骑兵" @click="setMovieType(item.Id, 2)">
-                  <ElIcon>
-                    <Bicycle />
-                  </ElIcon>
-                </ElButton>
-                <ElButton plain type="info" class="icon-button" v-if="notBuBing(item.MovieType) && 7 < view.showIconNum"
-                  title="步兵" @click="setMovieType(item.Id, 1)">
-                  <ElIcon>
-                    <Sunny />
-                  </ElIcon>
-                </ElButton>
-                <ElButton plain type="info" class="icon-button" v-if="notNative(item.MovieType) && 7 < view.showIconNum"
-                  title="国产" @click="setMovieType(item.Id, 4)">
-                  <ElIcon>
-                    <Location />
-                  </ElIcon>
-                </ElButton>
-                <ElButton plain type="info" class="icon-button" v-if="notSiBaDa(item.MovieType) && 7 < view.showIconNum"
-                  title="欧美" @click="setMovieType(item.Id, 3)">
-                  <ElIcon>
-                    <Ship />
-                  </ElIcon>
-                </ElButton>
-                <ElIcon v-if="7 >= view.showIconNum">
-                  <ElDropdown placement="top-start">
-                    <MoreFilled />
-                    <template #dropdown>
-                      <ElDropdownMenu>
-                        <ElDropdownItem v-if="notQiBing(item.MovieType)" title="骑兵" @click="setMovieType(item.Id, 2)">
-                          <ElIcon type="info" plain class="icon-button">
+                    <ElButton v-if="noMovieType(item.MovieType)" type="danger" plain class="icon-button" title="同步"
+                      @click="syncThis(item.Id)">
+                      <ElIcon>
+                        <Refresh />
+                      </ElIcon>
+                    </ElButton>
+                    <ElButton type="info" plain class="icon-button"
+                      v-if="7 < view.showIconNum && notQiBing(item.MovieType)" title="骑兵"
+                      @click="setMovieType(item.Id, 2)">
+                      <ElIcon>
+                        <Bicycle />
+                      </ElIcon>
+                    </ElButton>
+                    <ElButton plain type="info" class="icon-button"
+                      v-if="notBuBing(item.MovieType) && 7 < view.showIconNum" title="步兵"
+                      @click="setMovieType(item.Id, 1)">
+                      <ElIcon>
+                        <Sunny />
+                      </ElIcon>
+                    </ElButton>
+                    <ElButton plain type="info" class="icon-button"
+                      v-if="notNative(item.MovieType) && 7 < view.showIconNum" title="国产"
+                      @click="setMovieType(item.Id, 4)">
+                      <ElIcon>
+                        <Location />
+                      </ElIcon>
+                    </ElButton>
+                    <ElButton plain type="info" class="icon-button"
+                      v-if="notSiBaDa(item.MovieType) && 7 < view.showIconNum" title="欧美"
+                      @click="setMovieType(item.Id, 3)">
+                      <ElIcon>
+                        <Ship />
+                      </ElIcon>
+                    </ElButton>
+                    <ElButton type="danger" plain class="icon-button" title="移动" @click="moveThis(item)">
+                      <ElIcon>
+                        <Position />
+                      </ElIcon>
+                    </ElButton>
+                  </ElSpace>
+                </template>
+                <template #default>
+                  <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="() => { item.toolShow = false }">
+                    <div>
+                      <ElRow>
+                        <ElButton type="success" plain class="cmenuButton" @click="cmenuPlay(item)">
+                          <ElIcon>
+                            <VideoPlay />
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton type="warning" plain class="cmenuButton" @click="playThis(item.Id)">
+                          <ElIcon>
+                            <VideoPlay />
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton type="success" plain class="cmenuButton" @click="javCode(item.Code)">
+                          <ElIcon>
+                            <Share />
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton type="success" plain @click="openThisFolder(item.Id, 2)">
+                          <ElIcon>
+                            <FolderOpened />
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton plain type="success" @click="previewPicture(item.Id)">
+                          <ElIcon>
+                            <QuestionFilled />
+                          </ElIcon>
+                        </ElButton>
+                      </ElRow>
+                      <ElRow>
+                        <ElButton plain class="cmenuButton" @click="setMovieType(item.Id, 2)">
+                          <ElIcon>
                             <Bicycle />
-                          </ElIcon>骑兵
-                        </ElDropdownItem>
-                        <ElDropdownItem v-if="notBuBing(item.MovieType)" title="步兵" @click="setMovieType(item.Id, 1)">
-                          <ElIcon plain type="info" class="icon-button">
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton plain class="cmenuButton" @click="setMovieType(item.Id, 1)">
+                          <ElIcon>
                             <Sunny />
-                          </ElIcon>步兵
-                        </ElDropdownItem>
-                        <ElDropdownItem v-if="notNative(item.MovieType)" title="国产" @click="setMovieType(item.Id, 4)">
-                          <ElIcon plain type="info" class="icon-button">
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton plain class="cmenuButton" @click="setMovieType(item.Id, 4)">
+                          <ElIcon>
                             <Location />
-                          </ElIcon>国产
-                        </ElDropdownItem>
-                        <ElDropdownItem v-if="notSiBaDa(item.MovieType)" title="欧美" @click="setMovieType(item.Id, 3)">
-                          <ElIcon plain type="info" class="icon-button">
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton plain class="cmenuButton" @click="setMovieType(item.Id, 3)">
+                          <ElIcon>
                             <Ship />
-                          </ElIcon>欧美
-                        </ElDropdownItem>
-                        <ElDropdownItem @click="deleteThis(item.Id)">
-                          <ElIcon type="info" plain class="icon-button">
+                          </ElIcon>
+                        </ElButton>
+                      </ElRow>
+                      <ElRow>
+                        <ElButton type="primary" plain class="cmenuButton" @click="getImageList(item.Id)">
+                          <ElIcon>
+                            <Magnet />
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton plain type="success" @click="editItem(item)">
+                          <ElIcon>
+                            <Edit />
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton type="warning" plain class="cmenuButton" @click="syncThis(item.Id)">
+                          <ElIcon>
+                            <Refresh />
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton type="danger" plain class="cmenuButton" @click="deleteThis(item.Id)">
+                          <ElIcon>
                             <DeleteFilled />
-                          </ElIcon>删除
-                        </ElDropdownItem>
-                      </ElDropdownMenu>
-                    </template>
-                  </ElDropdown>
-                </ElIcon>
-              </ElSpace>
+                          </ElIcon>
+                        </ElButton>
+                        <ElButton type="danger" plain class="cmenuButton" title="移动" @click="moveThis(item)">
+                          <ElIcon>
+                            <Position />
+                          </ElIcon>
+                        </ElButton>
+                      </ElRow>
+                    </div>
+
+                  </ElCard>
+                </template>
+              </ElPopover>
+
 
               <div class="context-text" style="font-size: 13px">
 
@@ -630,12 +599,12 @@
     <div v-show="view.innerVisible" class="imageBloswerList" @click="innerVisibleFalse">
       <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
         <ElImage style="
-                        min-width: 1200px;
-                        width: auto;
-                        margin: 0 auto;
-                        opacity: 9;
-                        z-index: 9999;
-                      " :src="item">
+                                        min-width: 1200px;
+                                        width: auto;
+                                        margin: 0 auto;
+                                        opacity: 9;
+                                        z-index: 9999;
+                                      " :src="item">
           @click.stop="innerVisibleFalse"
         </ElImage>
       </div>
@@ -644,20 +613,20 @@
   <teleport to="body">
     <div v-show="view.videoVisible" class="playDiv" id="videoDiv">
       <div style="
-                  top: 0;
-                  height: 2rem;
-                  width: 100%;
-                  margin: 1rem auto;
-                  position: absolute;
-                  color: white;
-                  z-index: 9999;
-                  float: right;
-                ">
+                                  top: 0;
+                                  height: 2rem;
+                                  width: 100%;
+                                  margin: 1rem auto;
+                                  position: absolute;
+                                  color: white;
+                                  z-index: 9999;
+                                  float: right;
+                                ">
         <span style="
-                    margin-left: 2rem;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                  ">
+                                    margin-left: 2rem;
+                                    text-overflow: ellipsis;
+                                    white-space: nowrap;
+                                  ">
           <ElTag v-for="item in view.contextmenuTarget.Tags" key="default" type="danger" size="large"
             style="margin-left: 0.5rem">
             {{ item }}
@@ -667,12 +636,12 @@
           {{ view.contextmenuTarget.Name }}
         </span>
         <div style="
-                    right: 1rem;
-                    top: 0;
-                    height: 2rem;
-                    position: absolute;
-                    z-index: 9999;
-                  ">
+                                    right: 1rem;
+                                    top: 0;
+                                    height: 2rem;
+                                    position: absolute;
+                                    z-index: 9999;
+                                  ">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
