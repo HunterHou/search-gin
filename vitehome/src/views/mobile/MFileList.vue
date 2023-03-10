@@ -606,6 +606,7 @@ const playSource = async (item) => {
   options.title = item.Actress;
   options.src = stream;
   vue3VideoPlayRef.value.play()
+  vue3VideoPlayRef.value.toggleFullScreenHandle()
   const palyParam = {
     ...view.queryParam,
     PageSize: 1000,
