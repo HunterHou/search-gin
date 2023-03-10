@@ -27,7 +27,7 @@
           @click="
             searchKeyword(tag);
           showSearch = false;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ">
           {{ tag }}
         </Button>
       </div>
@@ -107,19 +107,15 @@
             webkit-playsinline="true" playsinline="true" x-webkit-airplay="allow" x5-video-player-type="h5"
             x5-video-player-fullscreen="true" x5-video-orientation="landscape">
           </video> -->
-        <vue3VideoPlay ref="vue3VideoPlayRef" style="width: auto;height: 360px;margin: 0px auto ;"
-          x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="landscape" v-bind="options"
-          @volumechange="volumechange" @play="onPlay" />
         <div class="videoDivButton">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <!-- <ElButton type="primary" @click="transform90">旋转</ElButton> -->
-          <div class="videoDivRelations">
-            <Image v-for="item in view.playlist" :key="item.Id" :src="getPng(item.Id)" class="videoDivImg"
-              @click="openFile(item)">
-            </Image>
-          </div>
         </div>
+        <vue3VideoPlay ref="vue3VideoPlayRef" style="width: 600px;height: 350px;object-fit: fill;"
+          x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="landscape" v-bind="options"
+          @volumechange="volumechange" @play="onPlay" />
+
 
 
       </div>
@@ -567,6 +563,7 @@ const closePlayVideo = () => {
   view.videoPlay = false;
   options.src = null;
   isPlaying.value = false;
+  changeScreen()
 };
 
 
@@ -615,22 +612,36 @@ const onPlay = () => {
 //   videoDivButton.style.setProperty('width', '30%')
 // }
 
+const element = document.getElementById('videoDiv')
+const isFullscreen = ref(false)
+const changeScreen = () => {
+  if (isFullscreen.value) {
+    if (element.requestFullscreen && element.requestFullscreen) {
+      document.exitFullscreen()
+    }
+  } else {
+    element.requestFullscreen()
+  }
+  isFullscreen.value = !isFullscreen.value
+}
+
 const playSource = async (item) => {
   const stream = getFileStream(item.Id);
   options.title = item.Actress;
   options.src = stream;
   vue3VideoPlayRef.value.play()
-  options.webFullScreen = true
-  const palyParam = {
-    ...view.queryParam,
-    PageSize: 1000,
-    Page: 1,
-    Keyword: item.Actress
-  }
-  const res = await QueryFileList(palyParam)
-  const model = res as unknown as ResultList;
-  view.playlist = []
-  view.playlist = [...view.playlist, ...model.Data]
+  changeScreen()
+  options.webFullScreen = false
+  // const palyParam = {
+  //   ...view.queryParam,
+  //   PageSize: 1000,
+  //   Page: 1,
+  //   Keyword: item.Actress
+  // }
+  // const res = await QueryFileList(palyParam)
+  // const model = res as unknown as ResultList;
+  // view.playlist = []
+  // view.playlist = [...view.playlist, ...model.Data]
 }
 
 const openFile = (item: any) => {
@@ -770,12 +781,12 @@ const SortTypeOptions = [
 }
 
 .videoDiv {
-  width: 800px;
-  height: 600px;
-  z-index: 9999;
+  width: 660px;
+  height: 360px;
+  z-index: 999;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.7);
-  transform: rotate(90deg) translateY(300px);
+  transform: rotate(90deg) translateY(150px);
   top: 0;
   bottom: 0;
   left: 0;
@@ -787,9 +798,8 @@ const SortTypeOptions = [
 
 .videoDivButton {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  width: 30%;
+  flex-direction: column;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 
