@@ -11,6 +11,6 @@
   "license": "ISC",
   "devDependencies": {},
   "dependencies": {
-    "electrion": "0.0.1-security"
+    "npm install --save-dev electron": "0.0.1-security"
   }
 }

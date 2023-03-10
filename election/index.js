@@ -26,7 +26,7 @@ app.whenReady().then(() => {
     //     menu.popup(remote.getCurrentWindow());
     //   }, false);
     // syetem.exec("C:\\Windows\\System32\\cmd.exe start ./app/appVue.exe")
-    win.loadURL("http://127.0.0.1:8081/home")
+    win.loadURL("http://127.0.0.1:10801/home")
     app.on('window-all-closed', function () {
         if (process.platform !== 'darwin') app.quit()
     })
