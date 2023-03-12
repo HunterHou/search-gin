@@ -1071,15 +1071,6 @@ const addTag = async (clickId, title) => {
   const res = await AddTag(clickId, title);
   if (res.Code == 200) {
     view.addTagShow = false;
-    // for (var i = 0; i < view.ModelList.length; i++) {
-    //   if (view.ModelList[i].Id == clickId) {
-    //     if (!view.ModelList[i].Tags) {
-    //       view.ModelList[i].Tags = [];
-    //     }
-    //     view.ModelList[i].Tags.push(title);
-    //     return;
-    //   }
-    // }
     ElMessage.success(res.Message);
     refreshData()
   } else {
@@ -1099,13 +1090,6 @@ const closeTag = async (clickId: string, title: string) => {
   const res = await CloseTag(clickId, title);
   if (res.Code == 200) {
     ElMessage.success(res.Message);
-    // for (var i = 0; i < view.ModelList.length; i++) {
-    //   if (view.ModelList[i].Id == clickId) {
-    //     const idx = view.ModelList[i].Tags.indexOf(title);
-    //     view.ModelList[i].Tags.splice(idx, 1);
-    //   }
-    //   return;
-    // }
     refreshData();
   } else {
     ElMessage.error(res.Message);
@@ -1364,11 +1348,11 @@ const handleCurrentChange = (page: number) => {
   if (!queryParam.Keyword) {
     view.allPage = page
   }
-  refreshData();
+  queryList();
 };
 const handleSizeChange = (pageSize: number) => {
   queryParam.PageSize = pageSize;
-  refreshData();
+  queryList();
 };
 
 setInterval(heartBeat, 60000);
