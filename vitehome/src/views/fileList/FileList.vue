@@ -651,7 +651,7 @@
       </video> -->
       <div>
         <ElSpace wrap size="default">
-          <vue3VideoPlay ref="vue3VideoPlayRef" v-bind="optionsPC" @volumechange="volumechange" />
+          <vue3VideoPlay ref="vue3VideoPlayRef" style="width: 98vw;margin: auto 1vw;" v-bind="optionsPC" @volumechange="volumechange" />
           <ElCard v-for="play in view.playlist" :key="play" style="width:250px;height: auto;">
             <ElImage :src="getPng(play.Id)" @click="startPlayVideo(play)"></ElImage>
             <span class="context-text" style="overflow: hidden; text-overflow: ellipsis;">{{ play.Name }}</span>
