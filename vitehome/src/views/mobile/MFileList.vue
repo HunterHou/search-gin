@@ -1,5 +1,5 @@
 <template>
-  <div ref="pagePress" class="mainBody">
+  <div ref="pagePress" class="mainBody" v-show="mainBody">
     <NavBar :title="title">
       <template #left>
         <div>
@@ -27,7 +27,7 @@
           @click="
             searchKeyword(tag);
           showSearch = false;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ">
           {{ tag }}
         </Button>
       </div>
@@ -103,34 +103,29 @@
     <teleport to="body">
       <div v-show="view.videoVisible" class="videoDiv" id="videoDiv">
         <div class="videoRow">
-          <div class="videoDivRowButton">
-            <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-            <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-            <ElButton type="primary" @click="vue3VideoPlayRef.webFullScreen = true">旋转</ElButton>
+          <div class="videoDesc">
+            <vue3VideoPlay :poster="getJpg(view.currentFile.Id)" ref="vue3VideoPlayRef"
+              style="width: 98vw;height: auto;object-fit: fill;padding: 1vh;" x5-video-player-type="h5"
+              openFilex5-video-player-fullscreen="true" x5-video-orientation="landscape" v-bind="options"
+              @volumechange="volumechange" @play="onPlay" />
+            <div class="videoDivRowButton">
+              <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+              <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+            </div>
+            <Row>
+              <a @click="searchKeyword(view.currentFile.Actress);hiddenPlayVideo()">{{
+                view.currentFile.Actress?.substring(0, 4)
+              }}
+              </a>
+              {{ view.currentFile.Code }}
+            </Row>
+            <Row style="max-height: 2rem;overflow: hidden;"> {{ view.currentFile.Name }}</Row>
           </div>
-          <vue3VideoPlay :poster="getJpg(view.currentFile.Id)" ref="vue3VideoPlayRef" style="width: 100vw;height: auto;object-fit: fill;"
-            x5-video-player-type="h5" openFilex5-video-player-fullscreen="true" x5-video-orientation="landscape"
-            v-bind="options" @volumechange="volumechange" @play="onPlay" />
           <div class="videoDivRowRelations">
             <Image class="videoDivRowImg" v-for=" relaPlay in view.playlist" :src="getPng(relaPlay.Id)"
               @click="openFile(relaPlay)" />
           </div>
         </div>
-
-        <!-- <div v-if="videoRow" class="videoRow">
-         
-        </div> -->
-        <!-- <div v-else class="videoColumn">
-          <div class="videoDivRowButton">
-            <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-            <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-            <ElButton type="primary" @click="videoRow = !videoRow; ">旋转</ElButton>
-          </div>
-          <video ref="vue3VideoPlayRef" style="object-fit:fill;height:20rem;height: 20rem;" :src="options.src" autoplay
-            controls webkit-playsinline="true" playsinline="true" x-webkit-airplay="allow" x5-video-player-type="h5"
-            x5-video-player-fullscreen="true" x5-video-orientation="landscape">
-          </video>
-        </div> -->
       </div>
     </teleport>
     <teleport to="body">
@@ -170,7 +165,11 @@
     <div class="container" ref="loadRef">
       <div v-if="easyMode" class="easyMode">
         <div v-for="item in view.ModelList" class="easyModeItem">
-          <Image class="easyModeImg" :src="getPng(item.Id)" @click="openFile(item)">
+          <Image :alt="item.Name" class="easyModeImg" :src="getPng(item.Id)" @click="openFile(item)">
+            <template v-slot:error>加载失败</template>
+            <template v-slot:loading>
+              <Loading type="spinner" size="20" />
+            </template>
           </Image>
         </div>
       </div>
@@ -248,15 +247,15 @@
             </div>
           </template>
         </SwipeCell>
-
-
       </div>
+      <Pagination class="pageTools" v-model="PageNum" :total-items="view.TotalCnt" mode="simple"
+        :items-per-page="view.queryParam.PageSize" @change="pageChange">
+      </Pagination>
       <LoadMoreVue @loadMore="onLoadMore" :more="loadMoreFlag" />
+
     </div>
 
-    <Pagination class=" pageTools" v-model="PageNum" :total-items="view.TotalCnt" mode="simple"
-      :items-per-page="view.queryParam.PageSize" @change="pageChange">
-    </Pagination>
+
 
   </div>
 </template>
@@ -277,9 +276,6 @@ import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
 import { useSystemProperty } from "@/store/System";
 import { getFileStream, getJpg, getPng, getTempImage } from "@/utils/ImageUtils";
-
-
-
 import {
   showConfirmDialog,
   ActionSheet,
@@ -290,6 +286,7 @@ import {
   Image,
   showImagePreview,
   NavBar,
+  Loading,
   Pagination,
   Row,
   Search,
@@ -315,14 +312,13 @@ import LoadMoreVue from "./LoadMore.vue";
 import { useWindowSize, useScroll } from "@vueuse/core";
 
 
-
 const systemProperty = useSystemProperty()
 const title = ref("总数")
 const { width } = useWindowSize();
 const isWide = computed(() => {
   return width.value > 600;
 });
-const loadingList = ref(false);
+const mainBody = ref(true);
 const easyMode = ref(false);
 const finished = ref(false);
 const isPlaying = ref(false);
@@ -381,9 +377,6 @@ const options = reactive({
   controlBtns: systemProperty.videoOptions.controlBtns, //显示所有按钮,
 });
 
-watch(loadingList, () => {
-  // console.log("loadingListWatch", loadingList.value);
-});
 watch(finished, () => {
   // console.log("finished", finished.value);
 });
@@ -391,11 +384,9 @@ watch(finished, () => {
 const showSearch = ref(false);
 const showTag = ref(false);
 
-
 const tagManage = (item: MovieModel) => {
   showTag.value = true
   view.currentFile = item
-
 }
 
 const loadRefreshIndex = async () => {
@@ -409,7 +400,7 @@ const easyModeChange = (e) => {
     view.queryParam.PageSize = 30
     queryList()
   } else {
-    view.queryParam.PageSize = 12
+    view.queryParam.PageSize = 10
   }
 }
 
@@ -510,6 +501,7 @@ const searchKeyword = (words: string) => {
   view.queryParam.Keyword = words;
   view.queryParam.Page = 1;
   PageNum.value = view.queryParam.Page
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
   onSearch();
 };
 const viewPic = ref(false);
@@ -552,10 +544,11 @@ const viewPictures = async (item) => {
   } else {
     showFailToast("无图");
   }
-};
+}
+
 const closeViewPicture = () => {
   viewPic.value = false;
-};
+}
 
 const loadDirInfo = async (id: string) => {
   const res = await QueryDirImageBase64(id);
@@ -567,38 +560,24 @@ const loadDirInfo = async (id: string) => {
       }
     }
   }
-};
-
-
+}
 
 const hiddenPlayVideo = () => {
   view.videoVisible = false;
-};
+  mainBody.value = true
+}
 
 const closePlayVideo = () => {
   view.videoVisible = false;
   view.videoPlay = false;
   options.src = null;
   isPlaying.value = false;
-  changeScreen()
-};
+  mainBody.value = true
+}
 
 
 const onPlay = () => {
   options.muted = false
-}
-
-const element = document.getElementById('videoDiv')
-const isFullscreen = ref(false)
-const changeScreen = () => {
-  if (isFullscreen.value) {
-    if (element.requestFullscreen && element.requestFullscreen) {
-      document.exitFullscreen()
-    }
-  } else {
-    element.requestFullscreen()
-  }
-  isFullscreen.value = !isFullscreen.value
 }
 
 const playSource = async (item) => {
@@ -625,8 +604,10 @@ const openFile = (item: any) => {
   view.currentFile = item;
   isPlaying.value = true;
   view.videoVisible = true;
+  mainBody.value = false
   playSource(item)
-};
+}
+
 const queryList = async (concat?: boolean, pageStart?: number) => {
   let queryParam = { ...view.queryParam };
   if (pageStart > 0) {
@@ -676,25 +657,27 @@ const queryList = async (concat?: boolean, pageStart?: number) => {
 
   view.loadCnt = view.loadCnt + model.Data.length;
   refreshing.value = false;
-  loadingList.value = false;
-};
+}
 
 const onSearch = async (clear?: Boolean) => {
   view.ModelList = [];
   view.loadCnt = 0;
   showSearch.value = false
   await queryList(false);
-};
+}
+
 const onCancel = async () => {
   await onSearch(false);
 };
+
 const keywordUpdate = () => {
   if (view.queryParam.Keyword.length >= 2 || view.queryParam.Keyword.length == 0) {
     view.queryParam.Page = 1;
     PageNum.value = view.queryParam.Page
     onSearch();
   }
-};
+}
+
 const initQuery = () => {
   const systemProperty = useSystemProperty()
   if (systemProperty.getSearchParam) {
@@ -703,9 +686,8 @@ const initQuery = () => {
       PageNum.value = systemProperty.getSearchParam.Page
     }, 100)
   }
-
-
 }
+
 onMounted(() => {
   initQuery()
   onSearch();
@@ -743,10 +725,9 @@ const SortTypeOptions = [
 }
 
 .pageTools {
-  position: fixed;
+  position: relative;
   width: 100%;
   background-color: blanchedalmond;
-  bottom: 50px;
 }
 
 .van-field__value {
@@ -764,11 +745,19 @@ const SortTypeOptions = [
   width: 100%;
   z-index: 999;
   overflow: auto;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   margin: auto;
   background-color: rgba(0, 0, 0, 0.9);
+}
+
+.videoDesc {
+  z-index: 99;
+  background-color: aliceblue;
+  justify-content: space-evenly;
+  overflow: hidden;
+  border-radius: 1%;
 }
 
 .videoColumn {
@@ -794,10 +783,13 @@ const SortTypeOptions = [
 .videoDivRowRelations {
   columns: 2;
   display: flex;
+  height: 60vh;
   flex-direction: row;
   flex-wrap: wrap;
   overflow: auto;
 }
+
+
 
 .videoDivRowImg {
   height: auto;
@@ -805,9 +797,9 @@ const SortTypeOptions = [
   margin: auto;
   border-radius: 5%;
   overflow: hidden;
-  padding: 4px;
+  padding: 0px;
   margin: 4px;
-  background-color: antiquewhite;
+  border: rgb(228, 177, 110) 2px dotted;
 }
 
 .listMode {
@@ -822,6 +814,7 @@ const SortTypeOptions = [
 .listModeItem {
   border-radius: 8%;
   width: 40vw;
+  max-width: 610px;
 }
 
 .listModeLeft {
@@ -858,22 +851,24 @@ const SortTypeOptions = [
 }
 
 .easyMode {
-  columns: 2;
-  column-gap: 4px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .easyModeItem {
   display: flex;
   margin: 4px;
-  border: solid grey 1px;
+  border: dotted rgb(244, 146, 146) 2px;
   border-radius: 4px;
-  min-width: 82px;
+  width: 12rem;
   overflow: hidden;
-  height: min-content
+  height: auto;
 }
 
 .easyModeImg {
-  border: solid grey 1px;
+  min-width: 4rem;
 }
 
 .viewPic {
