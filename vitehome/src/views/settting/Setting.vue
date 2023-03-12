@@ -31,10 +31,6 @@
 
             <ElFormItem label="热门标签">
               <div style="width: 90%">
-                <!-- <span v-for="iteTag in form.Tags" :key="iteTag"
-                >{{ iteTag }} <el-divider direction="vertical"></el-divider
-              ></span> -->
-
                 <ElTag v-for="iteTag in view.form.Tags" size="default" :key="iteTag" closable style="margin-right: 5px"
                   @close="removeTag(iteTag)">
                   {{ iteTag }}
@@ -43,10 +39,10 @@
                 <ElPopover placement="left" width="400px;" trigger="click">
                   <template #reference>
                     <ElLink type="success" icon="el-icon-edit" round @click="() => {
-  makeTabLibData();
-  view.popTagLibData = view.form.tagLibData;
-}
-">添加
+                      makeTabLibData();
+                      view.popTagLibData = view.form.tagLibData;
+                    }
+                    ">添加
                     </ElLink>
                   </template>
                   <template #default>
@@ -90,27 +86,39 @@
               <ElInput v-model="view.form.OMUrl" style="width: 90%" size="default"></ElInput>
             </ElFormItem>
             <ElFormItem label="枚举文件类型">
-              <ElSelect v-model="view.form.Types" :persistent="false" multiple allowCreate filterable
-                placeholder="请添加类型" tagType="success" automaticDropdown style="width: 90%" size="default">
-                <ElOption v-for="item in view.form.Types" :key="item" :label="item" :value="item">
-                </ElOption>
-              </ElSelect>
+              <el-tag v-for="tag in view.form.Types" :key="tag" class="inputTag" closable :disable-transitions="false"
+                @close="handleClose(tag, 'Types')">
+                {{ tag }}
+              </el-tag>
+              <el-input v-if="view.typeVisible" ref="InputRef" v-model="view.inputValue" class="ml-1 w-20" size="small"
+                @keyup.enter="enterInput('typeVisible', 'Types')" @blur="enterInput('typeVisible', 'Types')" />
+              <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput('typeVisible')">
+                + New
+              </el-button>
             </ElFormItem>
             <ElFormItem label="标签库">
-              <ElSelect v-model="view.form.TagsLib" :persistent="false" multiple allowCreate filterable
-                placeholder="请添加标签" tagType="success" automaticDropdown style="width: 90%" size="default">
-                <ElOption v-for="item in view.form.Tags" :key="item" :label="item" :value="item">
-                </ElOption>
-              </ElSelect>
+              <el-tag v-for="tag in view.form.TagsLib" :key="tag" class="inputTag" closable :disable-transitions="false"
+                @close="handleClose(tag, 'TagsLib')">
+                {{ tag }}
+              </el-tag>
+              <el-input v-if="view.TagsLibVisible" ref="InputRef" v-model="view.inputValue" class="ml-1 w-20" size="small"
+                @keyup.enter="enterInput('TagsLibVisible', 'TagsLib')" @blur="enterInput('TagsLibVisible', 'TagsLib')" />
+              <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput('TagsLibVisible')">
+                + New
+              </el-button>
+
             </ElFormItem>
             <ElFormItem label="路徑库">
-              <ElSelect v-model="view.form.DirsLib" :persistent="false" multiple allowCreate filterable
-                placeholder="请添加路径" tagType="success" automaticDropdown style="width: 90%" size="default">
-                <ElOption v-for="item in view.form.Dirs" :key="item" :label="item" :value="item">
-                </ElOption>
-              </ElSelect>
+              <el-tag v-for="tag in view.form.DirsLib" :key="tag" class="inputTag" closable :disable-transitions="false"
+                @close="handleClose(tag, 'DirsLib')">
+                {{ tag }}
+              </el-tag>
+              <el-input v-if="view.DirsLibVisible" ref="InputRef" v-model="view.inputValue" class="ml-1 w-20" size="small"
+                @keyup.enter="enterInput('DirsLibVisible', 'DirsLib')" @blur="enterInput('DirsLibVisible', 'DirsLib')" />
+              <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput('DirsLibVisible')">
+                + New
+              </el-button>
             </ElFormItem>
-
             <ElFormItem label="备注">
               <ElInput type="textarea" :rows="4" v-model="view.form.Remark" style="width: 90%; margin-bottom: 20px">
               </ElInput>
@@ -166,16 +174,36 @@ const { go } = useRouter()
 const view = reactive({
   form: new SettingInfo(),
   ipAddr: "",
-  inputVisible: false,
-  isIndeterminateDir: false,
-  inputVisibleFile: false,
-  inputValueFile: '',
   inputValue: '',
+  typeVisible: false,
+  TagsLibVisible: false,
+  DirsLibVisible: false,
+  isIndeterminateDir: false,
   popTagLibData: [],
   isIndeterminate: false,
   loading: false,
 })
 const activeName = ref('second')
+
+const showInput = (visible) => {
+  view[visible] = true
+  console.log(visible)
+  visible = true
+}
+const enterInput = (visible, arr) => {
+  if (!view.inputValue) {
+    return
+  }
+  if (view.form[arr].indexOf(view.inputValue) < 0) {
+    view.form[arr].push(view.inputValue)
+  }
+  view[visible] = false;
+  view.inputValue = null
+}
+
+const handleClose = (tag, arr) => {
+  view.form[arr].splice(view.form[arr].indexOf(tag), 1);
+}
 
 
 const checkAll = computed(() => {
@@ -221,43 +249,8 @@ const submitForm = async () => {
     go(0)
   }
 }
-const handleClose = (tag) => {
-  view.form.Types.splice(view.form.Types.indexOf(tag), 1);
-}
-
-const showInput = () => {
-  view.inputVisible = true;
-  // view.$nextTick((_) => {
-  //   view.$refs.saveTagInput.$refs.input.focus();
-  // });
-}
-const handleInputConfirm = () => {
-  let inputValue = view.inputValue;
-  if (inputValue) {
-    view.form.Types.push(inputValue);
-  }
-  view.inputVisible = false;
-  view.inputValue = "";
-}
-const showInputFile = () => {
-  view.inputVisibleFile = true;
-  // view.$nextTick((_) => {
-  //   view.$refs.saveTagInputFile.$refs.input.focus();
-  // });
-}
-const handleCloseFile = (tag) => {
-  view.form.BaseDir.splice(view.form.BaseDir.indexOf(tag), 1);
-}
 
 
-const handleInputConfirmFile = () => {
-  let inputValueFile = view.inputValueFile;
-  if (inputValueFile) {
-    view.form.BaseDir.push(inputValueFile);
-  }
-  view.inputVisibleFile = false;
-  view.inputValueFile = "";
-}
 const makeTabLibData = () => {
   const dataLib = [];
   const { TagsLib = [] } = view.form;
@@ -328,5 +321,9 @@ onMounted(() => {
 .el-transfer {
   margin-left: 120px;
   text-align: left;
+}
+
+.inputTag {
+  margin: 2px;
 }
 </style>

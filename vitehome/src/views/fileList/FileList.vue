@@ -250,7 +250,7 @@
             <div class="image-tool" :style="{ background: !noMovieType(item.MovieType) ? '' : 'rgb(239 251 219)', }">
               <ElPopover placement="top-start" width="280px" :visible="item.toolShow" trigger="hover" :auto-close="0">
                 <template #reference>
-                  <ElSpace wrap>
+                  <div class="tool-button">
                     <ElButton type="danger" plain class="icon-button" title="在线" @click="cmenuPlay(item)">
                       <ElIcon>
                         <VideoPlay />
@@ -320,7 +320,7 @@
                         <Position />
                       </ElIcon>
                     </ElButton>
-                  </ElSpace>
+                  </div>
                 </template>
                 <template #default>
                   <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="() => { item.toolShow = false }">
@@ -599,12 +599,12 @@
     <div v-show="view.innerVisible" class="imageBloswerList" @click="innerVisibleFalse">
       <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
         <ElImage style="
-                                            min-width: 1200px;
-                                            width: auto;
-                                            margin: 0 auto;
-                                            opacity: 9;
-                                            z-index: 9999;
-                                          " :src="item">
+                                              min-width: 1200px;
+                                              width: auto;
+                                              margin: 0 auto;
+                                              opacity: 9;
+                                              z-index: 9999;
+                                            " :src="item">
           @click.stop="innerVisibleFalse"
         </ElImage>
       </div>
@@ -613,20 +613,20 @@
   <teleport to="body">
     <div v-show="view.videoVisible" class="playDiv" id="videoDiv">
       <div style="
-                                      top: 0;
-                                      height: 2rem;
-                                      width: 100%;
-                                      margin: 1rem auto;
-                                      position: absolute;
-                                      color: white;
-                                      z-index: 9999;
-                                      float: right;
-                                    ">
-        <span style="
-                                        margin-left: 2rem;
-                                        text-overflow: ellipsis;
-                                        white-space: nowrap;
+                                        top: 0;
+                                        height: 2rem;
+                                        width: 100%;
+                                        margin: 1rem auto;
+                                        position: absolute;
+                                        color: white;
+                                        z-index: 9999;
+                                        float: right;
                                       ">
+        <span style="
+                                          margin-left: 2rem;
+                                          text-overflow: ellipsis;
+                                          white-space: nowrap;
+                                        ">
           <ElTag v-for="item in view.contextmenuTarget.Tags" key="default" type="danger" size="large"
             style="margin-left: 0.5rem">
             {{ item }}
@@ -636,12 +636,12 @@
           {{ view.contextmenuTarget.Name }}
         </span>
         <div style="
-                                        right: 1rem;
-                                        top: 0;
-                                        height: 2rem;
-                                        position: absolute;
-                                        z-index: 9999;
-                                      ">
+                                          right: 1rem;
+                                          top: 0;
+                                          height: 2rem;
+                                          position: absolute;
+                                          z-index: 9999;
+                                        ">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
@@ -1399,4 +1399,11 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.tool-button{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+  justify-content: space-between;
+}
+</style>

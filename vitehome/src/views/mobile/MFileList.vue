@@ -27,7 +27,7 @@
           @click="
             searchKeyword(tag);
           showSearch = false;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ">
           {{ tag }}
         </Button>
       </div>
@@ -162,79 +162,80 @@
         </div>
       </div>
       <div v-if="!easyMode" v-for="item in view.ModelList" :key="item.Id" class="listMode">
-
         <div class="listModeItem">
           <div class="listModeLeft">
-            <SwipeCell>
-              <Image class="listModeImg" :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)"
-                :style="{ width: isWide ? '100%' : 'auto' }">
-              </Image>
-              <template #right>
-                <div
-                  style="height:150px;display: flex;flex-direction: column;justify-content: space-between;margin: 10px 10px;">
-                  <Tag square size="large" type="danger" @click="deleteFile(item)">删除
-                  </Tag>
-                  <Tag square size="large" type="primary" @click="showRenameForm(item)">
-                    重命名</Tag>
-                  <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
-                  </Tag>
-                  <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
-                </div>
-              </template>
-            </SwipeCell>
+
+            <Image class="listModeImg" :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)"
+              :style="{ width: isWide ? '100%' : 'auto' }">
+            </Image>
+
           </div>
         </div>
-        <div class="listModeRight">
-          <div style="margin: 1px auto">
-            <Row style="display: flex;flex-direction: row;justify-content: space-around;">
-              <Col>
-              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-              </Col>
-              <Col v-if="item.Actress?.length > 0">
-              <a @click="searchKeyword(item.Actress)">{{
-                item.Actress?.substring(0, 4)
-              }}
-              </a>
-              </Col>
-              <Col v-if="item.Code?.length > 0">
-              <span>{{ item.Code }}</span>
-              </Col>
-            </Row>
+        <SwipeCell>
+          <div class="listModeRight">
+            <div style="margin: 1px auto">
+              <Row style="display: flex;flex-direction: row;justify-content: space-around;">
+                <Col>
+                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+                </Col>
+                <Col v-if="item.Actress?.length > 0">
+                <a @click="searchKeyword(item.Actress)">{{
+                  item.Actress?.substring(0, 4)
+                }}
+                </a>
+                </Col>
+                <Col v-if="item.Code?.length > 0">
+                <span>{{ item.Code }}</span>
+                </Col>
+              </Row>
 
-            <Row class="listModeRightTag">
-              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
-            </Row>
-            <Row class="listModeItemContent">
-              <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
-            </Row>
-            <Row justify="space-around">
-              <Col>
-              <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
-              </Col>
-              <Col>
-              <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
-              </Col>
-              <Col>
-              <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
-              </Col>
-              <Col v-if="isWide">
-              <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
-              </Col>
-              <Col v-if="isWide">
+              <Row class="listModeRightTag">
+                <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
+              </Row>
+              <Row class="listModeItemContent">
+                <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
+              </Row>
+              <Row justify="space-around">
+                <Col>
+                <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
+                </Col>
+                <Col>
+                <Tag square size="large" type="primary" @click="openFile(item)">播放</Tag>
+                </Col>
+                <Col>
+                <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="danger" @click="deleteFile(item)">删除
+                </Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="primary" @click="showRenameForm(item)">
+                  重命名</Tag>
+                </Col>
+                <Col v-if="isWide">
+                <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
+                </Tag>
+                </Col>
+              </Row>
+            </div>
+          </div>
+          <template #right>
+            <div style="display: flex;flex-direction: column;justify-content: space-between;margin: 10px 10px;">
               <Tag square size="large" type="danger" @click="deleteFile(item)">删除
               </Tag>
-              </Col>
-              <Col v-if="isWide">
               <Tag square size="large" type="primary" @click="showRenameForm(item)">
                 重命名</Tag>
-              </Col>
-              <Col v-if="isWide">
               <Tag square size="large" type="success" @click="syncFile(item.Id)">同步
               </Tag>
-              </Col>
-            </Row>
-          </div>
-        </div>
+              <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
+            </div>
+          </template>
+        </SwipeCell>
+
 
       </div>
       <LoadMoreVue @loadMore="onLoadMore" :more="loadMoreFlag" />
@@ -267,7 +268,7 @@ import { getFileStream, getJpg, getPng, getTempImage } from "@/utils/ImageUtils"
 
 
 import {
-  Dialog,
+  showConfirmDialog,
   ActionSheet,
   Button,
   Col,
@@ -283,7 +284,8 @@ import {
   SwipeCell,
   Field,
   Tag,
-  Toast,
+  showSuccessToast,
+  showFailToast,
   RadioGroup,
   Icon,
   Radio,
@@ -410,21 +412,21 @@ const renameFile = async () => {
   item.Name = "[" + Actress + "][" + Code + "]" + Name;
   const res = await FileRename(item)
   if (res.Code == 200) {
-    Toast.success('操作成功')
+    showSuccessToast('操作成功')
     showRename.value = false
     await loadRefreshIndex()
   } else {
-    Toast.fail(res.Message)
+    showFailToast(res.Message)
   }
 }
 const syncFile = async (id: string) => {
   const res = await SyncFileInfo(id)
   if (res.Code == 200) {
-    Toast.success('操作成功')
+    showSuccessToast('操作成功')
     await queryList()
     showTag.value = false
   } else {
-    Toast.fail(res.Message)
+    showFailToast(res.Message)
   }
 }
 
@@ -435,20 +437,20 @@ const showRenameForm = (item: MovieModel) => {
 }
 
 const deleteFile = async (item: MovieModel) => {
-  Dialog.confirm({
+  showConfirmDialog({
     title: "确认删除？",
     message: item.Name
   }).then(async () => {
     const res = await DeleteFile(item.Id)
     if (res.Code == 200) {
-      Toast.success('操作成功')
+      showSuccessToast('操作成功')
       await queryList()
       showTag.value = false
     } else {
-      Toast.fail(res.Message)
+      showFailToast(res.Message)
     }
   }).catch(() => {
-    Toast.fail("取消删除")
+    showFailToast("取消删除")
   })
 
 }
@@ -457,11 +459,11 @@ const deleteFile = async (item: MovieModel) => {
 const removeCurrentFileTag = async (tag: string) => {
   const res = await CloseTag(view.currentFile.Id, tag)
   if (res.Code == 200) {
-    Toast.success('操作成功')
+    showSuccessToast('操作成功')
     showTag.value = false
     await loadRefreshIndex();
   } else {
-    Toast.fail(res.Message)
+    showFailToast(res.Message)
   }
 }
 
@@ -469,11 +471,11 @@ const removeCurrentFileTag = async (tag: string) => {
 const addCurrentFileTag = async (tag: string) => {
   const res = await AddTag(view.currentFile.Id, tag)
   if (res.Code == 200) {
-    Toast.success('操作成功')
+    showSuccessToast('操作成功')
     showTag.value = false
     await loadRefreshIndex();
   } else {
-    Toast.fail(res.Message)
+    showFailToast(res.Message)
   }
 }
 
@@ -502,9 +504,9 @@ const viewPic = ref(false);
 const getImageList = async (Id: string) => {
   const res = await DownImageList(Id);
   if (res.Code === 200) {
-    Toast.success(res.Message);
+    showSuccessToast(res.Message);
   } else {
-    Toast.fail(res.Message);
+    showFailToast(res.Message);
   }
 };
 
@@ -524,7 +526,7 @@ const previewPictures = async (item) => {
   if (view.imageList && view.imageList.length > 0) {
     new ImagePreview({ images: view.imageList, closeable: true });
   } else {
-    Toast.fail("无图");
+    showFailToast("无图");
   }
 };
 const viewPictures = async (item) => {
@@ -533,7 +535,7 @@ const viewPictures = async (item) => {
   if (view.imageList && view.imageList.length > 0) {
     viewPic.value = true;
   } else {
-    Toast.fail("无图");
+    showFailToast("无图");
   }
 };
 const closeViewPicture = () => {
@@ -827,8 +829,8 @@ const SortTypeOptions = [
 }
 
 .listModeItem {
+  border-radius: 8%;
   width: 40vw;
-  margin: 8px auto
 }
 
 .listModeLeft {
@@ -836,12 +838,12 @@ const SortTypeOptions = [
   min-width: 122px;
   height: 100%;
   width: auto;
-  margin: 2px auto;
   overflow: hidden;
 }
 
 .listModeImg {
   height: 100%;
+  min-height: 3rem;
   width: auto;
 }
 

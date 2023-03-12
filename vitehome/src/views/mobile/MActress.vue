@@ -30,32 +30,29 @@
         refreshing = false;
       }
     ">
-      <SwipeCell>
-        <div v-for="item in view.ModelList" :key="item.Id" class="actressDiv">
-          <div style="margin: 0px auto" @click="gotoSearch(item.Name)">
-            <Image :src="getActressImage(item.Name)" :style="{
-              height: '90%',
-              width: 'auto',
-            }">
-              <Row style="height: 20px;width: 100%;position: relative;">
-                <Col>
-                <Tag color="#7232dd" style="height: 100%;"> {{ item.Name }}</Tag>
-                </Col>
-                <Col>
-                <Tag color="orange" style="height: 100%;"> {{ item.SizeStr }}</Tag>
-                </Col>
-                <Col>
-                <Tag color="red" style="height: 100%;"> {{ item.Cnt }}</Tag>
-                </Col>
-              </Row>
+      <div class="actressDiv">
+        <div v-for="item in view.ModelList" :key="item.Id">
+          <div @click="gotoSearch(item.Name)">
+            <Image :src="getActressImage(item.Name)" class="actressDivItem">
             </Image>
+            <Row class="actressDivButtom">
+              <Col>
+              <Tag color="#7232dd" style="height: 100%;"> {{ item.Name }}</Tag>
+              </Col>
+              <Col>
+              <Tag color="orange" style="height: 100%;"> {{ item.SizeStr }}</Tag>
+              </Col>
+              <Col>
+              <Tag color="red" style="height: 100%;"> {{ item.Cnt }}</Tag>
+              </Col>
+            </Row>
           </div>
         </div>
-      </SwipeCell>
-
+      </div>
     </PullRefresh>
     <LoadMoreVue @loadMore="onLoadMore" :more="true" />
   </div>
+ 
 </template>
 
 <script setup lang="ts">
@@ -177,12 +174,24 @@ onMounted(() => {
 }
 
 .actressDiv {
-  float: left;
-  width: auto;
-  height: 16rem;
   display: flex;
-  box-shadow: 0 0 4px grey;
-  margin: 8px 8px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 99%;
+  text-align: center;
+}
+
+.actressDivItem {
+  border-radius: 5%;
+  overflow: hidden;
+  position: relative;
+  height: 12rem;
+  width: auto;
+  margin: 10px 10px;
+}
+
+.actressDivButtom {
+  margin-top: -40px;
 }
 
 .mlist {

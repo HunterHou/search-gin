@@ -138,7 +138,7 @@ onMounted(() => {
 }
 
 .list-item {
-  margin-top: 8px;
+  margin-top: 2px;
   max-width: 268px;
   max-height: 250px;
   float: left;
@@ -147,8 +147,11 @@ onMounted(() => {
 }
 
 .img-list-item {
+  max-height: 250px;
   width: auto;
   height: auto;
+  border-radius: 4%;
+  overflow: hidden;
 }
 
 .up {
