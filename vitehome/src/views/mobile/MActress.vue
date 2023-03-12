@@ -32,8 +32,8 @@
     ">
       <div class="actressDiv">
         <div v-for="item in view.ModelList" :key="item.Id">
-          <div @click="gotoSearch(item.Name)">
-            <Image :src="getActressImage(item.Name)" class="actressDivItem">
+          <div @click="gotoSearch(item.Name)" class="actressDivItem">
+            <Image :src="getActressImage(item.Name)">
             </Image>
             <Row class="actressDivButtom">
               <Col>
@@ -52,7 +52,6 @@
     </PullRefresh>
     <LoadMoreVue @loadMore="onLoadMore" :more="true" />
   </div>
- 
 </template>
 
 <script setup lang="ts">
@@ -182,12 +181,12 @@ onMounted(() => {
 }
 
 .actressDivItem {
-  border-radius: 5%;
+  border-radius: 3%;
   overflow: hidden;
   position: relative;
-  height: 12rem;
+  max-width: 45vw;
   width: auto;
-  margin: 10px 10px;
+  margin: 4px 4px;
 }
 
 .actressDivButtom {

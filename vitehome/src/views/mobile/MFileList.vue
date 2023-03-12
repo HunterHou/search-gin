@@ -27,7 +27,7 @@
           @click="
             searchKeyword(tag);
           showSearch = false;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ">
           {{ tag }}
         </Button>
       </div>
@@ -102,22 +102,35 @@
     <MobileBar></MobileBar>
     <teleport to="body">
       <div v-show="view.videoVisible" class="videoDiv" id="videoDiv">
-
-        <!-- <video ref="vue3VideoPlayRef" style="object-fit:fill" v-if="view.videoPlay" :src="options.src" autoplay controls
-            webkit-playsinline="true" playsinline="true" x-webkit-airplay="allow" x5-video-player-type="h5"
-            x5-video-player-fullscreen="true" x5-video-orientation="landscape">
-          </video> -->
-        <div class="videoDivButton">
-          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-          <!-- <ElButton type="primary" @click="transform90">旋转</ElButton> -->
+        <div class="videoRow">
+          <div class="videoDivRowButton">
+            <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+            <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+            <ElButton type="primary" @click="vue3VideoPlayRef.webFullScreen = true">旋转</ElButton>
+          </div>
+          <vue3VideoPlay :poster="getJpg(view.currentFile.Id)" ref="vue3VideoPlayRef" style="width: 100vw;height: auto;object-fit: fill;"
+            x5-video-player-type="h5" openFilex5-video-player-fullscreen="true" x5-video-orientation="landscape"
+            v-bind="options" @volumechange="volumechange" @play="onPlay" />
+          <div class="videoDivRowRelations">
+            <Image class="videoDivRowImg" v-for=" relaPlay in view.playlist" :src="getPng(relaPlay.Id)"
+              @click="openFile(relaPlay)" />
+          </div>
         </div>
-        <vue3VideoPlay ref="vue3VideoPlayRef" style="width: 600px;height: 350px;object-fit: fill;"
-          x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="landscape" v-bind="options"
-          @volumechange="volumechange" @play="onPlay" />
 
-
-
+        <!-- <div v-if="videoRow" class="videoRow">
+         
+        </div> -->
+        <!-- <div v-else class="videoColumn">
+          <div class="videoDivRowButton">
+            <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+            <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+            <ElButton type="primary" @click="videoRow = !videoRow; ">旋转</ElButton>
+          </div>
+          <video ref="vue3VideoPlayRef" style="object-fit:fill;height:20rem;height: 20rem;" :src="options.src" autoplay
+            controls webkit-playsinline="true" playsinline="true" x-webkit-airplay="allow" x5-video-player-type="h5"
+            x5-video-player-fullscreen="true" x5-video-orientation="landscape">
+          </video>
+        </div> -->
       </div>
     </teleport>
     <teleport to="body">
@@ -275,7 +288,7 @@ import {
   DropdownItem,
   DropdownMenu,
   Image,
-  ImagePreview,
+  showImagePreview,
   NavBar,
   Pagination,
   Row,
@@ -286,6 +299,7 @@ import {
   Tag,
   showSuccessToast,
   showFailToast,
+  showLoadingToast,
   RadioGroup,
   Icon,
   Radio,
@@ -354,7 +368,7 @@ const options = reactive({
   height: 'auto', //播放器高度
   color: "#409eff", //主题色
   title: "123", //视频名称
-  src: "", //视频源
+  src: null, //视频源
   muted: false, //静音
   webFullScreen: false,
   speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
@@ -511,20 +525,21 @@ const getImageList = async (Id: string) => {
 };
 
 const previewPictures = async (item) => {
-  const toast = Toast.loading({
+  const toast = showLoadingToast({
     duration: 0, // 持续展示 toast
     forbidClick: false, // 禁用背景点击
     loadingType: "spinner",
     message: "加载中...",
   });
   setTimeout(() => {
-    toast.clear();
+    toast.close();
   }, 3000);
   await loadDirInfo(item.Id);
-  toast.clear();
+  toast.close();
 
   if (view.imageList && view.imageList.length > 0) {
-    new ImagePreview({ images: view.imageList, closeable: true });
+    const pre = showImagePreview({ images: view.imageList, closeable: true });
+    pre.show()
   } else {
     showFailToast("无图");
   }
@@ -573,47 +588,6 @@ const onPlay = () => {
   options.muted = false
 }
 
-// const transformColumn = () => {
-//   const videoDiv = document.getElementById('videoDiv');
-//   videoDiv.style.setProperty('transform', 'translateY(0px)')
-//   videoDiv.style.setProperty('height', '100vh')
-//   videoDiv.style.setProperty('width', '100vw')
-//   videoDiv.style.setProperty('flex-direction', 'column')
-
-//   const videoDivRelations = document.getElementById('videoDivRelations');
-//   videoDivRelations.style.setProperty('column', '3')
-//   videoDivRelations.style.setProperty('width', '100vh')
-
-//   const vue3VideoPlayRef = document.getElementById('vue3VideoPlayRef');
-//   vue3VideoPlayRef.style.setProperty('width', '100vw')
-//   vue3VideoPlayRef.style.setProperty('height', 'auto')
-//   vue3VideoPlayRef.style.setProperty('margin', '0px auto')
-//   vue3VideoPlayRef.style.setProperty('transform','translateY(0px)')
-
-//   const videoDivButton = document.getElementById('videoDivButton');
-//   videoDivButton.style.setProperty('width', '100%')
-
-// }
-// const transformRow = () => {
-//   const videoDiv = document.getElementById('videoDiv');
-//   videoDiv.style.setProperty('transform', 'rotate(90deg) translateY(300px)')
-//   videoDiv.style.setProperty('flex-direction', 'row')
-//   videoDiv.style.setProperty('width', '800px')
-//   videoDiv.style.setProperty('height', '600px')
-
-//   const videoDivRelations = document.getElementById('videoDivRelations');
-//   videoDivRelations.style.setProperty('width', 'auto')
-
-//   const vue3VideoPlayRef = document.getElementById('vue3VideoPlayRef');
-//   vue3VideoPlayRef.style.setProperty('width', '100vw')
-//   vue3VideoPlayRef.style.setProperty('height', '1000px')
-//   vue3VideoPlayRef.style.setProperty('margin', '0px auto')
-//   vue3VideoPlayRef.style.setProperty('transform','translateY(100px)')
-
-//   const videoDivButton = document.getElementById('videoDivButton');
-//   videoDivButton.style.setProperty('width', '30%')
-// }
-
 const element = document.getElementById('videoDiv')
 const isFullscreen = ref(false)
 const changeScreen = () => {
@@ -632,18 +606,17 @@ const playSource = async (item) => {
   options.title = item.Actress;
   options.src = stream;
   vue3VideoPlayRef.value.play()
-  changeScreen()
-  options.webFullScreen = false
-  // const palyParam = {
-  //   ...view.queryParam,
-  //   PageSize: 1000,
-  //   Page: 1,
-  //   Keyword: item.Actress
-  // }
-  // const res = await QueryFileList(palyParam)
-  // const model = res as unknown as ResultList;
-  // view.playlist = []
-  // view.playlist = [...view.playlist, ...model.Data]
+  view.playlist = []
+  const palyParam = {
+    ...view.queryParam,
+    PageSize: 1000,
+    Page: 1,
+    Keyword: item.Actress
+  }
+  const res = await QueryFileList(palyParam)
+  const model = res as unknown as ResultList;
+  view.playlist = [...model.Data]
+
 }
 
 const openFile = (item: any) => {
@@ -766,8 +739,7 @@ const SortTypeOptions = [
 .container {
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  overflow: auto
+  height: auto;
 }
 
 .pageTools {
@@ -783,29 +755,43 @@ const SortTypeOptions = [
 }
 
 .videoDiv {
-  width: 660px;
-  height: 360px;
-  z-index: 999;
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.7);
-  transform: rotate(90deg) translateY(150px);
-  top: 0;
-  bottom: 0;
-  left: 0;
-  margin: auto;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  height: 100vh;
+  width: 100vw;
 }
 
-.videoDivButton {
+.videoRow {
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+  overflow: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.videoColumn {
+  height: 100vw;
+  width: 100vh;
+  z-index: 999;
+  overflow: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+  transform: rotate(90deg) translateY(50%);
+}
+
+.videoDivRowButton {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: flex-start;
   flex-wrap: wrap;
 }
 
-.videoDivRelations {
+.videoDivRowRelations {
   columns: 2;
   display: flex;
   flex-direction: row;
@@ -813,10 +799,15 @@ const SortTypeOptions = [
   overflow: auto;
 }
 
-.videoDivImg {
+.videoDivRowImg {
   height: auto;
-  width: 90px;
+  width: 10rem;
   margin: auto;
+  border-radius: 5%;
+  overflow: hidden;
+  padding: 4px;
+  margin: 4px;
+  background-color: antiquewhite;
 }
 
 .listMode {
