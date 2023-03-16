@@ -27,17 +27,15 @@
           @click="
             searchKeyword(tag);
           showSearch = false;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ">
           {{ tag }}
         </Button>
       </div>
     </ActionSheet>
     <ActionSheet v-model:show="showTag" title="标签管理" :close-on-click-overlay="true" style="height: 60vh;">
-      <div style="margin-bottom: 0vh;">
+      <div style="margin: 1rem;">
         <Row>
-          <Col>
-          <Tag type="success" @click="onSearch">总数:{{ view.ResultCnt }}</Tag>
-          </Col>
+
           <Col>当前标签</Col>
           <Col>
           <Tag type="success" size="large" style="margin: 2px 4px;" v-for="ta in view.currentFile.Tags" :key="ta"
@@ -47,12 +45,13 @@
           </Col>
         </Row>
       </div>
-      <div style="margin-bottom: 0vh;">
-        <Row>
+      <div style="margin: 1rem;">
+        <Row justify="space-around">
           <Col>可选标签</Col>
         </Row>
         <Row>
           <Col>
+
           <Tag type="success" size="large" style="margin: 2px 4px;" v-for="ta in view.settingInfo.Tags" :key="ta"
             @click="addCurrentFileTag(ta)">{{ ta }}</Tag>
           </Col>
@@ -111,13 +110,16 @@
             <div class="videoDivRowButton">
               <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
               <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+              <ElButton type="primary" @click="togglePlay">停/播</ElButton>
             </div>
             <Row>
-              <a @click="searchKeyword(view.currentFile.Actress);hiddenPlayVideo()">{{
+              <Col :span="12"> <a @click="searchKeyword(view.currentFile.Actress); hiddenPlayVideo()">{{
                 view.currentFile.Actress?.substring(0, 4)
               }}
-              </a>
-              {{ view.currentFile.Code }}
+              </a></Col>
+              <Col :span="12"> {{ view.currentFile.Code }}</Col>
+
+
             </Row>
             <Row style="max-height: 2rem;overflow: hidden;"> {{ view.currentFile.Name }}</Row>
           </div>
@@ -374,6 +376,7 @@ const options = reactive({
   ligthOff: false, //关灯模式
   volume: systemProperty.videoOptions.volume, //默认音量大小
   control: true, //是否显示控制
+  currentTime: 30, //是否显示控制
   controlBtns: systemProperty.videoOptions.controlBtns, //显示所有按钮,
 });
 
@@ -565,6 +568,11 @@ const loadDirInfo = async (id: string) => {
 const hiddenPlayVideo = () => {
   view.videoVisible = false;
   mainBody.value = true
+}
+
+const togglePlay = (last: number) => {
+  options.volume = options.volume - 10
+  vue3VideoPlayRef.value.togglePlay()
 }
 
 const closePlayVideo = () => {
@@ -809,6 +817,7 @@ const SortTypeOptions = [
   margin: 6px 8px;
   display: flex;
   box-shadow: 0 0 4px grey;
+  padding: 4px;
 }
 
 .listModeItem {
@@ -826,9 +835,11 @@ const SortTypeOptions = [
 }
 
 .listModeImg {
+  padding: 2px;
   height: 100%;
   min-height: 3rem;
   width: auto;
+  border: 1px dotted rgb(251, 228, 232);
 }
 
 .listModeRight {
@@ -863,6 +874,7 @@ const SortTypeOptions = [
   border: dotted rgb(244, 146, 146) 2px;
   border-radius: 4px;
   width: 12rem;
+  max-width: 46%;
   overflow: hidden;
   height: auto;
 }
