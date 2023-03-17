@@ -541,18 +541,19 @@
     " :destroy-on-close="true">
       <div v-if="view.formItem">
         <div style="margin-top:-40px">
-          <ElImage :src="getJpg(view.formItem.Id)" style="margin: 1px auto; width: 680px;max-height: 600px; : auto"
+          <ElImage :src="getJpg(view.formItem.Id)"
+            style="margin: 1px auto; width: auto;min-height:200px;max-height: 500px; "
             @click="previewPicture(view.formItem.Id)" />
           <ElRow :gutter="24">
             <ElCol :span="4" tyle="text-align:right"> YY： </ElCol>
-            <ElCol :span="8" tyle="text-align:right">
+            <ElCol :span="16" tyle="text-align:left">
               <a href="javascript:void(0);" @click="javSearch(view.formItem.Actress)">
                 <span>{{ view.formItem.Actress }}</span></a>
             </ElCol>
           </ElRow>
           <ElRow :gutter="24">
-            <ElCol :span="4" tyle="text-align:right"> Code </ElCol>
-            <ElCol :span="8">
+            <ElCol :span="4" tyle="text-align:left"> Code </ElCol>
+            <ElCol :span="16">
               <a href="javascript:void(0);" @click="javCode(view.formItem.Code)"><span>{{ view.formItem.Code
               }}</span></a>
             </ElCol>
@@ -598,12 +599,12 @@
     <div v-show="view.innerVisible" class="imageBloswerList" @click="innerVisibleFalse">
       <div v-for="(item, index) in view.sourceList" :key="index" style="display: flex; margin: 1px auto">
         <ElImage style="
-                                                  min-width: 1200px;
-                                                  width: auto;
-                                                  margin: 0 auto;
-                                                  opacity: 9;
-                                                  z-index: 9999;
-                                                " :src="item">
+                                                        min-width: 1200px;
+                                                        width: auto;
+                                                        margin: 0 auto;
+                                                        opacity: 9;
+                                                        z-index: 9999;
+                                                      " :src="item">
           @click.stop="innerVisibleFalse"
         </ElImage>
       </div>
@@ -612,20 +613,20 @@
   <teleport to="body">
     <div v-show="view.videoVisible" class="playDiv" id="videoDiv">
       <div style="
-                                            top: 0;
-                                            height: 2rem;
-                                            width: 100%;
-                                            margin: 1rem auto;
-                                            position: absolute;
-                                            color: white;
-                                            z-index: 9999;
-                                            float: right;
-                                          ">
+                                                  top: 0;
+                                                  height: 2rem;
+                                                  width: 100%;
+                                                  margin: 1rem auto;
+                                                  position: absolute;
+                                                  color: white;
+                                                  z-index: 9999;
+                                                  float: right;
+                                                ">
         <span style="
-                                              margin-left: 2rem;
-                                              text-overflow: ellipsis;
-                                              white-space: nowrap;
-                                            ">
+                                                    margin-left: 2rem;
+                                                    text-overflow: ellipsis;
+                                                    white-space: nowrap;
+                                                  ">
           <ElTag v-for="item in view.contextmenuTarget.Tags" key="default" type="danger" size="large"
             style="margin-left: 0.5rem">
             {{ item }}
@@ -635,12 +636,12 @@
           {{ view.contextmenuTarget.Name }}
         </span>
         <div style="
-                                              right: 1rem;
-                                              top: 0;
-                                              height: 2rem;
-                                              position: absolute;
-                                              z-index: 9999;
-                                            ">
+                                                    right: 1rem;
+                                                    top: 0;
+                                                    height: 2rem;
+                                                    position: absolute;
+                                                    z-index: 9999;
+                                                  ">
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
           <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
@@ -651,7 +652,8 @@
       </video> -->
       <div>
         <ElSpace wrap size="default">
-          <vue3VideoPlay ref="vue3VideoPlayRef" style="width: 98vw;margin: auto 1vw;" v-bind="optionsPC" @volumechange="volumechange" />
+          <vue3VideoPlay ref="vue3VideoPlayRef" style="width: 98vw;margin: auto 1vw;" v-bind="optionsPC"
+            @volumechange="volumechange" />
           <ElCard v-for="play in view.playlist" :key="play" style="width:250px;height: auto;">
             <ElImage :src="getPng(play.Id)" @click="startPlayVideo(play)"></ElImage>
             <span class="context-text" style="overflow: hidden; text-overflow: ellipsis;">{{ play.Name }}</span>
