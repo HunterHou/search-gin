@@ -305,7 +305,6 @@ onMounted(() => {
 .container {
   margin: 8px 20px;
   width: 90%;
-  background: white;
   min-height: 650px;
 }
 

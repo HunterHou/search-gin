@@ -36,16 +36,13 @@
 }
 
 .ecard {
-  padding: 0;
+  padding: 4px;
   margin-bottom: 40px;
-  /* background: #e4e6d1; */
 }
 
 .list-item {
   width: 220px;
   height: 358px;
-  /* float: left; */
-  /* list-style: none; */
 }
 
 .image-tag {
@@ -78,7 +75,6 @@
 .totalRow {
   width: 47%;
   height: 32px;
-  background-color: rgba(255, 255, 255, 0.676);
   position: fixed;
   bottom: 4px;
   z-index: 99;
