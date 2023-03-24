@@ -1410,6 +1410,7 @@ const playSource = async (item) => {
   optionsPC.title = item.Name;
   optionsPC.src = stream;
   vue3VideoPlayRef.value.play();
+  fullPlayVideo()
   const pageSize = item.Actress ? 100 : 30;
   const palyParam = {
     ...queryParam,
@@ -1588,7 +1589,8 @@ const addTag = async (clickId, title) => {
   if (res.Code == 200) {
     view.addTagShow = false;
     ElMessage.success(res.Message);
-    refreshData();
+    refreshIndex()
+    //  replace({ path: thisRoute.path, query: { ...queryParam } });
   } else {
     ElMessage.error(res.Message);
   }
@@ -1606,7 +1608,8 @@ const closeTag = async (clickId: string, title: string) => {
   const res = await CloseTag(clickId, title);
   if (res.Code == 200) {
     ElMessage.success(res.Message);
-    refreshData();
+     refreshIndex()
+    //  replace({ path: thisRoute.path, query: { ...queryParam } });
   } else {
     ElMessage.error(res.Message);
   }
