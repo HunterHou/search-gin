@@ -663,8 +663,7 @@ const deleteFile = async (item: MovieModel) => {
       const res = await DeleteFile(item.Id);
       if (res.Code == 200) {
         showSuccessToast("操作成功");
-        await queryList();
-        showTag.value = false;
+        loadRefreshIndex
       } else {
         showFailToast(res.Message);
       }
