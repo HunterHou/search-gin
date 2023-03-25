@@ -181,6 +181,9 @@
       <div v-show="view.videoVisible" class="videoDiv" id="videoDiv">
         <div class="videoRow">
           <div class="videoDesc">
+            <Row :span="22" style="max-height: 3rem; overflow: hidden">
+              <Col>{{ view.currentFile.Name }}</Col>
+            </Row>
             <vue3VideoPlay
               :poster="getJpg(view.currentFile.Id)"
               ref="vue3VideoPlayRef"
@@ -194,24 +197,47 @@
             />
             <div class="videoDivRowButton">
               <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-              <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
               <ElButton type="primary" @click="togglePlay">停/播</ElButton>
+              <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
             </div>
+
             <Row>
-              <Col :span="12">
+              <Col :span="8">
                 <a
                   @click="
                     searchKeyword(view.currentFile.Actress);
-                    hiddenPlayVideo();
+                    playListQuery(view.currentFile.Actress);
                   "
                   >{{ view.currentFile.Actress?.substring(0, 4) }}
                 </a></Col
               >
-              <Col :span="12"> {{ view.currentFile.Code }}</Col>
+              <Col :span="8"> {{ view.currentFile.Code }}</Col>
+              <Col :span="8"> {{ view.currentFile.SizeStr }}</Col>
             </Row>
-            <Row style="max-height: 2rem; overflow: hidden">
-              {{ view.currentFile.Name }}</Row
+            <Tag
+              v-for="tag in view.currentFile.Tags"
+              plain
+              size="large"
+              type="danger"
+              @click="playListQuery(tag)"
+              >{{ tag }}</Tag
             >
+            <Tag plain size="large" type="default" @click="moreTags = !moreTags"
+              >更多</Tag
+            >
+            <Row v-if="moreTags">
+              <Col>
+                <Tag
+                  type="success"
+                  size="large"
+                  style="margin: 2px 4px"
+                  v-for="ta in view.settingInfo.Tags"
+                  :key="ta"
+                  @click="playListQuery(ta)"
+                  >{{ ta }}</Tag
+                >
+              </Col>
+            </Row>
           </div>
           <div class="videoDivRowRelations">
             <Image
@@ -317,144 +343,121 @@
             >
             </Image>
           </div>
-        </div>
-        <SwipeCell>
-          <div class="listModeRight">
-            <div style="margin: 1px auto">
-              <Row
-                style="
-                  display: flex;
-                  flex-direction: row;
-                  justify-content: space-around;
-                "
-              >
-                <Col>
-                  <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
-                </Col>
-                <Col v-if="item.Actress?.length > 0">
-                  <a @click="searchKeyword(item.Actress)"
-                    >{{ item.Actress?.substring(0, 4) }}
-                  </a>
-                </Col>
-                <Col v-if="item.Code?.length > 0">
-                  <span>{{ item.Code }}</span>
-                </Col>
-              </Row>
 
-              <Row class="listModeRightTag">
-                <Tag
-                  v-for="tag in item.Tags"
-                  plain
-                  type="danger"
-                  @click="searchKeyword(tag)"
-                  >{{ tag }}</Tag
+          <div class="imageCover">
+            <SwipeCell>
+              <div class="imageCoverTool">
+                <Tag size="large" type="primary" @click="openFile(item)"
+                  >播放</Tag
                 >
-              </Row>
-              <Row class="listModeItemContent">
-                <span>【{{ item.SizeStr }}】 </span
-                ><span> 【{{ item.Name }}】</span>
-              </Row>
-              <Row justify="space-around">
-                <Col>
+                <Tag
+                  square
+                  size="large"
+                  type="primary"
+                  @click="viewPictures(item)"
+                  >查看</Tag
+                >
+                <Tag square size="large" type="success" @click="tagManage(item)"
+                  >标签</Tag
+                >
+
+                <Tag
+                  square
+                  size="large"
+                  type="warning"
+                  @click="getImageList(item.Id)"
+                  >刮图</Tag
+                >
+
+                <Tag
+                  square
+                  size="large"
+                  type="primary"
+                  @click="showRenameForm(item)"
+                >
+                  重命名</Tag
+                >
+                <Tag
+                  v-if="isWide"
+                  square
+                  class="mr1"
+                  size="large"
+                  type="danger"
+                  @click="deleteFile(item)"
+                  >删除
+                </Tag>
+                <Tag
+                  v-if="isWide"
+                  square
+                  class="mr1"
+                  size="large"
+                  type="success"
+                  @click="syncFile(item.Id)"
+                  >同步
+                </Tag>
+              </div>
+
+              <template #right>
+                <div class="imageCoverToolRight">
                   <Tag
                     square
-                    size="large"
-                    type="success"
-                    @click="tagManage(item)"
-                    >标签</Tag
-                  >
-                </Col>
-                <Col>
-                  <Tag
-                    square
-                    size="large"
-                    type="primary"
-                    @click="openFile(item)"
-                    >播放</Tag
-                  >
-                </Col>
-                <Col>
-                  <Tag
-                    square
-                    size="large"
-                    type="primary"
-                    @click="viewPictures(item)"
-                    >查看</Tag
-                  >
-                </Col>
-                <Col v-if="isWide">
-                  <Tag
-                    square
-                    size="large"
-                    type="warning"
-                    @click="getImageList(item.Id)"
-                    >刮图</Tag
-                  >
-                </Col>
-                <Col v-if="isWide">
-                  <Tag
-                    square
+                    class="mr1"
                     size="large"
                     type="danger"
                     @click="deleteFile(item)"
                     >删除
                   </Tag>
-                </Col>
-                <Col v-if="isWide">
                   <Tag
                     square
-                    size="large"
-                    type="primary"
-                    @click="showRenameForm(item)"
-                  >
-                    重命名</Tag
-                  >
-                </Col>
-                <Col v-if="isWide">
-                  <Tag
-                    square
+                    class="mr1"
                     size="large"
                     type="success"
                     @click="syncFile(item.Id)"
                     >同步
                   </Tag>
-                </Col>
-              </Row>
-            </div>
+                </div>
+              </template>
+            </SwipeCell>
           </div>
-          <template #right>
-            <div
+        </div>
+        <div class="listModeRight">
+          <div style="margin: 1px auto">
+            <Row
               style="
                 display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                margin: 10px 10px;
+                flex-direction: row;
+                justify-content: space-around;
               "
             >
-              <Tag square size="large" type="danger" @click="deleteFile(item)"
-                >删除
-              </Tag>
+              <Col>
+                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+              </Col>
+              <Col v-if="item.Actress?.length > 0">
+                <a @click="searchKeyword(item.Actress)"
+                  >{{ item.Actress?.substring(0, 4) }}
+                </a>
+              </Col>
+              <Col v-if="item.Code?.length > 0">
+                <span>{{ item.Code }}</span>
+              </Col>
+            </Row>
+
+            <Row class="listModeRightTag">
               <Tag
-                square
-                size="large"
-                type="primary"
-                @click="showRenameForm(item)"
+                v-for="tag in item.Tags"
+                plain
+                type="danger"
+                @click="searchKeyword(tag)"
+                >{{ tag }}</Tag
               >
-                重命名</Tag
-              >
-              <Tag square size="large" type="success" @click="syncFile(item.Id)"
-                >同步
-              </Tag>
-              <Tag
-                square
-                size="large"
-                type="warning"
-                @click="getImageList(item.Id)"
-                >刮图</Tag
-              >
-            </div>
-          </template>
-        </SwipeCell>
+            </Row>
+            <Row class="listModeItemContent">
+              <span>【{{ item.SizeStr }}】 </span
+              ><span> 【{{ item.Name }}】</span>
+            </Row>
+            <Row justify="space-around"> </Row>
+          </div>
+        </div>
       </div>
       <Pagination
         class="pageTools"
@@ -534,6 +537,7 @@ const { width } = useWindowSize();
 const isWide = computed(() => {
   return width.value > 600;
 });
+const moreTags = ref(false);
 const mainBody = ref(true);
 const easyMode = ref(false);
 const finished = ref(false);
@@ -663,7 +667,7 @@ const deleteFile = async (item: MovieModel) => {
       const res = await DeleteFile(item.Id);
       if (res.Code == 200) {
         showSuccessToast("操作成功");
-        loadRefreshIndex
+        loadRefreshIndex;
       } else {
         showFailToast(res.Message);
       }
@@ -798,12 +802,16 @@ const playSource = async (item) => {
   options.title = item.Actress;
   options.src = stream;
   vue3VideoPlayRef.value.play();
+  playListQuery(item.Actress);
+};
+
+const playListQuery = async (Actress: string) => {
   view.playlist = [];
   const palyParam = {
     ...view.queryParam,
     PageSize: 1000,
     Page: 1,
-    Keyword: item.Actress,
+    Keyword: Actress,
   };
   const res = await QueryFileList(palyParam);
   const model = res as unknown as ResultList;
@@ -977,7 +985,7 @@ const SortTypeOptions = [
 
 .videoDesc {
   z-index: 99;
-  background-color: aliceblue;
+  background-color: rgba(0, 0, 0, 0.8);
   justify-content: space-evenly;
   overflow: hidden;
   border-radius: 1%;
@@ -999,7 +1007,7 @@ const SortTypeOptions = [
 .videoDivRowButton {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   flex-wrap: wrap;
 }
 
@@ -1125,6 +1133,28 @@ const SortTypeOptions = [
   width: 100%;
   margin: 0 auto;
   opacity: 9;
-  z-index: 99;
+  // z-index: 3;
+}
+
+.imageCover {
+  position: absolute;
+  margin-top: -2rem;
+  background-color: rgba(250, 250, 250, 0.1);
+  height: 2rem;
+  width: 98%;
+  // z-index: 4;
+}
+.imageCoverTool {
+  height: 2rem;
+  width: 98%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap-reverse;
+  align-items: center;
+}
+.mr1 {
+  margin-right: 1rem;
+  align-items: center;
 }
 </style>
