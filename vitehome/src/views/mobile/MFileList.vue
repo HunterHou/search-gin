@@ -18,7 +18,9 @@
           "
         >
           <Icon name="search" size="18" />
-          <span> {{ view.queryParam.Keyword }} </span>
+          <span style="width: 10rem; overflow: hidden">
+            {{ view.queryParam.Keyword }}
+          </span>
         </div>
         <Icon
           v-if="view.queryParam.Keyword"
