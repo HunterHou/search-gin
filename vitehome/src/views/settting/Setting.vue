@@ -80,21 +80,19 @@
               </ElSelect>
             </ElFormItem>
             <ElFormItem label="定制按钮">
-              <ElSelect
+              <el-checkbox-group
                 v-model="view.form.Buttons"
-                multiple
-                placeholder="请选择"
+                size="large"
                 style="width: 90%"
-                size="default"
               >
-                <ElOption
+                <el-checkbox-button
                   v-for="item in buttonEnum"
                   :key="item"
                   :label="item"
-                  :value="item"
                 >
-                </ElOption>
-              </ElSelect>
+                  {{ item }}
+                </el-checkbox-button>
+              </el-checkbox-group>
             </ElFormItem>
             <ElFormItem label="热门标签">
               <div style="width: 90%">
@@ -114,7 +112,6 @@
                     <ElLink
                       type="success"
                       icon="el-icon-edit"
-                      round
                       @click="
                         () => {
                           makeTabLibData();
@@ -369,7 +366,7 @@ const formatted = useDateFormat(useNow(), "YYYY-MM-DD HH:mm:ss");
 
 const { go } = useRouter();
 
-const buttonEnum = ["刮图", "删除", "移动", "编辑", "文件夹", "图鉴"];
+const buttonEnum = ["刮图", "删除", "移动", "编辑", "文件夹", "图鉴", "更多"];
 const view = reactive({
   form: new SettingInfo(),
   ipAddr: "",

@@ -613,6 +613,7 @@
                     <ElButton
                       plain
                       type="success"
+                      v-if="view.settingInfo.Buttons?.indexOf('更多') >= 0"
                       class="icon-button"
                       @click="previewPicture(item.Id)"
                     >
