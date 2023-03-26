@@ -6,6 +6,7 @@ export class SettingInfo {
   DirsLib: string[] = [];
   Dirs: string[] = [];
   Types: string[] = ["mp4", "jpg"];
+  Buttons: string[] = ["刮图", "删除"];
   BaseDir: string[] = [];
   tagLibData: string[] = [];
   TagsLib: string[] = [];

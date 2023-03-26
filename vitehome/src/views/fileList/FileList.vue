@@ -469,11 +469,14 @@
             >
               <div class="tool-button">
                 <ElButton
-                  v-if="item.Actress"
                   type="warning"
                   plain
                   class="icon-button"
-                  title="优优"
+                  title="图鉴"
+                  v-if="
+                    item.Actress &&
+                    view.settingInfo.Buttons?.indexOf('图鉴') >= 0
+                  "
                   @click="thisActress(item.Actress)"
                 >
                   <ElIcon>
@@ -485,6 +488,7 @@
                   plain
                   class="icon-button"
                   title="文件夹"
+                  v-if="view.settingInfo.Buttons?.indexOf('文件夹') >= 0"
                   @click="openThisFolder(item.Id, 2)"
                 >
                   <ElIcon>
@@ -495,11 +499,46 @@
                   plain
                   type="success"
                   class="icon-button"
+                  v-if="view.settingInfo.Buttons?.indexOf('编辑') >= 0"
                   title="编辑"
                   @click="editItem(item)"
                 >
                   <ElIcon>
                     <Edit />
+                  </ElIcon>
+                </ElButton>
+                <ElButton
+                  type="primary"
+                  plain
+                  class="icon-button"
+                  v-if="view.settingInfo.Buttons?.indexOf('刮图') >= 0"
+                  @click="getImageList(item.Id)"
+                >
+                  <ElIcon>
+                    <Magnet />
+                  </ElIcon>
+                </ElButton>
+                <ElButton
+                  v-if="view.settingInfo.Buttons?.indexOf('删除') >= 0"
+                  type="danger"
+                  plain
+                  class="icon-button"
+                  @click="deleteThis(item.Id)"
+                >
+                  <ElIcon>
+                    <DeleteFilled />
+                  </ElIcon>
+                </ElButton>
+                <ElButton
+                  v-if="view.settingInfo.Buttons?.indexOf('移动') >= 0"
+                  type="danger"
+                  plain
+                  class="icon-button"
+                  title="移动"
+                  @click="moveThis(item)"
+                >
+                  <ElIcon>
+                    <Position />
                   </ElIcon>
                 </ElButton>
 
@@ -1410,7 +1449,7 @@ const playSource = async (item) => {
   optionsPC.title = item.Name;
   optionsPC.src = stream;
   vue3VideoPlayRef.value.play();
-  fullPlayVideo()
+  fullPlayVideo();
   const pageSize = item.Actress ? 100 : 30;
   const palyParam = {
     ...queryParam,
@@ -1589,7 +1628,7 @@ const addTag = async (clickId, title) => {
   if (res.Code == 200) {
     view.addTagShow = false;
     ElMessage.success(res.Message);
-    refreshIndex()
+    refreshIndex();
     //  replace({ path: thisRoute.path, query: { ...queryParam } });
   } else {
     ElMessage.error(res.Message);
@@ -1608,7 +1647,7 @@ const closeTag = async (clickId: string, title: string) => {
   const res = await CloseTag(clickId, title);
   if (res.Code == 200) {
     ElMessage.success(res.Message);
-     refreshIndex()
+    refreshIndex();
     //  replace({ path: thisRoute.path, query: { ...queryParam } });
   } else {
     ElMessage.error(res.Message);
@@ -1833,7 +1872,7 @@ const deleteThis = async (id: string) => {
           .then((res) => {
             if (res.Code === 200) {
               ElMessage.success(res.Message);
-              refreshIndex()
+              refreshIndex();
             } else {
               ElMessage.error(res.Message);
             }

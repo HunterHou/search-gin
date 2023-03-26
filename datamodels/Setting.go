@@ -17,6 +17,7 @@ type Setting struct {
 	DocsTypes      []string
 	VideoTypes     []string
 	Types          []string
+	Buttons        []string
 	ControllerHost string
 	ImageHost      string
 	StreamHost     string

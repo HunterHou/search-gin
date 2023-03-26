@@ -116,7 +116,7 @@ var MovieFields = utils.InterfaceFields(datamodels.Movie{})
 // 索引构建中标记
 var IndexDone = true
 
-//系统配置信息
+// 系统配置信息
 var OSSetting = datamodels.Setting{
 	IsDb:           true,
 	IsJavBus:       false,
@@ -139,6 +139,7 @@ var OSSetting = datamodels.Setting{
 	DocsTypes:  []string{TXT, XLSX},
 	VideoTypes: []string{AVI, MKV, WMV, MP4},
 	Types:      []string{AVI, MKV, WMV, MP4, GIF, PNG, JPG, TXT, XLSX},
+	Buttons:    []string{"刮图", "删除", "移动"},
 }
 
 // Base Dictory
