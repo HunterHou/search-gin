@@ -188,9 +188,46 @@
           </ElAutocomplete>
         </ElCol>
         <div style="margin-left: 10px">
+          <ElPopover :width="800" trigger="click" v-model:visible="tagPopover">
+            <template #reference>
+              <ElButton type="success" text link style="margin-left: 10px"
+                >标签</ElButton
+              >
+            </template>
+            <div v-if="tagData && tagData.length > 0">
+              <el-space wrap>
+                <el-link
+                  v-for="tag in tagData"
+                  :key="tag.Name"
+                  class="d-tag"
+                  :underline="false"
+                >
+                  <el-tag
+                    size="default"
+                    :value="tag.Cnt"
+                    @click="
+                      tagPopover = false;
+                      gotoSearch(tag.Name);
+                    "
+                  >
+                    <el-badge :value="tag.Cnt" :max="999">
+                      <span style="font-size: 10px">
+                        <b
+                          >{{ tag.Name }} (<i>{{ tag.SizeStr }}</i
+                          >)
+                        </b>
+                      </span>
+                    </el-badge>
+                  </el-tag>
+                </el-link>
+              </el-space>
+            </div>
+          </ElPopover>
           <ElPopover :width="400" trigger="hover">
             <template #reference>
-              <ElButton text link bg>历史</ElButton>
+              <ElButton type="danger" text link bg style="margin-left: 10px"
+                >历史</ElButton
+              >
             </template>
             <template #default>
               <div style="max-height: 600px; overflow: auto">
@@ -230,7 +267,9 @@
           </ElPopover>
           <ElPopover :width="400" trigger="hover">
             <template #reference>
-              <ElButton text link>收藏</ElButton>
+              <ElButton type="danger" text link style="margin-left: 10px"
+                >收藏</ElButton
+              >
             </template>
             <template #default>
               <div style="max-height: 800px">
@@ -1304,6 +1343,7 @@ import {
   notBuBing,
   volumechange,
 } from "./fileList";
+import { TagSizeMap } from "@/api/home";
 
 import "vue3-video-play/dist/style.css";
 import "./filelist.css";
@@ -1318,8 +1358,10 @@ const { y: windowScrollHheight } = useWindowScroll();
 const pagePress = ref(null);
 
 const running = ref(true);
+const tagPopover = ref(false);
 const moreTag = ref(false);
 const loading = ref(false);
+const tagData = ref<any>([]);
 const refreshIndexFlag = ref(false);
 const showStyle = ref("post");
 const systemProperty = useSystemProperty();
@@ -1342,6 +1384,13 @@ const changeScreen = () => {
     element.requestFullscreen();
   }
   systemProperty.isFullscreen = !systemProperty.isFullscreen;
+};
+
+const loadTagSize = async () => {
+  const res = await TagSizeMap();
+  if (res) {
+    tagData.value = (res as any).splice(0, 60);
+  }
 };
 
 const view = reactive<any>({
@@ -1942,7 +1991,7 @@ onMounted(() => {
     queryParam.SortType = systemProperty.getSearchParam.SortType;
     queryParam.Keyword = systemProperty.getSearchParam.Keyword;
   }
-
+  loadTagSize();
   setTimeout(queryList, 200);
 });
 </script>

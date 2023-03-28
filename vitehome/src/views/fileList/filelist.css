@@ -179,6 +179,9 @@
 .rightBtnPop {
   min-width: 400px;
 }
+.d-tag {
+  margin: 4px 8px;
+}
 .playDiv {
   width: 100vw;
   height: 100%;
