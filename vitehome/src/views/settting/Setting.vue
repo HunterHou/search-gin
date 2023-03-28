@@ -83,15 +83,14 @@
               <el-checkbox-group
                 v-model="view.form.Buttons"
                 size="large"
-                style="width: 90%"
               >
-                <el-checkbox-button
+                <el-checkbox
                   v-for="item in buttonEnum"
                   :key="item"
                   :label="item"
                 >
                   {{ item }}
-                </el-checkbox-button>
+                </el-checkbox>
               </el-checkbox-group>
             </ElFormItem>
             <ElFormItem label="热门标签">
@@ -158,7 +157,7 @@
             <ElFormItem label="备注">
               <ElInput
                 type="textarea"
-                :rows="4"
+                :rows="8"
                 v-model="view.form.Remark"
                 style="width: 90%; margin-bottom: 20px"
               >
@@ -292,7 +291,7 @@
             <ElFormItem label="备注">
               <ElInput
                 type="textarea"
-                :rows="4"
+                :rows="8"
                 v-model="view.form.Remark"
                 style="width: 90%; margin-bottom: 20px"
               >

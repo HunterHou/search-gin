@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue';
-import { GetSettingInfo } from '@/api/setting';
-import { SettingInfo } from '../settting';
+import { onMounted, reactive } from "vue";
+import VueMarkdownEditor from "@kangc/v-md-editor";
+import "@kangc/v-md-editor/lib/style/base-editor.css";
+import vuepressTheme from "@kangc/v-md-editor/lib/theme/vuepress.js";
+import { GetSettingInfo } from "@/api/setting";
+import { SettingInfo } from "../settting";
 
 const view = reactive({
-    form: new SettingInfo()
-})
+  form: new SettingInfo(),
+});
 const loadData = async () => {
-    const res = await GetSettingInfo()
-    view.form = res;
-}
+  const res = await GetSettingInfo();
+  view.form = res;
+};
 onMounted(() => {
-    loadData()
-})
+  loadData();
+});
 </script>
 <template>
-    <!-- <div v-html="view.form.SystemHtml">
-
-    </div> -->
-    <v-md-preview-html v-bind:html="view.form.SystemHtml" preview-class="vuepress-markdown-body"></v-md-preview-html>
+  <v-md-editor mode="preview" v-model="view.form.SystemHtml" height="700px"></v-md-editor>
 </template>

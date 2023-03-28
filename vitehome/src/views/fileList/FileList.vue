@@ -1138,79 +1138,97 @@
   </teleport>
   <teleport to="body">
     <div v-show="view.videoVisible" class="playDiv" id="videoDiv">
-      <div
-        style="
-          top: 0;
-          height: 2rem;
-          width: 100%;
-          margin: 1rem auto;
-          position: absolute;
-          color: white;
-          z-index: 9999;
-          float: right;
-        "
-      >
-        <span
-          style="
-            margin-left: 2rem;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          "
-        >
-          <ElTag
-            v-for="item in view.contextmenuTarget.Tags"
-            key="default"
-            type="danger"
-            size="large"
-            style="margin-left: 0.5rem"
-          >
-            {{ item }}
-          </ElTag>
-          {{ view.contextmenuTarget.Code }}
-          {{ view.contextmenuTarget.Actress }}
-          {{ view.contextmenuTarget.Name }}
-        </span>
+      <vue3VideoPlay
+        ref="vue3VideoPlayRef"
+        :style="{
+          'object-fit': 'fill',
+        }"
+        v-bind="optionsPC"
+        @volumechange="volumechange"
+      />
+
+      <div style="background-color: antiquewhite">
         <div
           style="
-            right: 1rem;
-            top: 0;
-            height: 2rem;
-            position: absolute;
-            z-index: 9999;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            background-color: antiquewhite;
           "
         >
-          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-          <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
-        </div>
-      </div>
-      <!-- <video id="video" :src="view.videoUrl" controls style="right: 0;top: 0;position:absolute">
-        您的浏览器不支持 video 标签。
-      </video> -->
-      <div>
-        <ElSpace wrap size="default">
-          <vue3VideoPlay
-            ref="vue3VideoPlayRef"
-            style="width: 98vw; margin: auto 1vw"
-            v-bind="optionsPC"
-            @volumechange="volumechange"
-          />
-          <ElCard
-            v-for="play in view.playlist"
-            :key="play"
-            style="width: 250px; height: auto"
-          >
-            <ElImage
-              :src="getPng(play.Id)"
-              @click="startPlayVideo(play)"
-            ></ElImage>
-            <span
-              class="context-text"
-              style="overflow: hidden; text-overflow: ellipsis"
-              >{{ play.Name }}</span
+          <el-space spacer="|" wrap>
+            <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+            <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+            <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
+            <ElButton type="primary" @click="moreTag = !moreTag">更多</ElButton>
+            <ElTag
+              v-for="item in view.contextmenuTarget.Tags"
+              key="default"
+              type="danger"
+              size="large"
+              style="margin-left: 0.5rem"
+              @click="queryRelation(item)"
             >
-          </ElCard>
-        </ElSpace>
+              {{ item }}
+            </ElTag>
+
+            <el-link :underline="false" type="success">{{
+              view.contextmenuTarget.Code
+            }}</el-link>
+            <el-link
+              type="warning"
+              size="large"
+              style="margin-left: 0.5rem"
+              @click="queryRelation(view.contextmenuTarget.Actress)"
+            >
+              {{ view.contextmenuTarget.Actress }}</el-link
+            >
+            <el-link :underline="false" type="success">{{
+              view.contextmenuTarget.Name
+            }}</el-link>
+          </el-space>
+        </div>
+        <ElRow v-if="moreTag">
+          <el-space spacer="|" wrap>
+            <el-link
+              type="warning"
+              v-for="item in view.settingInfo.Tags"
+              key="default"
+              size="large"
+              :underline="false"
+              style="margin-left: 0.5rem"
+              @click="queryRelation(item)"
+            >
+              {{ item }}</el-link
+            >
+          </el-space>
+        </ElRow>
+        <div style="margin: 10px auto">
+          <ElSpace wrap size="default">
+            <ElCard
+              v-for="play in view.playlist"
+              :key="play"
+              :body-style="{ padding: '8px' }"
+              style="width: 200px; height: auto"
+            >
+              <ElImage
+                :src="getPng(play.Id)"
+                @click="startPlayVideo(play)"
+              ></ElImage>
+              <span
+                class="context-text"
+                style="
+                  height: 3rem;
+                  overflow: hidden;
+                  word-break: break-all;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                "
+                >{{ play.Name }}</span
+              >
+            </ElCard>
+          </ElSpace>
+        </div>
       </div>
     </div>
   </teleport>
@@ -1247,20 +1265,15 @@ import {
   onKeyStroke,
   useClipboard,
   useDateFormat,
-  useMouseInElement,
   useTextSelection,
   useWindowScroll,
   useWindowSize,
 } from "@vueuse/core";
 import {
-  ElAffix,
   ElBacktop,
   ElCol,
   ElDialog,
   ElDivider,
-  ElDropdown,
-  ElDropdownItem,
-  ElDropdownMenu,
   ElImage,
   ElLink,
   ElMessage,
@@ -1274,7 +1287,7 @@ import {
   ElCard,
   ElSpace,
 } from "element-plus";
-import { computed, onMounted, pushScopeId, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { MovieModel, MovieQuery } from ".";
 import {
   formMovieTypeChange,
@@ -1300,13 +1313,12 @@ import { auto } from "@popperjs/core";
 const thisRoute = useRoute();
 const { replace } = useRouter();
 
-const target = ref(null);
 const selectText = useTextSelection();
 const { y: windowScrollHheight } = useWindowScroll();
-const { x, y, isOutside } = useMouseInElement(target);
 const pagePress = ref(null);
 
 const running = ref(true);
+const moreTag = ref(false);
 const loading = ref(false);
 const refreshIndexFlag = ref(false);
 const showStyle = ref("post");
@@ -1445,32 +1457,27 @@ const closePlayVideo = () => {
   isPlaying.value = false;
 };
 
-const playSource = async (item) => {
-  const stream = getFileStream(item.Id);
-  optionsPC.title = item.Name;
-  optionsPC.src = stream;
-  vue3VideoPlayRef.value.play();
-  fullPlayVideo();
-  const pageSize = item.Actress ? 100 : 30;
+const queryRelation = async (keywords) => {
+  const pageSize = 999;
+  queryParam.Keyword = keywords;
   const palyParam = {
     ...queryParam,
     PageSize: pageSize,
     Page: 1,
-    Keyword: item.Actress,
-    MovieType: item.MovieType,
   };
   const res = await QueryFileList(palyParam);
   const model = res as unknown as ResultList;
   view.playlist = [];
-  view.playlist.push(item);
-  view.playlist = [...view.playlist, ...model.Data];
+  view.playlist = [...model.Data];
 };
+
 const startPlayVideo = (item: MovieModel) => {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
   view.videoClose = true;
-  fullScreen.value = false;
-  playSource(item);
+  optionsPC.title = item.Name;
+  optionsPC.src = getFileStream(item.Id);
+  vue3VideoPlayRef.value.play();
+  queryRelation(item.Actress);
+  fullPlayVideo();
   isPlaying.value = true;
   view.videoVisible = true;
 };

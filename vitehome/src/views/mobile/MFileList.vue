@@ -36,36 +36,37 @@
       v-model:show="showSearch"
       title="搜索"
       :close-on-click-overlay="true"
-      style="max-height: 60vh"
+      style="height: 70vh; background-color: white"
     >
       <Search
         v-model="view.queryParam.Keyword"
         placeholder="请输入搜索"
         @search="onSearch"
-        label="关键词"
         show-action
         @update:model-value="keywordUpdate"
         @cancel="onCancel"
         input-align="center"
       >
         <template #action>
-          <div @click="onCancel" style="margin: 2px 4px">搜索</div>
+          <Button type="primary" plain @click="onCancel" style="width: 4rem"
+            >搜索</Button
+          >
         </template>
       </Search>
       <div style="margin-bottom: 0vh">
-        <Button
-          type="warning"
+        <Tag
+          type="success"
           v-for="tag in view.settingInfo.Tags"
           :key="tag"
-          style="margin: 1px 2px"
-          size="normal"
+          style="margin: 1px 2px; font-size: 18px"
+          size="large"
           @click="
             searchKeyword(tag);
             showSearch = false;
           "
         >
           {{ tag }}
-        </Button>
+        </Tag>
       </div>
     </ActionSheet>
     <ActionSheet
@@ -92,10 +93,10 @@
         </Row>
       </div>
       <div style="margin: 1rem">
-        <Row justify="space-around">
+        <Row>
           <Col>可选标签</Col>
         </Row>
-        <Row>
+        <Row justify="space-around">
           <Col>
             <Tag
               type="success"
@@ -343,6 +344,7 @@
               @click="previewPictures(item)"
               :style="{ width: isWide ? '100%' : 'auto' }"
             >
+              <template v-slot:error>加载失败</template>
             </Image>
           </div>
 
@@ -472,6 +474,32 @@
       </Pagination>
       <LoadMoreVue @loadMore="onLoadMore" :more="loadMoreFlag" />
     </div>
+    <Sticky offset-bottom="26vh" position="bottom">
+      <Popover
+        v-model:show="showPopover"
+        placement="top"
+        theme="dark"
+        @select="
+          (e) => {
+            actionClick(e);
+          }
+        "
+        :actions="[
+          { text: '上一页', icon: 'add-o' },
+          { text: '首页', icon: 'music-o' },
+          { text: '下一页', icon: 'more-o' },
+        ]"
+      >
+        <template #reference>
+          <Button
+            plain
+            type="primary"
+            style="background-color: rgba(0, 0, 0, 0.5); color: whitesmoke"
+            >{{ view.queryParam.Page }}</Button
+          >
+        </template>
+      </Popover>
+    </Sticky>
   </div>
 </template>
 
@@ -499,6 +527,7 @@ import {
 import {
   showConfirmDialog,
   ActionSheet,
+  Popover,
   Button,
   Col,
   DropdownItem,
@@ -521,6 +550,8 @@ import {
   Icon,
   Radio,
   Switch,
+  Grid,
+  GridItem,
 } from "vant";
 import "vant/lib/index.css";
 import { computed, onMounted, reactive, ref, watch } from "vue";
@@ -540,6 +571,7 @@ const isWide = computed(() => {
   return width.value > 600;
 });
 const moreTags = ref(false);
+const showPopover = ref(false);
 const mainBody = ref(true);
 const easyMode = ref(false);
 const finished = ref(false);
@@ -613,6 +645,25 @@ const loadRefreshIndex = async () => {
   const url = window.location.href;
   const newUrl = url.substring(0, url.indexOf("?"));
   window.location.href = newUrl + `?y=${y.value}`;
+};
+
+const actionClick = (e) => {
+  const { text } = e;
+  if (text === "首页") {
+    pageChange(1);
+  } else if (text === "上一页") {
+    if (view.queryParam.Page <= 1) {
+      pageChange(1);
+    } else {
+      PageNum.value = view.queryParam.Page - 1;
+      view.queryParam.Page = view.queryParam.Page - 1;
+      pageChange(view.queryParam.Page);
+    }
+  } else if (text === "下一页") {
+    PageNum.value = view.queryParam.Page + 1;
+    view.queryParam.Page = view.queryParam.Page + 1;
+    pageChange(view.queryParam.Page);
+  }
 };
 
 const easyModeChange = (e) => {
@@ -1034,13 +1085,12 @@ const SortTypeOptions = [
 }
 
 .listMode {
-  width: 96vw;
   float: left;
+  width: fit-content;
   height: 12rem;
   margin: 6px 8px;
   display: flex;
   box-shadow: 0 0 4px grey;
-  padding: 4px;
 }
 
 .listModeItem {
@@ -1078,7 +1128,7 @@ const SortTypeOptions = [
 
 .listModeItemContent {
   overflow: hidden;
-  margin: 1px auto;
+  padding: 1px auto;
   font-size: 12px;
   color: gray;
   max-height: 7rem;
@@ -1128,7 +1178,7 @@ const SortTypeOptions = [
 
 .viewPicItem {
   display: flex;
-  margin: 1px auto;
+  margin: 4px auto;
 }
 
 .viewPicImg {

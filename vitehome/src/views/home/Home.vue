@@ -23,9 +23,9 @@ const view = reactive({
   tableData: [],
   indexLoading: false,
 });
-const tableData = ref([]);
-const tagData = ref([]);
-const scanTime = ref([]);
+const tableData = ref<any>([]);
+const tagData = ref<any>([]);
+const scanTime = ref<any>([]);
 
 onKeyStroke(["`"], (e) => {
   refreshIndex();
@@ -57,7 +57,7 @@ const loadTypeSize = async () => {
 const loadTagSize = async () => {
   const res = await TagSizeMap();
   if (res) {
-    tagData.value = res.splice(0, 70);
+    tagData.value = (res as any).splice(0, 70);
   }
 };
 const loadScanTime = async () => {
@@ -126,7 +126,7 @@ const f5 = () => {
         :underline="false"
       >
         <el-tag size="default" :value="tag.Cnt" @click="gotoMenu(tag)">
-          <el-badge :value="tag.Cnt">
+          <el-badge :value="tag.Cnt" :max="999">
             <span style="font-size: 10px">
               <b
                 >{{ tag.Name }} (<i>{{ tag.SizeStr }}</i
