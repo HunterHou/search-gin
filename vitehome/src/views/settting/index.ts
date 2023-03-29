@@ -19,3 +19,5 @@ export class SettingInfo {
   StreamHost: string;
   IsDb: boolean = false;
 }
+
+export const buttonEnum = ["刮图", "删除", "移动", "编辑", "文件夹", "图鉴", "更多"];

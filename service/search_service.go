@@ -680,6 +680,13 @@ func (fs FileService) GetJpg(c *gin.Context) {
 	}
 
 }
+func cleanPath(name string) string {
+	newName := strings.ReplaceAll(name, "《", "")
+	newName = strings.ReplaceAll(newName, "》", "")
+	newName = strings.ReplaceAll(newName, "{{", "")
+	newName = strings.ReplaceAll(newName, "}}", "")
+	return newName
+}
 
 func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 	res := utils.NewSuccess()
@@ -694,8 +701,8 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 		return res
 	}
 
-	newPath := movieLib.DirPath
-	newDir := movieLib.DirPath
+	newPath := cleanPath(movieLib.DirPath)
+	newDir := newPath
 	if movie.MoveOut {
 		// os.MkdirAll(movie.Actress, os.ModePerm)
 		if movie.Actress != "" {
@@ -706,7 +713,8 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 			newDir += utils.PathSeparator
 			newDir += choose2To1(!strings.Contains(movie.Title, "["+movie.Actress+"]"), choose2To1(movie.Actress != "", "["+movie.Actress+"]", ""), "")
 			newDir += choose2To1(!strings.Contains(movie.Title, "["+movie.Actress+"]"), choose2To1(movie.Code != "", "["+movie.Code+"]", ""), "")
-			newDir += movie.Title
+			newTitle := strings.Split(movie.Title, "{{")
+			newDir += cleanPath(newTitle[0])
 		}
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
@@ -716,11 +724,7 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 			return res
 		}
 	}
-	newName := strings.ReplaceAll(movie.Name, "《", "_")
-	newName = strings.ReplaceAll(movie.Name, "》", "_")
-	newName = strings.ReplaceAll(movie.Name, "{{", "_")
-	newName = strings.ReplaceAll(movie.Name, "}}", "_")
-	newPath = newDir + utils.PathSeparator + newName
+	newPath = newDir + utils.PathSeparator + movie.Name
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
@@ -732,6 +736,15 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 	//png
 	targetSuffix := ".png"
 	suffix := "." + utils.GetSuffux(oldPath)
+	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
+	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
+	if utils.ExistsFiles(oldPath) {
+		os.Rename(oldPath, newPath)
+	}
+
+	//gif
+	targetSuffix = ".gif"
+	suffix = "." + utils.GetSuffux(oldPath)
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {

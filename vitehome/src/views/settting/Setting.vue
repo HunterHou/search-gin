@@ -359,13 +359,13 @@ import {
 } from "@/api/setting";
 import { computed } from "vue";
 import { useNow, useDateFormat } from "@vueuse/core";
-import { SettingInfo } from "@/views/settting/index";
+import { SettingInfo,buttonEnum } from "@/views/settting/index";
 
 const formatted = useDateFormat(useNow(), "YYYY-MM-DD HH:mm:ss");
 
 const { go } = useRouter();
 
-const buttonEnum = ["刮图", "删除", "移动", "编辑", "文件夹", "图鉴", "更多"];
+
 const view = reactive({
   form: new SettingInfo(),
   ipAddr: "",
