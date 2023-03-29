@@ -716,7 +716,11 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 			return res
 		}
 	}
-	newPath = newDir + utils.PathSeparator + movie.Name
+	newName := strings.ReplaceAll(movie.Name, "《", "_")
+	newName = strings.ReplaceAll(movie.Name, "》", "_")
+	newName = strings.ReplaceAll(movie.Name, "{{", "_")
+	newName = strings.ReplaceAll(movie.Name, "}}", "_")
+	newPath = newDir + utils.PathSeparator + newName
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
@@ -793,7 +797,7 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 
 }
 
-//全局扫描
+// 全局扫描
 func (fs FileService) ScanAll() {
 	//统计初始化
 	cons.TypeMenu = sync.Map{}
@@ -810,7 +814,7 @@ func (fs FileService) ScanAll() {
 	fs.ScanDisk(dirList, cons.QueryTypes)
 }
 
-//扫描指定文佳佳
+// 扫描指定文佳佳
 func (fs FileService) ScanTarget(dirPath string) {
 	//统计初始化
 	cons.TypeMenu = sync.Map{}
