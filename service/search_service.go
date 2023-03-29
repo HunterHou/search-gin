@@ -681,7 +681,8 @@ func (fs FileService) GetJpg(c *gin.Context) {
 
 }
 func cleanPath(name string) string {
-	newName := strings.ReplaceAll(name, "《", "")
+	newName := strings.Trim(name, " ")
+	newName = strings.ReplaceAll(newName, "《", "")
 	newName = strings.ReplaceAll(newName, "》", "")
 	newName = strings.ReplaceAll(newName, "{{", "")
 	newName = strings.ReplaceAll(newName, "}}", "")
@@ -725,6 +726,8 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 		}
 	}
 	newPath = newDir + utils.PathSeparator + movie.Name
+	fmt.Printf("oldPath: %s", oldPath)
+	fmt.Printf("newPath: %s", newPath)
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
@@ -732,7 +735,6 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 		res.Data = err
 		return res
 	}
-
 	//png
 	targetSuffix := ".png"
 	suffix := "." + utils.GetSuffux(oldPath)
