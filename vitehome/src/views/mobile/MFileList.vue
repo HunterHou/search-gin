@@ -201,6 +201,9 @@
             <div class="videoDivRowButton">
               <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
               <ElButton type="primary" @click="togglePlay">停/播</ElButton>
+              <ElButton type="primary" @click="thisDelete(view.currentFile)"
+                >删除</ElButton
+              >
               <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
             </div>
 
@@ -317,16 +320,13 @@
     <div class="container" ref="loadRef">
       <div v-if="easyMode" class="easyMode">
         <div v-for="item in view.ModelList" class="easyModeItem">
+          <div class="easyModeText">{{ item.Code || item.Name }}</div>
           <Image
             :alt="item.Name"
             class="easyModeImg"
             :src="getPng(item.Id)"
             @click="openFile(item)"
           >
-            <template v-slot:error>加载失败</template>
-            <template v-slot:loading>
-              <Loading type="spinner" size="20" />
-            </template>
           </Image>
         </div>
       </div>
@@ -717,10 +717,11 @@ const deleteFile = async (item: MovieModel) => {
     message: item.Name,
   })
     .then(async () => {
+      options.src = null;
       const res = await DeleteFile(item.Id);
       if (res.Code == 200) {
         showSuccessToast("操作成功");
-        loadRefreshIndex;
+        loadRefreshIndex();
       } else {
         showFailToast(res.Message);
       }
@@ -739,6 +740,11 @@ const removeCurrentFileTag = async (tag: string) => {
   } else {
     showFailToast(res.Message);
   }
+};
+
+const thisDelete = async (file) => {
+  closePlayVideo();
+  await deleteFile(file);
 };
 
 const addCurrentFileTag = async (tag: string) => {
@@ -1149,11 +1155,22 @@ const SortTypeOptions = [
   width: 12rem;
   max-width: 46%;
   overflow: hidden;
-  height: auto;
+  height: fit-content;
+  flex-direction: column;
 }
 
 .easyModeImg {
   min-width: 4rem;
+  z-index: 4;
+}
+.easyModeText {
+  color: red;
+  position: absolute;
+  margin-bottom: -100px;
+  height: fit-content;
+  width: 12rem;
+  max-width: 46%;
+  overflow: hidden;
 }
 
 .viewPic {

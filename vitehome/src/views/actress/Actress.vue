@@ -122,9 +122,7 @@ onMounted(() => {
         >
           <el-link>
             <el-badge :value="item.Cnt">
-              <Image :src="getActressImage(item.Name)" fit="fill" round>
-                <template v-slot:error>加载失败</template></Image
-              >
+              <ElImage :src="getActressImage(item.Name)" fit="fill" round/>
             </el-badge>
           </el-link>
           {{ item.Name ? item.Name : "" }} 【{{ item.SizeStr }}】
