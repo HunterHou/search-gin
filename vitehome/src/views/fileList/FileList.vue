@@ -1271,11 +1271,9 @@
               :key="play"
               :body-style="{ padding: '8px' }"
               style="width: 200px; height: auto"
+              @click="startPlayVideo(play)"
             >
-              <ElImage
-                :src="getPng(play.Id)"
-                @click="startPlayVideo(play)"
-              ></ElImage>
+              <ElImage :src="getPng(play.Id)"></ElImage>
               <span
                 class="context-text"
                 style="
