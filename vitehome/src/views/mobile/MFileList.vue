@@ -448,13 +448,13 @@
     <Popup
       round
       v-model:show="showPopover"
-      position="center"
-      style="background-color: rgba(255, 255, 255, 0.2)"
+      position="bottom"
+      style="background-color: rgba(255, 255, 255, 0.2);margin-bottom: 20vh;;"
     >
       <div
         style="
-          width: 90vw;
-          height: 28vh;
+          width: 99vw;
+          height: 30vh;
           overflow: visible;
           background-color: rgba(0, 0, 0, 0.1);
           display: flex;
@@ -462,15 +462,12 @@
           justify-content: space-between;
         "
       >
-        <Pagination
-          class="pageTools"
-          v-model="PageNum"
-          :total-items="view.TotalCnt"
-          force-ellipses
-          :items-per-page="view.queryParam.PageSize"
-          @change="pageChange"
+        <Button
+          style="height: 50px"
+          @click="pageChange(1)"
+          color="blanchedalmond"
+          ><span style="color: black">首页</span></Button
         >
-        </Pagination>
         <Tabs
           v-model:active="view.queryParam.MovieType"
           type="card"
@@ -536,15 +533,20 @@
             "
           />
         </div>
-        <Button
-          style="height: 50px"
-          @click="pageChange(1)"
-          color="blanchedalmond"
-          ><span style="color: black">首页</span></Button
+
+        <Pagination
+          class="pageTools"
+          v-model="PageNum"
+          :total-items="view.TotalCnt"
+          force-ellipses
+          :show-page-size="3"
+          :items-per-page="view.queryParam.PageSize"
+          @change="pageChange"
         >
+        </Pagination>
       </div>
     </Popup>
-    <Sticky offset-bottom="26vh" position="bottom" style="margin-left: 200px">
+    <Sticky offset-bottom="24vh" position="bottom" style="margin-right: 100px">
       <Button
         plain
         type="primary"
