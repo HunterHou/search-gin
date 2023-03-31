@@ -123,8 +123,8 @@ export const notBuBing = (movieType: string): boolean => {
 };
 export const volumechange = (e) => {
   const {
-    target: { volume },
+    target: { volume ,muted},
   } = e;
   systemProperty.videoOptions.volume = volume;
-  systemProperty.videoOptions.muted = false;
+  systemProperty.videoOptions.muted = muted;
 };

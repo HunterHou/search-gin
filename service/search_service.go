@@ -707,6 +707,11 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 	if movie.MoveOut {
 		// os.MkdirAll(movie.Actress, os.ModePerm)
 		if movie.Actress != "" {
+			arr := strings.Split(newPath, utils.PathSeparator)
+			if utils.HasItem(arr, movie.Actress) {
+				arr2 := strings.Split(newPath, movie.Actress)
+				newDir = arr2[0]
+			}
 			newDir += utils.PathSeparator + movie.Actress
 		}
 

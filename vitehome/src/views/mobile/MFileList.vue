@@ -6,7 +6,6 @@
           <span @click="loadRefreshIndex" style="color: blue"
             >总数:{{ view.ResultCnt }}</span
           >
-          <Switch size="18px" v-model="easyMode" @change="easyModeChange" />
         </div>
       </template>
       <template #right>
@@ -195,8 +194,7 @@
               openFilex5-video-player-fullscreen="true"
               x5-video-orientation="landscape"
               v-bind="options"
-              @volumechange="volumechange"
-              @play="onPlay"
+              @volumechange="volumechangeThis"
             />
             <div class="videoDivRowButton">
               <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
@@ -296,26 +294,8 @@
         >停止播放</Button
       >
     </Sticky>
-    <DropdownMenu>
-      <DropdownItem
-        v-model="view.queryParam.MovieType"
-        :options="MovieTypeOptions"
-        @change="onSearch"
-      >
-      </DropdownItem>
-      <DropdownItem
-        v-model="view.queryParam.SortField"
-        :options="SortFieldOptions"
-        @change="onSearch"
-      >
-      </DropdownItem>
-      <DropdownItem
-        v-model="view.queryParam.SortType"
-        :options="SortTypeOptions"
-        @change="onSearch"
-      >
-      </DropdownItem>
-    </DropdownMenu>
+
+    <BackTop right="15vw" bottom="10vh" />
 
     <div class="container" ref="loadRef">
       <div v-if="easyMode" class="easyMode">
@@ -463,42 +443,115 @@
           </div>
         </div>
       </div>
-      <Pagination
-        class="pageTools"
-        v-model="PageNum"
-        :total-items="view.TotalCnt"
-        mode="simple"
-        :items-per-page="view.queryParam.PageSize"
-        @change="pageChange"
-      >
-      </Pagination>
       <LoadMoreVue @loadMore="onLoadMore" :more="loadMoreFlag" />
     </div>
-    <Sticky offset-bottom="26vh" position="bottom">
-      <Popover
-        v-model:show="showPopover"
-        placement="top"
-        theme="dark"
-        @select="
-          (e) => {
-            actionClick(e);
-          }
+    <Popup
+      round
+      v-model:show="showPopover"
+      position="center"
+      style="background-color: rgba(255, 255, 255, 0.2)"
+    >
+      <div
+        style="
+          width: 90vw;
+          height: 28vh;
+          overflow: visible;
+          background-color: rgba(0, 0, 0, 0.1);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
         "
-        :actions="[
-          { text: '上一页', icon: 'add-o' },
-          { text: '首页', icon: 'music-o' },
-          { text: '下一页', icon: 'more-o' },
-        ]"
       >
-        <template #reference>
-          <Button
-            plain
-            type="primary"
-            style="background-color: rgba(0, 0, 0, 0.5); color: whitesmoke"
-            >{{ view.queryParam.Page }}</Button
-          >
-        </template>
-      </Popover>
+        <Pagination
+          class="pageTools"
+          v-model="PageNum"
+          :total-items="view.TotalCnt"
+          force-ellipses
+          :items-per-page="view.queryParam.PageSize"
+          @change="pageChange"
+        >
+        </Pagination>
+        <Tabs
+          v-model:active="view.queryParam.MovieType"
+          type="card"
+          size="large"
+          class="tabsBtn"
+          @click-tab="movieTypeChange"
+        >
+          <Tab
+            v-for="item in MovieTypeOptions"
+            :title="item.text"
+            :name="item.value"
+            :key="item.value"
+            :title-style="{ height: '2rem' }"
+          ></Tab>
+        </Tabs>
+
+        <Tabs
+          v-model:active="view.queryParam.SortField"
+          type="card"
+          size="large"
+          class="tabsBtn"
+          @click-tab="sortFieldChange"
+        >
+          <Tab
+            v-for="item in SortFieldOptions"
+            :title="item.text"
+            :name="item.value"
+            :key="item.value"
+          ></Tab>
+        </Tabs>
+        <Tabs
+          v-model:active="view.queryParam.SortType"
+          type="card"
+          size="large"
+          class="tabsBtn"
+          @click-tab="sortTypeChange"
+        >
+          <Tab
+            v-for="item in SortTypeOptions"
+            :title="item.text"
+            :name="item.value"
+            :key="item.value"
+          ></Tab>
+        </Tabs>
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+          "
+        >
+          <ElRadioGroup v-model="easyMode" size="large">
+            <ElRadioButton :label="true">简易模式</ElRadioButton>
+            <ElRadioButton :label="false">列表模式</ElRadioButton>
+          </ElRadioGroup>
+          <Icon
+            name="search"
+            size="33"
+            color="blanchedalmond"
+            @click="
+              showSearch = true;
+              showPopover = false;
+            "
+          />
+        </div>
+        <Button
+          style="height: 50px"
+          @click="pageChange(1)"
+          color="blanchedalmond"
+          ><span style="color: black">首页</span></Button
+        >
+      </div>
+    </Popup>
+    <Sticky offset-bottom="26vh" position="bottom" style="margin-left: 200px">
+      <Button
+        plain
+        type="primary"
+        @click="showPopover = true"
+        style="background-color: rgba(0, 0, 0, 0.5); color: whitesmoke"
+        >{{ view.queryParam.Page }}</Button
+      >
     </Sticky>
   </div>
 </template>
@@ -527,15 +580,12 @@ import {
 import {
   showConfirmDialog,
   ActionSheet,
-  Popover,
+  Popup,
   Button,
   Col,
-  DropdownItem,
-  DropdownMenu,
   Image,
   showImagePreview,
   NavBar,
-  Loading,
   Pagination,
   Row,
   Search,
@@ -549,10 +599,11 @@ import {
   RadioGroup,
   Icon,
   Radio,
-  Switch,
-  Grid,
-  GridItem,
+  Tab,
+  Tabs,
+  BackTop,
 } from "vant";
+import { ElRadioGroup, ElRadioButton } from "element-plus";
 import "vant/lib/index.css";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { MovieModel, MovieQuery } from "../fileList";
@@ -614,7 +665,7 @@ const options = reactive({
   color: "#409eff", //主题色
   title: "123", //视频名称
   src: null, //视频源
-  muted: false, //静音
+  muted: systemProperty.videoOptions.muted, //静音
   webFullScreen: false,
   speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
   autoPlay: false, //自动播放
@@ -647,25 +698,6 @@ const loadRefreshIndex = async () => {
   window.location.href = newUrl + `?y=${y.value}`;
 };
 
-const actionClick = (e) => {
-  const { text } = e;
-  if (text === "首页") {
-    pageChange(1);
-  } else if (text === "上一页") {
-    if (view.queryParam.Page <= 1) {
-      pageChange(1);
-    } else {
-      PageNum.value = view.queryParam.Page - 1;
-      view.queryParam.Page = view.queryParam.Page - 1;
-      pageChange(view.queryParam.Page);
-    }
-  } else if (text === "下一页") {
-    PageNum.value = view.queryParam.Page + 1;
-    view.queryParam.Page = view.queryParam.Page + 1;
-    pageChange(view.queryParam.Page);
-  }
-};
-
 const easyModeChange = (e) => {
   if (e) {
     view.queryParam.PageSize = 30;
@@ -676,6 +708,7 @@ const easyModeChange = (e) => {
 };
 
 const pageChange = async (idx) => {
+  showPopover.value = false;
   view.queryParam.Page = idx;
   document.body.scrollTop = document.documentElement.scrollTop = 0;
   view.ModelList = [];
@@ -822,6 +855,15 @@ const closeViewPicture = () => {
   viewPic.value = false;
 };
 
+const volumechangeThis = (e) => {
+  const {
+    target: { volume, muted },
+  } = e;
+  options.volume = volume;
+  options.muted = muted;
+  volumechange(e);
+};
+
 const loadDirInfo = async (id: string) => {
   const res = await QueryDirImageBase64(id);
   if (res && res.length > 0) {
@@ -852,14 +894,11 @@ const closePlayVideo = () => {
   mainBody.value = true;
 };
 
-const onPlay = () => {
-  options.muted = false;
-};
-
 const playSource = async (item) => {
   const stream = getFileStream(item.Id);
   options.title = item.Actress;
   options.src = stream;
+  options.muted = systemProperty.videoOptions.muted;
   vue3VideoPlayRef.value.play();
   playListQuery(item.Actress);
 };
@@ -884,6 +923,7 @@ const openFile = (item: any) => {
   isPlaying.value = true;
   view.videoVisible = true;
   mainBody.value = false;
+  console.log(options);
   playSource(item);
 };
 
@@ -938,11 +978,28 @@ const queryList = async (concat?: boolean, pageStart?: number) => {
   refreshing.value = false;
 };
 
-const onSearch = async (clear?: Boolean) => {
+const onSearch = async (clear?: any) => {
+  console.log(clear);
   view.ModelList = [];
   view.loadCnt = 0;
   showSearch.value = false;
   await queryList(false);
+};
+
+const movieTypeChange = (e) => {
+  const { name } = e;
+  view.queryParam.MovieType = name;
+  onSearch();
+};
+const sortFieldChange = (e) => {
+  const { name } = e;
+  view.queryParam.SortField = name;
+  onSearch();
+};
+const sortTypeChange = (e) => {
+  const { name } = e;
+  view.queryParam.SortType = name;
+  onSearch();
 };
 
 const onCancel = async () => {
