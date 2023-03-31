@@ -1543,6 +1543,7 @@ const queryRelation = async (keywords) => {
 
 const startPlayVideo = (item: MovieModel) => {
   view.videoClose = true;
+  view.currentFile = item;
   optionsPC.title = item.Name;
   optionsPC.src = getFileStream(item.Id);
   vue3VideoPlayRef.value.play();
