@@ -258,8 +258,10 @@
                 </div>
               </template>
             </ElPopover>
-            <ElButton type="danger" @click="taskPop=!taskPop;fetchTransferTask()" text link style="margin-left: 10px"
-            >执行任务
+            <ElButton :type="countTransferIng>0?'danger':'success'" @click="taskPop=!taskPop;fetchTransferTask()" text
+                      link
+                      style="margin-left: 10px"
+            >执行任务({{ countTransferIng }})
             </ElButton>
           </div>
         </ElCol>
@@ -978,7 +980,8 @@
   </div>
 
 
-  <ElDialog width="70vw"  title="执行任务" draggable v-model="taskPop" destroy-on-close
+  <ElDialog width="70vw" :title="`执行任务(${countTransferIng}/${Object.keys(view.transferTask).length})`" draggable
+            v-model="taskPop" destroy-on-close
             @before-close="(done)=>{taskPop=false;done()}">
     <template #default>
       <div style="height: 60vh;overflow: auto;padding:12px;border-radius: 3%;background-color: blanchedalmond">
@@ -1518,8 +1521,18 @@ const previewPicture = (id: string) => {
 
 const fetchTransferTask = async () => {
   const res = await TransferTasksInfo("")
-  view.transferTask = res.Data
+  const keys = Object.keys(res.Data)
+  view.transferTask = {}
+  for (let i = keys.length - 1; i >= 0; i--) {
+    const key = keys[i]
+    view.transferTask[key] = res.Data[key]
+  }
 }
+
+
+const countTransferIng = computed(() => {
+  return Object.keys(view.transferTask)?.filter(item => view.transferTask[item].Status !== '成功').length
+})
 
 const fullPlayVideo = () => {
   if (fullScreen.value) {
@@ -1879,6 +1892,7 @@ const TransferToMp4 = async (id: string) => {
   const res = await TansferFile(id);
   if (res.Code === 200) {
     ElMessage.success(res.Message);
+    fetchTransferTask()
   } else {
     ElMessage.error(res.Message);
   }
