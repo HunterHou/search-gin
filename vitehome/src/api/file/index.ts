@@ -30,13 +30,18 @@ export const OpenFileFolder = async (data: string) => {
   return res as unknown as ResultEdit;
 };
 
-export const DeleteFile = async (data: string) => {
+export const DeleteFile = async (data: string): Promise<ResultEdit> => {
   const res = await request.get({ url: `/api/delete/${data}` });
   return res as unknown as ResultEdit;
 };
 
 export const SyncFileInfo = async (data: string) => {
   const res = await request.get({ url: `/api/sync/${data}` });
+  return res as unknown as ResultEdit;
+};
+
+export const TansferFile = async (data: string): Promise<ResultEdit> => {
+  const res = await request.get({ url: `/api/transfer/${data}` });
   return res as unknown as ResultEdit;
 };
 

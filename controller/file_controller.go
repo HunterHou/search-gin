@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"searchGin/cons"
 	"searchGin/datamodels"
@@ -15,8 +16,8 @@ import (
 func GetPlay(c *gin.Context) {
 	//id := c.Param("id")
 	id := c.Param("id")
-	service := service.CreateFileService()
-	file := service.FindOne(id)
+	fileService := service.CreateFileService()
+	file := fileService.FindOne(id)
 	//c.File(file.Path)
 	utils.ExecCmdStart(file.Path)
 	res := utils.NewSuccessByMsg("播放成功")
@@ -27,17 +28,17 @@ func GetPlay(c *gin.Context) {
 func SetMovieType(c *gin.Context) {
 	id := c.Param("id")
 	movieType := c.Param("movieType")
-	service := service.CreateFileService()
-	file := service.FindOne(id)
-	res := service.SetMovieType(file, movieType)
+	fileService := service.CreateFileService()
+	file := fileService.FindOne(id)
+	res := fileService.SetMovieType(file, movieType)
 	c.JSON(http.StatusOK, res)
 }
 
 // 获取Info信息
 func GetInfo(c *gin.Context) {
 	id := c.Param("id")
-	service := service.CreateFileService()
-	file := service.FindOne(id)
+	fileService := service.CreateFileService()
+	file := fileService.FindOne(id)
 	c.JSON(http.StatusOK, file)
 }
 
@@ -45,8 +46,8 @@ func GetInfo(c *gin.Context) {
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
 	c.ShouldBindJSON(&currentFile)
-	service := service.CreateFileService()
-	res := service.Rename(currentFile)
+	fileService := service.CreateFileService()
+	res := fileService.Rename(currentFile)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -54,8 +55,8 @@ func PostRename(c *gin.Context) {
 func GetAddTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
-	service := service.CreateFileService()
-	res := service.AddTag(idInt, tag)
+	fileService := service.CreateFileService()
+	res := fileService.AddTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -63,8 +64,8 @@ func GetAddTag(c *gin.Context) {
 func GetClearTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
-	service := service.CreateFileService()
-	res := service.ClearTag(idInt, tag)
+	fileService := service.CreateFileService()
+	res := fileService.ClearTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -88,8 +89,8 @@ func GetDirInfo(c *gin.Context) {
 // 删除文件
 func GetDelete(c *gin.Context) {
 	id := c.Param("id")
-	service := service.CreateFileService()
-	service.Delete(id)
+	fileService := service.CreateFileService()
+	fileService.Delete(id)
 	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
 }
@@ -133,8 +134,8 @@ func GetImageList(c *gin.Context) {
 
 // 刷新索引
 func GetRefreshIndex(c *gin.Context) {
-	service := service.CreateFileService()
-	service.ScanAll()
+	fileService := service.CreateFileService()
+	fileService.ScanAll()
 	datasource.SortMovieForce()
 	res := utils.NewSuccessByMsg("扫描结束！")
 	c.JSON(http.StatusOK, res)
@@ -153,9 +154,9 @@ func GetTempImage(c *gin.Context) {
 
 // 获取文件流
 func GetFile(c *gin.Context) {
-	service := service.CreateFileService()
+	fileService := service.CreateFileService()
 	id := c.Param("id")
-	file := service.FindOne(id)
+	file := fileService.FindOne(id)
 	if utils.ExistsFiles(file.Path) {
 		c.File(file.Path)
 	} else {
@@ -165,8 +166,8 @@ func GetFile(c *gin.Context) {
 
 // 获取Png流
 func GetPng(c *gin.Context) {
-	service := service.CreateFileService()
-	service.GetPng(c)
+	fileService := service.CreateFileService()
+	fileService.GetPng(c)
 }
 
 // 获取jpg流
@@ -190,4 +191,13 @@ func GetActressImage(c *gin.Context) {
 		}
 	}
 
+}
+
+func GetTransfer(c *gin.Context) {
+	id := c.Param("id")
+	fileService := service.CreateFileService()
+	fmt.Println("GetTransfer:"+id)
+	file := fileService.FindOne(id)
+	result:=service.TransferFormatter(file.Path)
+	c.JSON(http.StatusOK, result)
 }

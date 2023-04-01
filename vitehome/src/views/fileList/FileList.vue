@@ -603,6 +603,20 @@
                     <Position />
                   </ElIcon>
                 </ElButton>
+                <ElButton
+                  v-if="view.settingInfo.Buttons?.indexOf('转换') >= 0"
+                  type="danger"
+                  plain
+                  class="icon-button"
+                  title="转换"
+                  @click="TransferToMp4(item.Id)"
+                >
+                  <ElIcon>
+                    <Position />
+                  </ElIcon>
+                </ElButton>
+
+                
 
                 <ElButton
                   v-if="noMovieType(item.MovieType)"
@@ -1308,6 +1322,7 @@ import {
   RefreshIndex,
   ResetMovieType,
   SyncFileInfo,
+  TansferFile,
 } from "@/api/file";
 import { PostSettingInfo } from "@/api/setting";
 
@@ -1858,6 +1873,17 @@ const playThis = async (id: string) => {
     ElMessage.error(res.Message);
   }
 };
+
+const TransferToMp4 = async (id: string) => {
+  const res = await TansferFile(id);
+  if (res.Code === 200) {
+    ElMessage.success(res.Message);
+  } else {
+    ElMessage.error(res.Message);
+  }
+};
+
+
 
 const syncThis = async (id: string) => {
   const res = await SyncFileInfo(id);
