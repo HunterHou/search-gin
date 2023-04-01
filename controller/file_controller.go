@@ -212,6 +212,10 @@ func GetTransferToMp4(c *gin.Context) {
 			break
 		}
 	}
+	if !utils.ExistsFiles(model.Path) {
+		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
+		return
+	}
 	if exists {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("任务不可重复"))
 		return
