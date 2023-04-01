@@ -40,8 +40,13 @@ export const SyncFileInfo = async (data: string) => {
   return res as unknown as ResultEdit;
 };
 
+export const TransferTasksInfo = async (data: string) => {
+  const res = await request.get({ url: `/api/transferTasks` });
+  return res as unknown as ResultEdit;
+};
+
 export const TansferFile = async (data: string): Promise<ResultEdit> => {
-  const res = await request.get({ url: `/api/transfer/${data}` });
+  const res = await request.get({ url: `/api/tranferToMp4/${data}` });
   return res as unknown as ResultEdit;
 };
 

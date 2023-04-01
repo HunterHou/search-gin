@@ -35,11 +35,12 @@ func BuildRouter() *gin.Engine {
 	router.NoRoute(controller.Index)
 	router.GET("/", controller.Index)
 	router.POST("/api/movieList", controller.PostSearch)
+	router.GET("/api/transferTasks", controller.GetTransferTask)
 	router.POST("/api/actressList", controller.PostActess)
 	router.GET("/api/actressImgae/:path", controller.GetActressImage)
 
 	router.GET("/api/play/:id", controller.GetPlay)
-	router.GET("/api/tranfer/:id", controller.GetTransfer)
+	router.GET("/api/tranferToMp4/:id", controller.GetTransferToMp4)
 	router.GET("/api/file/:id", controller.GetFile)
 	router.GET("/api/setMovieType/:id/:movieType", controller.SetMovieType)
 	router.GET("/api/info/:id", controller.GetInfo)

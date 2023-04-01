@@ -9,6 +9,9 @@ type Result struct {
 func (res *Result) Success() {
 	res.MessageCode.Success()
 }
+func (res *Result) IsSuccess() bool {
+	return res.MessageCode.Code == Success().Code
+}
 func NewResult() Result {
 	return Result{}
 }

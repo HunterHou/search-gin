@@ -2,17 +2,21 @@ package service
 
 import (
 	"fmt"
+	"github.com/goccy/go-json"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/datasource"
 	"searchGin/utils"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -70,7 +74,7 @@ func DeleteOne(dirName string, fileName string) {
 
 }
 
-//删除递归文件夹
+// 删除递归文件夹
 func DownDeleteDir(dirname string) {
 	files2, _ := ioutil.ReadDir(dirname)
 	if len(files2) > 0 {
@@ -87,7 +91,7 @@ func DownDeleteDir(dirname string) {
 
 }
 
-//递归向上处理空文件夹
+// 递归向上处理空文件夹
 func UpDirClear(dirname string) {
 	files2, _ := ioutil.ReadDir(dirname)
 	if len(files2) == 0 {
@@ -217,7 +221,7 @@ func ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[stri
 	return filemap, actessmap, suppliermap, size
 }
 
-//合并文件数组
+// 合并文件数组
 func ExpandsMovie(originArr []datamodels.Movie, insertArr []datamodels.Movie) []datamodels.Movie {
 	if len(insertArr) == 0 {
 		return originArr
@@ -287,7 +291,7 @@ func Walks(baseDir []string, types []string) []datamodels.Movie {
 
 }
 
-//  协程方法 扫描单个文件夹并送入管道
+// 协程方法 扫描单个文件夹并送入管道
 func goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
@@ -377,12 +381,50 @@ func WalkInnter(baseDir string, types []string, totalSize int64, queryChild bool
 	return result, currentSize
 }
 
-func TransferFormatter(path string) utils.Result{
-	from:="D:\\emby\\[仙儿媛] [MD-0118]你爲什麽這麽著急呢百變性感制服劇場{{国产}}.ts"
-	to:="D:\\emby\\[仙儿媛] [MD-0118]你爲什麽這麽著急呢百變性感制服劇場{{国产}}.mp4"
-	cmdSt:= "-i '"+from +"' -codec copy '"+to +"'"
-
-	utils.TransferFormatter(cmdSt)
-	res:=utils.NewSuccessByMsg("转换成功")
+func TransferFormatter(model datamodels.TransferTaskModel) utils.Result {
+	from := model.Path
+	dest := strings.ReplaceAll(model.Path, "."+model.From, "."+model.To)
+	thisNow := model.CreateTime
+	res := transferFormatterBackground(from, dest, thisNow)
+	if res.IsSuccess() {
+		fmt.Println(json.Marshal(res))
+		os.Remove(model.Path)
+	}
 	return res
+}
+
+func transferFormatterBackground(from string, to string, thisNow time.Time) utils.Result {
+	task := cons.TransferTask[thisNow]
+	task.SetStatus("执行中")
+	cons.TransferTask[thisNow] = task
+	args := []string{"-i", from, "-vcodec", "copy", to}
+	cmd := exec.Command("./ffmpeg.exe", args...)
+	if cmd != nil {
+		if runtime.GOOS == "windows" {
+			cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: false}
+		}
+		out, cmdErr := cmd.CombinedOutput()
+		if cmdErr != nil {
+			task.SetStatus("执行失败")
+			task.SetLog(string(out))
+			task.FinishTime = time.Now()
+			cons.TransferTask[thisNow] = task
+			fmt.Println(cmdErr)
+			fmt.Println(string(out))
+			res := utils.NewFailByMsg("转换失败")
+			res.Data = cmdErr
+			return res
+		}
+		task.SetStatus("成功")
+		task.FinishTime = time.Now()
+		task.SetLog(string(out))
+		cons.TransferTask[thisNow] = task
+		res := utils.NewSuccessByMsg("转换成功")
+		res.Data = string(out)
+		return res
+	}
+	task.SetStatus("执行失败")
+	task.FinishTime = time.Now()
+	cons.TransferTask[thisNow] = task
+	return utils.NewFailByMsg("命令生成失败")
 }

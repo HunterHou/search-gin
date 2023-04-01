@@ -31,18 +31,20 @@ if [ $levelKey -ge 1 ]; then
     echo 开始打包前端文件
     echo 'yarn build'
     yarn build
-    echo 打包完成，开始移动到app目录
+    echo '打包完成，开始移动到app目录'
     echo 'cp -R dist ../viteApp/vitehome/dist'
     cp -R dist ../viteApp/vitehome/
 fi
 cd ..
 if [ $levelKey -ge 2 ]; then
-    echo 移动完成，打包APP
+    echo '移动完成，打包APP'
     go build -o viteApp/appVite.exe -ldflags "-H=windowsgui" -tags=prod
     echo 移动配置文件 '*.*(1)'
     echo 'cp setting.json viteApp/setting.json(1)'
     cp setting.json 'viteApp/setting.json(1)'
-    echo APP打包完成！！！
+    echo 'cp ffmpeg.exe viteApp/ffmpeg.exe'
+    cp ffmpeg.exe 'viteApp/ffmpeg.exe'
+    echo 'APP打包完成！！！'
 fi
 if [ $levelKey -ge 3 ]; then
     echo 移动源到 Election代码目录

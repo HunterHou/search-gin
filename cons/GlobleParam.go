@@ -4,6 +4,7 @@ import (
 	"searchGin/datamodels"
 	"searchGin/utils"
 	"sync"
+	"time"
 )
 
 //环境引用
@@ -113,10 +114,10 @@ func TagSizePlus(targetType string, targetSize int64) {
 
 var MovieFields = utils.InterfaceFields(datamodels.Movie{})
 
-// 索引构建中标记
+// IndexDone 索引构建中标记
 var IndexDone = true
 
-// 系统配置信息
+// OSSetting 系统配置信息
 var OSSetting = datamodels.Setting{
 	IsDb:           true,
 	IsJavBus:       false,
@@ -142,7 +143,7 @@ var OSSetting = datamodels.Setting{
 	Buttons:    []string{"刮图", "删除", "移动"},
 }
 
-// Base Dictory
+// PNG Base Dictory
 const PNG = "png"
 const JPG = "jpg"
 const GIF = "gif"
@@ -165,3 +166,5 @@ var StaticFs = map[string]string{
 	"/css": "./vitehome/dist/css",
 	"/js":  "./vitehome/dist/js",
 }
+
+var TransferTask = map[time.Time]datamodels.TransferTaskModel{}

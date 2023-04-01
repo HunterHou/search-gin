@@ -2,17 +2,16 @@ package controller
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/datasource"
 	"searchGin/service"
 	"searchGin/utils"
-
-	"github.com/gin-gonic/gin"
 )
 
-// 本地打开文件
+// GetPlay 本地打开文件
 func GetPlay(c *gin.Context) {
 	//id := c.Param("id")
 	id := c.Param("id")
@@ -24,7 +23,7 @@ func GetPlay(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// 设置类型
+// SetMovieType 设置类型
 func SetMovieType(c *gin.Context) {
 	id := c.Param("id")
 	movieType := c.Param("movieType")
@@ -34,7 +33,7 @@ func SetMovieType(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// 获取Info信息
+// GetInfo 获取Info信息
 func GetInfo(c *gin.Context) {
 	id := c.Param("id")
 	fileService := service.CreateFileService()
@@ -42,16 +41,19 @@ func GetInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, file)
 }
 
-// 改名
+// PostRename 改名
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
-	c.ShouldBindJSON(&currentFile)
+	err := c.ShouldBindJSON(&currentFile)
+	if err != nil {
+		fmt.Println(err)
+	}
 	fileService := service.CreateFileService()
 	res := fileService.Rename(currentFile)
 	c.JSON(http.StatusOK, res)
 }
 
-// 添加标签
+// GetAddTag 添加标签
 func GetAddTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
@@ -60,7 +62,7 @@ func GetAddTag(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// 删除标签
+// GetClearTag 删除标签
 func GetClearTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
@@ -69,7 +71,7 @@ func GetClearTag(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// 文件夹信息 文件列表
+// GetDirInfo 文件夹信息 文件列表
 func GetDirInfo(c *gin.Context) {
 	if len(cons.TempImage) > 1000 {
 		cons.TempImage = make(map[string]datamodels.Movie)
@@ -86,7 +88,7 @@ func GetDirInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, files)
 }
 
-// 删除文件
+// GetDelete 删除文件
 func GetDelete(c *gin.Context) {
 	id := c.Param("id")
 	fileService := service.CreateFileService()
@@ -95,7 +97,7 @@ func GetDelete(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// 同步 挂图
+// GetSync 同步 挂图
 func GetSync(c *gin.Context) {
 	id := c.Param("id")
 	serviceFile := service.CreateFileService()
@@ -109,7 +111,7 @@ func GetSync(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// 下拉相关图片
+// GetImageList 下拉相关图片
 func GetImageList(c *gin.Context) {
 	id := c.Param("id")
 	serviceFile := service.CreateFileService()
@@ -132,7 +134,7 @@ func GetImageList(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// 刷新索引
+// GetRefreshIndex 刷新索引
 func GetRefreshIndex(c *gin.Context) {
 	fileService := service.CreateFileService()
 	fileService.ScanAll()
@@ -141,7 +143,7 @@ func GetRefreshIndex(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-//临时图片 特指浏览某个文件夹的所有图片
+// GetTempImage 临时图片 特指浏览某个文件夹的所有图片
 func GetTempImage(c *gin.Context) {
 	id := c.Param("path")
 	file := cons.TempImage[id]
@@ -152,7 +154,7 @@ func GetTempImage(c *gin.Context) {
 	}
 }
 
-// 获取文件流
+// GetFile 获取文件流
 func GetFile(c *gin.Context) {
 	fileService := service.CreateFileService()
 	id := c.Param("id")
@@ -164,20 +166,20 @@ func GetFile(c *gin.Context) {
 	}
 }
 
-// 获取Png流
+// GetPng 获取Png流
 func GetPng(c *gin.Context) {
 	fileService := service.CreateFileService()
 	fileService.GetPng(c)
 }
 
-// 获取jpg流
+// GetJpg 获取jpg流
 func GetJpg(c *gin.Context) {
 	fs := service.CreateFileService()
 	fs.GetJpg(c)
 
 }
 
-//  获取脸谱的图片流
+// GetActressImage 获取脸谱的图片流
 func GetActressImage(c *gin.Context) {
 	path := c.Param("path")
 	list := datasource.ActressLib
@@ -193,12 +195,25 @@ func GetActressImage(c *gin.Context) {
 
 }
 
-func GetTransfer(c *gin.Context) {
+// GetTransferToMp4 格式转换
+func GetTransferToMp4(c *gin.Context) {
 	id := c.Param("id")
-	c.JSON(http.StatusOK, utils.NewSuccessByMsg("转化已发起！"))
+	to := c.Param("to")
 	fileService := service.CreateFileService()
-	fmt.Println("GetTransfer:"+id)
-	file := fileService.FindOne(id)
-	service.TransferFormatter(file.Path)
-	c.JSON(http.StatusOK, utils.NewSuccessByMsg("转化已发起！"))
+	model := fileService.FindOne(id)
+	from := utils.GetSuffux(model.Path)
+	if to == "" {
+		to = "mp4"
+	}
+	task := datamodels.NewTask(model.Path, model.Name, from, to)
+	task.SetStatus("待执行")
+	cons.TransferTask[task.CreateTime] = task
+	go service.TransferFormatter(task)
+	c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))
+}
+
+func GetTransferTask(c *gin.Context) {
+	result := utils.NewSuccess()
+	result.Data = cons.TransferTask
+	c.JSON(http.StatusOK, result)
 }
