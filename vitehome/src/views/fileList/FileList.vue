@@ -984,14 +984,14 @@
       <div style="height: 100%;overflow: auto;padding:12px;border-radius: 3%;background-color: blanchedalmond" >
         <ElRow v-for="(item, index) in view.transferTask"
                :key="index" style="border-bottom: 1px dodgerblue dotted">
-          <ElCol :span="item.Log?16:20"
+          <ElCol :span="item.Log?20:20"
                  style="text-align:left;line-height: 1rem;white-space: nowrap;overflow: hidden">
             {{ item.Name }}
           </ElCol>
-          <ElCol v-if="item.Log" :span="4"
-                 style="text-align:left;line-height: 1rem;white-space: nowrap;overflow: hidden;background-color: gainsboro">
-            {{ item.Log?.substring(item.Log.length - 16, item.Log.length) }}
-          </ElCol>
+<!--          <ElCol v-if="item.Log" :span="4"-->
+<!--                 style="text-align:left;line-height: 1rem;white-space: nowrap;overflow: hidden;background-color: gainsboro">-->
+<!--            {{ item.Log?.substring(item.Log.length - 16, item.Log.length) }}-->
+<!--          </ElCol>-->
           <ElCol :span="2" :style="{textAlign:'right',color:item.Status=='成功'?'green':'red'}"> {{
               item.Status
             }}

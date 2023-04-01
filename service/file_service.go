@@ -401,7 +401,7 @@ func transferFormatterBackground(from string, to string, thisNow time.Time) util
 	cmd := exec.Command("./ffmpeg.exe", args...)
 	if cmd != nil {
 		if runtime.GOOS == "windows" {
-			cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: false}
+			cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 		}
 		out, cmdErr := cmd.CombinedOutput()
 		if cmdErr != nil {
