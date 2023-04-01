@@ -362,6 +362,15 @@
                   重命名</Tag
                 >
                 <Tag
+                    square
+                    size="large"
+                    type="primary"
+                    @click="TransferToMp4(item.Id)"
+                    v-if="item.FileType!=='mp4'"
+                >
+                  转MP4</Tag
+                >
+                <Tag
                   v-if="isWide"
                   square
                   class="mr1"
@@ -569,6 +578,7 @@ import {
   QueryFileList,
   RefreshIndex,
   SyncFileInfo,
+  TansferFile,
 } from "@/api/file";
 import { GetSettingInfo } from "@/api/setting";
 import { ResultList } from "@/config/ResultModel";
@@ -615,6 +625,7 @@ import MobileBar from "./MobileBar.vue";
 import LoadMoreVue from "./LoadMore.vue";
 import { useWindowSize, useWindowScroll } from "@vueuse/core";
 import { useRoute } from "vue-router";
+import {ElMessage} from "element-plus/es";
 const { query } = useRoute();
 
 const systemProperty = useSystemProperty();
@@ -744,6 +755,15 @@ const syncFile = async (id: string) => {
 const showRenameForm = (item: MovieModel) => {
   view.currentFile = item;
   showRename.value = true;
+};
+
+const TransferToMp4 = async (id: string) => {
+  const res = await TansferFile(id);
+  if (res.Code === 200) {
+    ElMessage.success(res.Message);
+  } else {
+    ElMessage.error(res.Message);
+  }
 };
 
 const deleteFile = async (item: MovieModel) => {
