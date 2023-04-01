@@ -90,9 +90,7 @@ func GetDirInfo(c *gin.Context) {
 func GetDelete(c *gin.Context) {
 	id := c.Param("id")
 	fileService := service.CreateFileService()
-	// fileService.Delete(id)
-	file := fileService.FindOne(id)
-	service.TransferFormatter(file.Path)
+	fileService.Delete(id)
 	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
 }
