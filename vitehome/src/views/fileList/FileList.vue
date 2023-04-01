@@ -2036,6 +2036,7 @@ const handleSizeChange = (pageSize: number) => {
 };
 
 setInterval(heartBeat, 60000);
+setInterval(fetchTransferTask, 30000);
 
 onMounted(() => {
   loadSettingInfo();
