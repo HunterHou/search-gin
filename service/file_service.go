@@ -378,13 +378,11 @@ func WalkInnter(baseDir string, types []string, totalSize int64, queryChild bool
 }
 
 func TransferFormatter(path string) utils.Result{
-	from:="D:\\emby\\[仙儿媛] [MD-0118]你爲什麽這麽著急呢？百變性感制服劇場{{国产}}.ts"
-	to:="D:\\emby\\[仙儿媛] [MD-0118]你爲什麽這麽著急呢？百變性感制服劇場{{国产}}.mp4"
-	cmdSt:= "-i "+from +" -codec copy "+to
-	fmt.Println("TransferFormatter:"+cmdSt)
-	err := utils.ExecCmd("./ffmpeg ",cmdSt)
-	fmt.Println(err)
-	res := utils.NewSuccessByMsg("转化已发起！")
+	from:="D:\\emby\\[仙儿媛] [MD-0118]你爲什麽這麽著急呢百變性感制服劇場{{国产}}.ts"
+	to:="D:\\emby\\[仙儿媛] [MD-0118]你爲什麽這麽著急呢百變性感制服劇場{{国产}}.mp4"
+	cmdSt:= "-i '"+from +"' -codec copy '"+to +"'"
+
+	utils.TransferFormatter(cmdSt)
+	res:=utils.NewSuccessByMsg("转换成功")
 	return res
 }
-

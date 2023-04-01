@@ -90,7 +90,9 @@ func GetDirInfo(c *gin.Context) {
 func GetDelete(c *gin.Context) {
 	id := c.Param("id")
 	fileService := service.CreateFileService()
-	fileService.Delete(id)
+	// fileService.Delete(id)
+	file := fileService.FindOne(id)
+	service.TransferFormatter(file.Path)
 	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
 }
@@ -195,9 +197,10 @@ func GetActressImage(c *gin.Context) {
 
 func GetTransfer(c *gin.Context) {
 	id := c.Param("id")
+	c.JSON(http.StatusOK, utils.NewSuccessByMsg("转化已发起！"))
 	fileService := service.CreateFileService()
 	fmt.Println("GetTransfer:"+id)
 	file := fileService.FindOne(id)
-	result:=service.TransferFormatter(file.Path)
-	c.JSON(http.StatusOK, result)
+	service.TransferFormatter(file.Path)
+	c.JSON(http.StatusOK, utils.NewSuccessByMsg("转化已发起！"))
 }

@@ -1981,7 +1981,7 @@ const deleteThis = async (id: string) => {
           .then((res) => {
             if (res.Code === 200) {
               ElMessage.success(res.Message);
-              refreshIndex();
+              // refreshIndex();
             } else {
               ElMessage.error(res.Message);
             }
