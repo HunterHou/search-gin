@@ -205,11 +205,24 @@ func GetTransferToMp4(c *gin.Context) {
 	if to == "" {
 		to = "mp4"
 	}
-	task := datamodels.NewTask(model.Path, model.Name, from, to)
-	task.SetStatus("待执行")
-	cons.TransferTask[task.CreateTime] = task
-	go service.TransferFormatter(task)
-	c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))
+	exists := false
+	for _, taskModel := range cons.TransferTask {
+		if taskModel.Path == model.Path {
+			exists = true
+			break
+		}
+	}
+	if exists {
+		c.JSON(http.StatusOK, utils.NewFailByMsg("任务不可重复"))
+		return
+	} else {
+		task := datamodels.NewTask(model.Path, model.Name, from, to)
+		task.SetStatus("待执行")
+		cons.TransferTask[task.CreateTime] = task
+		go service.TransferFormatter(task)
+		c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))
+	}
+
 }
 
 func GetTransferTask(c *gin.Context) {
