@@ -28,7 +28,7 @@ func NewSuccessByMsg(msg string) Result {
 }
 func NewFailByMsg(msg string) Result {
 	res := Result{}
-	res.Success()
+	res.Fail()
 	res.Message = msg
 	return res
 }
