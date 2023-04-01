@@ -980,7 +980,7 @@
   </div>
 
 
-  <ElDialog width="70vw"
+  <ElDialog :width="windowWidth>100?'80vw':'500px'"
             :title="`执行任务(${Object.keys(view.transferTask).length-countTransferIng}/${Object.keys(view.transferTask).length})`"
             draggable
             v-model="taskPop" destroy-on-close
