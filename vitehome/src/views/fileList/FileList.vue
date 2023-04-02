@@ -1456,7 +1456,7 @@ const view = reactive<any>({
   ResultCnt: 0,
   allPage: 1,
   transferTask: {},
-  taskType: '执行中'
+  taskType: '等待'
 });
 
 const queryParam = reactive<MovieQuery>(new MovieQuery());
