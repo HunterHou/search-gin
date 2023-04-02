@@ -1459,7 +1459,7 @@ watch(text, (newtext) => {
 const timeFunc = ref(null)
 const taskPop = ref(false);
 watch(taskPop, (newValue, oldValue) => {
-  console.log(taskPop,newValue, oldValue)
+  console.log(taskPop, newValue, oldValue)
   if (newValue) {
     clearInterval(timeFunc.value)
     timeFunc.value = setInterval(fetchTransferTask, 1000)
@@ -1531,7 +1531,7 @@ const fetchTransferTask = async () => {
 
 
 const countTransferIng = computed(() => {
-  return Object.keys(view.transferTask)?.filter(item => view.transferTask[item].Status === '执行中').length
+  return Object.keys(view.transferTask)?.filter(item => view.transferTask[item].Status === '执行中' || view.transferTask[item].Status === '等待').length
 })
 
 const fullPlayVideo = () => {
