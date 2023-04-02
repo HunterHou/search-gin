@@ -995,8 +995,8 @@
             {{
               item.Status
             }} {{
-              (((new Date(item.FinishTime).getTime() > 0 ? new Date(item.FinishTime) : new Date()) - new Date(item.CreateTime)) / 1000).toFixed(0)
-            }}s
+              item.Status === '等待' ? '' : (((new Date(item.FinishTime).getTime() > 0 ? new Date(item.FinishTime) : new Date()) - new Date(item.CreateTime)) / 1000).toFixed(0) + 's'
+            }}
           </span>
           <span
               style="text-align:left;line-height: 1rem;white-space: nowrap;overflow: hidden">
