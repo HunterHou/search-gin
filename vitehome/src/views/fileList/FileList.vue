@@ -1531,7 +1531,7 @@ const fetchTransferTask = async () => {
 
 
 const countTransferIng = computed(() => {
-  return Object.keys(view.transferTask)?.filter(item => view.transferTask[item].Status !== '成功').length
+  return Object.keys(view.transferTask)?.filter(item => view.transferTask[item].Status === '执行中').length
 })
 
 const fullPlayVideo = () => {
