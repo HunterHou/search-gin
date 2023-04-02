@@ -221,9 +221,8 @@ func GetTransferToMp4(c *gin.Context) {
 		return
 	} else {
 		task := datamodels.NewTask(model.Path, model.Name, from, to)
-		task.SetStatus("待执行")
+		task.SetStatus("等待")
 		cons.TransferTask[task.CreateTime] = task
-		go service.TransferFormatter(task)
 		c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))
 	}
 

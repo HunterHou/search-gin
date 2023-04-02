@@ -29,8 +29,11 @@ var this = CreateFileService()
 
 // 心跳与定时
 func HeartBeat() {
-	time.After(1 * time.Second)
+	//time.After(1 * time.Second)
+	// 启动扫描系统
 	this.ScanAll()
+	// 启动转换执行任务
+	TaskExecuting()
 	// time.AfterFunc(180*time.Second, HeartBeat)
 }
 
@@ -381,6 +384,25 @@ func WalkInnter(baseDir string, types []string, totalSize int64, queryChild bool
 	return result, currentSize
 }
 
+func TaskExecuting() {
+	//time.After(1 * time.Second)
+	var todos []datamodels.TransferTaskModel
+	var executing []datamodels.TransferTaskModel
+	for _, model := range cons.TransferTask {
+		if strings.EqualFold(model.Status, "等待") {
+			todos = append(todos, model)
+		}
+		if strings.EqualFold(model.Status, "执行中") {
+			executing = append(executing, model)
+		}
+
+	}
+	if len(executing) == 0 && len(todos) > 0 {
+		go TransferFormatter(todos[0])
+	}
+	time.AfterFunc(2*time.Second, TaskExecuting)
+}
+
 func TransferFormatter(model datamodels.TransferTaskModel) utils.Result {
 	from := model.Path
 	dest := strings.ReplaceAll(model.Path, "."+model.From, "."+model.To)
@@ -396,6 +418,7 @@ func TransferFormatter(model datamodels.TransferTaskModel) utils.Result {
 func transferFormatterBackground(from string, to string, thisNow time.Time) utils.Result {
 	task := cons.TransferTask[thisNow]
 	task.SetStatus("执行中")
+	task.CreateTime = time.Now()
 	cons.TransferTask[thisNow] = task
 	args := []string{"-i", from, "-vcodec", "copy", to}
 	cmd := exec.Command("./ffmpeg.exe", args...)
