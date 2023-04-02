@@ -6,7 +6,7 @@
 1. golang 后台逻辑
 2. gin 前后端交互以及服务启动
 3. sqlite 用于搜索一种方式 3W数据以上推荐
-4. vue+element 前端开发 
+4. vue+element 前端开发 （运行使用打包后的文件）
 5. ffmpeg 视频处理 转码   ffplay和ffprobe以待后续
 6. Election桌面开发 半成品可忽略，好久没开发了
 ### 食用方式
