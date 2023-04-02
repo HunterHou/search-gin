@@ -986,22 +986,49 @@
             v-model="taskPop" destroy-on-close
             @before-close="(done)=>{taskPop=false;done()}">
     <template #default>
-      <div style="height: 60vh;overflow: auto;padding:12px;border-radius: 3%;background-color: blanchedalmond">
+
+      <ElRadioGroup v-model="view.taskType" size="large">
+        <ElRadioButton label="等待"/>
+        <ElRadioButton label="成功"/>
+      </ElRadioGroup>
+      <div style="height: 60vh;overflow: auto;padding:12px;border-radius: 3%;">
         <ElRow v-for="(item, index) in view.transferTask"
                :key="index"
-               style="border-bottom: 1px dodgerblue dotted;display: flex;flex-direction: row;flex-wrap: nowrap">
-          <span
-              :style="{width:'5rem',textAlign:'left',color:item.Status=='成功'?'green':(item.Status==='等待'?'grey':'red')}">
+        >
+          <div style=";display: flex;flex-direction: row;flex-wrap: nowrap;border-bottom: 1px dodgerblue dotted"
+               v-if="item.Status ==='执行中'">
+             <span
+                 :style="{width:'5rem',textAlign:'left',color:item.Status=='成功'?'green':(item.Status==='等待'?'grey':'red')}">
             {{
-              item.Status
-            }} {{
-              item.Status === '等待' ? '' : (((new Date(item.FinishTime).getTime() > 0 ? new Date(item.FinishTime) : new Date()) - new Date(item.CreateTime)) / 1000).toFixed(0) + 's'
-            }}
+                 item.Status
+               }} {{
+                 item.Status === '等待' ? '' : (((new Date(item.FinishTime).getTime() > 0 ? new Date(item.FinishTime) : new Date()) - new Date(item.CreateTime)) / 1000).toFixed(0) + 's'
+               }}
           </span>
-          <span
-              style="text-align:left;line-height: 1rem;white-space: nowrap;overflow: hidden">
+            <span
+                style="text-align:left;line-height: 1rem;white-space: nowrap;overflow: hidden">
             {{ item.Name }}
           </span>
+          </div>
+        </ElRow>
+        <ElRow v-for="(item, index) in view.transferTask"
+               :key="index"
+        >
+          <div style=";display: flex;flex-direction: row;flex-wrap: nowrap;border-bottom: 1px dodgerblue dotted"
+               v-if="item.Status ===view.taskType">
+             <span
+                 :style="{width:'5rem',textAlign:'left',color:item.Status=='成功'?'green':(item.Status==='等待'?'grey':'red')}">
+            {{
+                 item.Status
+               }} {{
+                 item.Status === '等待' ? '' : (((new Date(item.FinishTime).getTime() > 0 ? new Date(item.FinishTime) : new Date()) - new Date(item.CreateTime)) / 1000).toFixed(0) + 's'
+               }}
+          </span>
+            <span
+                style="text-align:left;line-height: 1rem;white-space: nowrap;overflow: hidden">
+            {{ item.Name }}
+          </span>
+          </div>
         </ElRow>
       </div>
     </template>
@@ -1427,7 +1454,8 @@ const view = reactive<any>({
   ModelList: [],
   ResultCnt: 0,
   allPage: 1,
-  transferTask: {}
+  transferTask: {},
+  taskType: '执行中'
 });
 
 const queryParam = reactive<MovieQuery>(new MovieQuery());
