@@ -990,6 +990,7 @@
       <ElRadioGroup v-model="view.taskType" size="large">
         <ElRadioButton label="等待"/>
         <ElRadioButton label="成功"/>
+        <ElRadioButton label="执行失败"/>
       </ElRadioGroup>
       <div style="height: 60vh;overflow: auto;padding:12px;border-radius: 3%;">
         <ElRow v-for="(item, index) in view.transferTask"
