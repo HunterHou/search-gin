@@ -18,5 +18,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <v-md-editor mode="preview" v-model="view.form.SystemHtml" height="700px"></v-md-editor>
+  <div style="text-align: left">
+    <v-md-editor mode="preview" v-model="view.form.SystemHtml" height="700px"></v-md-editor>
+  </div>
 </template>
