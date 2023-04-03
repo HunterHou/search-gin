@@ -1,0 +1,1 @@
+import{u as r}from"./index.5589866e.js";const e=r(),s=t=>e.getControllerHost+":8082/api/png/"+t,n=t=>e.getControllerHost+":8082/api/jpg/"+t,g=t=>e.getControllerHost+":8083/api/file/"+t,a=t=>e.getControllerHost+":8082"+t;export{s as a,g as b,a as c,n as g};
