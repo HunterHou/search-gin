@@ -2,8 +2,6 @@ module searchGin
 
 go 1.20
 
-// go 1.18
-
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/gin-gonic/gin v1.9.0
