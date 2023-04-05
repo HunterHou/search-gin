@@ -4,13 +4,12 @@
   "description": "search window",
   "main": "index.js",
   "scripts": {
-    "dev": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "electron ."
   },
   "author": "hunter",
   "license": "ISC",
-  "devDependencies": {},
-  "dependencies": {
-    "npm install --save-dev electron": "0.0.1-security"
-  }
+  "devDependencies": {
+    "electron": "22.0.2"
+  },
+  "dependencies": {}
 }

@@ -1,1 +1,0 @@
-import{u as o}from"./userAxios.0453d902.js";import{u as r}from"./index.5589866e.js";const s=o(),e=r(),u=async()=>{const t=await s.get({url:"/api/buttoms"});return e.setControllerHost(t.ControllerHost),t},c=async t=>await s.post({url:"/api/setting",data:t});export{u as G,c as P};
