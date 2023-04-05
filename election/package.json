@@ -2,7 +2,7 @@
   "name": "search",
   "version": "1.0.0",
   "description": "SearchWindow",
-  "main": "index.js",
+  "main": "dist",
   "scripts": {
     "dev": "electron .",
     "start": "electron-forge start",
@@ -12,7 +12,10 @@
   "author": "hunter",
   "license": "ISC",
   "devDependencies": {
-    "electron": "24.0.0"
+    "@electron-forge/cli": "^6.1.1",
+    "electron-prebuilt-compile": "24.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0"
+  }
 }
