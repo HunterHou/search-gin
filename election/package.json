@@ -12,9 +12,10 @@
   "author": "hunter",
   "license": "ISC",
   "devDependencies": {
-    "electron": "22.0.0",
     "@electron-forge/cli": "^6.1.0",
-    "electron-prebuilt-compile": "22.0.0"
+    "electron": "22.0.0",
+    "electron-prebuilt-compile": "22.0.0",
+    "electron-squirrel-startup": "^1.0.0"
   },
   "dependencies": {}
 }
