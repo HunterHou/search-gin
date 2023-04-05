@@ -369,15 +369,10 @@
   resolved "https://mirrors.huaweicloud.com/repository/npm/@types/minimatch/-/minimatch-5.1.2.tgz#07508b45797cb81ec3f273011b054cd0755eddca"
   integrity sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==
 
-"@types/node@*":
+"@types/node@*", "@types/node@^18.11.18":
   version "18.15.11"
   resolved "https://mirrors.huaweicloud.com/repository/npm/@types/node/-/node-18.15.11.tgz#b3b790f09cb1696cffcec605de025b088fa4225f"
   integrity sha512-E5Kwq2n4SbMzQOn6wnmBjuK9ouqlURrcZDVfbo9ftDDTFt3nk7ZKK4GMOzoYgnpQJKcxwQw+lGaBvvlMo0qN/Q==
-
-"@types/node@^16.11.26":
-  version "16.18.23"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/@types/node/-/node-16.18.23.tgz#b6e934fe427eb7081d0015aad070acb3373c3c90"
-  integrity sha512-XAMpaw1s1+6zM+jn2tmw8MyaRDIJfXxqmIQIS0HfoGYPuf7dUWeiUKopwq13KFX9lEp1+THGtlaaYx39Nxr58g==
 
 "@types/responselike@^1.0.0":
   version "1.0.0"
@@ -933,13 +928,13 @@ electron-winstaller@^5.0.0:
     lodash.template "^4.2.2"
     temp "^0.9.0"
 
-electron@22.0.0:
-  version "22.0.0"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/electron/-/electron-22.0.0.tgz#ef84ab9cf23aa3f8c2f42a1e8e000ad7fd941058"
-  integrity sha512-cgRc4wjyM+81A0E8UGv1HNJjL1HBI5cWNh/DUIjzYvoUuiEM0SS0hAH/zaFQ18xOz2ced6Yih8SybpOiOYJhdg==
+electron@24.0.0:
+  version "24.0.0-alpha.7"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/electron/-/electron-24.0.0-alpha.7.tgz#4d1ccc946c0a2cec8e8cefce30aacf6f762e4853"
+  integrity sha512-tB/ct2Fpkfto4empA1cD5HejdIptJ6xxnFw+VcqwcrayqdLLykcjnv6Toh+CivGruUqZoOh8g+95Nm+eqce72w==
   dependencies:
     "@electron/get" "^2.0.0"
-    "@types/node" "^16.11.26"
+    "@types/node" "^18.11.18"
     extract-zip "^2.0.1"
 
 emoji-regex@^8.0.0:
