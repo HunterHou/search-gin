@@ -1,4 +1,4 @@
-const { startBg, killBg } = require("./src/js/exec");
+const sys = require("child_process");
 const { app, BrowserWindow, process, Menu, MenuItem } = require("electron");
 function createWindow() {
   const win = new BrowserWindow({
@@ -59,3 +59,32 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
+
+function startBg() {
+  sys.exec("cd src && cd app && start appVue.exe && cd .. && cd ..");
+}
+
+function killBg() {
+  const ports = ["10081"];
+  var showProcess = process.platform == "win32" ? "netstat -ano" : "ps aux";
+  sys.exec(showProcess, function (err, stdout, stderr) {
+    if (err) {
+      return console.log(err);
+    }
+    stdout.split("\n").filter(function (line) {
+      var p = line.trim().split(/\s+/);
+      var address = p[1];
+
+      if (address != undefined) {
+        if (ports.indexOf(address.split(":")[1]) >= 0) {
+          sys.exec("taskkill /F /pid " + p[4], function (err, stdout, stderr) {
+            if (err) {
+              return console.log("释放指定端口失败！！");
+            }
+            console.log("占用指定端口的程序被成功杀掉！");
+          });
+        }
+      }
+    });
+  });
+}
