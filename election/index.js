@@ -1,5 +1,5 @@
 const sys = require("child_process");
-const process = require("node:process");
+const process = require("process");
 const {
   app,
   BrowserWindow,
@@ -51,13 +51,13 @@ menu.append(
 );
 
 app.whenReady().then(() => {
-  mainWindoww = createWindow();
+  const mainWindow = createWindow();
   Menu.setApplicationMenu(menu);
-  mainWindoww.loadFile("index.html");
+  mainWindow.loadFile("index.html");
   setTimeout(() => {
-    mainWindoww.loadURL(bgUrl);
+    mainWindow.loadURL(bgUrl);
   }, 3000);
-  startBg(mainWindoww);
+  startBg(mainWindow);
   app.on("window-all-closed", function () {
     if (process.platform !== "darwin") {
       app.quit();
@@ -95,7 +95,7 @@ const showThis = () => {
   app.relaunch();
 };
 
-function startBg(mainWindoww) {
+function startBg(mainWindow) {
   sys.exec(
     "cd src && cd viteApp && start appVite.exe && cd .. && cd ..",
     (err, stdout, stderr) => {
@@ -104,8 +104,7 @@ function startBg(mainWindoww) {
         console.log("startBg", err);
         return;
       }
-      console.log("loadURL");
-      mainWindoww.loadURL(bgUrl);
+      mainWindow.loadURL(bgUrl);
     }
   );
 }
