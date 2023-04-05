@@ -5,7 +5,7 @@ vapp/
 .vscode/settings.json
 /app/
 
-election/src/
+election/node_modules/
 searchGin
 gin.log
 searchGin
