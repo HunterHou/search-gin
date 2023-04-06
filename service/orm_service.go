@@ -29,7 +29,7 @@ func init() {
 	// dbEngine.ShowSQL(true)
 	dbEngine.SetMapper(names.SnakeMapper{})
 	total, _ := dbEngine.Count(movie)
-	log.Fatalf("movie total:%d", total)
+	log.Fatalln("movie total:", total)
 }
 
 type OrmService struct {
@@ -129,7 +129,7 @@ func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 			lastIndex = int(total)
 		}
 		pageNo := i + 1
-		log.Fatalln("开始启动，页码：%d", pageNo)
+		log.Fatalf("开始启动，页码：%d", pageNo)
 		curMovies := movies[startIndex:lastIndex]
 		go o.InsertBatch(curMovies, &wg, pageNo)
 		startIndex = lastIndex
@@ -159,10 +159,10 @@ func (o *OrmService) InsertS(movies []datamodels.Movie, pageNo int) utils.Result
 			if ok {
 				fmt.Println("----------------------------")
 				fmt.Println("----------------------------")
-				log.Fatalln("key repeat:%s \n", current.Path)
-				log.Fatalln("key repeat:%s \n", target.Path)
-				log.Fatalln("key repeat:%s \n", current.Id)
-				log.Fatalln("key repeat:%s \n", target.Id)
+				log.Fatalf("key repeat:%s \n", current.Path)
+				log.Fatalf("key repeat:%s \n", target.Path)
+				log.Fatalf("key repeat:%s \n", current.Id)
+				log.Fatalf("key repeat:%s \n", target.Id)
 				fmt.Println("----------------------------")
 				fmt.Println("----------------------------")
 				repeat = target
@@ -172,7 +172,7 @@ func (o *OrmService) InsertS(movies []datamodels.Movie, pageNo int) utils.Result
 		}
 		return utils.NewFailByMsg(repeat.Path + err.Error())
 	}
-	log.Fatalln("pageNo:%d , insert total:%d \n", pageNo, len(movies))
+	log.Fatalf("pageNo:%d , insert total:%d \n", pageNo, len(movies))
 	res := utils.NewSuccess()
 	res.EffectRows = effectRows
 	return res

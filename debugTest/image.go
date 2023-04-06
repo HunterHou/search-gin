@@ -13,7 +13,7 @@ import (
 func TestImage(test *testing.T) {
 	src := "d:\\5.jpg"
 	des := "d:\\111.png"
-	log.Fatalln("src: %s des:%s", src, des)
+	log.Fatalf("src: %s des:%s", src, des)
 	fin, _ := os.Open(src)
 	fin2, _ := os.Open(src)
 	defer fin.Close()
