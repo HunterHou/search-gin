@@ -6,6 +6,7 @@ import (
 	"os"
 	"searchGin/cons"
 	"searchGin/controller"
+	"searchGin/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +23,9 @@ func BuildRouter() *gin.Engine {
 	for k, v := range cons.StaticFs {
 		router.StaticFS(k, http.Dir(v))
 	}
-	router.LoadHTMLFiles(cons.IndexHtml)
+	if utils.ExistsFiles(cons.IndexHtml) {
+		router.LoadHTMLFiles(cons.IndexHtml)
+	}
 	// router.StaticFS("/_nuxt", http.Dir("./vuehome/dist/_nuxt"))
 	// router.LoadHTMLFiles("./vuehome/dist/index.html")
 

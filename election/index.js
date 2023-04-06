@@ -97,7 +97,7 @@ const showThis = () => {
 
 function startBg(mainWindow) {
   sys.exec(
-    "cd src && cd viteApp && start appVite.exe && cd .. && cd ..",
+    "cd viteApp && start appVite.exe && cd .. ",
     (err, stdout, stderr) => {
       console.log("startBg", err, stdout, stderr);
       if (err) {

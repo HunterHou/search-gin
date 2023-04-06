@@ -161,10 +161,10 @@ var Images = []string{PNG, JPG, GIF}
 
 var TempImage = make(map[string]datamodels.Movie)
 
-var IndexHtml = "./vitehome/dist/index.html"
+var IndexHtml = "./dist/index.html"
 var StaticFs = map[string]string{
-	"/css": "./vitehome/dist/css",
-	"/js":  "./vitehome/dist/js",
+	"/css": "./dist/css",
+	"/js":  "./dist/js",
 }
 
 var TransferTask = map[time.Time]datamodels.TransferTaskModel{}
