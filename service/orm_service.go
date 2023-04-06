@@ -29,7 +29,7 @@ func init() {
 	// dbEngine.ShowSQL(true)
 	dbEngine.SetMapper(names.SnakeMapper{})
 	total, _ := dbEngine.Count(movie)
-	log.Fatalln("movie total:%d", total)
+	log.Fatalf("movie total:%d", total)
 }
 
 type OrmService struct {
