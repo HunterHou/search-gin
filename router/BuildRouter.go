@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -20,20 +21,15 @@ func BuildRouter() *gin.Engine {
 	fLog, _ := os.Create("gin.log")
 	gin.DefaultWriter = io.MultiWriter(fLog, os.Stdout)
 
-	for k, v := range cons.StaticFs {
-		router.StaticFS(k, http.Dir(v))
-	}
 	if utils.ExistsFiles(cons.IndexHtml) {
+		fmt.Println("static exists:" + cons.IndexHtml)
 		router.LoadHTMLFiles(cons.IndexHtml)
+		for k, v := range cons.StaticFs {
+			router.StaticFS(k, http.Dir(v))
+		}
+	} else {
+		fmt.Println("static not exists:" + cons.IndexHtml)
 	}
-	// router.StaticFS("/_nuxt", http.Dir("./vuehome/dist/_nuxt"))
-	// router.LoadHTMLFiles("./vuehome/dist/index.html")
-
-	// router.StaticFS("/static", http.Dir("static"))
-
-	// router.StaticFS("/css", http.Dir("./vitehome/dist/css"))
-	// router.StaticFS("/js", http.Dir("./vitehome/dist/js"))
-	// router.LoadHTMLFiles("./vitehome/dist/index.html")
 
 	router.NoRoute(controller.Index)
 	router.GET("/", controller.Index)
