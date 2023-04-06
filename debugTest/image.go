@@ -1,10 +1,10 @@
 package debugTest
 
 import (
-	"fmt"
 	"image"
 	_ "image/jpeg"
 	"image/png"
+	"log"
 	"os"
 	"testing"
 )
@@ -13,7 +13,7 @@ import (
 func TestImage(test *testing.T) {
 	src := "d:\\5.jpg"
 	des := "d:\\111.png"
-	fmt.Printf("src: %s des:%s", src, des)
+	log.Fatalln("src: %s des:%s", src, des)
 	fin, _ := os.Open(src)
 	fin2, _ := os.Open(src)
 	defer fin.Close()
@@ -22,9 +22,9 @@ func TestImage(test *testing.T) {
 	defer fout.Close()
 	config, _, _ := image.DecodeConfig(fin2)
 	srcImage, str, err := image.Decode(fin)
-	fmt.Println(str)
+	log.Fatalln(str)
 	if err != nil {
-		fmt.Println("err:", err)
+		log.Fatalln("err:", err)
 	}
 	height := config.Height
 	width := config.Width

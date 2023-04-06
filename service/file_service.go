@@ -2,8 +2,8 @@ package service
 
 import (
 	"fmt"
-	"github.com/goccy/go-json"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -18,6 +18,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/goccy/go-json"
 
 	"github.com/gin-gonic/gin"
 )
@@ -65,7 +67,7 @@ func DeleteOne(dirName string, fileName string) {
 			path := dirName + utils.PathSeparator + f.Name()
 			err := os.Remove(path)
 			if err != nil {
-				fmt.Println(err)
+				log.Fatalln(err)
 			}
 		}
 	}
@@ -114,7 +116,7 @@ func UpDirClear(dirname string) {
 func GetIpAddr() string {
 	conn, err := net.Dial("udp", "8.8.8.8:53")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 		return "127.0.0.1"
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
@@ -409,7 +411,7 @@ func TransferFormatter(model datamodels.TransferTaskModel) utils.Result {
 	thisNow := model.CreateTime
 	res := transferFormatterBackground(from, dest, thisNow)
 	if res.IsSuccess() {
-		fmt.Println(json.Marshal(res))
+		log.Fatalln(json.Marshal(res))
 		os.Remove(model.Path)
 	}
 	return res
@@ -432,8 +434,8 @@ func transferFormatterBackground(from string, to string, thisNow time.Time) util
 			task.SetLog(string(out))
 			task.FinishTime = time.Now()
 			cons.TransferTask[thisNow] = task
-			fmt.Println(cmdErr)
-			fmt.Println(string(out))
+			log.Fatalln(cmdErr)
+			log.Fatalln(string(out))
 			res := utils.NewFailByMsg("转换失败")
 			res.Data = cmdErr
 			return res

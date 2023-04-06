@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"searchGin/cons"
 	"searchGin/datamodels"
@@ -21,14 +22,14 @@ func init() {
 	os.Remove("searchGin")
 	dbEngine, err = xorm.NewEngine("sqlite3", "searchGin")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
 	movie := new(datamodels.Movie)
 	dbEngine.Sync2(movie)
 	// dbEngine.ShowSQL(true)
 	dbEngine.SetMapper(names.SnakeMapper{})
 	total, _ := dbEngine.Count(movie)
-	fmt.Printf("movie total:%d", total)
+	log.Fatalln("movie total:%d", total)
 }
 
 type OrmService struct {
@@ -112,7 +113,7 @@ func (o *OrmService) queryCount(param datamodels.SearchParam) (int64, int64) {
 
 }
 
-//全部删除 并添加
+// 全部删除 并添加
 func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 	total := int64(len(movies))
 	pageSize := int64(1000)
@@ -128,7 +129,7 @@ func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 			lastIndex = int(total)
 		}
 		pageNo := i + 1
-		fmt.Printf("开始启动，页码：%d", pageNo)
+		log.Fatalln("开始启动，页码：%d", pageNo)
 		curMovies := movies[startIndex:lastIndex]
 		go o.InsertBatch(curMovies, &wg, pageNo)
 		startIndex = lastIndex
@@ -158,10 +159,10 @@ func (o *OrmService) InsertS(movies []datamodels.Movie, pageNo int) utils.Result
 			if ok {
 				fmt.Println("----------------------------")
 				fmt.Println("----------------------------")
-				fmt.Printf("key repeat:%s \n", current.Path)
-				fmt.Printf("key repeat:%s \n", target.Path)
-				fmt.Printf("key repeat:%s \n", current.Id)
-				fmt.Printf("key repeat:%s \n", target.Id)
+				log.Fatalln("key repeat:%s \n", current.Path)
+				log.Fatalln("key repeat:%s \n", target.Path)
+				log.Fatalln("key repeat:%s \n", current.Id)
+				log.Fatalln("key repeat:%s \n", target.Id)
 				fmt.Println("----------------------------")
 				fmt.Println("----------------------------")
 				repeat = target
@@ -171,7 +172,7 @@ func (o *OrmService) InsertS(movies []datamodels.Movie, pageNo int) utils.Result
 		}
 		return utils.NewFailByMsg(repeat.Path + err.Error())
 	}
-	fmt.Printf("pageNo:%d , insert total:%d \n", pageNo, len(movies))
+	log.Fatalln("pageNo:%d , insert total:%d \n", pageNo, len(movies))
 	res := utils.NewSuccess()
 	res.EffectRows = effectRows
 	return res

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"os/exec"
 	"searchGin/cons"
@@ -37,7 +37,7 @@ func GetShutdown(c *gin.Context) {
 	res := utils.NewSuccess()
 	err := exec.Command("cmd", "/C", "shutdown -s -t 0").Run()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
 	c.JSON(http.StatusOK, res)
 }

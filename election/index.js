@@ -96,7 +96,7 @@ const showThis = () => {
 };
 
 function startBg(mainWindow) {
-  const exePath = "start " + __dirname + "\\" + "viteApp\\appVite.exe";
+  const exePath = "start " + __dirname + "\\appVite.exe";
   console.log(exePath);
   sys.exec(exePath, (err, stdout, stderr) => {
     console.log("startBg", err, stdout, stderr);

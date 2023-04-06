@@ -1,8 +1,7 @@
 package debugTest
 
 import (
-	"fmt"
-	main2 "searchGin/cons"
+	"log"
 	"searchGin/service"
 	"searchGin/utils"
 	"testing"
@@ -16,13 +15,13 @@ func TestMain(t *testing.T) {
 	var imageTypes = []string{main2.JPG, main2.PNG, main2.GIF}
 	var queryTypes []string
 	queryTypes = utils.ExtandsItems(queryTypes, imageTypes)
-	items := service.Walk(baseDir, queryTypes,true)
+	items := service.Walk(baseDir, queryTypes, true)
 	i := 0
 	for {
 		if len(items) == i {
 			break
 		}
-		fmt.Println(items[i].GetFileInfo())
+		log.Fatalln(items[i].GetFileInfo())
 		i++
 	}
 }
