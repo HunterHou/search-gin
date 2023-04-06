@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"path/filepath"
 	"searchGin/cons"
@@ -10,6 +10,7 @@ import (
 	"searchGin/utils"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -76,7 +77,7 @@ func main() {
 		return fileRequest.ListenAndServe()
 	})
 	if err := g.Wait(); err != nil {
-		log.Fatal(err)
+		fmt.Fprint(gin.DefaultWriter, "", err)
 	}
 	url := "http://127.0.0.1" + cons.PortNo + "/"
 	go utils.ExecCmdStart(url)

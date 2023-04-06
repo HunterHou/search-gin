@@ -1,8 +1,8 @@
 package router
 
 import (
+	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"searchGin/cons"
@@ -16,19 +16,18 @@ func BuildRouter() *gin.Engine {
 	router := gin.Default()
 
 	router.Use(gin.Recovery())
-	router.Use(gin.Logger())
 
-	fLog, _ := os.Create("gin.log")
-	gin.DefaultWriter = io.MultiWriter(fLog, os.Stdout)
+	fLog, _ := os.OpenFile("gin.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0644)
+	router.Use(gin.LoggerWithWriter(io.MultiWriter(fLog, os.Stdout)))
 
 	if utils.ExistsFiles(cons.IndexHtml) {
-		log.Fatalln("static exists:" + cons.IndexHtml)
+		fmt.Fprintf(gin.DefaultWriter, "static exists:%s", cons.IndexHtml)
 		router.LoadHTMLFiles(cons.IndexHtml)
 		for k, v := range cons.StaticFs {
 			router.StaticFS(k, http.Dir(v))
 		}
 	} else {
-		log.Fatalln("static not exists:" + cons.IndexHtml)
+		fmt.Fprintf(gin.DefaultWriter, "static not exists:%s", cons.IndexHtml)
 	}
 
 	router.NoRoute(controller.Index)

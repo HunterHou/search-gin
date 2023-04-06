@@ -1,11 +1,13 @@
 package debugTest
 
 import (
-	"log"
+	"fmt"
 	"searchGin/cons"
 	"searchGin/service"
 	"searchGin/utils"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
 // TestScan ..
@@ -22,7 +24,7 @@ func TestMain(t *testing.T) {
 		if len(items) == i {
 			break
 		}
-		log.Fatalln(items[i].GetFileInfo())
+		fmt.Fprint(gin.DefaultWriter, "open folder", items[i].GetFileInfo())
 		i++
 	}
 }

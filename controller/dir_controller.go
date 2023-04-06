@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"searchGin/service"
 	"searchGin/utils"
@@ -15,7 +15,7 @@ func GetOpenFolder(c *gin.Context) {
 	id := c.Param("id")
 	service := service.CreateFileService()
 	file := service.FindOne(id)
-	log.Fatalln(file.DirPath)
+	fmt.Fprint(gin.DefaultWriter, "open folder", file.DirPath)
 	utils.ExecCmdExplorer(file.DirPath)
 	res := utils.NewSuccessByMsg("打开成功")
 	c.JSON(http.StatusOK, res)

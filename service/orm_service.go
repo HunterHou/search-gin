@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"searchGin/cons"
 	"searchGin/datamodels"
@@ -10,6 +9,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 	"xorm.io/xorm"
 	"xorm.io/xorm/names"
@@ -22,14 +22,14 @@ func init() {
 	os.Remove("searchGin")
 	dbEngine, err = xorm.NewEngine("sqlite3", "searchGin")
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Fprint(gin.DefaultWriter, "xorm.NewEngine:", err)
 	}
 	movie := new(datamodels.Movie)
 	dbEngine.Sync2(movie)
 	// dbEngine.ShowSQL(true)
 	dbEngine.SetMapper(names.SnakeMapper{})
 	total, _ := dbEngine.Count(movie)
-	log.Fatalln("movie total:", total)
+	fmt.Fprintf(gin.DefaultWriter, "movie total:%v", total)
 }
 
 type OrmService struct {
@@ -129,7 +129,7 @@ func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 			lastIndex = int(total)
 		}
 		pageNo := i + 1
-		log.Fatalf("开始启动，页码：%d", pageNo)
+		fmt.Fprintf(gin.DefaultWriter, "开始启动，页码：%d:", pageNo)
 		curMovies := movies[startIndex:lastIndex]
 		go o.InsertBatch(curMovies, &wg, pageNo)
 		startIndex = lastIndex
@@ -159,10 +159,10 @@ func (o *OrmService) InsertS(movies []datamodels.Movie, pageNo int) utils.Result
 			if ok {
 				fmt.Println("----------------------------")
 				fmt.Println("----------------------------")
-				log.Fatalf("key repeat:%s \n", current.Path)
-				log.Fatalf("key repeat:%s \n", target.Path)
-				log.Fatalf("key repeat:%s \n", current.Id)
-				log.Fatalf("key repeat:%s \n", target.Id)
+				fmt.Fprintf(gin.DefaultWriter, "key repeat:%s \n", current.Path)
+				fmt.Fprintf(gin.DefaultWriter, "key repeat:%s \n", target.Path)
+				fmt.Fprintf(gin.DefaultWriter, "key repeat:%s \n", current.Id)
+				fmt.Fprintf(gin.DefaultWriter, "key repeat:%s \n", target.Id)
 				fmt.Println("----------------------------")
 				fmt.Println("----------------------------")
 				repeat = target
@@ -172,7 +172,8 @@ func (o *OrmService) InsertS(movies []datamodels.Movie, pageNo int) utils.Result
 		}
 		return utils.NewFailByMsg(repeat.Path + err.Error())
 	}
-	log.Fatalf("pageNo:%d , insert total:%d \n", pageNo, len(movies))
+	fmt.Fprintf(gin.DefaultWriter, "pageNo:%d , insert total:%d \n", pageNo, len(movies))
+
 	res := utils.NewSuccess()
 	res.EffectRows = effectRows
 	return res
