@@ -38,7 +38,7 @@ func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page
 	result.SetResultCnt(int(searchCount), searchParam.Page)
 	result.CurSize = utils.GetSizeStr(pageSize)
 	result.CurCnt = len(pageList)
-	fmt.Printf("query over :searchCnt[%d] searchSize [%d]", searchCount, searchSize)
+	fmt.Fprintf(gin.DefaultWriter, "query over :searchCnt[%d] searchSize [%d]", searchCount, searchSize)
 	result.Data = pageList
 	return result
 
@@ -724,18 +724,18 @@ func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
 		}
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
-			fmt.Printf("err: %v\n", err)
+			fmt.Fprintf(gin.DefaultWriter, "err: %v\n", err)
 			res.FailByMsg("执行失败")
 			res.Data = err
 			return res
 		}
 	}
 	newPath = newDir + utils.PathSeparator + movie.Name
-	fmt.Printf("oldPath: %s", oldPath)
-	fmt.Printf("newPath: %s", newPath)
+	fmt.Fprintf(gin.DefaultWriter, "oldPath: %s", oldPath)
+	fmt.Fprintf(gin.DefaultWriter, "newPath: %s", newPath)
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
-		fmt.Printf("err: %v\n", err)
+		fmt.Fprintf(gin.DefaultWriter, "err: %v\n", err)
 		res.FailByMsg("执行失败")
 		res.Data = err
 		return res
@@ -851,7 +851,7 @@ func (fs FileService) ScanTarget(dirPath string) {
 	db.DeleteByDirPath(dirPath)
 	fmt.Println("删除文件夹:" + dirPath)
 	db.InsertS(targetFiles, 1)
-	fmt.Printf("添加文件:%d", len(targetFiles))
+	fmt.Fprintf(gin.DefaultWriter, "添加文件:%d", len(targetFiles))
 
 	fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
 

@@ -18,10 +18,10 @@ fi
 printf '执行级别：levelKey[{%s}]--levelValue[{%s}] \n' $levelKey $levelValue
 echo 'cd ./viteApp'
 cd ./viteApp
-echo 'rm -rf vitehome'
-rm -rf vitehome
-echo 'mkdir -p vitehome/dist'
-mkdir -p vitehome/dist
+echo 'rm -rf dist'
+rm -rf dist
+echo 'mkdir -p dist'
+mkdir -p dist
 echo 'cd ..'
 cd ..
 echo 'cd vitehome'
@@ -32,8 +32,8 @@ if [ $levelKey -ge 1 ]; then
     echo 'yarn build'
     yarn build
     echo '打包完成，开始移动到app目录'
-    echo 'cp -R dist ../viteApp/vitehome/dist'
-    cp -R dist ../viteApp/vitehome/
+    echo 'cp -R dist ../viteApp/dist'
+    cp -R dist ../viteApp/
 fi
 cd ..
 if [ $levelKey -ge 2 ]; then

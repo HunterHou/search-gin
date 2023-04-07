@@ -49,7 +49,7 @@ menu.append(
     },
   })
 );
-
+console.log(__dirname);
 app.whenReady().then(() => {
   const mainWindow = createWindow();
   Menu.setApplicationMenu(menu);
@@ -96,17 +96,16 @@ const showThis = () => {
 };
 
 function startBg(mainWindow) {
-  sys.exec(
-    "cd src && cd viteApp && start appVite.exe && cd .. && cd ..",
-    (err, stdout, stderr) => {
-      console.log("startBg", err, stdout, stderr);
-      if (err) {
-        console.log("startBg", err);
-        return;
-      }
-      mainWindow.loadURL(bgUrl);
+  const exePath = "start " + __dirname + "\\appVite.exe";
+  console.log(exePath);
+  sys.exec(exePath, (err, stdout, stderr) => {
+    console.log("startBg", err, stdout, stderr);
+    if (err) {
+      console.log("startBg", err);
+      return;
     }
-  );
+    mainWindow.loadURL(bgUrl);
+  });
 }
 
 function killBg() {

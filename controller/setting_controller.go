@@ -37,7 +37,7 @@ func GetShutdown(c *gin.Context) {
 	res := utils.NewSuccess()
 	err := exec.Command("cmd", "/C", "shutdown -s -t 0").Run()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprint(gin.DefaultWriter, "shutdown", err)
 	}
 	c.JSON(http.StatusOK, res)
 }
