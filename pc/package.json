@@ -1,6 +1,8 @@
 {
   "name": "desk",
   "private": true,
+  "author": "HunterHou",
+  "description": "文件搜索 你值得用用",
   "version": "0.0.0",
   "main": "src/main/main.ts",
   "scripts": {

@@ -7,7 +7,7 @@ class MovieModel {
   Png: string ="";
   Actress: string ="";
   Code: string ="";
-  MTime: Date =null;
+  MTime: Date =new Date();
   SizeStr: string ="";
   Name: string ="";
   originName: string ="";
