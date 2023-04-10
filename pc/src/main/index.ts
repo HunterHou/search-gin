@@ -4,7 +4,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import appVite from '../../resources/appVite.exe?asset'
-const bgUrl = 'http://127.0.0.1:10081/home'
+const bgUrl = 'http://localhost:10081/home'
 const contextMenu = Menu.buildFromTemplate([
   {
     label: '打开网页',
@@ -54,9 +54,11 @@ function createWindow(): void {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    // mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    mainWindow.loadURL(bgUrl)
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadURL(bgUrl)
+    // mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
 
