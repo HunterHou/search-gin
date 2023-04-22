@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow, Menu, Tray, nativeImage } from 'electron'
-import sys from 'child_process'
+import { exec, spawn } from 'child_process'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -101,7 +101,7 @@ function killBg() {
   const ports = ['10081']
   const showProcess = process.platform == 'win32' ? 'netstat -ano' : 'ps aux'
   console.log(ports, showProcess)
-  sys.exec(showProcess, (err, stdout, stderr) => {
+  exec(showProcess, (err, stdout, stderr) => {
     console.log(err, stdout, stderr)
     if (err) {
       return console.log(err)
@@ -111,7 +111,7 @@ function killBg() {
       const address = p[1]
       if (address != undefined) {
         if (ports.indexOf(address.split(':')[1]) >= 0) {
-          sys.exec('taskkill /F /pid ' + p[4], function (err, stdout, stderr) {
+          exec('taskkill /F /pid ' + p[4], function (err, stdout, stderr) {
             console.log(err, stdout, stderr)
             if (err) {
               return console.log('释放指定端口失败！！')

@@ -244,12 +244,16 @@
             </Row>
           </div>
           <div class="videoDivRowRelations">
-            <Image
-              class="videoDivRowImg"
+            <div
               v-for="relaPlay in view.playlist"
-              :src="getPng(relaPlay.Id)"
+              class="videoDivRowImg"
               @click="openFile(relaPlay)"
-            />
+            >
+              <Image :src="getPng(relaPlay.Id)" />
+              <div class="videoDivRowDesc">
+                {{ relaPlay.Name }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -300,7 +304,22 @@
     <div class="container" ref="loadRef">
       <div v-if="easyMode" class="easyMode">
         <div v-for="item in view.ModelList" class="easyModeItem">
-          <div class="easyModeText">{{ item.Code || item.Name }}</div>
+          <div class="easyModeText">
+            {{ item.Code || item.Name }}
+          </div>
+          <div class="easyModeBTN">
+            <Tag size="large" type="primary" @click="openFile(item)">播放</Tag>
+            <Tag size="large" type="primary" @click="viewPictures(item)"
+              >查看</Tag
+            >
+            <Tag
+              class="mr1"
+              size="large"
+              type="danger"
+              @click="deleteFile(item)"
+              >删除
+            </Tag>
+          </div>
           <Image
             :alt="item.Name"
             class="easyModeImg"
@@ -362,11 +381,11 @@
                   重命名</Tag
                 >
                 <Tag
-                    square
-                    size="large"
-                    type="primary"
-                    @click="TransferToMp4(item.Id)"
-                    v-if="item.FileType!=='mp4'"
+                  square
+                  size="large"
+                  type="primary"
+                  @click="TransferToMp4(item.Id)"
+                  v-if="item.FileType !== 'mp4'"
                 >
                   转MP4</Tag
                 >
@@ -458,7 +477,7 @@
       round
       v-model:show="showPopover"
       position="bottom"
-      style="background-color: rgba(255, 255, 255, 0.2);margin-bottom: 20vh;;"
+      style="background-color: rgba(255, 255, 255, 0.2); margin-bottom: 20vh"
     >
       <div
         style="
@@ -625,7 +644,7 @@ import MobileBar from "./MobileBar.vue";
 import LoadMoreVue from "./LoadMore.vue";
 import { useWindowSize, useWindowScroll } from "@vueuse/core";
 import { useRoute } from "vue-router";
-import {ElMessage} from "element-plus/es";
+import { ElMessage } from "element-plus/es";
 const { query } = useRoute();
 
 const systemProperty = useSystemProperty();
@@ -1107,6 +1126,7 @@ const SortTypeOptions = [
 .videoDiv {
   height: 100vh;
   width: 100vw;
+  color: rgb(216, 155, 74);
 }
 
 .videoRow {
@@ -1158,12 +1178,18 @@ const SortTypeOptions = [
   overflow: auto;
 }
 
+.videoDivRowDesc {
+  width: 10rem;
+  color: antiquewhite;
+  height: 1rem;
+}
 .videoDivRowImg {
   height: auto;
   width: 10rem;
   margin: auto;
   border-radius: 5%;
   overflow: hidden;
+  max-height: 16rem;
   padding: 0px;
   margin: 4px;
   border: rgb(228, 177, 110) 2px dotted;
@@ -1235,12 +1261,13 @@ const SortTypeOptions = [
   max-width: 46%;
   overflow: hidden;
   height: fit-content;
+  max-height: 17rem;
   flex-direction: column;
 }
 
 .easyModeImg {
   min-width: 4rem;
-  z-index: 4;
+  z-index: 2;
 }
 .easyModeText {
   color: red;
@@ -1250,6 +1277,16 @@ const SortTypeOptions = [
   width: 12rem;
   max-width: 46%;
   overflow: hidden;
+}
+
+.easyModeBTN {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 12rem;
+  max-width: 46%;
+  z-index: 5;
 }
 
 .viewPic {
