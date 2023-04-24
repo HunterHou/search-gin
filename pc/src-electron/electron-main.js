@@ -1,4 +1,5 @@
 import { app, BrowserWindow, nativeTheme, Notification } from "electron";
+import { ChildProcess } from "child_process";
 import path from "path";
 import os from "os";
 const publicFolder = path.resolve(__dirname, process.env.QUASAR_PUBLIC_FOLDER);
