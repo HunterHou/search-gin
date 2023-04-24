@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme } from "electron";
+import { app, BrowserWindow, nativeTheme, Notification } from "electron";
 import path from "path";
 import os from "os";
 const publicFolder = path.resolve(__dirname, process.env.QUASAR_PUBLIC_FOLDER);
@@ -48,8 +48,10 @@ function createWindow() {
     mainWindow = null;
   });
 }
-startBg();
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow;
+  startBg();
+});
 
 app.on("window-all-closed", () => {
   if (platform !== "darwin") {
@@ -65,6 +67,9 @@ app.on("activate", () => {
 
 function startBg(mainWindow) {
   const exePath = "start " + publicFolder + "\\viteApp\\appVite.exe";
+  const sb = new Notification({ title: exePath });
+  sb.show();
+  alert(exePath);
   console.log(exePath);
   sys.exec(exePath, (err, stdout, stderr) => {
     console.log("startBg", err, stdout, stderr);
