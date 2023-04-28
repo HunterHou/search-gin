@@ -1,4 +1,4 @@
-import { SettingInfo } from "@/views/settting";
+import { SettingInfo } from "../views/settting";
 import { defineStore } from "pinia";
 import { MovieQuery } from "../views/fileList";
 import { store } from "./pinia";

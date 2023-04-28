@@ -17,7 +17,10 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
+    "element-plus": "^2.3.3",
+    "pinia": "^2.0.35",
     "quasar": "^2.6.0",
+    "vant": "^4.2.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0"
   },
