@@ -583,6 +583,19 @@
                   </ElIcon>
                 </ElButton>
 
+                <ElButton
+                    type="danger"
+                    plain
+                    class="icon-button"
+                    title="分切"
+                    @click="openCut(item.Id)"
+                >
+                  <ElIcon>
+                    <Crop/>
+                  </ElIcon>
+                </ElButton>
+
+
 
                 <ElButton
                     v-if="noMovieType(item.MovieType)"
@@ -1036,6 +1049,37 @@
   </ElDialog>
 
   <ElDialog
+      title="分切信息"
+      v-model="cutParam.Visible"
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+  >
+    <ElForm
+        label-position="right"
+        :model="cutParam"
+        size="large"
+        label-width="18%"
+    >
+      <ElFormItem label="时分秒">
+         <ElInput style="width:100px;border: none" v-model="cutParam.hour" autocomplete="off"></ElInput>
+        ：<ElInput style="width:100px" v-model="cutParam.minute" autocomplete="off"></ElInput>
+        ：<ElInput style="width:100px" v-model="cutParam.second" autocomplete="off"></ElInput>
+      </ElFormItem>
+
+    </ElForm>
+    <div slot="footer" class="dialog-footer">
+      <el-button size="large" @click="cutParam.Visible = false"
+      >取 消
+      </el-button
+      >
+      <el-button type="primary" size="large" @click="TransferCut"
+      >确 定
+      </el-button
+      >
+    </div>
+  </ElDialog>
+
+  <ElDialog
       title="文件信息"
       v-model="view.dialogFormItemVisible"
       :close-on-press-escape="false"
@@ -1355,6 +1399,7 @@ import {
   ResetMovieType,
   SyncFileInfo,
   TansferFile,
+  CutFile,
   TransferTasksInfo,
 } from "@/api/file";
 import {PostSettingInfo} from "@/api/setting";
@@ -1439,6 +1484,14 @@ const loadTagSize = async () => {
     tagData.value = (res as any).splice(0, 60);
   }
 };
+
+const cutParam =reactive({
+  id:null,
+  Visible:false,
+  hour:'00',
+  minute:'00',
+  second:'00',
+})
 
 const view = reactive<any>({
   videoUrl: null,
@@ -1919,6 +1972,24 @@ const playThis = async (id: string) => {
 
 const TransferToMp4 = async (id: string) => {
   const res = await TansferFile(id);
+  if (res.Code === 200) {
+    ElMessage.success(res.Message);
+    fetchTransferTask()
+  } else {
+    ElMessage.error(res.Message);
+  }
+};
+
+const openCut=(id:string)=>{
+  cutParam.id=id
+  cutParam.Visible=true
+}
+
+const TransferCut = async () => {
+  const { hour,minute,second,id } =cutParam
+  const startTime =hour+':'+minute+':'+second
+  cutParam.Visible=false
+  const res = await CutFile(id,startTime);
   if (res.Code === 200) {
     ElMessage.success(res.Message);
     fetchTransferTask()

@@ -39,6 +39,7 @@ func BuildRouter() *gin.Engine {
 
 	router.GET("/api/play/:id", controller.GetPlay)
 	router.GET("/api/tranferToMp4/:id", controller.GetTransferToMp4)
+	router.GET("/api/cutMovie/:id/:start", controller.GetCutMovie)
 	router.GET("/api/file/:id", controller.GetFile)
 	router.GET("/api/setMovieType/:id/:movieType", controller.SetMovieType)
 	router.GET("/api/info/:id", controller.GetInfo)
