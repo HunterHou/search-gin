@@ -201,6 +201,10 @@ func GetTransferToMp4(c *gin.Context) {
 	to := c.Param("to")
 	fileService := service.CreateFileService()
 	model := fileService.FindOne(id)
+	if !utils.ExistsFiles(model.Path) {
+		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
+		return
+	}
 	from := utils.GetSuffux(model.Path)
 	if to == "" {
 		to = "mp4"
@@ -212,10 +216,6 @@ func GetTransferToMp4(c *gin.Context) {
 			break
 		}
 	}
-	if !utils.ExistsFiles(model.Path) {
-		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
-		return
-	}
 	if exists {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("任务不可重复"))
 		return
@@ -225,6 +225,23 @@ func GetTransferToMp4(c *gin.Context) {
 		cons.TransferTask[task.CreateTime] = task
 		c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))
 	}
+
+}
+
+func GetCutMovie(c *gin.Context) {
+	id := c.Param("id")
+	start := c.Param("start")
+	fileService := service.CreateFileService()
+	model := fileService.FindOne(id)
+	if !utils.ExistsFiles(model.Path) {
+		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
+		return
+	}
+	from := utils.GetSuffux(model.Path)
+	task := datamodels.NewCutTask(model.Path, model.Name, start, from)
+	task.SetStatus("等待")
+	cons.TransferTask[task.CreateTime] = task
+	c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))
 
 }
 

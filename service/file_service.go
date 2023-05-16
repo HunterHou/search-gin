@@ -386,41 +386,80 @@ func WalkInnter(baseDir string, types []string, totalSize int64, queryChild bool
 func TaskExecuting() {
 	//time.After(1 * time.Second)
 	var todos []datamodels.TransferTaskModel
+	var todosCuts []datamodels.TransferTaskModel
 	var executing []datamodels.TransferTaskModel
+	var executingCuts []datamodels.TransferTaskModel
 	for _, model := range cons.TransferTask {
 		if strings.EqualFold(model.Status, "等待") {
-			todos = append(todos, model)
+			if strings.EqualFold(model.Type, "分切") {
+				todosCuts = append(executing, model)
+			} else {
+				todos = append(executing, model)
+			}
 		}
 		if strings.EqualFold(model.Status, "执行中") {
-			executing = append(executing, model)
+			if strings.EqualFold(model.Type, "分切") {
+				executingCuts = append(executing, model)
+			} else {
+				executing = append(executing, model)
+			}
+
 		}
 
 	}
 	if len(executing) == 0 && len(todos) > 0 {
 		go TransferFormatter(todos[0])
 	}
+	if len(executingCuts) == 0 && len(todosCuts) > 0 {
+		go CutFormatter(todosCuts[0])
+	}
 	time.AfterFunc(2*time.Second, TaskExecuting)
 }
 
 func TransferFormatter(model datamodels.TransferTaskModel) utils.Result {
 	from := model.Path
-	dest := strings.ReplaceAll(model.Path, "."+model.From, "."+model.To)
+	suffix := utils.GetSuffux(model.Path)
+	dest := strings.ReplaceAll(model.Path, "."+suffix, "."+model.To)
 	thisNow := model.CreateTime
-	res := transferFormatterBackground(from, dest, thisNow)
+	args := []string{"-i", from, "-vcodec", "copy", dest}
+	res := ffmepgExec(args, thisNow)
 	if res.IsSuccess() {
-
 		os.Remove(model.Path)
 	}
 	return res
 }
 
-func transferFormatterBackground(from string, to string, thisNow time.Time) utils.Result {
+func CutFormatter(model datamodels.TransferTaskModel) utils.Result {
+	from := model.Path
+	suffix := utils.GetSuffux(model.Path)
+	toSuffix := "mkv"
+	if suffix == "mkv" {
+		toSuffix = "mp4"
+	}
+	dest := strings.ReplaceAll(model.Path, "."+suffix, "."+toSuffix)
+	thisNow := model.CreateTime
+	if !strings.Contains(from, "\\\\") && strings.Contains(from, "\\") {
+		from = strings.ReplaceAll(from, "\\", "\\\\")
+	}
+	if !strings.Contains(dest, "\\\\") && strings.Contains(dest, "\\") {
+		dest = strings.ReplaceAll(dest, "\\", "\\\\")
+	}
+	args := []string{"-i", from, "-ss", model.From, "-t", "99:00:00", "-c", "copy", dest}
+	res := ffmepgExec(args, thisNow)
+	if res.IsSuccess() {
+		os.Remove(model.Path)
+	}
+	return res
+
+}
+
+func ffmepgExec(args []string, thisNow time.Time) utils.Result {
 	task := cons.TransferTask[thisNow]
 	task.SetStatus("执行中")
 	task.CreateTime = time.Now()
 	cons.TransferTask[thisNow] = task
-	args := []string{"-i", from, "-vcodec", "copy", to}
-	cmd := exec.Command("./ffmpeg.exe", args...)
+
+	cmd := exec.Command("./ffmpeg.exe ", args...)
 	if cmd != nil {
 		if runtime.GOOS == "windows" {
 			cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
@@ -431,8 +470,9 @@ func transferFormatterBackground(from string, to string, thisNow time.Time) util
 			task.SetLog(string(out))
 			task.FinishTime = time.Now()
 			cons.TransferTask[thisNow] = task
+			fmt.Fprint(gin.DefaultWriter, "out:", string(out))
 			fmt.Fprint(gin.DefaultWriter, "cmdErr:", cmdErr)
-			fmt.Fprint(gin.DefaultWriter, "out:", out)
+			fmt.Fprint(gin.DefaultWriter, "args:", args)
 			res := utils.NewFailByMsg("转换失败")
 			res.Data = cmdErr
 			return res
@@ -449,4 +489,5 @@ func transferFormatterBackground(from string, to string, thisNow time.Time) util
 	task.FinishTime = time.Now()
 	cons.TransferTask[thisNow] = task
 	return utils.NewFailByMsg("命令生成失败")
+
 }

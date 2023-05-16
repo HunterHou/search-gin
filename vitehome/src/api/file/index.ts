@@ -50,6 +50,11 @@ export const TansferFile = async (data: string): Promise<ResultEdit> => {
   return res as unknown as ResultEdit;
 };
 
+export const CutFile = async (id: string,start:string): Promise<ResultEdit> => {
+  const res = await request.get({ url: `/api/cutMovie/${id}/${start}` });
+  return res as unknown as ResultEdit;
+};
+
 export const ResetMovieType = async (data: string, movieType: string) => {
   const res = await request.get({
     url: `/api/setMovieType/${data}/${movieType}`,
@@ -98,7 +103,7 @@ export const CloseTag = async (id: string, title: string) => {
   return res as unknown as ResultEdit;
 };
 
-export const GetFile = async (id: string) => {
-  const res = await request.get({ url: `/api/file/${id}` });
-  return res;
-};
+// export const GetFile = async (id: string) => {
+//   const res = await request.get({ url: `/api/file/${id}` });
+//   return res;
+// };

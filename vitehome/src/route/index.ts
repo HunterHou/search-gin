@@ -103,25 +103,6 @@ export const staticRoutes: RouteRecordRaw[] = [
       },
     ],
   },
-  // {
-  //   path: "/mobilebar",
-  //   name: "mobilebar",
-  //   meta: {
-  //     title: "M文件",
-  //     hidden: true,
-  //   },
-  //   children: [
-  //     {
-  //       path: "/mobilebar",
-  //       component: () => import("../views/mobile/MobileBar.vue"),
-  //       name: "MobileBar",
-  //       meta: {
-  //         title: "M文件",
-  //         hidden: true,
-  //       },
-  //     },
-  //   ],
-  // },
   {
     path: "/mhome",
     name: "mhome",

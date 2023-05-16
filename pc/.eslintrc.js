@@ -59,6 +59,8 @@ module.exports = {
   rules: {
     
     'prefer-promise-reject-errors': 'off',
+    'multi-word-component-names': 'off',
+    'require-v-for-key': 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
