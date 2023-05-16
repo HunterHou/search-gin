@@ -50,8 +50,8 @@ export const TansferFile = async (data: string): Promise<ResultEdit> => {
   return res as unknown as ResultEdit;
 };
 
-export const CutFile = async (id: string,start:string): Promise<ResultEdit> => {
-  const res = await request.get({ url: `/api/cutMovie/${id}/${start}` });
+export const CutFile = async (id: string,start:string,end:string): Promise<ResultEdit> => {
+  const res = await request.get({ url: `/api/cutMovie/${id}/${start}/${end}` });
   return res as unknown as ResultEdit;
 };
 

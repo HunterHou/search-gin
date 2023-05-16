@@ -2,13 +2,14 @@ package controller
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/datasource"
 	"searchGin/service"
 	"searchGin/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GetPlay 本地打开文件
@@ -231,6 +232,7 @@ func GetTransferToMp4(c *gin.Context) {
 func GetCutMovie(c *gin.Context) {
 	id := c.Param("id")
 	start := c.Param("start")
+	end := c.Param("end")
 	fileService := service.CreateFileService()
 	model := fileService.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {
@@ -238,7 +240,7 @@ func GetCutMovie(c *gin.Context) {
 		return
 	}
 	from := utils.GetSuffux(model.Path)
-	task := datamodels.NewCutTask(model.Path, model.Name, start, from)
+	task := datamodels.NewCutTask(model.Path, model.Name, start,end, from)
 	task.SetStatus("等待")
 	cons.TransferTask[task.CreateTime] = task
 	c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))
