@@ -444,7 +444,7 @@ func CutFormatter(model datamodels.TransferTaskModel) utils.Result {
 	if !strings.Contains(dest, "\\\\") && strings.Contains(dest, "\\") {
 		dest = strings.ReplaceAll(dest, "\\", "\\\\")
 	}
-	args := []string{"-i", from, "-ss", model.From, "-t", "99:00:00", "-c", "copy", dest}
+	args := []string{"-i", from, "-ss", model.Start, "-t", model.End, "-c", "copy", dest}
 	res := ffmepgExec(args, thisNow)
 	if res.IsSuccess() {
 		os.Remove(model.Path)

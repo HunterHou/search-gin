@@ -1,4 +1,5 @@
 import { app, BrowserWindow, nativeTheme, Notification } from "electron";
+import { ChildProcess } from "child_process";
 import path from "path";
 import  ChildProcess  from "child_process";
 import os from "os";
