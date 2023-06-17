@@ -20,4 +20,4 @@ export class SettingInfo {
   IsDb: boolean = false;
 }
 
-export const buttonEnum = ["刮图", "删除", "移动", "编辑", "文件夹", "图鉴","转换", "更多"];
+export const buttonEnum = ["刮图", "删除", "移动", "编辑", "文件夹", "图鉴","转换","剪切", "更多"];

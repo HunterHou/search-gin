@@ -588,6 +588,7 @@
                     plain
                     class="icon-button"
                     title="分切"
+                    v-if="view.settingInfo.Buttons?.indexOf('剪切') >= 0"
                     @click="openCut(item.Id)"
                 >
                   <ElIcon>
