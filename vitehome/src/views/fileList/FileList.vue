@@ -1648,9 +1648,9 @@ const closePlayVideo = () => {
 
 const queryRelation = async (keywords) => {
   const pageSize = 999;
-  queryParam.Keyword = keywords;
   const palyParam = {
     ...queryParam,
+    Keyword:keywords,
     PageSize: pageSize,
     Page: 1,
   };
