@@ -300,6 +300,20 @@
             </template>
           </ElAutocomplete>
         </ElCol>
+        <div v-if="isPlaying">
+          <ElLink
+            type="success"
+            plain
+            size="large"
+            @click="view.videoVisible = true"
+            :underline="false"
+            style="font-size: 16px"
+          >
+            <ElButton type="success" plain size="large" loading :link="true" />
+            {{ view.contextmenuTarget.Code }} -
+            {{ view.contextmenuTarget.Actress }}
+          </ElLink>
+        </div>
       </ElRow>
     </div>
 
@@ -470,9 +484,9 @@
                 type="danger"
                 title="在线"
                 @click="cmenuPlay(item)"
-                :style="{ height: '30px', width: '30px' }"
+                :style="{ height: '35px', width: '35px' }"
               >
-                <ElIcon :size="21">
+                <ElIcon :size="24">
                   <VideoPlay />
                 </ElIcon>
               </ElButton>
@@ -960,35 +974,6 @@
           <span> 总：{{ view.TotalSize }}({{ view.TotalCnt }}) </span>
           <ElDivider direction="vertical"></ElDivider>
           <span> 搜：{{ view.ResultSize }}({{ view.ResultCnt }}) </span>
-          <div v-if="isPlaying">
-            <ElLink
-              type="success"
-              plain
-              size="large"
-              @click="view.videoVisible = true"
-              :underline="false"
-              style="font-size: 16px"
-            >
-              <ElButton
-                type="success"
-                plain
-                size="large"
-                loading
-                :link="true"
-              />
-              {{ view.contextmenuTarget.Code }} -
-              {{ view.contextmenuTarget.Actress }}
-            </ElLink>
-            <ElLink
-              type="danger"
-              plain
-              @click="closePlayVideo"
-              :underline="false"
-              style="font-size: 16px"
-            >
-              关闭
-            </ElLink>
-          </div>
         </ElRow>
       </div>
     </div>
@@ -1245,6 +1230,11 @@
   <ElDialog
     width="66%"
     :modal="true"
+    :append-to-body="false"
+    :show-close="true"
+    :lock-scroll="true"
+    :close-on-click-modal="true"
+    :close-on-press-escape="true"
     v-model="view.dialogVisible"
     :before-close="
       () => {
@@ -1255,7 +1245,7 @@
     :destroy-on-close="true"
   >
     <div v-if="view.formItem">
-      <div style="margin-top: -40px">
+      <div style="margin-top: 10px">
         <ElImage
           :src="getJpg(view.formItem.Id)"
           style="
@@ -1354,37 +1344,63 @@
       </div>
     </div>
   </teleport>
-  <teleport to="body">
-    <div v-show="view.videoVisible" class="playDiv" id="videoDiv">
+  <el-dialog
+    v-model="view.videoVisible"
+    :append-to-body="false"
+    :modal="false"
+    :show-close="true"
+    :lock-scroll="true"
+    :close-on-click-modal="true"
+    :close-on-press-escape="true"
+    :fullscreen="view.videoFullscreen"
+    :before-close="closePlayVideo"
+    top="2vh"
+    width="80%"
+  >
+    <template #header>
+      <div class="my-header">
+        <span style="color: bisque;">{{ view.contextmenuTarget.Name }}</span>
+        <div class="header-button">
+          <ElButton
+            type="primary"
+            @click="
+              () => {
+                view.videoFullscreen = !view.videoFullscreen;
+              }
+            "
+            >{{ view.videoFullscreen ? "恢复" : "全屏" }}</ElButton
+          >
+          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+        </div>
+      </div>
+    </template>
+    <div v-show="view.contextmenuTarget.Code" class="playDiv">
       <vue3VideoPlay
         ref="vue3VideoPlayRef"
         :style="{
-          'object-fit': 'fill',
+          position: 'relative',
         }"
         v-bind="optionsPC"
         @volumechange="volumechange"
       />
 
-      <div style="background-color: antiquewhite">
+      <div
+        style="height: 60vh; overflow: auto"
+        v-if="view.playlist && view.playlist.length > 0"
+      >
         <div
           style="
             display: flex;
             flex-direction: row;
             justify-content: flex-start;
-            background-color: antiquewhite;
           "
         >
           <el-space spacer="|" wrap>
-            <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-            <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
-            <ElButton type="primary" @click="fullPlayVideo">满屏</ElButton>
-            <ElButton type="primary" @click="moreTag = !moreTag">更多</ElButton>
             <ElTag
               v-for="item in view.contextmenuTarget.Tags"
               key="default"
               type="danger"
-              size="large"
-              style="margin-left: 0.5rem"
+              size="mini"
               @click="queryRelation(item)"
             >
               {{ item }}
@@ -1401,10 +1417,8 @@
             >
               {{ view.contextmenuTarget.Actress }}
             </el-link>
-            <el-link :underline="false" type="success"
-              >{{ view.contextmenuTarget.Name }}
-            </el-link>
           </el-space>
+          <ElButton type="primary" @click="moreTag = !moreTag">更多</ElButton>
         </div>
         <ElRow v-if="moreTag">
           <el-space spacer="|" wrap>
@@ -1427,14 +1441,14 @@
               v-for="play in view.playlist"
               :key="play"
               :body-style="{ padding: '4px' }"
-              style="width: 180px; height: auto"
+              style="width: 136px; height: auto"
               @click="startPlayVideo(play)"
             >
               <ElImage :src="getPng(play.Id)"></ElImage>
               <span
                 class="context-text"
                 style="
-                  height: 2rem;
+                  height: 3rem;
                   overflow: hidden;
                   word-break: break-all;
                   text-overflow: ellipsis;
@@ -1447,7 +1461,10 @@
         </div>
       </div>
     </div>
-  </teleport>
+  </el-dialog>
+  <!-- <teleport to="body">
+    
+  </teleport> -->
 </template>
 <script setup lang="ts">
 import {
@@ -1571,7 +1588,7 @@ const view = reactive<any>({
   videoUrl: null,
   playlist: [],
   videoVisible: false,
-  videoClose: false,
+  videoFullscreen: false,
   innerVisible: false,
   formItem: new MovieModel(),
   dialogFormItemVisible: false,
@@ -1589,8 +1606,8 @@ const view = reactive<any>({
 const queryParam = reactive<MovieQuery>(new MovieQuery());
 
 const optionsPC = reactive({
-  width: "1200px", //播放器高度
-  height: "700px", //播放器高度
+  width: "100%", //播放器高度
+  height: "auto", //播放器高度
   color: "#409eff", //主题色
   title: "", //视频名称
   src: "", //视频源
@@ -1625,19 +1642,19 @@ watch(taskPop, (newValue, oldValue) => {
   }
 });
 
-watch(windowWidth, (newWidth) => {
-  let newHeight = (newWidth * 9) / 16;
-  if (newHeight > windowHeight.value) {
-    newHeight = windowHeight.value;
-  }
-  optionsPC.width = newWidth - 20 + "px";
-  optionsPC.height = newHeight - 14 + "px";
-});
-watch(windowHeight, (newHeight) => {
-  const newWidth = (newHeight * 16) / 9;
-  optionsPC.width = newWidth - 20 + "px";
-  optionsPC.height = newHeight - 14 + "px";
-});
+// watch(windowWidth, (newWidth) => {
+// let newHeight = (newWidth * 9) / 16;
+// if (newHeight > windowHeight.value) {
+// newHeight = windowHeight.value;
+// }
+// optionsPC.width = newWidth - 20 + "px";
+// optionsPC.height = newHeight - 14 + "px";
+// });
+// watch(windowHeight, (newHeight) => {
+// const newWidth = (newHeight * 16) / 9;
+// optionsPC.width = newWidth - 20 + "px";
+// optionsPC.height = newHeight - 14 + "px";
+// });
 watch(windowScrollHheight, () => {
   if (windowScrollHheight.value > 50) {
     searchStyle.value = {
@@ -1664,7 +1681,6 @@ onKeyStroke(["Enter"], (e) => {
   queryList();
 });
 
-const fullScreen = ref(true);
 const vue3VideoPlayRef = ref(null);
 const isPlaying = ref(false);
 
@@ -1691,24 +1707,13 @@ const countTransferIng = computed(() => {
   ).length;
 });
 
-const fullPlayVideo = () => {
-  if (fullScreen.value) {
-    optionsPC.width = windowWidth.value - 20 + "px";
-    optionsPC.height = windowHeight.value - 14 + "px";
-  } else {
-    optionsPC.width = windowWidth.value * 0.988 + "px";
-    optionsPC.height = windowHeight.value * 0.988 + "px";
-  }
-  fullScreen.value = !fullScreen.value;
-};
-
 const hiddenPlayVideo = () => {
+  view.videoFullscreen = false;
   view.videoVisible = false;
 };
 
 const closePlayVideo = () => {
   view.videoVisible = false;
-  view.videoClose = false;
   optionsPC.src = null;
   isPlaying.value = false;
 };
@@ -1728,15 +1733,15 @@ const queryRelation = async (keywords) => {
 };
 
 const startPlayVideo = (item: MovieModel) => {
-  view.videoClose = true;
+  view.videoVisible = true;
   view.contextmenuTarget = item;
   optionsPC.title = item.Name;
   optionsPC.src = getFileStream(item.Id);
-  vue3VideoPlayRef.value.play();
   queryRelation(item.Actress);
-  fullPlayVideo();
   isPlaying.value = true;
-  view.videoVisible = true;
+  setTimeout(() => {
+    vue3VideoPlayRef.value.play();
+  }, 1000);
 };
 
 const innerVisibleFalse = () => {
@@ -1754,7 +1759,7 @@ const cmenuPlay = async (item?) => {
   if (item) {
     view.contextmenuTarget = item;
   }
-  view.videoVisible = true;
+
   startPlayVideo(view.contextmenuTarget);
 };
 
