@@ -1359,7 +1359,7 @@
   >
     <template #header>
       <div class="my-header">
-        <span style="color: bisque;">{{ view.contextmenuTarget.Name }}</span>
+        <span style="color: bisque">{{ view.contextmenuTarget.Name }}</span>
         <div class="header-button">
           <ElButton
             type="primary"
@@ -1374,7 +1374,7 @@
         </div>
       </div>
     </template>
-    <div v-show="view.contextmenuTarget.Code" class="playDiv">
+    <div class="playDiv">
       <vue3VideoPlay
         ref="vue3VideoPlayRef"
         :style="{
