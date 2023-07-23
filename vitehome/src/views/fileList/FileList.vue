@@ -247,7 +247,7 @@
                       <span style="color: blue">{{
                         useDateFormat(item.createTime, "MM月DD日 HH:MM:ss", {
                           locales: "zh-cn",
-                        })
+                        }).value
                       }}</span>
                     </span>
                   </div>
@@ -894,8 +894,8 @@
                         direction="vertical"
                       ></ElDivider>
                       <span style="color: red" @click="copy(item.Title)">
-                        {{ item.SizeStr }}</span
-                      >
+                        {{ item.SizeStr }}
+                      </span>
                     </span>
                   </template>
                   <template #default>
@@ -923,8 +923,9 @@
                       {{
                         useDateFormat(item.MTime, "YYYY-MM-DD HH:MM", {
                           locales: "zh-cn",
-                        })
+                        }).value
                       }}
+
                       <ElDivider
                         v-if="item.Code"
                         direction="vertical"
@@ -932,6 +933,11 @@
                       <span style="color: red" @click="copy(item.Title)"
                         >【{{ item.SizeStr }}】</span
                       >
+                      <ElDivider
+                        v-if="item.Code"
+                        direction="vertical"
+                      ></ElDivider>
+                      {{ useTimeAgo(item.MTime, {}).value }}
                     </ElRow>
                     <ElRow>
                       <span
@@ -1026,7 +1032,7 @@
           >
             <span
               :style="{
-                width: '5rem',
+                width: '6rem',
                 textAlign: 'left',
                 color:
                   item.Status == '成功'
@@ -1037,7 +1043,11 @@
               }"
             >
               {{ item.Status }}
-              {{ showTime(item) }}
+              {{
+                item.FinishTime
+                  ? timeFormat(item.CreateTime, item.FinishTime)
+                  : timeFormat(item.CreateTime, new Date())
+              }}
             </span>
             <span
               style="
@@ -1063,7 +1073,7 @@
           >
             <span
               :style="{
-                width: '5rem',
+                width: '6rem',
                 textAlign: 'left',
                 color:
                   item.Status == '成功'
@@ -1074,7 +1084,11 @@
               }"
             >
               {{ item.Status }}
-              {{ showTime(item) }}
+              {{
+                item.FinishTime
+                  ? timeFormat(item.CreateTime, item.FinishTime)
+                  : timeFormat(item.CreateTime, new Date())
+              }}
             </span>
             <span
               style="
@@ -1305,7 +1319,7 @@
               >【{{ view.formItem.SizeStr }}】</span
             >
             <span>{{
-              useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss")
+              useDateFormat(view.formItem.MTime, "YYYY-MM-DD HH:MM:ss").value
             }}</span>
           </ElCol>
         </ElRow>
@@ -1517,6 +1531,8 @@ import {
   useTextSelection,
   useWindowScroll,
   useWindowSize,
+  useTimeAgo,
+  formatTimeAgo,
 } from "@vueuse/core";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { computed, onMounted, reactive, ref, watch } from "vue";
@@ -1585,6 +1601,16 @@ const loadTagSize = async () => {
   if (res) {
     tagData.value = (res as any).splice(0, 60);
   }
+};
+
+const timeFormat = (startTime, endTime) => {
+  if (!endTime) {
+    endTime = new Date();
+  }
+  return (
+    (new Date(endTime).getTime() - new Date(startTime).getTime()) /
+    1000
+  ).toFixed(0);
 };
 
 const cutParam = reactive({
@@ -1880,29 +1906,6 @@ const loadSettingInfo = async () => {
       Buttons: res.Buttons || [],
     };
   }
-};
-
-const showTime = (item) => {
-  if (item.Status === "等待") {
-    return "";
-  }
-  const now = new Date();
-  let res = "";
-  if (item.FinishTime) {
-    res = (
-      (new Date(item.FinishTime).getTime() -
-        new Date(item.CreateTime).getTime()) /
-      1000
-    ).toFixed(0);
-  } else {
-    const createTime = new Date(item.CreateTime);
-    res = (
-      (now.getMilliseconds() - createTime.getMilliseconds()) /
-      1000
-    ).toFixed(0);
-  }
-
-  return res + "s";
 };
 
 const handleCheckAllChange = (val) => {
