@@ -1746,7 +1746,6 @@ const queryRelation = async (keywords) => {
 };
 
 const startPlayVideo = (item: MovieModel) => {
-  
   view.videoVisible = true;
   view.contextmenuTarget = item;
   optionsPC.title = item.Name;
@@ -1888,13 +1887,22 @@ const showTime = (item) => {
     return "";
   }
   const now = new Date();
-  if (new Date(item.FinishTime).getTime() > 0) {
-    return new Date(item.FinishTime);
+  let res = "";
+  if (item.FinishTime) {
+    res = (
+      (new Date(item.FinishTime).getTime() -
+        new Date(item.CreateTime).getTime()) /
+      1000
+    ).toFixed(0);
+  } else {
+    const createTime = new Date(item.CreateTime);
+    res = (
+      (now.getMilliseconds() - createTime.getMilliseconds()) /
+      1000
+    ).toFixed(0);
   }
-  return (
-    (now.getMilliseconds() - new Date(item.CreateTime).getMilliseconds()) /
-    1000
-  ).toFixed(0);
+
+  return res + "s";
 };
 
 const handleCheckAllChange = (val) => {
