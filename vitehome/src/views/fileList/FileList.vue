@@ -305,7 +305,7 @@
             type="success"
             plain
             size="large"
-            @click="view.videoVisible = true"
+            @click="startPlayVideo(view.contextmenuTarget)"
             :underline="false"
             style="font-size: 16px"
           >
@@ -467,7 +467,7 @@
             </div>
             <div
               :style="{
-                marginTop: '-35px',
+                marginTop: '-45px',
                 position: 'absolute',
                 height: '30px',
                 alignItems: 'center',
@@ -476,29 +476,40 @@
                 width: isShowCover(view) ? '300px' : '200px',
                 display: 'flex',
                 justifyContent: 'flex-start',
-                backgroundColor: 'rgba(0, 0, 0, 0.1)',
               }"
             >
               <ElButton
                 plain
-                type="danger"
                 title="在线"
+                type="primary"
                 @click="cmenuPlay(item)"
-                :style="{ height: '35px', width: '35px' }"
+                :style="{
+                  height: '66px',
+                  width: '66px',
+                  border: 'none',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(0,0,0,0.1)',
+                }"
               >
-                <ElIcon :size="24">
+                <ElIcon :size="66">
                   <VideoPlay />
                 </ElIcon>
               </ElButton>
               <ElButton
-                type="primary"
                 plain
+                type="danger"
                 class="icon-button"
                 title="播放"
                 @click="playThis(item.Id)"
-                :style="{ height: '30px', width: '30px' }"
+                :style="{
+                  height: '45px',
+                  width: '45px',
+                  border: 'none',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(0,0,0,0.1)',
+                }"
               >
-                <ElIcon :size="21">
+                <ElIcon :size="45">
                   <VideoPlay />
                 </ElIcon>
               </ElButton>
@@ -1346,7 +1357,7 @@
   </teleport>
   <el-dialog
     v-model="view.videoVisible"
-    :append-to-body="false"
+    :append-to-body="true"
     :modal="false"
     :show-close="true"
     :lock-scroll="true"
@@ -1354,8 +1365,8 @@
     :close-on-press-escape="true"
     :fullscreen="view.videoFullscreen"
     :before-close="closePlayVideo"
-    top="2vh"
-    width="80%"
+    top="0"
+    width="1200px"
   >
     <template #header>
       <div class="my-header">
@@ -1371,6 +1382,7 @@
             >{{ view.videoFullscreen ? "恢复" : "全屏" }}</ElButton
           >
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
         </div>
       </div>
     </template>
@@ -1440,15 +1452,16 @@
             <ElCard
               v-for="play in view.playlist"
               :key="play"
-              :body-style="{ padding: '4px' }"
-              style="width: 136px; height: auto"
+              :body-style="{ padding: '2px' }"
+              style="width: 156px; height: auto"
               @click="startPlayVideo(play)"
             >
               <ElImage :src="getPng(play.Id)"></ElImage>
               <span
-                class="context-text"
                 style="
                   height: 3rem;
+                  color: #000;
+                  scale: 0.8;
                   overflow: hidden;
                   word-break: break-all;
                   text-overflow: ellipsis;
@@ -1529,6 +1542,7 @@ import "vue3-video-play/dist/style.css";
 import "./filelist.css";
 import { useRoute, useRouter } from "vue-router";
 import { buttonEnum, SettingInfo } from "@/views/settting/index";
+import Color from "element-plus/es/components/color-picker/src/color";
 
 const thisRoute = useRoute();
 const { replace } = useRouter();
@@ -1588,7 +1602,7 @@ const view = reactive<any>({
   videoUrl: null,
   playlist: [],
   videoVisible: false,
-  videoFullscreen: false,
+  videoFullscreen: true,
   innerVisible: false,
   formItem: new MovieModel(),
   dialogFormItemVisible: false,
@@ -1708,7 +1722,6 @@ const countTransferIng = computed(() => {
 });
 
 const hiddenPlayVideo = () => {
-  view.videoFullscreen = false;
   view.videoVisible = false;
 };
 
@@ -1733,6 +1746,7 @@ const queryRelation = async (keywords) => {
 };
 
 const startPlayVideo = (item: MovieModel) => {
+  
   view.videoVisible = true;
   view.contextmenuTarget = item;
   optionsPC.title = item.Name;
@@ -1759,7 +1773,7 @@ const cmenuPlay = async (item?) => {
   if (item) {
     view.contextmenuTarget = item;
   }
-
+  view.videoFullscreen = true;
   startPlayVideo(view.contextmenuTarget);
 };
 
