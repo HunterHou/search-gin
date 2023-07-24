@@ -1045,8 +1045,16 @@
               {{ item.Status }}
               {{
                 item.FinishTime
-                  ? timeFormat(item.CreateTime, item.FinishTime)
-                  : timeFormat(item.CreateTime, new Date())
+                  ? (
+                      (new Date(item.FinishTime).getTime() -
+                        new Date(item.StartTime).getTime()) /
+                      1000
+                    ).toFixed(0)
+                  : (
+                      (new Date().getTime() -
+                        new Date(item.StartTime).getTime()) /
+                      1000
+                    ).toFixed(0)
               }}
             </span>
             <span
@@ -1086,8 +1094,16 @@
               {{ item.Status }}
               {{
                 item.FinishTime
-                  ? timeFormat(item.CreateTime, item.FinishTime)
-                  : timeFormat(item.CreateTime, new Date())
+                  ? (
+                      (new Date(item.FinishTime).getTime() -
+                        new Date(item.StartTime).getTime()) /
+                      1000
+                    ).toFixed(0)
+                  : (
+                      (new Date().getTime() -
+                        new Date(item.StartTime).getTime()) /
+                      1000
+                    ).toFixed(0)
               }}
             </span>
             <span
@@ -1403,9 +1419,7 @@
     <div class="playDiv">
       <vue3VideoPlay
         ref="vue3VideoPlayRef"
-        :style="{
-          position: 'relative',
-        }"
+        style="position: relative; max-height: 90vh; object-fit: contain"
         v-bind="optionsPC"
         @volumechange="volumechange"
       />
@@ -1601,16 +1615,6 @@ const loadTagSize = async () => {
   if (res) {
     tagData.value = (res as any).splice(0, 60);
   }
-};
-
-const timeFormat = (startTime, endTime) => {
-  if (!endTime) {
-    endTime = new Date();
-  }
-  return (
-    (new Date(endTime).getTime() - new Date(startTime).getTime()) /
-    1000
-  ).toFixed(0);
 };
 
 const cutParam = reactive({
