@@ -2217,6 +2217,7 @@ const deleteThis = async (id: string) => {
             if (res.Code === 200) {
               ElMessage.success(res.Message);
               refreshIndex();
+              view.isPlaying=false
               view.videoVisible = false;
               view.videoFullscreen = false;
             } else {
