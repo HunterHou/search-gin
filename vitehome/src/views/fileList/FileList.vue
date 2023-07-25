@@ -1398,7 +1398,13 @@
     top="0"
     width="1200px"
   >
-    <template #header>
+    <div class="playDiv">
+      <vue3VideoPlay
+        ref="vue3VideoPlayRef"
+        style="position: relative; max-height: 90vh; object-fit: contain"
+        v-bind="optionsPC"
+        @volumechange="volumechange"
+      />
       <div class="my-header">
         <span style="color: bisque">{{ view.contextmenuTarget.Name }}</span>
         <div class="header-button">
@@ -1409,98 +1415,89 @@
                 view.videoFullscreen = !view.videoFullscreen;
               }
             "
-            >{{ view.videoFullscreen ? "恢复" : "全屏" }}</ElButton
+            >{{ view.videoFullscreen ? "小屏" : "全屏" }}</ElButton
           >
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+          <ElButton
+            type="primary"
+            @click="deleteThis(view.contextmenuTarget.Id)"
+            >删除</ElButton
+          >
           <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
         </div>
       </div>
-    </template>
-    <div class="playDiv">
-      <vue3VideoPlay
-        ref="vue3VideoPlayRef"
-        style="position: relative; max-height: 90vh; object-fit: contain"
-        v-bind="optionsPC"
-        @volumechange="volumechange"
-      />
-
       <div
-        style="height: 60vh; overflow: auto"
+        style="display: flex; flex-direction: row; justify-content: flex-start"
+      >
+        <el-space spacer="|" wrap>
+          <ElTag
+            v-for="item in view.contextmenuTarget.Tags"
+            key="default"
+            type="danger"
+            size="mini"
+            @click="queryRelation(item)"
+          >
+            {{ item }}
+          </ElTag>
+
+          <el-link :underline="false" type="success"
+            >{{ view.contextmenuTarget.Code }}
+          </el-link>
+          <el-link
+            type="warning"
+            size="large"
+            style="margin-left: 0.5rem"
+            @click="queryRelation(view.contextmenuTarget.Actress)"
+          >
+            {{ view.contextmenuTarget.Actress }}
+          </el-link>
+        </el-space>
+        <ElButton type="primary" @click="moreTag = !moreTag">更多</ElButton>
+      </div>
+      <ElRow v-if="moreTag">
+        <el-space spacer="|" wrap>
+          <el-link
+            type="warning"
+            v-for="item in view.settingInfo.Tags"
+            key="default"
+            size="large"
+            :underline="false"
+            style="margin-left: 0.5rem"
+            @click="queryRelation(item)"
+          >
+            {{ item }}
+          </el-link>
+        </el-space>
+      </ElRow>
+      <div
+        style="margin: 8px auto; height: 60vh; overflow: auto"
         v-if="view.playlist && view.playlist.length > 0"
       >
-        <div
-          style="
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-          "
-        >
-          <el-space spacer="|" wrap>
-            <ElTag
-              v-for="item in view.contextmenuTarget.Tags"
-              key="default"
-              type="danger"
-              size="mini"
-              @click="queryRelation(item)"
+        <ElSpace wrap size="default">
+          <ElCard
+            v-for="play in view.playlist"
+            :key="play"
+            :body-style="{ padding: '2px' }"
+            style="width: 156px; height: auto"
+            @click="startPlayVideo(play)"
+          >
+            <ElImage :src="getPng(play.Id)"></ElImage>
+            <span
+              style="
+                height: 3rem;
+                color: #000;
+                scale: 0.8;
+                overflow: hidden;
+                word-break: break-all;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+              "
+              >{{ play.Name }}</span
             >
-              {{ item }}
-            </ElTag>
-
-            <el-link :underline="false" type="success"
-              >{{ view.contextmenuTarget.Code }}
-            </el-link>
-            <el-link
-              type="warning"
-              size="large"
-              style="margin-left: 0.5rem"
-              @click="queryRelation(view.contextmenuTarget.Actress)"
-            >
-              {{ view.contextmenuTarget.Actress }}
-            </el-link>
-          </el-space>
-          <ElButton type="primary" @click="moreTag = !moreTag">更多</ElButton>
-        </div>
-        <ElRow v-if="moreTag">
-          <el-space spacer="|" wrap>
-            <el-link
-              type="warning"
-              v-for="item in view.settingInfo.Tags"
-              key="default"
-              size="large"
-              :underline="false"
-              style="margin-left: 0.5rem"
-              @click="queryRelation(item)"
-            >
-              {{ item }}
-            </el-link>
-          </el-space>
-        </ElRow>
-        <div style="margin: 8px auto">
-          <ElSpace wrap size="default">
-            <ElCard
-              v-for="play in view.playlist"
-              :key="play"
-              :body-style="{ padding: '2px' }"
-              style="width: 156px; height: auto"
-              @click="startPlayVideo(play)"
-            >
-              <ElImage :src="getPng(play.Id)"></ElImage>
-              <span
-                style="
-                  height: 3rem;
-                  color: #000;
-                  scale: 0.8;
-                  overflow: hidden;
-                  word-break: break-all;
-                  text-overflow: ellipsis;
-                  display: -webkit-box;
-                "
-                >{{ play.Name }}</span
-              >
-            </ElCard>
-          </ElSpace>
-        </div>
+          </ElCard>
+        </ElSpace>
       </div>
+      <!-- </div> -->
     </div>
   </el-dialog>
   <!-- <teleport to="body">
@@ -2214,11 +2211,14 @@ const deleteThis = async (id: string) => {
     type: "warning",
     callback: async (action) => {
       if (action == "confirm") {
+        optionsPC.src = null;
         await DeleteFile(id)
           .then((res) => {
             if (res.Code === 200) {
               ElMessage.success(res.Message);
               refreshIndex();
+              view.videoVisible = false;
+              view.videoFullscreen = false;
             } else {
               ElMessage.error(res.Message);
             }
