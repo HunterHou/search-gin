@@ -370,14 +370,14 @@
               title="播放"
               @click="playThis(item.Id)"
               :style="{
-                height: '42px',
-                width: '42px',
+                height: '35px',
+                width: '35px',
                 border: 'none',
                 borderRadius: '50%',
                 backgroundColor: 'rgba(255,255,255,0.7)',
               }"
             >
-              <ElIcon :size="40">
+              <ElIcon :size="30">
                 <VideoPlay />
               </ElIcon>
             </ElButton>
@@ -1601,7 +1601,7 @@
                 text-overflow: ellipsis;
                 display: -webkit-box;
               "
-              >{{ play.name }}</span
+              >{{ play.Name }}</span
             >
           </ElCard>
         </ElSpace>
