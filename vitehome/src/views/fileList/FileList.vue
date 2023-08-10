@@ -323,7 +323,115 @@
       element-loading-spinner="ElIcon-loading"
       style="min-height: 660px; margin: 2px auto"
     >
-      <ElSpace wrap>
+      <ElSpace v-if="showStyle == 'mini'" wrap size="default">
+        <ElCard
+          v-for="item in view.ModelList"
+          :key="item"
+          :body-style="{ padding: '2px' }"
+          style="width: 156px; height: auto"
+        >
+          <ElImage
+            :src="getPng(item.Id)"
+            @click="openInfoWindow(item.Id)"
+          ></ElImage>
+          <div
+            :style="{
+              marginTop: '-35px',
+              position: 'absolute',
+              height: '30px',
+              alignItems: 'center',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              display: 'flex',
+              justifyContent: 'flex-start',
+            }"
+          >
+            <ElButton
+              plain
+              title="在线"
+              type="primary"
+              @click="cmenuPlay(item)"
+              :style="{
+                height: '45px',
+                width: '45px',
+                border: 'none',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255,255,255,0.7)',
+              }"
+            >
+              <ElIcon :size="40">
+                <VideoPlay />
+              </ElIcon>
+            </ElButton>
+            <ElButton
+              plain
+              type="danger"
+              class="icon-button"
+              title="播放"
+              @click="playThis(item.Id)"
+              :style="{
+                height: '42px',
+                width: '42px',
+                border: 'none',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255,255,255,0.7)',
+              }"
+            >
+              <ElIcon :size="40">
+                <VideoPlay />
+              </ElIcon>
+            </ElButton>
+            <ElButton
+              type="danger"
+              plain
+              class="icon-button"
+              @click="deleteThis(item.Id)"
+              :style="{
+                height: '42px',
+                width: '42px',
+                border: 'none',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(0,0,0,0.7)',
+              }"
+            >
+              <ElIcon :size="36">
+                <DeleteFilled />
+              </ElIcon>
+            </ElButton>
+          </div>
+          <div
+            style="
+              height: 3rem;
+              color: #000;
+              scale: 0.8;
+              overflow: hidden;
+              word-break: break-all;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+            "
+          >
+            <ElLink
+              v-if="item.Actress"
+              style="color: green"
+              @click="copy(item.Actress)"
+              >{{ item.Actress }}
+            </ElLink>
+            <ElDivider v-if="item.Actress" direction="vertical"></ElDivider>
+            <ElLink
+              v-if="item.Code"
+              style="color: orange"
+              @click="copy(item.Code)"
+              >{{ codeFormat(item.Code) }}</ElLink
+            >
+            <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
+            <span style="color: red" @click="copy(item.Title)">
+              {{ item.SizeStr }}
+            </span>
+            <span @click="editItem(item)">{{ item.Name }}</span>
+          </div>
+        </ElCard>
+      </ElSpace>
+      <ElSpace v-else wrap>
         <div
           :class="isShowCover(view) ? 'list-item-cover' : 'list-item'"
           v-for="item in view.ModelList"
@@ -984,6 +1092,7 @@
           <el-radio-group v-model="showStyle" size="default">
             <el-radio-button label="cover">封面</el-radio-button>
             <el-radio-button label="post">海报</el-radio-button>
+            <el-radio-button label="mini">极简</el-radio-button>
           </el-radio-group>
           <ElDivider direction="vertical"></ElDivider>
           <span v-if="!running" style="color: red">运行异常</span>
@@ -1492,7 +1601,7 @@
                 text-overflow: ellipsis;
                 display: -webkit-box;
               "
-              >{{ play.Name }}</span
+              >{{ play.name }}</span
             >
           </ElCard>
         </ElSpace>
@@ -2217,7 +2326,7 @@ const deleteThis = async (id: string) => {
             if (res.Code === 200) {
               ElMessage.success(res.Message);
               refreshIndex();
-              view.isPlaying=false
+              view.isPlaying = false;
               view.videoVisible = false;
               view.videoFullscreen = false;
             } else {
