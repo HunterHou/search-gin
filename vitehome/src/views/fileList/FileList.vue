@@ -198,59 +198,8 @@
 
     <div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="ElIcon-loading"
       style="min-height: 660px; margin: 2px auto">
-
-      <ElSpace v-if="showStyle == 'mini'" wrap size="default">
-        <ElCard v-for=" item in view.ModelList" :key="item" :body-style="{ padding: '2px' }"
-          style="width: 156px; height: auto" @click="startPlayVideo(item)">
-          <ElImage :src="getPng(item.Id)"></ElImage>
-          <div :style="{
-                marginTop: '-40px',
-                position: 'absolute',
-                height: '30px',
-                alignItems: 'center',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                width: isShowCover(view) ? '300px' : '200px',
-                display: 'flex',
-                justifyContent: 'flex-start',
-              }
-              ">
-              <ElButton plain title="在线" type="primary" @click="cmenuPlay(item)" :style="{
-                  height: '40px',
-                  width: '40px',
-                  border: 'none',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.1)',
-                }
-                ">
-                <ElIcon :size="45">
-                  <VideoPlay />
-                </ElIcon>
-              </ElButton>
-              <ElButton plain type="danger" class="icon-button" title="播放" @click="playThis(item.Id)" :style="{
-                  height: '40px',
-                  width: '40px',
-                  border: 'none',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.1)',
-                }
-                ">
-                <ElIcon :size="45">
-                  <VideoPlay />
-                </ElIcon>
-              </ElButton>
-              <ElButton type="danger" plain class="icon-button"
-                  @click="deleteThis(item.Id)">
-                  <ElIcon :size="30">
-                    <DeleteFilled />
-                  </ElIcon>
-                </ElButton>
-            </div>
-        </ElCard>
-      </ElSpace>
-      <ElSpace v-else wrap>
-        <div :class="isShowCover(view) ? 'list-item-cover' : 'list-item'" v-for=" item  in  view.ModelList "
-          :key="item.Id">
+      <ElSpace wrap>
+        <div :class="isShowCover(view) ? 'list-item-cover' : 'list-item'" v-for="item in view.ModelList" :key="item.Id">
           <div class="tag-area">
             <li v-for=" tag  in  item.Tags " :key="tag" style="list-style-type: none">
               <ElTag closable effect="dark" :size="isShowCover(view) ? 'default' : 'default'"
@@ -312,9 +261,9 @@
             </template>
           </ElPopover>
           <ElCard class="ecard" shadow="always" :body-style="{
-              padding: '0px',
-              margin: '4px 2px',
-            }
+            padding: '0px',
+            margin: '4px 2px',
+          }
             ">
             <div v-if="item" :class="isShowCover(view) ? 'img-list-item-cover' : 'img-list-item'
               " @click="openInfoWindow(item.Id)">
@@ -322,36 +271,36 @@
                 fit="fill" />
             </div>
             <div :style="{
-                marginTop: '-45px',
-                position: 'absolute',
-                height: '30px',
-                alignItems: 'center',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                width: isShowCover(view) ? '300px' : '200px',
-                display: 'flex',
-                justifyContent: 'flex-start',
-              }
+              marginTop: '-45px',
+              position: 'absolute',
+              height: '30px',
+              alignItems: 'center',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              width: isShowCover(view) ? '300px' : '200px',
+              display: 'flex',
+              justifyContent: 'flex-start',
+            }
               ">
               <ElButton plain title="在线" type="primary" @click="cmenuPlay(item)" :style="{
-                  height: '66px',
-                  width: '66px',
-                  border: 'none',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.1)',
-                }
+                height: '66px',
+                width: '66px',
+                border: 'none',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(0,0,0,0.1)',
+              }
                 ">
                 <ElIcon :size="66">
                   <VideoPlay />
                 </ElIcon>
               </ElButton>
               <ElButton plain type="danger" class="icon-button" title="播放" @click="playThis(item.Id)" :style="{
-                  height: '45px',
-                  width: '45px',
-                  border: 'none',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.1)',
-                }
+                height: '45px',
+                width: '45px',
+                border: 'none',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(0,0,0,0.1)',
+              }
                 ">
                 <ElIcon :size="45">
                   <VideoPlay />
@@ -360,10 +309,10 @@
             </div>
 
             <div class="image-tool" :style="{
-                background: !noMovieType(item.MovieType)
-                  ? ''
-                  : 'rgb(239 251 219)',
-              }
+              background: !noMovieType(item.MovieType)
+                ? ''
+                : 'rgb(239 251 219)',
+            }
               ">
               <div class="tool-button">
                 <ElButton type="warning" plain class="icon-button" title="图鉴" v-if="item.Actress &&
@@ -448,11 +397,10 @@
                     <Ship />
                   </ElIcon>
                 </ElButton>
-                <ElPopover placement="top-start" width="280px" :visible="item.toolShow" trigger="hover"
-                  :auto-close="0">
+                <ElPopover placement="top-start" width="280px" :visible="item.toolShow" trigger="hover" :auto-close="0">
                   <template #reference>
-                    <ElButton plain type="success" v-if="view.settingInfo.Buttons?.indexOf('更多') >= 0"
-                      class="icon-button" @click="previewPicture(item.Id)">
+                    <ElButton plain type="success" v-if="view.settingInfo.Buttons?.indexOf('更多') >= 0" class="icon-button"
+                      @click="previewPicture(item.Id)">
                       <ElIcon>
                         <QuestionFilled />
                       </ElIcon>
@@ -460,8 +408,8 @@
                   </template>
                   <template #default>
                     <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="() => {
-                        item.toolShow = false;
-                      }
+                      item.toolShow = false;
+                    }
                       ">
                       <div>
                         <ElRow>
@@ -629,9 +577,9 @@
   <ElDialog :width="windowWidth > 100 ? '80vw' : '500px'" :title="`执行任务(${Object.keys(view.transferTask).length - countTransferIng
     }/${Object.keys(view.transferTask).length})`
     " draggable v-model="taskPop" destroy-on-close @before-close="(done) => {
-      taskPop = false;
-      done();
-    }
+    taskPop = false;
+    done();
+  }
     ">
     <template #default>
       <ElRadioGroup v-model="view.taskType" size="large">
@@ -648,15 +596,15 @@
               border-bottom: 1px dodgerblue dotted;
             " v-if="item.Status === '执行中'">
             <span :style="{
-                width: '6rem',
-                textAlign: 'left',
-                color:
-                  item.Status == '成功'
-                    ? 'green'
-                    : item.Status === '等待'
-                      ? 'grey'
-                      : 'red',
-              }
+              width: '6rem',
+              textAlign: 'left',
+              color:
+                item.Status == '成功'
+                  ? 'green'
+                  : item.Status === '等待'
+                    ? 'grey'
+                    : 'red',
+            }
               ">
               {{ item.Status }}
               {{
@@ -691,15 +639,15 @@
               border-bottom: 1px dodgerblue dotted;
             " v-if="item.Status === view.taskType">
             <span :style="{
-                width: '6rem',
-                textAlign: 'left',
-                color:
-                  item.Status == '成功'
-                    ? 'green'
-                    : item.Status === '等待'
-                      ? 'grey'
-                      : 'red',
-              }
+              width: '6rem',
+              textAlign: 'left',
+              color:
+                item.Status == '成功'
+                  ? 'green'
+                  : item.Status === '等待'
+                    ? 'grey'
+                    : 'red',
+            }
               ">
               {{ item.Status }}
               {{
@@ -803,9 +751,9 @@
   </ElDialog>
   <ElDialog width="66%" :modal="true" :append-to-body="false" :show-close="true" :lock-scroll="true"
     :close-on-click-modal="true" :close-on-press-escape="true" v-model="view.dialogVisible" :before-close="() => {
-        innerVisibleFalse();
-        view.dialogVisible = false;
-      }
+      innerVisibleFalse();
+      view.dialogVisible = false;
+    }
       " :destroy-on-close="true">
     <div v-if="view.formItem">
       <div style="margin-top: 10px">
@@ -878,9 +826,9 @@
       </div>
     </div>
   </teleport>
-  <el-dialog v-model="view.videoVisible" :append-to-body="true" :modal="false" :show-close="true"
-    :lock-scroll="true" :close-on-click-modal="true" :close-on-press-escape="true"
-    :fullscreen="view.videoFullscreen" :before-close="closePlayVideo" top="0" width="1200px">
+  <el-dialog v-model="view.videoVisible" :append-to-body="true" :modal="false" :show-close="true" :lock-scroll="true"
+    :close-on-click-modal="true" :close-on-press-escape="true" :fullscreen="view.videoFullscreen"
+    :before-close="closePlayVideo" top="0" width="1200px">
     <div class="playDiv">
       <vue3VideoPlay ref="vue3VideoPlayRef" style="position: relative; max-height: 90vh; object-fit: contain"
         v-bind="optionsPC" @volumechange="volumechange" />
@@ -888,8 +836,8 @@
         <span style="color: bisque">{{ view.contextmenuTarget.Name }}</span>
         <div class="header-button">
           <ElButton type="primary" @click="() => {
-              view.videoFullscreen = !view.videoFullscreen;
-            }
+            view.videoFullscreen = !view.videoFullscreen;
+          }
             ">{{ view.videoFullscreen ? "小屏" : "全屏" }}</ElButton>
           <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
           <ElButton type="primary" @click="deleteThis(view.contextmenuTarget.Id)">删除</ElButton>
@@ -914,8 +862,8 @@
       </div>
       <ElRow v-if="moreTag">
         <el-space spacer="|" wrap>
-          <el-link type="warning" v-for=" item  in  view.settingInfo.Tags " key="default" size="large"
-            :underline="false" style="margin-left: 0.5rem" @click="queryRelation(item)">
+          <el-link type="warning" v-for=" item  in  view.settingInfo.Tags " key="default" size="large" :underline="false"
+            style="margin-left: 0.5rem" @click="queryRelation(item)">
             {{ item }}
           </el-link>
         </el-space>
