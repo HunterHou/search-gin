@@ -1,93 +1,53 @@
 <template>
   <div ref="pagePress" class="mainBody" v-show="mainBody">
-    <NavBar :title="title">
-      <template #left>
+    <NavBar left-text="返回" @click-left="gohome">
+      <template #title>
         <div>
-          <span @click="loadRefreshIndex" style="color: blue"
-            >总数:{{ view.ResultCnt }}</span
-          >
+          <span @click="loadRefreshIndex" style="color: blue">总数:{{ view.ResultCnt }}</span>
         </div>
       </template>
       <template #right>
-        <div
-          @click="
-            view.queryParam.Page = 1;
-            PageNum = 1;
-            showSearch = true;
-          "
-        >
+        <div @click="
+          view.queryParam.Page = 1;
+        PageNum = 1;
+        showSearch = true;
+        ">
           <Icon name="search" size="18" />
           <span style="width: 10rem; overflow: hidden">
             {{ view.queryParam.Keyword }}
           </span>
         </div>
-        <Icon
-          v-if="view.queryParam.Keyword"
-          name="revoke"
-          @click="
-            view.queryParam.Keyword = '';
-            onSearch();
-          "
-        />
+        <Icon v-if="view.queryParam.Keyword" name="revoke" @click="
+          view.queryParam.Keyword = '';
+        onSearch();
+        " />
       </template>
     </NavBar>
-    <ActionSheet
-      v-model:show="showSearch"
-      title="搜索"
-      :close-on-click-overlay="true"
-      style="height: 70vh; background-color: white"
-    >
-      <Search
-        v-model="view.queryParam.Keyword"
-        placeholder="请输入搜索"
-        @search="onSearch"
-        show-action
-        @update:model-value="keywordUpdate"
-        @cancel="onCancel"
-        input-align="center"
-      >
+    <ActionSheet v-model:show="showSearch" title="搜索" :close-on-click-overlay="true"
+      style="height: 70vh; background-color: white">
+      <Search v-model="view.queryParam.Keyword" placeholder="请输入搜索" @search="onSearch" show-action
+        @update:model-value="keywordUpdate" @cancel="onCancel" input-align="center">
         <template #action>
-          <Button type="primary" plain @click="onCancel" style="width: 4rem"
-            >搜索</Button
-          >
+          <Button type="primary" plain @click="onCancel" style="width: 4rem">搜索</Button>
         </template>
       </Search>
       <div style="margin-bottom: 0vh">
-        <Tag
-          type="success"
-          v-for="tag in view.settingInfo.Tags"
-          :key="tag"
-          style="margin: 1px 2px; font-size: 18px"
-          size="large"
-          @click="
+        <Tag type="success" v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px; font-size: 18px"
+          size="large" @click="
             searchKeyword(tag);
-            showSearch = false;
-          "
-        >
+          showSearch = false;
+          ">
           {{ tag }}
         </Tag>
       </div>
     </ActionSheet>
-    <ActionSheet
-      v-model:show="showTag"
-      title="标签管理"
-      :close-on-click-overlay="true"
-      style="height: 60vh"
-    >
+    <ActionSheet v-model:show="showTag" title="标签管理" :close-on-click-overlay="true" style="height: 60vh">
       <div style="margin: 1rem">
         <Row>
           <Col>当前标签</Col>
           <Col>
-            <Tag
-              type="success"
-              size="large"
-              style="margin: 2px 4px"
-              v-for="ta in view.currentFile.Tags"
-              :key="ta"
-              closeable
-              @close="removeCurrentFileTag(ta)"
-              >{{ ta }}</Tag
-            >
+          <Tag type="success" size="large" style="margin: 2px 4px" v-for="ta in view.currentFile.Tags" :key="ta" closeable
+            @close="removeCurrentFileTag(ta)">{{ ta }}</Tag>
           </Col>
         </Row>
       </div>
@@ -97,88 +57,51 @@
         </Row>
         <Row justify="space-around">
           <Col>
-            <Tag
-              type="success"
-              size="large"
-              style="margin: 2px 4px"
-              v-for="ta in view.settingInfo.Tags"
-              :key="ta"
-              @click="addCurrentFileTag(ta)"
-              >{{ ta }}</Tag
-            >
+          <Tag type="success" size="large" style="margin: 2px 4px" v-for="ta in view.settingInfo.Tags" :key="ta"
+            @click="addCurrentFileTag(ta)">{{ ta }}</Tag>
           </Col>
         </Row>
       </div>
     </ActionSheet>
-    <ActionSheet
-      v-model:show="showRename"
-      title="重命名"
-      :close-on-click-overlay="true"
-      style="height: 60vh"
-    >
+    <ActionSheet v-model:show="showRename" title="重命名" :close-on-click-overlay="true" style="height: 60vh">
       <div style="margin-bottom: 0vh">
         <Row>
           <Col :span="6"> 类型 </Col>
           <Col :span="18">
-            <RadioGroup
-              v-model="view.currentFile.MovieType"
-              @change="formMovieTypeChange(view)"
-              direction="horizontal"
-            >
-              <Radio name="">全部</Radio>
-              <Radio name="骑兵">骑兵</Radio>
-              <Radio name="步兵">步兵</Radio>
-              <Radio name="斯巴达">斯巴达</Radio>
-              <Radio name="国产">国产</Radio>
-            </RadioGroup>
+          <RadioGroup v-model="view.currentFile.MovieType" @change="formMovieTypeChange(view)" direction="horizontal">
+            <Radio name="">全部</Radio>
+            <Radio name="骑兵">骑兵</Radio>
+            <Radio name="步兵">步兵</Radio>
+            <Radio name="斯巴达">斯巴达</Radio>
+            <Radio name="国产">国产</Radio>
+          </RadioGroup>
           </Col>
         </Row>
         <Row>
           <Col :span="24">
-            <Field
-              label="编码"
-              style="width: 100%"
-              v-model="view.currentFile.Code"
-            >
-            </Field>
+          <Field label="编码" style="width: 100%" v-model="view.currentFile.Code">
+          </Field>
           </Col>
         </Row>
         <Row>
           <Col :span="24">
-            <Field
-              label="图鉴"
-              style="width: 100%"
-              v-model="view.currentFile.Actress"
-            >
-            </Field>
+          <Field label="图鉴" style="width: 100%" v-model="view.currentFile.Actress">
+          </Field>
           </Col>
         </Row>
         <Row>
           <Col :span="24">
-            <Field
-              label="名称"
-              rows="5"
-              style="width: 100%"
-              autosize
-              type="textarea"
-              v-model="view.currentFile.Name"
-            >
-            </Field>
+          <Field label="名称" rows="5" style="width: 100%" autosize type="textarea" v-model="view.currentFile.Name">
+          </Field>
           </Col>
         </Row>
         <Row>
-          <Button
-            style="margin: 4px auto"
-            size="large"
-            type="primary"
-            @click="renameFile"
-            >提交</Button
-          >
+          <Button style="margin: 4px auto" size="large" type="primary" @click="renameFile">提交</Button>
         </Row>
       </div>
     </ActionSheet>
 
-    <MobileBar></MobileBar>
+
     <teleport to="body">
       <div v-show="view.videoVisible" class="videoDiv" id="videoDiv">
         <div class="videoRow">
@@ -186,69 +109,39 @@
             <Row :span="22" style="max-height: 3rem; overflow: hidden">
               <Col>{{ view.currentFile.Name }}</Col>
             </Row>
-            <vue3VideoPlay
-              :poster="getJpg(view.currentFile.Id)"
-              ref="vue3VideoPlayRef"
-              style="width: 98vw; height: auto; object-fit: fill; padding: 1vh"
-              x5-video-player-type="h5"
-              openFilex5-video-player-fullscreen="true"
-              x5-video-orientation="landscape"
-              v-bind="options"
-              @volumechange="volumechangeThis"
-            />
+            <vue3VideoPlay :poster="getJpg(view.currentFile.Id)" ref="vue3VideoPlayRef"
+              style="width: 98vw; height: auto; object-fit: fill; padding: 1vh" x5-video-player-type="h5"
+              openFilex5-video-player-fullscreen="true" x5-video-orientation="landscape" v-bind="options"
+              @volumechange="volumechangeThis" />
             <div class="videoDivRowButton">
               <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
               <ElButton type="primary" @click="togglePlay">停/播</ElButton>
-              <ElButton type="primary" @click="thisDelete(view.currentFile)"
-                >删除</ElButton
-              >
+              <ElButton type="primary" @click="thisDelete(view.currentFile)">删除</ElButton>
               <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
             </div>
 
             <Row>
               <Col :span="8">
-                <a
-                  @click="
-                    searchKeyword(view.currentFile.Actress);
-                    playListQuery(view.currentFile.Actress);
-                  "
-                  >{{ view.currentFile.Actress?.substring(0, 4) }}
-                </a></Col
-              >
+              <a @click="
+                searchKeyword(view.currentFile.Actress);
+              playListQuery(view.currentFile.Actress);
+              ">{{ view.currentFile.Actress?.substring(0, 4) }}
+              </a></Col>
               <Col :span="8"> {{ view.currentFile.Code }}</Col>
               <Col :span="8"> {{ view.currentFile.SizeStr }}</Col>
             </Row>
-            <Tag
-              v-for="tag in view.currentFile.Tags"
-              plain
-              size="large"
-              type="danger"
-              @click="playListQuery(tag)"
-              >{{ tag }}</Tag
-            >
-            <Tag plain size="large" type="default" @click="moreTags = !moreTags"
-              >更多</Tag
-            >
+            <Tag v-for="tag in view.currentFile.Tags" plain size="large" type="danger" @click="playListQuery(tag)">{{ tag
+            }}</Tag>
+            <Tag plain size="large" type="default" @click="moreTags = !moreTags">更多</Tag>
             <Row v-if="moreTags">
               <Col>
-                <Tag
-                  type="success"
-                  size="large"
-                  style="margin: 2px 4px"
-                  v-for="ta in view.settingInfo.Tags"
-                  :key="ta"
-                  @click="playListQuery(ta)"
-                  >{{ ta }}</Tag
-                >
+              <Tag type="success" size="large" style="margin: 2px 4px" v-for="ta in view.settingInfo.Tags" :key="ta"
+                @click="playListQuery(ta)">{{ ta }}</Tag>
               </Col>
             </Row>
           </div>
           <div class="videoDivRowRelations">
-            <div
-              v-for="relaPlay in view.playlist"
-              class="videoDivRowImg"
-              @click="openFile(relaPlay)"
-            >
+            <div v-for="relaPlay in view.playlist" class="videoDivRowImg" @click="openFile(relaPlay)">
               <Image :src="getPng(relaPlay.Id)" />
               <div class="videoDivRowDesc">
                 {{ relaPlay.Name }}
@@ -263,11 +156,7 @@
         <div class="viewPicButton">
           <Button type="primary" @click="closeViewPicture">关闭</Button>
         </div>
-        <div
-          v-for="(item, index) in view.imageList"
-          :key="index"
-          class="viewPicItem"
-        >
+        <div v-for="(item, index) in view.imageList" :key="index" class="viewPicItem">
           <ElImage class="viewPicImg" :src="item">
             @click.stop="innerVisibleFalse"
           </ElImage>
@@ -276,27 +165,15 @@
     </teleport>
 
     <Sticky v-if="isPlaying" :offsetTop="520" style="left: 450px; width: 400px">
-      <Button
-        size="normal"
-        type="success"
-        @click="
-          () => {
-            view.videoVisible = true;
-          }
-        "
-      >
+      <Button size="normal" type="success" @click="() => {
+        view.videoVisible = true;
+      }
+        ">
         正在播放：
         {{ view.currentFile?.Code || view.currentFile?.Actress || "无" }}
-        <Button
-          size="normal"
-          type="success"
-          :loading="true"
-          loading-type="spinner"
-        ></Button>
+        <Button size="normal" type="success" :loading="true" loading-type="spinner"></Button>
       </Button>
-      <Button size="normal" type="danger" @click="closePlayVideo"
-        >停止播放</Button
-      >
+      <Button size="normal" type="danger" @click="closePlayVideo">停止播放</Button>
     </Sticky>
 
     <BackTop right="15vw" bottom="10vh" />
@@ -309,40 +186,19 @@
           </div>
           <div class="easyModeBTN">
             <Tag size="large" type="primary" @click="openFile(item)">播放</Tag>
-            <Tag size="large" type="primary" @click="viewPictures(item)"
-              >查看</Tag
-            >
-            <Tag
-              class="mr1"
-              size="large"
-              type="danger"
-              @click="deleteFile(item)"
-              >删除
+            <Tag size="large" type="primary" @click="viewPictures(item)">查看</Tag>
+            <Tag class="mr1" size="large" type="danger" @click="deleteFile(item)">删除
             </Tag>
           </div>
-          <Image
-            :alt="item.Name"
-            class="easyModeImg"
-            :src="getPng(item.Id)"
-            @click="openFile(item)"
-          >
+          <Image :alt="item.Name" class="easyModeImg" :src="getPng(item.Id)" @click="openFile(item)">
           </Image>
         </div>
       </div>
-      <div
-        v-if="!easyMode"
-        v-for="item in view.ModelList"
-        :key="item.Id"
-        class="listMode"
-      >
+      <div v-if="!easyMode" v-for="item in view.ModelList" :key="item.Id" class="listMode">
         <div class="listModeItem">
           <div class="listModeLeft">
-            <Image
-              class="listModeImg"
-              :src="isWide ? getJpg(item.Id) : getPng(item.Id)"
-              @click="previewPictures(item)"
-              :style="{ width: isWide ? '100%' : 'auto' }"
-            >
+            <Image class="listModeImg" :src="isWide ? getJpg(item.Id) : getPng(item.Id)" @click="previewPictures(item)"
+              :style="{ width: isWide ? '100%' : 'auto' }">
               <template v-slot:error>加载失败</template>
             </Image>
           </div>
@@ -350,82 +206,27 @@
           <div class="imageCover">
             <SwipeCell>
               <div class="imageCoverTool">
-                <Tag size="large" type="primary" @click="openFile(item)"
-                  >播放</Tag
-                >
-                <Tag
-                  square
-                  size="large"
-                  type="primary"
-                  @click="viewPictures(item)"
-                  >查看</Tag
-                >
-                <Tag square size="large" type="success" @click="tagManage(item)"
-                  >标签</Tag
-                >
+                <Tag size="large" type="primary" @click="openFile(item)">播放</Tag>
+                <Tag square size="large" type="primary" @click="viewPictures(item)">查看</Tag>
+                <Tag square size="large" type="success" @click="tagManage(item)">标签</Tag>
 
-                <Tag
-                  square
-                  size="large"
-                  type="warning"
-                  @click="getImageList(item.Id)"
-                  >刮图</Tag
-                >
+                <Tag square size="large" type="warning" @click="getImageList(item.Id)">刮图</Tag>
 
-                <Tag
-                  square
-                  size="large"
-                  type="primary"
-                  @click="showRenameForm(item)"
-                >
-                  重命名</Tag
-                >
-                <Tag
-                  square
-                  size="large"
-                  type="primary"
-                  @click="TransferToMp4(item.Id)"
-                  v-if="item.FileType !== 'mp4'"
-                >
-                  转MP4</Tag
-                >
-                <Tag
-                  v-if="isWide"
-                  square
-                  class="mr1"
-                  size="large"
-                  type="danger"
-                  @click="deleteFile(item)"
-                  >删除
+                <Tag square size="large" type="primary" @click="showRenameForm(item)">
+                  重命名</Tag>
+                <Tag square size="large" type="primary" @click="TransferToMp4(item.Id)" v-if="item.FileType !== 'mp4'">
+                  转MP4</Tag>
+                <Tag v-if="isWide" square class="mr1" size="large" type="danger" @click="deleteFile(item)">删除
                 </Tag>
-                <Tag
-                  v-if="isWide"
-                  square
-                  class="mr1"
-                  size="large"
-                  type="success"
-                  @click="syncFile(item.Id)"
-                  >同步
+                <Tag v-if="isWide" square class="mr1" size="large" type="success" @click="syncFile(item.Id)">同步
                 </Tag>
               </div>
 
               <template #right>
                 <div class="imageCoverToolRight">
-                  <Tag
-                    square
-                    class="mr1"
-                    size="large"
-                    type="danger"
-                    @click="deleteFile(item)"
-                    >删除
+                  <Tag square class="mr1" size="large" type="danger" @click="deleteFile(item)">删除
                   </Tag>
-                  <Tag
-                    square
-                    class="mr1"
-                    size="large"
-                    type="success"
-                    @click="syncFile(item.Id)"
-                    >同步
+                  <Tag square class="mr1" size="large" type="success" @click="syncFile(item.Id)">同步
                   </Tag>
                 </div>
               </template>
@@ -434,38 +235,28 @@
         </div>
         <div class="listModeRight">
           <div style="margin: 1px auto">
-            <Row
-              style="
+            <Row style="
                 display: flex;
                 flex-direction: row;
                 justify-content: space-around;
-              "
-            >
+              ">
               <Col>
-                <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
+              <Tag color="#7232dd"> {{ item.MovieType }}</Tag>
               </Col>
               <Col v-if="item.Actress?.length > 0">
-                <a @click="searchKeyword(item.Actress)"
-                  >{{ item.Actress?.substring(0, 4) }}
-                </a>
+              <a @click="searchKeyword(item.Actress)">{{ item.Actress?.substring(0, 4) }}
+              </a>
               </Col>
               <Col v-if="item.Code?.length > 0">
-                <span>{{ item.Code }}</span>
+              <span>{{ item.Code }}</span>
               </Col>
             </Row>
 
             <Row class="listModeRightTag">
-              <Tag
-                v-for="tag in item.Tags"
-                plain
-                type="danger"
-                @click="searchKeyword(tag)"
-                >{{ tag }}</Tag
-              >
+              <Tag v-for="tag in item.Tags" plain type="danger" @click="searchKeyword(tag)">{{ tag }}</Tag>
             </Row>
             <Row class="listModeItemContent">
-              <span>【{{ item.SizeStr }}】 </span
-              ><span> 【{{ item.Name }}】</span>
+              <span>【{{ item.SizeStr }}】 </span><span> 【{{ item.Name }}】</span>
             </Row>
             <Row justify="space-around"> </Row>
           </div>
@@ -473,14 +264,9 @@
       </div>
       <LoadMoreVue @loadMore="onLoadMore" :more="loadMoreFlag" />
     </div>
-    <Popup
-      round
-      v-model:show="showPopover"
-      position="bottom"
-      style="background-color: rgba(255, 255, 255, 0.2); margin-bottom: 20vh"
-    >
-      <div
-        style="
+    <Popup round v-model:show="showPopover" position="bottom"
+      style="background-color: rgba(255, 255, 255, 0.2); margin-bottom: 20vh">
+      <div style="
           width: 99vw;
           height: 30vh;
           overflow: visible;
@@ -488,102 +274,49 @@
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-        "
-      >
-        <Button
-          style="height: 50px"
-          @click="pageChange(1)"
-          color="blanchedalmond"
-          ><span style="color: black">首页</span></Button
-        >
-        <Tabs
-          v-model:active="view.queryParam.MovieType"
-          type="card"
-          size="large"
-          class="tabsBtn"
-          @click-tab="movieTypeChange"
-        >
-          <Tab
-            v-for="item in MovieTypeOptions"
-            :title="item.text"
-            :name="item.value"
-            :key="item.value"
-            :title-style="{ height: '2rem' }"
-          ></Tab>
+        ">
+        <Button style="height: 50px" @click="pageChange(1)" color="blanched
+almond"><span style="color: black">首页</span></Button>
+        <Tabs v-model:active="view.queryParam.MovieType" type="card" size="large" class="tabsBtn"
+          @click-tab="movieTypeChange">
+          <Tab v-for="item in MovieTypeOptions" :title="item.text" :name="item.value" :key="item.value"
+            :title-style="{ height: '2rem' }"></Tab>
         </Tabs>
 
-        <Tabs
-          v-model:active="view.queryParam.SortField"
-          type="card"
-          size="large"
-          class="tabsBtn"
-          @click-tab="sortFieldChange"
-        >
-          <Tab
-            v-for="item in SortFieldOptions"
-            :title="item.text"
-            :name="item.value"
-            :key="item.value"
-          ></Tab>
+        <Tabs v-model:active="view.queryParam.SortField" type="card" size="large" class="tabsBtn"
+          @click-tab="sortFieldChange">
+          <Tab v-for="item in SortFieldOptions" :title="item.text" :name="item.value" :key="item.value"></Tab>
         </Tabs>
-        <Tabs
-          v-model:active="view.queryParam.SortType"
-          type="card"
-          size="large"
-          class="tabsBtn"
-          @click-tab="sortTypeChange"
-        >
-          <Tab
-            v-for="item in SortTypeOptions"
-            :title="item.text"
-            :name="item.value"
-            :key="item.value"
-          ></Tab>
+        <Tabs v-model:active="view.queryParam.SortType" type="card" size="large" class="tabsBtn"
+          @click-tab="sortTypeChange">
+          <Tab v-for="item in SortTypeOptions" :title="item.text" :name="item.value" :key="item.value"></Tab>
         </Tabs>
-        <div
-          style="
+        <div style="
             display: flex;
             flex-direction: row;
             justify-content: space-evenly;
-          "
-        >
+          ">
           <ElRadioGroup v-model="easyMode" size="large">
             <ElRadioButton :label="true">简易模式</ElRadioButton>
             <ElRadioButton :label="false">列表模式</ElRadioButton>
           </ElRadioGroup>
-          <Icon
-            name="search"
-            size="33"
-            color="blanchedalmond"
-            @click="
-              showSearch = true;
-              showPopover = false;
-            "
-          />
+          <Icon name="search" size="33" color="blanchedalmond
+" @click="
+  showSearch = true;
+showPopover = false;
+" />
         </div>
 
-        <Pagination
-          class="pageTools"
-          v-model="PageNum"
-          :total-items="view.TotalCnt"
-          force-ellipses
-          :show-page-size="3"
-          :items-per-page="view.queryParam.PageSize"
-          @change="pageChange"
-        >
+        <Pagination class="pageTools" v-model="PageNum" :total-items="view.TotalCnt" force-ellipses :show-page-size="3"
+          :items-per-page="view.queryParam.PageSize" @change="pageChange">
         </Pagination>
       </div>
     </Popup>
-    <Sticky offset-bottom="24vh" position="bottom" style="margin-right: 100px">
-      <Button
-        plain
-        type="primary"
-        @click="showPopover = true"
-        style="background-color: rgba(0, 0, 0, 0.5); color: whitesmoke"
-        >{{ view.queryParam.Page }}</Button
-      >
-    </Sticky>
+    <FloatingBubble axis="xy">
+      <Button type="primary" @click="showPopover = true">{{ view.queryParam.Page }}</Button>
+    </FloatingBubble>
   </div>
+ 
 </template>
 
 <script setup lang="ts">
@@ -633,6 +366,7 @@ import {
   Tab,
   Tabs,
   BackTop,
+  FloatingBubble
 } from "vant";
 import { ElRadioGroup, ElRadioButton } from "element-plus";
 import "vant/lib/index.css";
@@ -640,7 +374,6 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { MovieModel, MovieQuery } from "../fileList";
 import { formMovieTypeChange, volumechange } from "../fileList/fileList";
 import { SettingInfo } from "../settting";
-import MobileBar from "./MobileBar.vue";
 import LoadMoreVue from "./LoadMore.vue";
 import { useWindowSize, useWindowScroll } from "@vueuse/core";
 import { useRoute } from "vue-router";
@@ -721,6 +454,8 @@ const tagManage = (item: MovieModel) => {
   showTag.value = true;
   view.currentFile = item;
 };
+
+const gohome = () => { window.location.href='/mhome' }"
 
 const loadRefreshIndex = async () => {
   showRename.value = false;
@@ -1183,6 +918,7 @@ const SortTypeOptions = [
   color: antiquewhite;
   height: 1rem;
 }
+
 .videoDivRowImg {
   height: auto;
   width: 10rem;
@@ -1269,6 +1005,7 @@ const SortTypeOptions = [
   min-width: 4rem;
   z-index: 2;
 }
+
 .easyModeText {
   color: red;
   position: absolute;
@@ -1329,6 +1066,7 @@ const SortTypeOptions = [
   width: 98%;
   // z-index: 4;
 }
+
 .imageCoverTool {
   height: 2rem;
   width: 98%;
@@ -1338,6 +1076,7 @@ const SortTypeOptions = [
   flex-wrap: wrap-reverse;
   align-items: center;
 }
+
 .mr1 {
   margin-right: 1rem;
   align-items: center;
