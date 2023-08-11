@@ -316,7 +316,6 @@ showPopover = false;
       <Button type="primary" @click="showPopover = true">{{ view.queryParam.Page }}</Button>
     </FloatingBubble>
   </div>
- 
 </template>
 
 <script setup lang="ts">
@@ -455,7 +454,7 @@ const tagManage = (item: MovieModel) => {
   view.currentFile = item;
 };
 
-const gohome = () => { window.location.href='/mhome' }"
+const gohome = () => { window.location.href = '/mhome' }
 
 const loadRefreshIndex = async () => {
   showRename.value = false;
