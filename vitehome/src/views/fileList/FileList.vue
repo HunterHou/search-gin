@@ -345,13 +345,13 @@
           <ElImage
             :src="getPng(item.Id)"
             style="min-height: 100px; max-height: 170px"
-            @click="openInfoWindow(item.Id)"
+            @click="cmenuPlay(item)"
           ></ElImage>
 
           <div
             :style="{
-              margin: '-76px 0px 0px 0px',
-              height: '80px',
+              margin: '-60px 0px 0px 0px',
+              height: '60px',
               width: '126px',
               position: 'absolute',
             }"
@@ -360,39 +360,21 @@
               style="
                 display: flex;
                 flex-direction: row;
-                justify-content: flex-start;
+                justify-content: space-between;
                 flex-wrap: wrap-reverse;
               "
             >
               <ElButton
                 plain
-                title="在线"
-                type="primary"
-                @click="cmenuPlay(item)"
-                :style="{
-                  width: '30px',
-                  height: '30px',
-                  border: 'none',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.4)',
-                }"
-              >
-                <ElIcon :size="25">
-                  <VideoPlay />
-                </ElIcon>
-              </ElButton>
-              <ElButton
-                plain
                 type="danger"
-                class="icon-button"
                 title="播放"
                 @click="playThis(item.Id)"
                 :style="{
-                  width: '30px',
-                  height: '30px',
+                  width: '25px',
+                  height: '25px',
                   border: 'none',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.4)',
+                  backgroundColor: 'rgba(250,250,250,0.6)',
                 }"
               >
                 <ElIcon :size="25">
@@ -402,24 +384,34 @@
               <ElButton
                 type="danger"
                 plain
-                class="icon-button"
                 @click="deleteThis(item.Id)"
                 :style="{
-                  width: '30px',
-                  height: '30px',
+                  width: '25px',
+                  height: '25px',
                   border: 'none',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.2)',
+                  backgroundColor: 'rgba(250,250,250,0.6)',
                 }"
               >
                 <ElIcon :size="20">
                   <DeleteFilled />
                 </ElIcon>
               </ElButton>
+              <span
+                style="
+                  color: red;
+                  font-size: 10px;
+                  border-radius: 9%;
+                  background-color: rgba(250, 250, 250, 0.9);
+                "
+                @click="copy(item.Title)"
+              >
+                {{ item.SizeStr }}
+              </span>
             </div>
             <div
               style="
-                height: 3rem;
+                height: 2.2rem;
                 font-size: 8px;
                 scale: 0.8;
                 overflow: hidden;
@@ -427,13 +419,24 @@
                 text-overflow: ellipsis;
                 display: -webkit-box;
                 line-height: 12px;
-                background-color: rgba(250, 250, 250, 0.4);
+                background-color: rgba(250, 250, 250, 0.5);
               "
             >
-              <span style="color: red" @click="copy(item.Title)">
-                {{ item.SizeStr }}
-              </span>
-              <span @click="editItem(item)">{{ item.Name }}</span>
+              <a
+                style="color: blue"
+                v-if="item.Actress"
+                @click="copy(item.Actress)"
+                >{{ item.Actress }}
+              </a>
+              <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
+              <a
+                style="color: rgb(64, 75, 220)"
+                v-if="item.Code"
+                @click="copy(item.Code)"
+                >{{ codeFormat(item.Code) }}
+              </a>
+              <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
+              <span @click="editItem(item)" style="color: rgb(147, 51, 237)">{{ item.Name }}</span>
             </div>
           </div>
         </ElCard>
