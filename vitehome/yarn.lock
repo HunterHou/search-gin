@@ -299,10 +299,15 @@
   resolved "https://registry.npmjs.org/@vant/popperjs/-/popperjs-1.3.0.tgz"
   integrity sha512-hB+czUG+aHtjhaEmCJDuXOep0YTZjdlRR+4MSmIFnkCQIxJaXLQdSsR90XWvAI2yvKUI7TCGqR8pQg2RtvkMHw==
 
-"@vant/use@^1.4.2", "@vant/use@^1.5.0":
+"@vant/use@^1.4.2":
   version "1.5.0"
   resolved "https://registry.npmjs.org/@vant/use/-/use-1.5.0.tgz"
   integrity sha512-Dk7aMn7gLpoDew2tix/mjXpP0PoERWcxWh+pRY4xxl0MG4eeByAAyZSE6PgMpof4Yorqn7yq8KmeQcaVnxq2cg==
+
+"@vant/use@^1.5.1":
+  version "1.5.2"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@vant/use/-/use-1.5.2.tgz#d1877f293e6d1a0a8428d3d3f4b587a3f745324d"
+  integrity sha512-CBK61iT568dCHUwFFsErGbW6/5tmrPnZJKGtcSy7Tjcrmws8Ku+YZo7IUFD9Xkj9MfSJ4pfhQ7pU2KouP5Cojg==
 
 "@vitejs/plugin-vue@^3.0.0":
   version "3.2.0"
@@ -437,6 +442,11 @@
   version "3.2.47"
   resolved "https://registry.npmmirror.com/@vue/shared/-/shared-3.2.47.tgz#e597ef75086c6e896ff5478a6bfc0a7aa4bbd14c"
   integrity sha512-BHGyyGN3Q97EZx0taMQ+OLNuZcW3d37ZEVmEAyeoA9ERdGvm9Irc/0Fua8SNyOtV1w6BS4q25wbMzJujO9HIfQ==
+
+"@vue/shared@^3.0.0":
+  version "3.3.4"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@vue/shared/-/shared-3.3.4.tgz#06e83c5027f464eef861c329be81454bc8b70780"
+  integrity sha512-7OjdcV8vQ74eiz1TZLzZP4JwqM5fA94K6yntPS5Z25r9HDuGNzaGdgvwKYq6S+MxwF0TFRwe50fIR/MYnakdkQ==
 
 "@vuepress/markdown@^1.8.2":
   version "1.9.7"
@@ -3459,12 +3469,13 @@ vant@^3.1.3:
     "@vant/use" "^1.4.2"
 
 vant@^4.0.0:
-  version "4.1.0"
-  resolved "https://registry.npmjs.org/vant/-/vant-4.1.0.tgz"
-  integrity sha512-wAcKaWjvWrmM4bSvyYxhh0LDe9KYFOKzNAgZBpJzokAuldnaUXQF8Dco7B30U2BglErxQC1NhqLCgnZoybOnqg==
+  version "4.6.4"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/vant/-/vant-4.6.4.tgz#44f2bec92a7f1d2c8a2a4c84e42d0e438178d4f5"
+  integrity sha512-cwdOfR2nmAr/HquFfQKfkqFDIiMMyIPCbLPSXVsfA6jsYf882bsGXYBfHumU4jaXzRbW5d3a0I0cPdlLB5GREQ==
   dependencies:
     "@vant/popperjs" "^1.3.0"
-    "@vant/use" "^1.5.0"
+    "@vant/use" "^1.5.1"
+    "@vue/shared" "^3.0.0"
 
 vite@^3.0.0:
   version "3.2.5"
