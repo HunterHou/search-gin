@@ -50,6 +50,7 @@ const SystemProperty = defineStore({
       SortType: "desc",
       Keyword: "",
       OnlyRepeat: false,
+      showStyle: 'post',
     },
     SettingInfo: {
       ControllerHost: "http://127.0.0.1:8081",
@@ -86,13 +87,14 @@ const SystemProperty = defineStore({
   },
   actions: {
     syncSearchParam(param) {
-      const { Page, PageSize, MovieType, SortField, SortType, Keyword } = param;
+      const { Page, PageSize, MovieType, SortField, SortType, Keyword, showStyle } = param;
       this.FileSearchParam.Page = Page;
       this.FileSearchParam.PageSize = PageSize;
       this.FileSearchParam.MovieType = MovieType;
       this.FileSearchParam.SortField = SortField;
       this.FileSearchParam.SortType = SortType;
       this.FileSearchParam.Keyword = Keyword;
+      this.FileSearchParam.showStyle = showStyle;
       if (param.Keyword) {
         this.addSuggestions(param.Keyword);
       }

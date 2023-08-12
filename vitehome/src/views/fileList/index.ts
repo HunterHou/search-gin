@@ -20,6 +20,7 @@ class MovieQuery extends MovieModel {
   Keyword: string;
   SortField = "MTime";
   SortType = "desc";
+  showStyle ='post';
 }
 
 export { MovieQuery, MovieModel };

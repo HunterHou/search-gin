@@ -335,7 +335,110 @@
       element-loading-spinner="ElIcon-loading"
       style="min-height: 660px; margin: 2px auto"
     >
-      <ElSpace wrap>
+      <ElSpace v-if="queryParam.showStyle == 'mini'" wrap size="default">
+        <ElCard
+          v-for="item in view.ModelList"
+          :key="item"
+          :body-style="{ padding: '1px' }"
+          style="width: 126px; height: auto"
+        >
+          <ElImage
+            :src="getPng(item.Id)"
+            style="min-height: 100px; max-height: 170px"
+            @click="openInfoWindow(item.Id)"
+          ></ElImage>
+
+          <div
+            :style="{
+              margin: '-76px 0px 0px 0px',
+              height: '80px',
+              width: '126px',
+              position: 'absolute',
+            }"
+          >
+            <div
+              style="
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                flex-wrap: wrap-reverse;
+              "
+            >
+              <ElButton
+                plain
+                title="在线"
+                type="primary"
+                @click="cmenuPlay(item)"
+                :style="{
+                  width: '30px',
+                  height: '30px',
+                  border: 'none',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                }"
+              >
+                <ElIcon :size="25">
+                  <VideoPlay />
+                </ElIcon>
+              </ElButton>
+              <ElButton
+                plain
+                type="danger"
+                class="icon-button"
+                title="播放"
+                @click="playThis(item.Id)"
+                :style="{
+                  width: '30px',
+                  height: '30px',
+                  border: 'none',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                }"
+              >
+                <ElIcon :size="25">
+                  <VideoPlay />
+                </ElIcon>
+              </ElButton>
+              <ElButton
+                type="danger"
+                plain
+                class="icon-button"
+                @click="deleteThis(item.Id)"
+                :style="{
+                  width: '30px',
+                  height: '30px',
+                  border: 'none',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(0,0,0,0.2)',
+                }"
+              >
+                <ElIcon :size="20">
+                  <DeleteFilled />
+                </ElIcon>
+              </ElButton>
+            </div>
+            <div
+              style="
+                height: 3rem;
+                font-size: 8px;
+                scale: 0.8;
+                overflow: hidden;
+                word-break: break-all;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                line-height: 12px;
+                background-color: rgba(250, 250, 250, 0.4);
+              "
+            >
+              <span style="color: red" @click="copy(item.Title)">
+                {{ item.SizeStr }}
+              </span>
+              <span @click="editItem(item)">{{ item.Name }}</span>
+            </div>
+          </div>
+        </ElCard>
+      </ElSpace>
+      <ElSpace v-else wrap>
         <div
           :class="isShowCover(view) ? 'list-item-cover' : 'list-item'"
           v-for="item in view.ModelList"
@@ -993,7 +1096,11 @@
             >{{ !isFullscreen ? "全屏" : "还原" }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <el-radio-group v-model="showStyle" size="default">
+          <el-radio-group
+            v-model="queryParam.showStyle"
+            size="default"
+            @change="styleChange"
+          >
             <el-radio-button label="cover">封面</el-radio-button>
             <el-radio-button label="post">海报</el-radio-button>
             <el-radio-button label="mini">极简</el-radio-button>
@@ -1602,7 +1709,6 @@ const moreTag = ref(false);
 const loading = ref(false);
 const tagData = ref<any>([]);
 const refreshIndexFlag = ref(false);
-const showStyle = ref("post");
 const systemProperty = useSystemProperty();
 const source = ref("");
 const { copy, text } = useClipboard({ source });
@@ -1774,6 +1880,11 @@ const closePlayVideo = () => {
   view.videoVisible = false;
   optionsPC.src = null;
   isPlaying.value = false;
+};
+
+const styleChange = () => {
+  replace({ path: thisRoute.path, query: { ...queryParam } });
+  systemProperty.syncSearchParam(queryParam);
 };
 
 const queryRelation = async (keywords) => {
@@ -1972,8 +2083,8 @@ const addCustomerTag = (clickId: string) => {
   view.addTagShow = false;
   view.customerTag = "";
 };
-const handleSelectTag = (item: string) => {
-  view.customerTag = item;
+const handleSelectTag = (item) => {
+  view.customerTag = item.value;
 };
 const closeTag = async (clickId: string, title: string) => {
   const res = await CloseTag(clickId, title);
@@ -2061,7 +2172,7 @@ const onlyRepeatQuery = () => {
 };
 
 const isShowCover = (view) => {
-  if (showStyle.value == "cover") {
+  if (queryParam.showStyle == "cover") {
     view.showIconNum = 10;
     return true;
   }
@@ -2157,9 +2268,7 @@ const gotoHistory = (history: MovieQuery) => {
   queryParam.Keyword = Keyword;
   queryList();
 };
-const addFavorite = (history: MovieQuery) => {
-  systemProperty.addFavorite(history);
-};
+
 const setMovieType = async (id: string, typeId: number) => {
   const movieType =
     typeId == 4
@@ -2283,7 +2392,7 @@ timeFunc.value = setInterval(fetchTransferTask, 10000);
 onMounted(() => {
   loadSettingInfo();
 
-  const { Page, PageSize, MovieType, SortField, SortType, Keyword } =
+  const { Page, PageSize, MovieType, SortField, SortType, Keyword, showStyle } =
     thisRoute.query;
   if (Page && PageSize) {
     queryParam.Page = Number(Page);
@@ -2292,6 +2401,8 @@ onMounted(() => {
     queryParam.SortField = SortField as string;
     queryParam.SortType = SortType as string;
     queryParam.Keyword = Keyword as string;
+    queryParam.Keyword = Keyword as string;
+    queryParam.showStyle = showStyle as string;
   } else {
     queryParam.Page = systemProperty.getSearchParam?.Page;
     queryParam.PageSize = systemProperty.getSearchParam.PageSize;
@@ -2299,6 +2410,7 @@ onMounted(() => {
     queryParam.SortField = systemProperty.getSearchParam.SortField;
     queryParam.SortType = systemProperty.getSearchParam.SortType;
     queryParam.Keyword = systemProperty.getSearchParam.Keyword;
+    queryParam.showStyle = systemProperty.getSearchParam.showStyle;
   }
   loadTagSize();
   setTimeout(queryList, 200);
