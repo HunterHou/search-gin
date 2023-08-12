@@ -3,7 +3,22 @@
     <ElBacktop :bottom="100" style="width: 50px; height: 50px">
       <div class="up">UP</div>
     </ElBacktop>
-
+    <div
+      v-if="isPlaying"
+      style="
+        position: fixed;
+        bottom: 500px;
+        z-index: 99;
+        left: 25px;
+        border-radius: 12%;
+        background-color: rgba(0, 0, 0, 0.8);
+      "
+    >
+      <a @click="startPlayVideo(view.contextmenuTarget)" :underline="false">
+        <ElButton type="success" plain size="large" loading :link="true" />
+        {{ `${view.contextmenuTarget.Code} ${view.contextmenuTarget.Actress}` }}
+      </a>
+    </div>
     <ElButton
       style="position: fixed; bottom: 300px; z-index: 99; left: 5px"
       size="default"
@@ -312,20 +327,6 @@
             </template>
           </ElAutocomplete>
         </ElCol>
-        <div v-if="isPlaying">
-          <ElLink
-            type="success"
-            plain
-            size="large"
-            @click="startPlayVideo(view.contextmenuTarget)"
-            :underline="false"
-            style="font-size: 16px"
-          >
-            <ElButton type="success" plain size="large" loading :link="true" />
-            {{ view.contextmenuTarget.Code }} -
-            {{ view.contextmenuTarget.Actress }}
-          </ElLink>
-        </div>
       </ElRow>
     </div>
 
@@ -340,11 +341,16 @@
           v-for="item in view.ModelList"
           :key="item"
           :body-style="{ padding: '1px' }"
-          style="width: 126px; height: auto"
+          style="width: 118px; height: auto"
         >
           <ElImage
             :src="getPng(item.Id)"
-            style="min-height: 160px; max-height: 170px"
+            style="
+              background-color: #e7e0e0;
+              min-height: 160px;
+              max-height: 170px;
+              min-width: 126px;
+            "
             @click="cmenuPlay(item)"
           ></ElImage>
 
@@ -1095,23 +1101,9 @@
           </ElCard>
         </div>
       </ElSpace>
-      <ElPagination
-        class="pageTool"
-        v-model:currentPage="queryParam.Page"
-        v-model:page-size="queryParam.PageSize"
-        :page-sizes="[10, 12, 16, 30, 50, 200]"
-        layout="sizes, prev, pager, next, jumper"
-        :total="view.ResultCnt"
-        :background="true"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+
       <div class="totalRow">
         <ElRow :gutter="24">
-          <ElButton type="danger" size="default" @click="changeScreen"
-            >{{ !isFullscreen ? "全屏" : "还原" }}
-          </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
           <el-radio-group
             v-model="queryParam.showStyle"
             size="default"
@@ -1121,13 +1113,25 @@
             <el-radio-button label="post">海报</el-radio-button>
             <el-radio-button label="mini">极简</el-radio-button>
           </el-radio-group>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="danger" size="default" @click="changeScreen"
+            >{{ !isFullscreen ? "全屏" : "还原" }}
+          </ElButton>
           <span v-if="!running" style="color: red">运行异常</span>
           <ElDivider v-if="!running" direction="vertical"></ElDivider>
           <span> 总：{{ view.TotalSize }}({{ view.TotalCnt }}) </span>
-          <ElDivider direction="vertical"></ElDivider>
           <span> 搜：{{ view.ResultSize }}({{ view.ResultCnt }}) </span>
         </ElRow>
+        <ElPagination
+          class="pageTool"
+          v-model:currentPage="queryParam.Page"
+          v-model:page-size="queryParam.PageSize"
+          :page-sizes="[10, 12, 16, 30, 50, 200]"
+          layout="sizes, prev, pager, next, jumper"
+          :total="view.ResultCnt"
+          :background="true"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
   </div>
