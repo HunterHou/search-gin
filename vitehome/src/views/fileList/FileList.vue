@@ -344,7 +344,7 @@
         >
           <ElImage
             :src="getPng(item.Id)"
-            style="min-height: 100px; max-height: 170px"
+            style="min-height: 160px; max-height: 170px"
             @click="cmenuPlay(item)"
           ></ElImage>
 
