@@ -374,7 +374,7 @@
                   height: '25px',
                   border: 'none',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(250,250,250,0.6)',
+                  backgroundColor: 'rgba(0,0,0,0.6)',
                 }"
               >
                 <ElIcon :size="25">
@@ -390,7 +390,7 @@
                   height: '25px',
                   border: 'none',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(250,250,250,0.6)',
+                  backgroundColor: 'rgba(0,0,0,0.6)',
                 }"
               >
                 <ElIcon :size="20">
