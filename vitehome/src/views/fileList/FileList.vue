@@ -412,31 +412,44 @@
             <div
               style="
                 height: 2.2rem;
-                font-size: 8px;
-                scale: 0.8;
+                font-size: 10px;
                 overflow: hidden;
                 word-break: break-all;
                 text-overflow: ellipsis;
                 display: -webkit-box;
-                line-height: 12px;
-                background-color: rgba(250, 250, 250, 0.5);
+                line-height: 13px;
               "
             >
               <a
-                style="color: blue"
+                style="
+                  color: blue;
+                  border-radius: 12%;
+                  background-color: rgba(250, 250, 250, 0.9);
+                "
                 v-if="item.Actress"
                 @click="copy(item.Actress)"
                 >{{ item.Actress }}
               </a>
-              <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
               <a
-                style="color: rgb(64, 75, 220)"
+                style="
+                  color: blue;
+                  margin-left: 4px;
+                  border-radius: 12%;
+                  background-color: rgba(250, 250, 250, 0.9);
+                "
                 v-if="item.Code"
                 @click="copy(item.Code)"
                 >{{ codeFormat(item.Code) }}
               </a>
-              <ElDivider v-if="item.Code" direction="vertical"></ElDivider>
-              <span @click="editItem(item)" style="color: rgb(147, 51, 237)">{{ item.Name }}</span>
+              <span
+                @click="editItem(item)"
+                style="
+                  margin-left: 4px;
+                  color: rgb(147, 51, 237);
+                  background-color: rgba(250, 250, 250, 0.6);
+                "
+                >{{ item.Name }}</span
+              >
             </div>
           </div>
         </ElCard>
