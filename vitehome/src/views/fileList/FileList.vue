@@ -267,10 +267,10 @@
             </ElPopover>
           </div>
         </ElCol>
-        <ElCol :xl="5" :lg="5" :md="10" :sm="18" :xs="24">
+        <ElCol :xl="6" :lg="6" :md="12" :sm="18" :xs="24">
           <ElAutocomplete
             id="searchInput"
-            style="min-width: 280px; width: auto"
+            style="min-width: 320px; width: auto"
             placeholder="请输入关键词"
             v-model="queryParam.Keyword"
             clearable
