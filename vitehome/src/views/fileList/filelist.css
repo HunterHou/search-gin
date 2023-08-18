@@ -220,12 +220,12 @@ body {
 .el-dialog__header{
   margin: 0;
   padding: 0;
-  max-height: 60px;
+  height: 0px;
   background-color: rgba(0, 0, 0, 0.8);
 }
 .el-dialog__body{
   margin: 0;
-  padding: 3px;
+  padding: 0px;
   border-radius: 4px solid orange;
   background-color: rgba(0, 0, 0, 0.8);
 }

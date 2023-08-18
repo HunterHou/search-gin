@@ -1,5 +1,14 @@
 <template>
-  <div ref="pagePress">
+  <div
+    ref="pagePress"
+    :style="{
+      backgroundSize: '100% 100%',
+      backgroundImage:
+        'linear-gradient(to left, rgba(255,255,255,0.7), rgba(255,255,255,8)),url(\'' +
+        getJpg(view.contextmenuTarget.Id) +
+        '\')',
+    }"
+  >
     <ElBacktop :bottom="100" style="width: 50px; height: 50px">
       <div class="up">UP</div>
     </ElBacktop>
@@ -1268,150 +1277,177 @@
     :close-on-press-escape="false"
     :close-on-click-modal="false"
   >
-    <ElForm
-      label-position="right"
-      :model="cutParam"
-      size="large"
-      label-width="18%"
+    <div
+      :style="{
+        height: '25vh',
+        padding: '10% 8%',
+        backgroundSize: '100% 100%',
+        backgroundImage:
+          'linear-gradient(to left, rgba(100,100,100,0.3), rgba(0,0,0,5)),url(\'' +
+          getJpg(view.contextmenuTarget.Id) +
+          '\')',
+      }"
     >
-      <ElFormItem label="开始">
-        <ElInput
-          style="width: 100px; border: none"
-          v-model="cutParam.hour"
-          autocomplete="off"
-        ></ElInput>
-        ：<ElInput
-          style="width: 100px"
-          v-model="cutParam.minute"
-          autocomplete="off"
-        ></ElInput>
-        ：<ElInput
-          style="width: 100px"
-          v-model="cutParam.second"
-          autocomplete="off"
-        ></ElInput>
-      </ElFormItem>
-      <ElFormItem label="结束">
-        <ElInput
-          style="width: 100px; border: none"
-          v-model="cutParam.hourEnd"
-          autocomplete="off"
-        ></ElInput>
-        ：<ElInput
-          style="width: 100px"
-          v-model="cutParam.minuteEnd"
-          autocomplete="off"
-        ></ElInput>
-        ：<ElInput
-          style="width: 100px"
-          v-model="cutParam.secondEnd"
-          autocomplete="off"
-        ></ElInput>
-      </ElFormItem>
-    </ElForm>
-    <div slot="footer" class="dialog-footer">
-      <el-button size="large" @click="cutParam.Visible = false"
-        >取 消
-      </el-button>
-      <el-button type="primary" size="large" @click="TransferCut"
-        >确 定
-      </el-button>
+      <ElForm
+        label-position="right"
+        :model="cutParam"
+        size="large"
+        label-width="18%"
+      >
+        <ElFormItem label="开始">
+          <ElInput
+            style="width: 100px; border: none"
+            v-model="cutParam.hour"
+            autocomplete="off"
+          ></ElInput>
+          ：<ElInput
+            style="width: 100px"
+            v-model="cutParam.minute"
+            autocomplete="off"
+          ></ElInput>
+          ：<ElInput
+            style="width: 100px"
+            v-model="cutParam.second"
+            autocomplete="off"
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem label="结束">
+          <ElInput
+            style="width: 100px; border: none"
+            v-model="cutParam.hourEnd"
+            autocomplete="off"
+          ></ElInput>
+          ：<ElInput
+            style="width: 100px"
+            v-model="cutParam.minuteEnd"
+            autocomplete="off"
+          ></ElInput>
+          ：<ElInput
+            style="width: 100px"
+            v-model="cutParam.secondEnd"
+            autocomplete="off"
+          ></ElInput>
+        </ElFormItem>
+      </ElForm>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="large" @click="cutParam.Visible = false"
+          >取 消
+        </el-button>
+        <el-button type="primary" size="large" @click="TransferCut"
+          >确 定
+        </el-button>
+      </div>
     </div>
   </ElDialog>
 
   <ElDialog
-    title="文件信息"
+    :title="''"
     v-model="view.dialogFormItemVisible"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
   >
-    <ElForm
-      label-position="right"
-      :model="view.formItem"
-      size="large"
-      label-width="18%"
+    <div
+      :style="{
+        color: 'white',
+        height: '43vh',
+        padding: '20px',
+        lineHeight: '32px',
+        backgroundSize: '100% 100%',
+        backgroundImage:
+          'linear-gradient(to left, rgba(0,0,0,0.2), rgba(0,0,0,3)),url(\'' +
+          getJpg(view.formItem.Id) +
+          '\')',
+      }"
     >
-      <ElFormItem label="类型">
-        <el-radio-group
-          v-model="view.formItem.MovieType"
-          @change="formMovieTypeChange(view)"
-          size="large"
-        >
-          <el-radio-button label="">无</el-radio-button>
-          <el-radio-button label="骑兵">骑</el-radio-button>
-          <el-radio-button label="步兵">步</el-radio-button>
-          <el-radio-button label="国产">国</el-radio-button>
-          <el-radio-button label="斯巴达">欧</el-radio-button>
-        </el-radio-group>
-      </ElFormItem>
-      <ElFormItem label="图鉴">
-        <ElInput v-model="view.formItem.Actress" autocomplete="off"></ElInput>
-      </ElFormItem>
-      <ElFormItem label="编码">
-        <ElInput v-model="view.formItem.Code" autocomplete="off"></ElInput>
-      </ElFormItem>
-      <ElFormItem label="文件名称">
-        <ElInput
-          type="textarea"
-          v-model="view.formItem.Name"
-          autocomplete="off"
-        ></ElInput>
-      </ElFormItem>
-      <ElFormItem label="标签">
-        <ElTag
-          v-for="tag in view.formItem.Tags"
-          :key="tag"
-          effect="dark"
-          closable
-          style="margin-right: 8px"
-          type=""
-          size="large"
-          @close="removeFormTag(tag)"
-        >
-          {{ tag }}
-        </ElTag>
-        <ElAutocomplete
-          placeholder="新标签"
-          v-model="view.customerTag"
-          :fetch-suggestions="fetchTagsLib"
-          @select="handleSelectTag"
-          size="small"
-          style="width: 160px"
-        >
-          <template #append>
-            <ElButton
-              size="default"
-              type="primary"
-              :disabled="customerTagEmpty(view)"
-              @click="addThisCustomerTag"
-              style="font-size: 12px"
-              >加
-            </ElButton>
-          </template>
-          <template #default="{ item }">
-            <div v-if="item" style="font-size: 12px" class="value">
-              {{ item }}
-            </div>
-          </template>
-        </ElAutocomplete>
-      </ElFormItem>
-    </ElForm>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="success" size="large" @click="editMoveout"
-        >移动到图鉴
-      </el-button>
-      <el-button size="large" @click="view.dialogFormItemVisible = false"
-        >取 消
-      </el-button>
-      <el-button type="primary" size="large" @click="editItemSubmit"
-        >确 定
-      </el-button>
+      <ElForm
+        label-position="right"
+        :model="view.formItem"
+        size="large"
+        label-width="18%"
+      >
+        <ElFormItem label="类型">
+          <el-radio-group
+            v-model="view.formItem.MovieType"
+            @change="formMovieTypeChange(view)"
+            size="large"
+          >
+            <el-radio-button label="">无</el-radio-button>
+            <el-radio-button label="骑兵">骑</el-radio-button>
+            <el-radio-button label="步兵">步</el-radio-button>
+            <el-radio-button label="国产">国</el-radio-button>
+            <el-radio-button label="斯巴达">欧</el-radio-button>
+          </el-radio-group>
+        </ElFormItem>
+        <ElFormItem label="图鉴">
+          <ElInput v-model="view.formItem.Actress" autocomplete="off"></ElInput>
+        </ElFormItem>
+        <ElFormItem label="编码">
+          <ElInput v-model="view.formItem.Code" autocomplete="off"></ElInput>
+        </ElFormItem>
+        <ElFormItem label="文件名称">
+          <ElInput
+            type="textarea"
+            v-model="view.formItem.Name"
+            autocomplete="off"
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem label="标签">
+          <ElTag
+            v-for="tag in view.formItem.Tags"
+            :key="tag"
+            effect="dark"
+            closable
+            style="margin-right: 8px"
+            type=""
+            size="large"
+            @close="removeFormTag(tag)"
+          >
+            {{ tag }}
+          </ElTag>
+          <ElAutocomplete
+            placeholder="新标签"
+            v-model="view.customerTag"
+            :fetch-suggestions="fetchTagsLib"
+            @select="handleSelectTag"
+            size="small"
+            style="width: 160px"
+          >
+            <template #append>
+              <ElButton
+                size="default"
+                type="primary"
+                :disabled="customerTagEmpty(view)"
+                @click="addThisCustomerTag"
+                style="font-size: 12px"
+                >加
+              </ElButton>
+            </template>
+            <template #default="{ item }">
+              <div v-if="item" style="font-size: 12px" class="value">
+                {{ item }}
+              </div>
+            </template>
+          </ElAutocomplete>
+        </ElFormItem>
+      </ElForm>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="success" size="large" @click="editMoveout"
+          >移动到图鉴
+        </el-button>
+        <el-button size="large" @click="view.dialogFormItemVisible = false"
+          >取 消
+        </el-button>
+        <el-button type="primary" size="large" @click="editItemSubmit"
+          >确 定
+        </el-button>
+      </div>
     </div>
   </ElDialog>
   <ElDialog
     width="66%"
     :modal="true"
-    :append-to-body="false"
+    :draggable="true"
+    :append-to-body="true"
     :show-close="true"
     :lock-scroll="true"
     :close-on-click-modal="true"
@@ -1425,18 +1461,21 @@
     "
     :destroy-on-close="true"
   >
-    <div v-if="view.formItem">
-      <div style="margin-top: 10px">
-        <ElImage
-          :src="getJpg(view.formItem.Id)"
-          style="
-            margin: 1px auto;
-            width: auto;
-            min-height: 200px;
-            max-height: 500px;
-          "
-          @click="previewPicture(view.formItem.Id)"
-        />
+    <div
+      v-if="view.formItem"
+      :style="{
+        color: 'white',
+        height: '60vh',
+        padding: '20px',
+        lineHeight: '32px',
+        backgroundSize: '100% 100%',
+        backgroundImage:
+          'linear-gradient(to left, rgba(0,0,0,0.2), rgba(0,0,0,3)),url(\'' +
+          getJpg(view.formItem.Id) +
+          '\')',
+      }"
+    >
+      <div style="margin: 20% 5%">
         <ElRow :gutter="24">
           <ElCol :span="4" tyle="text-align:right"> YY：</ElCol>
           <ElCol :span="16" tyle="text-align:left">
@@ -1544,99 +1583,132 @@
         style="position: relative; max-height: 90vh; object-fit: contain"
         v-bind="optionsPC"
         @volumechange="volumechange"
+        :style="{
+          backgroundSize: '100% 100%',
+          backgroundImage:
+            'linear-gradient(to left, rgba(100,100,100,0.3), rgba(0,0,0,5)),url(\'' +
+            getJpg(view.contextmenuTarget.Id) +
+            '\')',
+        }"
       />
-      <div class="my-header">
-        <span style="color: bisque">{{ view.contextmenuTarget.Name }}</span>
-        <div class="header-button">
-          <ElButton
-            type="primary"
-            @click="
-              () => {
-                view.videoFullscreen = !view.videoFullscreen;
-              }
-            "
-            >{{ view.videoFullscreen ? "小屏" : "全屏" }}</ElButton
-          >
-          <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
-          <ElButton
-            type="primary"
-            @click="deleteThis(view.contextmenuTarget.Id)"
-            >删除</ElButton
-          >
-          <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+      <div
+        :style="{
+          color: 'white',
+          backgroundSize: '100% 100%',
+          backgroundImage:
+            'linear-gradient(to left, rgba(0,0,0,0.8), rgba(0,0,0,9)),url(\'' +
+            getJpg(view.contextmenuTarget.Id) +
+            '\')',
+        }"
+      >
+        <div class="my-header">
+          <span style="color: bisque">{{ view.contextmenuTarget.Name }}</span>
+          <div class="header-button">
+            <ElButton
+              type="primary"
+              @click="
+                () => {
+                  view.videoFullscreen = !view.videoFullscreen;
+                }
+              "
+              >{{ view.videoFullscreen ? "小屏" : "全屏" }}</ElButton
+            >
+            <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
+            <ElButton
+              type="primary"
+              @click="deleteThis(view.contextmenuTarget.Id)"
+              >删除</ElButton
+            >
+            <ElButton type="primary" @click="closePlayVideo">关闭</ElButton>
+          </div>
+        </div>
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+          "
+        >
+          <el-space spacer="|" wrap>
+            <ElTag
+              v-for="item in view.contextmenuTarget.Tags"
+              key="default"
+              type="danger"
+              size="mini"
+              @click="queryRelation(item)"
+            >
+              {{ item }}
+            </ElTag>
+
+            <el-link :underline="false" type="success"
+              >{{ view.contextmenuTarget.Code }}
+            </el-link>
+            <el-link
+              type="warning"
+              size="large"
+              style="margin-left: 0.5rem"
+              @click="queryRelation(view.contextmenuTarget.Actress)"
+            >
+              {{ view.contextmenuTarget.Actress }}
+            </el-link>
+          </el-space>
+          <ElButton type="primary" @click="moreTag = !moreTag">更多</ElButton>
+        </div>
+        <ElRow v-if="moreTag">
+          <el-space spacer="|" wrap>
+            <el-link
+              type="warning"
+              v-for="item in view.settingInfo.Tags"
+              key="default"
+              size="large"
+              :underline="false"
+              style="margin-left: 0.5rem"
+              @click="queryRelation(item)"
+            >
+              {{ item }}
+            </el-link>
+          </el-space>
+        </ElRow>
+        <div
+          style="margin: 8px auto; height: 60vh; overflow: auto"
+          v-if="view.playlist && view.playlist.length > 0"
+        >
+          <ElSpace wrap size="default">
+            <ElCard
+              v-for="play in view.playlist"
+              :key="play"
+              :body-style="{
+                padding: '2px',
+                color: 'bisque',
+                width: '156px',
+                minHeight: '80px',
+                backgroundColor: 'rgba(0,0,0,0.1)',
+                backgroundSize: '100% 100%',
+                backgroundImage:
+                  'linear-gradient(to left, rgba(100,100,100,0.3), rgba(0,0,0,5)),url(\'' +
+                  getJpg(play.Id) +
+                  '\')',
+              }"
+              @click="startPlayVideo(play)"
+            >
+              <!-- <ElImage :src="getPng(play.Id)"></ElImage> -->
+              <span
+                style="
+                  height: 3rem;
+                  margin-top: 60%;
+                  scale: 0.8;
+                  overflow: hidden;
+                  word-break: break-all;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                "
+                >{{ play.Name }}</span
+              >
+            </ElCard>
+          </ElSpace>
         </div>
       </div>
-      <div
-        style="display: flex; flex-direction: row; justify-content: flex-start"
-      >
-        <el-space spacer="|" wrap>
-          <ElTag
-            v-for="item in view.contextmenuTarget.Tags"
-            key="default"
-            type="danger"
-            size="mini"
-            @click="queryRelation(item)"
-          >
-            {{ item }}
-          </ElTag>
 
-          <el-link :underline="false" type="success"
-            >{{ view.contextmenuTarget.Code }}
-          </el-link>
-          <el-link
-            type="warning"
-            size="large"
-            style="margin-left: 0.5rem"
-            @click="queryRelation(view.contextmenuTarget.Actress)"
-          >
-            {{ view.contextmenuTarget.Actress }}
-          </el-link>
-        </el-space>
-        <ElButton type="primary" @click="moreTag = !moreTag">更多</ElButton>
-      </div>
-      <ElRow v-if="moreTag">
-        <el-space spacer="|" wrap>
-          <el-link
-            type="warning"
-            v-for="item in view.settingInfo.Tags"
-            key="default"
-            size="large"
-            :underline="false"
-            style="margin-left: 0.5rem"
-            @click="queryRelation(item)"
-          >
-            {{ item }}
-          </el-link>
-        </el-space>
-      </ElRow>
-      <div
-        style="margin: 8px auto; height: 60vh; overflow: auto"
-        v-if="view.playlist && view.playlist.length > 0"
-      >
-        <ElSpace wrap size="default">
-          <ElCard
-            v-for="play in view.playlist"
-            :key="play"
-            :body-style="{ padding: '2px' }"
-            style="width: 156px; height: auto"
-            @click="startPlayVideo(play)"
-          >
-            <ElImage :src="getPng(play.Id)"></ElImage>
-            <span
-              style="
-                height: 3rem;
-                color: #000;
-                scale: 0.8;
-                overflow: hidden;
-                word-break: break-all;
-                text-overflow: ellipsis;
-                display: -webkit-box;
-              "
-              >{{ play.Name }}</span
-            >
-          </ElCard>
-        </ElSpace>
-      </div>
       <!-- </div> -->
     </div>
   </el-dialog>
@@ -1715,6 +1787,7 @@ import "vue3-video-play/dist/style.css";
 import "./filelist.css";
 import { useRoute, useRouter } from "vue-router";
 import { buttonEnum, SettingInfo } from "@/views/settting/index";
+import Color from "element-plus/es/components/color-picker/src/color";
 
 const thisRoute = useRoute();
 const { replace } = useRouter();
