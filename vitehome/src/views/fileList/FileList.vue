@@ -1583,6 +1583,7 @@
         style="position: relative; max-height: 90vh; object-fit: contain"
         v-bind="optionsPC"
         @volumechange="volumechange"
+        @ended="playNext"
         :style="{
           backgroundSize: '100% 100%',
           backgroundImage:
@@ -1679,19 +1680,19 @@
               :key="play"
               :body-style="{
                 padding: '2px',
-                color: 'bisque',
+                color:
+                  view.contextmenuTarget.Id == play.Id ? 'green' : 'bisque',
                 width: '156px',
                 minHeight: '80px',
-                backgroundColor: 'rgba(0,0,0,0.1)',
                 backgroundSize: '100% 100%',
                 backgroundImage:
-                  'linear-gradient(to left, rgba(100,100,100,0.3), rgba(0,0,0,5)),url(\'' +
-                  getJpg(play.Id) +
+                  'linear-gradient(to left, rgba(100,100,100,0.3), rgba(100,100,100,0.8)),' +
+                  'url(\'' +
+                  getPng(play.Id) +
                   '\')',
               }"
               @click="startPlayVideo(play)"
             >
-              <!-- <ElImage :src="getPng(play.Id)"></ElImage> -->
               <span
                 style="
                   height: 3rem;
@@ -1787,7 +1788,6 @@ import "vue3-video-play/dist/style.css";
 import "./filelist.css";
 import { useRoute, useRouter } from "vue-router";
 import { buttonEnum, SettingInfo } from "@/views/settting/index";
-import Color from "element-plus/es/components/color-picker/src/color";
 
 const thisRoute = useRoute();
 const { replace } = useRouter();
@@ -1874,7 +1874,7 @@ const optionsPC = reactive({
   webFullScreen: false,
   speedRate: ["1.0", "1.25", "1.5", "2.0"], //播放倍速
   autoPlay: false, //自动播放
-  loop: true, //循环播放
+  loop: false, //循环播放
   mirror: false, //镜像画面
   ligthOff: true, //关灯模式
   volume: systemProperty.videoOptions.volume, //默认音量大小
@@ -1992,6 +1992,21 @@ const queryRelation = async (keywords) => {
   const model = res as unknown as ResultList;
   view.playlist = [];
   view.playlist = [...model.Data];
+};
+
+const playNext = () => {
+  console.log("playNext");
+  for (let i = 0; i < view.playlist.length; i++) {
+    if (view.playlist[i].Id === view.contextmenuTarget.Id) {
+      if (i == view.playlist.length - 1) {
+        startPlayVideo(view.playlist[0]);
+        return;
+      } else {
+        startPlayVideo(view.playlist[i + 1]);
+        return;
+      }
+    }
+  }
 };
 
 const startPlayVideo = (item: MovieModel) => {
