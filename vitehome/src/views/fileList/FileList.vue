@@ -156,8 +156,8 @@
                 <div style="max-height: 600px; overflow: auto">
                   <div>
                     <ElLink @click="() => {
-                        systemProperty.History = [];
-                      }
+                      systemProperty.History = [];
+                    }
                       ">清空历史
                     </ElLink>
                   </div>
@@ -189,9 +189,9 @@
             <template #append>
               <el-dropdown size="small" split-button type="primary">
                 <ElButton slot="append" type="primary" size="default" icon="ElIcon-search" @click="() => {
-                    queryParam.Page = 1;
-                    queryList();
-                  }
+                  queryParam.Page = 1;
+                  queryList();
+                }
                   ">搜本地
                 </ElButton>
                 <template #dropdown>
@@ -490,8 +490,8 @@
                   </template>
                   <template #default>
                     <ElCard class="cmenu" :body-style="{ padding: '4px' }" @click="() => {
-                        item.toolShow = false;
-                      }
+                      item.toolShow = false;
+                    }
                       ">
                       <div>
                         <ElRow>
@@ -639,9 +639,9 @@
 
   <ElDialog :width="windowWidth > 100 ? '80vw' : '500px'" :title="`执行任务(${Object.keys(view.transferTask).length - countTransferIng
     }/${Object.keys(view.transferTask).length})`" draggable v-model="taskPop" destroy-on-close @before-close="(done) => {
-      taskPop = false;
-      done();
-    }
+    taskPop = false;
+    done();
+  }
     ">
     <template #default>
       <ElRadioGroup v-model="view.taskType" size="large">
@@ -832,9 +832,9 @@
   </ElDialog>
   <ElDialog width="66%" :modal="true" :draggable="true" :append-to-body="true" :show-close="true" :lock-scroll="true"
     :close-on-click-modal="true" :close-on-press-escape="true" v-model="view.dialogVisible" :before-close="() => {
-        innerVisibleFalse();
-        view.dialogVisible = false;
-      }
+      innerVisibleFalse();
+      view.dialogVisible = false;
+    }
       " :destroy-on-close="true">
     <div v-if="view.formItem" :style="{
       color: 'white',
@@ -916,10 +916,10 @@
     :before-close="closePlayVideo" top="0" width="1200px">
     <div class="playDiv">
       <vue3VideoPlay ref="vue3VideoPlayRef" style="position: relative; max-height: 90vh; object-fit: contain"
-        v-bind="optionsPC" @volumechange="volumechange" @ended="playNext" :style="{
+        v-bind="optionsPC" @volumechange="volumechange" @ended="playNext(1)" :style="{
           backgroundSize: '100% 100%',
           backgroundImage:
-            'linear-gradient(to left, rgba(100,100,100,0.3), rgba(0,0,0,5)),url(\'' +
+            'linear-gradient(to left, rgba(205, 138, 50,0.1), rgba(205, 118, 50,0.2)),url(\'' +
             getJpg(view.contextmenuTarget.Id) +
             '\')',
         }" />
@@ -937,8 +937,8 @@
             <ElButton type="danger" @click="playNext(-1)">上一个</ElButton>
             <ElButton type="danger" @click="playNext(1)">下一个</ElButton>
             <ElButton type="primary" @click="() => {
-                view.videoFullscreen = !view.videoFullscreen;
-              }
+              view.videoFullscreen = !view.videoFullscreen;
+            }
               ">{{ view.videoFullscreen ? "小屏" : "全屏" }}</ElButton>
             <ElButton type="primary" @click="hiddenPlayVideo">隐藏</ElButton>
             <ElButton type="primary" @click="deleteThis(view.contextmenuTarget.Id)">删除</ElButton>
@@ -978,12 +978,12 @@
             <ElCard v-for="play in view.playlist" :key="play" :body-style="{
               padding: '2px',
               color:
-                view.contextmenuTarget.Id == play.Id ? 'green' : 'bisque',
+                view.contextmenuTarget.Id == play.Id ? 'green' : 'orange',
               width: '156px',
               minHeight: '80px',
               backgroundSize: '100% 100%',
               backgroundImage:
-                'linear-gradient(to left, rgba(100,100,100,0.3), rgba(100,100,100,0.8)),' +
+                'linear-gradient(to left, rgba(205, 138, 50,0.1), rgba(205, 118, 50,0.2)),' +
                 'url(\'' +
                 getPng(play.Id) +
                 '\')',
@@ -1307,6 +1307,9 @@ const playNext = (step) => {
 };
 
 const startPlayVideo = (item: MovieModel) => {
+  if (!item) {
+    return
+  }
   view.videoVisible = true;
   view.contextmenuTarget = item;
   optionsPC.title = item.Name;
