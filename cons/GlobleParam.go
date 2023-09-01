@@ -141,6 +141,7 @@ var OSSetting = datamodels.Setting{
 	VideoTypes: []string{AVI, MKV, WMV, MP4},
 	Types:      []string{AVI, MKV, WMV, MP4, GIF, PNG, JPG, TXT, XLSX},
 	Buttons:    []string{"刮图", "删除", "移动"},
+	MovieTypes:    []string{"骑兵", "步兵", "国产", "漫动"},
 }
 
 // PNG Base Dictory

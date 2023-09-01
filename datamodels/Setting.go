@@ -18,6 +18,7 @@ type Setting struct {
 	VideoTypes     []string
 	Types          []string
 	Buttons        []string
+	MovieTypes        []string
 	ControllerHost string
 	ImageHost      string
 	StreamHost     string

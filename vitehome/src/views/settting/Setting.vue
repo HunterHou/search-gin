@@ -231,6 +231,35 @@
                 + New
               </el-button>
             </ElFormItem>
+            <ElFormItem label="视频类型">
+              <el-tag
+                  v-for="tag in view.form.MovieTypes"
+                  :key="tag"
+                  class="inputTag"
+                  closable
+                  :disable-transitions="false"
+                  @close="handleClose(tag, 'MovieTypes')"
+              >
+                {{ tag }}
+              </el-tag>
+              <el-input
+                  v-if="view.MovieTypesVisible"
+                  ref="InputRef"
+                  v-model="view.inputValue"
+                  class="ml-1 w-20"
+                  size="small"
+                  @keyup.enter="enterInput('MovieTypesVisible', 'MovieTypes')"
+                  @blur="enterInput('MovieTypesVisible', 'MovieTypes')"
+              />
+              <el-button
+                  v-else
+                  class="button-new-tag ml-1"
+                  size="small"
+                  @click="showInput('MovieTypesVisible')"
+              >
+                + New
+              </el-button>
+            </ElFormItem>
             <ElFormItem label="标签库">
               <el-tag
                   v-for="tag in view.form.TagsLib"
@@ -371,6 +400,7 @@ const view = reactive({
   ipAddr: "",
   inputValue: "",
   typeVisible: false,
+  MovieTypesVisible: false,
   TagsLibVisible: false,
   DirsLibVisible: false,
   isIndeterminateDir: false,
@@ -388,6 +418,9 @@ const showInput = (visible) => {
 const enterInput = (visible, arr) => {
   if (!view.inputValue) {
     return;
+  }
+  if(!view.form[arr]){
+    view.form[arr] = []
   }
   if (view.form[arr].indexOf(view.inputValue) < 0) {
     view.form[arr].push(view.inputValue);

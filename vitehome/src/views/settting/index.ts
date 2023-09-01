@@ -7,6 +7,7 @@ export class SettingInfo {
   Dirs: string[] = [];
   Types: string[] = ["mp4", "jpg"];
   Buttons: string[] = ["刮图", "删除"];
+  MovieTypes: string[] = ["骑兵", "步兵", "国产", "漫动"];
   BaseDir: string[] = [];
   tagLibData: string[] = [];
   TagsLib: string[] = [];
