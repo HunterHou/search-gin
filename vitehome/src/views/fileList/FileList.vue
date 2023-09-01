@@ -1605,6 +1605,8 @@
         <div class="my-header">
           <span style="color: bisque">{{ view.contextmenuTarget.Name }}</span>
           <div class="header-button">
+            <ElButton type="danger" @click="playNext(-1)">上一个</ElButton>
+            <ElButton type="danger" @click="playNext(1)">下一个</ElButton>
             <ElButton
               type="primary"
               @click="
@@ -1994,7 +1996,7 @@ const queryRelation = async (keywords) => {
   view.playlist = [...model.Data];
 };
 
-const playNext = () => {
+const playNext = (step) => {
   console.log("playNext");
   for (let i = 0; i < view.playlist.length; i++) {
     if (view.playlist[i].Id === view.contextmenuTarget.Id) {
@@ -2002,8 +2004,13 @@ const playNext = () => {
         startPlayVideo(view.playlist[0]);
         return;
       } else {
-        startPlayVideo(view.playlist[i + 1]);
-        return;
+        if (i + step <= 0) {
+          startPlayVideo(view.playlist[0]);
+          return;
+        } else {
+          startPlayVideo(view.playlist[i + step]);
+          return;
+        }
       }
     }
   }
