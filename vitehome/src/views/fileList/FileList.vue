@@ -1291,14 +1291,14 @@ const playNext = (step) => {
   for (let i = 0; i < view.playlist.length; i++) {
     if (view.playlist[i].Id === view.contextmenuTarget.Id) {
       if (i == view.playlist.length - 1) {
-        startPlayVideo(view.playlist[0]);
+        startPlayVideo(view.playlist[0],true);
         return;
       } else {
         if (i + step <= 0) {
-          startPlayVideo(view.playlist[0]);
+          startPlayVideo(view.playlist[0],true);
           return;
         } else {
-          startPlayVideo(view.playlist[i + step]);
+          startPlayVideo(view.playlist[i + step],true);
           return;
         }
       }
@@ -1306,7 +1306,7 @@ const playNext = (step) => {
   }
 };
 
-const startPlayVideo = (item: MovieModel) => {
+const startPlayVideo = (item: MovieModel,onlyPlay?:boolean) => {
   if (!item) {
     return
   }
@@ -1314,7 +1314,9 @@ const startPlayVideo = (item: MovieModel) => {
   view.contextmenuTarget = item;
   optionsPC.title = item.Name;
   optionsPC.src = getFileStream(item.Id);
-  queryRelation(item.Actress);
+  if(!onlyPlay){
+    queryRelation(item.Actress);
+  }
   isPlaying.value = true;
   setTimeout(() => {
     vue3VideoPlayRef.value.play();
@@ -1514,7 +1516,7 @@ const refreshData = async (params?: any) => {
     title = "文件";
     queryParam.Page = view.allPage;
   }
-  document.title = title;
+  
 
   const res = await QueryFileList(queryParam);
 
@@ -1548,7 +1550,9 @@ const refreshData = async (params?: any) => {
     view.TotalSize = model.TotalSize;
     view.ResultSize = model.ResultSize;
     view.CurSize = model.CurSize;
+    title+=`${view.ResultSize}(${view.ResultCnt})`
   }
+  document.title = title;
 };
 
 const queryList = async (params?: any) => {
