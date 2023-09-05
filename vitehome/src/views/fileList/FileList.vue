@@ -1550,7 +1550,7 @@ const refreshData = async (params?: any) => {
     view.TotalSize = model.TotalSize;
     view.ResultSize = model.ResultSize;
     view.CurSize = model.CurSize;
-    title+=`${view.ResultSize}(${view.ResultCnt})`
+    title=`【${title}】 ${view.ResultSize}(${view.ResultCnt})`
   }
   document.title = title;
 };
