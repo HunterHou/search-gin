@@ -4,6 +4,16 @@ body {
 
 .searchRow {
   padding: 0px;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ml1rem{
+  margin-left:1rem;
 }
 
 .image-tool {
