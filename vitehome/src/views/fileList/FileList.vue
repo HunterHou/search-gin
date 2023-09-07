@@ -317,6 +317,12 @@
             </template>
             <template #default>
               <div class="rightBtnPop">
+                <ElButton plain size="default" v-for="tp in view.settingInfo.MovieTypes"
+                  @click="setMovieType(item.Id, tp)">
+                  <i class="el-icon-bicycle icon-style" :title="tp">{{ tp }}</i>
+                </ElButton>
+              </div>
+              <div class="rightBtnPop">
                 <div v-if="!noMovieType(item.MovieType)" style="max-width: 400px">
                   <ElButton type="warning" plain v-for="tag in view.settingInfo.Tags" :key="tag" style="margin: 1px 2px"
                     :disabled="!notContainTag(item.Tags, tag)" @click="addTag(item.Id, tag)">
@@ -338,33 +344,7 @@
                   </ElAutocomplete>
                 </div>
 
-                <div v-if="noMovieType(item.MovieType)" class="rightBtnPop">
-                  <ElButton plain size="default" v-for="tp in view.settingInfo.MovieTypes"
-                    @click="setMovieType(item.Id, tp)">
-                    <i class="el-icon-bicycle icon-style" :title="tp">{{ tp }}</i>
-                  </ElButton>
-                  <!-- <ElButton
-                    plain
-                    size="default"
-                    @click="setMovieType(item.Id, 1)"
-                  >
-                    <i class="el-icon-sunny icon-style" title="步兵">步兵</i>
-                  </ElButton>
-                  <ElButton
-                    plain
-                    size="default"
-                    @click="setMovieType(item.Id, 4)"
-                  >
-                    <i class="el-icon-location icon-style" title="国产">国产</i>
-                  </ElButton>
-                  <ElButton
-                    plain
-                    size="default"
-                    @click="setMovieType(item.Id, 3)"
-                  >
-                    <i class="el-icon-ship icon-style" title="欧美">斯巴达</i>
-                  </ElButton> -->
-                </div>
+
               </div>
             </template>
           </ElPopover>
