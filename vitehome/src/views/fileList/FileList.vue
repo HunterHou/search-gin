@@ -123,7 +123,9 @@
 
       <ElAutocomplete id="searchInput" style="margin-left:1rem;min-width: 320px; width: auto" placeholder="请输入关键词"
         v-model="queryParam.Keyword" clearable size="default" @change="keywordChange" @select="selectSuggestion"
-        :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
+        :fetch-suggestions="(a, c) => {
+          fetchSuggestion(a, c); keywordChange(a);
+        }" @keyup.enter.native="queryList">
         <template #append>
           <el-dropdown size="small" split-button type="primary">
             <ElLink type="danger" :underline="false" @click="() => {
@@ -1537,10 +1539,10 @@ const refreshData = async (params?: any) => {
 };
 
 const queryList = async (params?: any) => {
-  view.ModelList = [];
-  loading.value = true;
-  await refreshData(params);
-  loading.value = false;
+  // view.ModelList = [];
+  setTimeout(refreshData, 50);
+  // loading.value = true;
+  // loading.value = false;
 };
 
 const selectSuggestion = (item) => {
