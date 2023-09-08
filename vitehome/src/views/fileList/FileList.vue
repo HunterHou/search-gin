@@ -110,7 +110,7 @@
       </el-dropdown>
 
       <el-dropdown size="default" type="primary" split-button class="ml1rem">
-        {{ queryParam.MovieType }}
+        {{ queryParam.MovieType || '全部' }}
         <template #dropdown>
           <ElRadioGroup v-model="queryParam.MovieType" @change="refreshData" size="default">
             <ElRadioButton label="">全</ElRadioButton>
