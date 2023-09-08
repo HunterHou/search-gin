@@ -909,19 +909,31 @@ func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64,
 				continue
 			}
 		}
-		if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(keyWord)) && isMovieType {
-			result = append(result, file)
-			size = size + file.Size
-		} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(keyWord)) && isMovieType {
-			result = append(result, file)
-			size = size + file.Size
-		} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(keyWord)) && isMovieType {
-			result = append(result, file)
-			size = size + file.Size
-		} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(keyWord)) && isMovieType {
-			result = append(result, file)
-			size = size + file.Size
+		arr:=strings.Split(keyWord," ")
+		for i := 0; i < len(arr); i++ {
+			words:=arr[i]
+			if(len(words) == 0 || words == " "){
+				break
+			}
+			if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(words)) && isMovieType {
+				result = append(result, file)
+				size = size + file.Size
+				break
+			} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(words)) && isMovieType {
+				result = append(result, file)
+				size = size + file.Size
+				break
+			} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(words)) && isMovieType {
+				result = append(result, file)
+				size = size + file.Size
+				break
+			} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(words)) && isMovieType {
+				result = append(result, file)
+				size = size + file.Size
+				break
+			}
 		}
+		
 	}
 
 	return result, size
