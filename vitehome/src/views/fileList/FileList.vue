@@ -27,66 +27,12 @@
 
     <div class="searchRow" :style="searchStyle">
 
-      <ElButton type="success" size="default" :loading-icon="Eleme" :loading="refreshIndexFlag" @click="refreshIndex()">
+      <ElButton type="warning" size="default" :loading-icon="Eleme" :loading="refreshIndexFlag" @click="refreshIndex()">
         扫 描
       </ElButton>
-      <ElPopover placement="bottom-end" v-model="view.settingInfoShow" width="800px" trigger="click">
-        <template #reference>
-          <ElLink> ({{ view.settingInfo.DirsCnt }})</ElLink>
-        </template>
-        <template #default>
-          <h1 align="center">索引配置</h1>
-          <div style="margin: 2px 2px">
-            <ElRow>
-              <ElCol :span="20">
-                <ElRow>
-                  <ElCol :span="4">
-                    <span>定制按钮：</span>
-                  </ElCol>
-                  <ElCol :span="20">
-                    <ElCheckboxGroup v-model="view.settingInfo.Buttons" size="large">
-                      <ElCheckbox v-for="item in buttonEnum" :key="item" :label="item">
-                        {{ item }}
-                      </ElCheckbox>
-                    </ElCheckboxGroup>
-                  </ElCol>
-                </ElRow>
-                <ElRow>
-                  <ElCol :span="4">
-                    <span>视频类型：</span>
-                  </ElCol>
-                  <ElCol :span="20">
-                    <ElSelect v-model="view.settingInfo.VideoTypes" multiple placeholder="请选择" style="width: 90%">
-                      <ElOption v-for="item in view.settingInfo.Types" :key="item" :label="item" :value="item">
-                      </ElOption>
-                    </ElSelect>
-                  </ElCol>
-                </ElRow>
-                <ElRow>
-                  <ElCol :span="4">
-                    <span>扫描路径：</span>
-                  </ElCol>
-                  <ElCol :span="20">
-                    <ElCheckbox size="small" :indeterminate="view.isIndeterminateDir" v-model="view.settingCheckAll"
-                      @change="handleCheckAllChange">全选
-                    </ElCheckbox>
-                    <ElCheckboxGroup v-model="view.settingInfo.Dirs" @change="handleCheckedCitiesChange">
-                      <ElCheckbox v-for="dir in view.settingInfo.DirsLib" :label="dir" :key="dir">{{ dir }}
-                      </ElCheckbox>
-                    </ElCheckboxGroup>
-                  </ElCol>
-                </ElRow>
-              </ElCol>
-              <ElCol :span="4">
-                <ElButton type="primary" style="height: 50px; width: 120px" @click="settingSubmit">提 交
-                </ElButton>
-              </ElCol>
-            </ElRow>
-          </div>
-        </template>
-      </ElPopover>
 
-      <ElCheckbox class="ml1rem" v-model="queryParam.OnlyRepeat" label="重" size="large" @change="onlyRepeatQuery()" />
+
+
 
       <el-dropdown size="default" type="primary" split-button class="ml1rem">
         {{ SortFieldEnum[queryParam.SortField] }}
@@ -144,6 +90,64 @@
           <div class="value">{{ item }}</div>
         </template>
       </ElAutocomplete>
+      <ElPopover placement="bottom-end" v-model="view.settingInfoShow" width="800px" trigger="click">
+        <template #reference>
+          <ElLink class="ml1rem" type="danger" :underline="false"> <el-icon>
+              <Tools />
+            </el-icon>({{ view.settingInfo.DirsCnt }})</ElLink>
+        </template>
+        <template #default>
+          <h1 align="center">索引配置</h1>
+          <div style="margin: 2px 2px">
+            <ElRow>
+              <ElCol :span="20">
+                <ElRow>
+                  <ElCol :span="4">
+                    <span>定制按钮：</span>
+                  </ElCol>
+                  <ElCol :span="20">
+                    <ElCheckboxGroup v-model="view.settingInfo.Buttons" size="large">
+                      <ElCheckbox v-for="item in buttonEnum" :key="item" :label="item">
+                        {{ item }}
+                      </ElCheckbox>
+                    </ElCheckboxGroup>
+                  </ElCol>
+                </ElRow>
+                <ElRow>
+                  <ElCol :span="4">
+                    <span>视频类型：</span>
+                  </ElCol>
+                  <ElCol :span="20">
+                    <ElSelect v-model="view.settingInfo.VideoTypes" multiple placeholder="请选择" style="width: 90%">
+                      <ElOption v-for="item in view.settingInfo.Types" :key="item" :label="item" :value="item">
+                      </ElOption>
+                    </ElSelect>
+                  </ElCol>
+                </ElRow>
+                <ElRow>
+                  <ElCol :span="4">
+                    <span>扫描路径：</span>
+                  </ElCol>
+                  <ElCol :span="20">
+                    <ElCheckbox size="small" :indeterminate="view.isIndeterminateDir" v-model="view.settingCheckAll"
+                      @change="handleCheckAllChange">全选
+                    </ElCheckbox>
+                    <ElCheckboxGroup v-model="view.settingInfo.Dirs" @change="handleCheckedCitiesChange">
+                      <ElCheckbox v-for="dir in view.settingInfo.DirsLib" :label="dir" :key="dir">{{ dir }}
+                      </ElCheckbox>
+                    </ElCheckboxGroup>
+                  </ElCol>
+                </ElRow>
+              </ElCol>
+              <ElCol :span="4">
+                <ElButton type="primary" style="height: 50px; width: 120px" @click="settingSubmit">提 交
+                </ElButton>
+              </ElCol>
+            </ElRow>
+          </div>
+        </template>
+      </ElPopover>
+      <ElCheckbox class="ml1rem" v-model="queryParam.OnlyRepeat" label="重" size="large" @change="onlyRepeatQuery()" />
       <div style="margin-left: 10px">
         <ElPopover :width="800" trigger="click" v-model:visible="tagPopover">
           <template #reference>
