@@ -19,12 +19,10 @@ import (
 )
 
 type SearchService struct {
-	FileService FileService
 }
 
 func CreateSearchService() SearchService {
-	fileService:=CreateFileService() 
-	return SearchService{FileService:fileService}
+	return SearchService{}
 }
 
 func (fs SearchService) SearchIndex(searchParam datamodels.SearchParam) utils.Page {
@@ -651,39 +649,6 @@ func (fs SearchService) UpdateOne(Id string, path string) {
 	}
 }
 
-func (fs SearchService) GetPng(c *gin.Context) {
-	//path := c.Param("path")
-	id := c.Param("path")
-	file := fs.FindOne(id)
-	if !file.IsNull() && utils.ExistsFiles(file.Png) {
-		c.File(file.Png)
-	} else if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
-		c.File(file.Jpg)
-	} else if !file.IsNull() && utils.ExistsFiles(file.Gif) {
-		c.File(file.Gif)
-	} else {
-		service:=CreateFileService()
-		service.writeNoPic(c)
-	}
-
-}
-
-func (fs SearchService) GetJpg(c *gin.Context) {
-	//path := c.Param("path")
-	id := c.Param("path")
-	file := fs.FindOne(id)
-	if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
-		c.File(file.Jpg)
-	} else if !file.IsNull() && utils.ExistsFiles(file.Png) {
-		c.File(file.Png)
-	} else if !file.IsNull() && utils.ExistsFiles(file.Gif) {
-		c.File(file.Gif)
-	} else {
-		service:=CreateFileService()
-		service.writeNoPic(c)
-	}
-
-}
 func cleanPath(name string) string {
 	newName := strings.Trim(name, " ")
 	newName = strings.ReplaceAll(newName, "《", "")

@@ -158,25 +158,19 @@ func GetTempImage(c *gin.Context) {
 
 // GetFile 获取文件流
 func GetFile(c *gin.Context) {
-	fileService := service.CreateSearchService()
-	id := c.Param("id")
-	file := fileService.FindOne(id)
-	if utils.ExistsFiles(file.Path) {
-		c.File(file.Path)
-	} else {
-		return
-	}
+	fileService := service.CreateFileService()
+	fileService.GetFile(c)
 }
 
 // GetPng 获取Png流
 func GetPng(c *gin.Context) {
-	fileService := service.CreateSearchService()
+	fileService := service.CreateFileService()
 	fileService.GetPng(c)
 }
 
 // GetJpg 获取jpg流
 func GetJpg(c *gin.Context) {
-	fs := service.CreateSearchService()
+	fs := service.CreateFileService()
 	fs.GetJpg(c)
 
 }

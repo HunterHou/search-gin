@@ -22,14 +22,60 @@ import (
 )
 
 type  FileService struct{
+	SearchService SearchService
 }
 
 func CreateFileService() FileService {
-	return FileService{}
+	searchService :=CreateSearchService()
+	return FileService{SearchService:searchService}
 }
 
 var noPic []byte
 var contentType string
+
+
+func (fileService FileService) GetPng(c *gin.Context) {
+	//path := c.Param("path")
+	id := c.Param("path")
+	file := fileService.SearchService.FindOne(id)
+	if !file.IsNull() && utils.ExistsFiles(file.Png) {
+		c.File(file.Png)
+	} else if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
+		c.File(file.Jpg)
+	} else if !file.IsNull() && utils.ExistsFiles(file.Gif) {
+		c.File(file.Gif)
+	} else {
+		fileService.writeNoPic(c)
+	}
+
+}
+
+func (fileService FileService) GetJpg(c *gin.Context) {
+	//path := c.Param("path")
+	id := c.Param("path")
+	file := fileService.SearchService.FindOne(id)
+	if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
+		c.File(file.Jpg)
+	} else if !file.IsNull() && utils.ExistsFiles(file.Png) {
+		c.File(file.Png)
+	} else if !file.IsNull() && utils.ExistsFiles(file.Gif) {
+		c.File(file.Gif)
+	} else {
+		fileService.writeNoPic(c)
+	}
+
+}
+
+func (fileService FileService) GetFile(c *gin.Context) {
+	id := c.Param("id")
+	file := fileService.SearchService.FindOne(id)
+	if utils.ExistsFiles(file.Path) {
+		c.File(file.Path)
+	} else {
+		return
+	}
+
+}
 
 // 心跳与定时
 func (f *FileService)HeartBeat() {
