@@ -65,7 +65,8 @@ func main() {
 	}
 
 	//默认启动页面
-	go service.HeartBeat()
+	fileService := service.CreateFileService()
+	go fileService.HeartBeat()
 
 	g.Go(func() error {
 		return serviceRequest.ListenAndServe()

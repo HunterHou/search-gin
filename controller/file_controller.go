@@ -16,7 +16,7 @@ import (
 func GetPlay(c *gin.Context) {
 	//id := c.Param("id")
 	id := c.Param("id")
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	file := fileService.FindOne(id)
 	//c.File(file.Path)
 	utils.ExecCmdStart(file.Path)
@@ -28,7 +28,7 @@ func GetPlay(c *gin.Context) {
 func SetMovieType(c *gin.Context) {
 	id := c.Param("id")
 	movieType := c.Param("movieType")
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	file := fileService.FindOne(id)
 	res := fileService.SetMovieType(file, movieType)
 	c.JSON(http.StatusOK, res)
@@ -37,7 +37,7 @@ func SetMovieType(c *gin.Context) {
 // GetInfo 获取Info信息
 func GetInfo(c *gin.Context) {
 	id := c.Param("id")
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	file := fileService.FindOne(id)
 	c.JSON(http.StatusOK, file)
 }
@@ -49,7 +49,7 @@ func PostRename(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	res := fileService.Rename(currentFile)
 	c.JSON(http.StatusOK, res)
 }
@@ -58,7 +58,7 @@ func PostRename(c *gin.Context) {
 func GetAddTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	res := fileService.AddTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
@@ -67,7 +67,7 @@ func GetAddTag(c *gin.Context) {
 func GetClearTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	res := fileService.ClearTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
@@ -78,10 +78,11 @@ func GetDirInfo(c *gin.Context) {
 		cons.TempImage = make(map[string]datamodels.Movie)
 	}
 	id := c.Param("id")
+	searchService := service.CreateSearchService()
 	fileService := service.CreateFileService()
-	file := fileService.FindOne(id)
+	file := searchService.FindOne(id)
 
-	files := service.Walk(file.DirPath, cons.Images, false)
+	files := fileService.Walk(file.DirPath, cons.Images, false)
 	for i := 0; i < len(files); i++ {
 		// files[i].SetImageBase64()
 		cons.TempImage[files[i].Id] = files[i]
@@ -92,7 +93,7 @@ func GetDirInfo(c *gin.Context) {
 // GetDelete 删除文件
 func GetDelete(c *gin.Context) {
 	id := c.Param("id")
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	fileService.Delete(id)
 	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
@@ -101,7 +102,7 @@ func GetDelete(c *gin.Context) {
 // GetSync 同步 挂图
 func GetSync(c *gin.Context) {
 	id := c.Param("id")
-	serviceFile := service.CreateFileService()
+	serviceFile := service.CreateSearchService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestBusToFile(curFile)
 	if result.Code != 200 {
@@ -115,7 +116,7 @@ func GetSync(c *gin.Context) {
 // GetImageList 下拉相关图片
 func GetImageList(c *gin.Context) {
 	id := c.Param("id")
-	serviceFile := service.CreateFileService()
+	serviceFile := service.CreateSearchService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestBusToFile(curFile)
 	if result.Code != 200 {
@@ -137,7 +138,7 @@ func GetImageList(c *gin.Context) {
 
 // GetRefreshIndex 刷新索引
 func GetRefreshIndex(c *gin.Context) {
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	fileService.ScanAll()
 	datasource.SortMovieForce()
 	res := utils.NewSuccessByMsg("扫描结束！")
@@ -157,7 +158,7 @@ func GetTempImage(c *gin.Context) {
 
 // GetFile 获取文件流
 func GetFile(c *gin.Context) {
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	id := c.Param("id")
 	file := fileService.FindOne(id)
 	if utils.ExistsFiles(file.Path) {
@@ -169,13 +170,13 @@ func GetFile(c *gin.Context) {
 
 // GetPng 获取Png流
 func GetPng(c *gin.Context) {
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	fileService.GetPng(c)
 }
 
 // GetJpg 获取jpg流
 func GetJpg(c *gin.Context) {
-	fs := service.CreateFileService()
+	fs := service.CreateSearchService()
 	fs.GetJpg(c)
 
 }
@@ -200,7 +201,7 @@ func GetActressImage(c *gin.Context) {
 func GetTransferToMp4(c *gin.Context) {
 	id := c.Param("id")
 	to := c.Param("to")
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	model := fileService.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
@@ -233,7 +234,7 @@ func GetCutMovie(c *gin.Context) {
 	id := c.Param("id")
 	start := c.Param("start")
 	end := c.Param("end")
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	model := fileService.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))

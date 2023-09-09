@@ -13,7 +13,7 @@ import (
 // 本地打开文件夹
 func GetOpenFolder(c *gin.Context) {
 	id := c.Param("id")
-	service := service.CreateFileService()
+	service := service.CreateSearchService()
 	file := service.FindOne(id)
 	fmt.Fprint(gin.DefaultWriter, "open folder", file.DirPath)
 	utils.ExecCmdExplorer(file.DirPath)
@@ -36,11 +36,12 @@ func PostOpenFolderByPath(c *gin.Context) {
 // 通过路径删除文件夹
 func PostDeleteFolerByPath(c *gin.Context) {
 
+	fileService := service.CreateFileService()
 	forms := make(map[string]string)
 	c.ShouldBindJSON(&forms)
 	dirpath := forms["dirpath"]
 	dirpath = strings.ReplaceAll(dirpath, utils.PathSeparator+utils.PathSeparator, utils.PathSeparator)
-	service.DownDeleteDir(dirpath)
+	fileService.DownDeleteDir(dirpath)
 	res := utils.NewSuccessByMsg("打开成功")
 	c.JSON(http.StatusOK, res)
 }

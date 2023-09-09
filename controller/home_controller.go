@@ -16,7 +16,7 @@ func Index(c *gin.Context) {
 }
 
 func GetTypeSize(c *gin.Context) {
-	service := service.CreateFileService()
+	service := service.CreateSearchService()
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
 		service.SortAct(datasource.ActressList, "desc")
