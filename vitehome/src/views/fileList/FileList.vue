@@ -77,7 +77,7 @@
             <ElLink type="danger" :underline="false" @click="() => {
               queryParam.Page = 1;
               queryList();
-            }">搜本地</ElLink>
+            }">搜</ElLink>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click=" javCode(queryParam.Keyword)">javCode</el-dropdown-item>
