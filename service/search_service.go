@@ -934,7 +934,7 @@ func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64,
 			isAdd = true
 		}
 		
-		if isAdd && isMovieType {
+		if isAdd {
 			result = append(result, file)
 			size = size + file.Size
 		}
