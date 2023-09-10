@@ -916,7 +916,7 @@
     :close-on-click-modal="true" :close-on-press-escape="true" :fullscreen="view.videoFullscreen"
     :before-close="closePlayVideo" top="0" width="1200px">
     <div class="playDiv">
-      <vue3VideoPlay ref="vue3VideoPlayRef" style="position: relative; max-height: 90vh; object-fit: contain"
+      <vue3VideoPlay ref="vue3VideoPlayRef" style="position: relative; max-height: 90vh; object-fit: cover"
         v-bind="optionsPC" @volumechange="volumechange" @ended="playNext(1)" :style="{
           backgroundSize: '100% 100%',
           backgroundImage:
