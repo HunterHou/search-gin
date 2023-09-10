@@ -25,6 +25,10 @@ func CreateSearchService() SearchService {
 	return SearchService{}
 }
 
+func (fs SearchService) SortMovieForce(){
+	datasource.SortMovieForce()
+}
+
 func (fs SearchService) SearchIndex(searchParam datamodels.SearchParam) utils.Page {
 	db := CreateOrmService()
 	result := utils.NewPage()

@@ -140,7 +140,7 @@ func GetImageList(c *gin.Context) {
 func GetRefreshIndex(c *gin.Context) {
 	fileService := service.CreateSearchService()
 	fileService.ScanAll()
-	datasource.SortMovieForce()
+	go fileService.SortMovieForce()
 	res := utils.NewSuccessByMsg("扫描结束！")
 	c.JSON(http.StatusOK, res)
 }
