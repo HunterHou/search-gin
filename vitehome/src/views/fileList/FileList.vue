@@ -31,9 +31,6 @@
         扫 描
       </ElButton>
 
-
-
-
       <el-dropdown size="default" type="primary" split-button class="ml1rem">
         {{ SortFieldEnum[queryParam.SortField] }}
         <template #dropdown>
@@ -149,7 +146,28 @@
       </ElPopover>
       <ElCheckbox class="ml1rem" v-model="queryParam.OnlyRepeat" label="重" size="large" @change="onlyRepeatQuery()" />
       <div style="margin-left: 10px">
-        <ElPopover :width="800" trigger="click" v-model:visible="tagPopover">
+        <ElPopover :width="400" trigger="hover" v-model:visible="diskPopover">
+          <template #reference>
+            <ElButton v-if="scanTime" type="success" bg text link style="margin-left: 10px">磁盘
+            </ElButton>
+          </template>
+          <div v-if="scanTime">
+            <el-space wrap>
+              <el-link v-for="folder in scanTime" :key="folder" class="d-tag" :underline="false">
+                <el-tag size="default" :value="folder" @click="
+                  diskPopover = false;
+                gotoSearch(folder.Name);
+                ">
+                  <span style="font-size: 10px">
+                    <b>{{ folder.Name }} (<i>{{ folder.Size }}</i>)
+                    </b>
+                  </span>
+                </el-tag>
+              </el-link>
+            </el-space>
+          </div>
+        </ElPopover>
+        <ElPopover :width="800" trigger="hover" v-model:visible="tagPopover">
           <template #reference>
             <ElButton type="success" bg text link style="margin-left: 10px">标签
             </ElButton>
@@ -312,7 +330,7 @@
             </li>
           </div>
           <ElPopover :teleported="true" placement="bottom-start" popperClass="tagPopover" width="auto"
-            v-model="view.addTagShow" trigger="click" :auto-close="0">
+            v-model="view.addTagShow" trigger="hover" :auto-close="0">
             <template #reference>
               <ElButton :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
                 :size="isShowCover(view) ? 'default' : 'large'" type="warning">
@@ -1057,7 +1075,7 @@ import {
   notSiBaDa,
   volumechange,
 } from "@/views/fileList/fileList";
-import { TagSizeMap } from "@/api/home";
+import { ScanTime, TagSizeMap } from "@/api/home";
 
 import "vue3-video-play/dist/style.css";
 import "./filelist.css";
@@ -1073,6 +1091,7 @@ const pagePress = ref(null);
 
 const running = ref(true);
 const tagPopover = ref(false);
+const diskPopover = ref(false);
 const moreTag = ref(false);
 const loading = ref(false);
 const tagData = ref<any>([]);
@@ -1139,6 +1158,8 @@ const view = reactive<any>({
   transferTask: {},
   taskType: "等待",
 });
+
+const scanTime = ref<any>([]);
 
 const queryParam = reactive<MovieQuery>(new MovieQuery());
 
@@ -1685,10 +1706,16 @@ const refreshIndex = async () => {
     setTimeout(() => {
       refreshData();
       refreshIndexFlag.value = false;
+      loadScanTime()
     }, 1000);
   } else {
     ElMessage.error(res.Message);
   }
+};
+
+const loadScanTime = async () => {
+  const res3 = await ScanTime();
+  scanTime.value = res3;
 };
 
 const thisActress = async (actress: string) => {
@@ -1805,6 +1832,7 @@ onMounted(() => {
   }
   loadTagSize();
   setTimeout(queryList, 200);
+  loadScanTime()
 });
 </script>
 

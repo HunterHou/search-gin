@@ -1,0 +1,1 @@
+import{a as s}from"./index.ed6964fb.js";const a=s(),r=async()=>await a.get({url:"/api/typeSizeMap"}),n=async()=>await a.get({url:"/api/tagSizeMap"}),i=async()=>await a.get({url:"/api/scanTime"});export{i as S,r as T,n as a};
