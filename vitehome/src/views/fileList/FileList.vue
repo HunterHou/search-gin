@@ -123,9 +123,7 @@
 
       <ElAutocomplete id="searchInput" style="margin-left:1rem;min-width: 320px; width: auto" placeholder="请输入关键词"
         v-model="queryParam.Keyword" clearable size="default" @change="keywordChange" @select="selectSuggestion"
-        :fetch-suggestions="(a, c) => {
-          fetchSuggestion(a, c); keywordChange(a);
-        }" @keyup.enter.native="queryList">
+        :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
         <template #append>
           <el-dropdown size="small" split-button type="primary">
             <ElLink type="danger" :underline="false" @click="() => {
@@ -1027,7 +1025,7 @@ import {
   useWindowScroll,
   useWindowSize,
   useTimeAgo,
-  formatTimeAgo,
+  useThrottleFn,
 } from "@vueuse/core";
 import {
   ElMessage,
@@ -1754,12 +1752,19 @@ const getImageList = async (params: string) => {
     ElMessage.error(res.Message);
   }
 };
+// 定义节流查询方法
+const throttledFn = useThrottleFn(() => {
+  queryParam.Page = 1;
+  queryList();
+}, 1000)
 
 const keywordChange = (value) => {
   queryParam.Keyword = value;
-  queryParam.Page = 1;
-  queryList();
+  throttledFn()
 };
+
+
+window.addEventListener('resize', throttledFn)
 
 const handleCurrentChange = (page: number) => {
   queryParam.Page = page;
