@@ -116,25 +116,27 @@ func (o *OrmService) queryCount(param datamodels.SearchParam) (int64, int64) {
 // 全部删除 并添加
 func (o *OrmService) InsertAllIndex(movies []datamodels.Movie) utils.Result {
 	total := int64(len(movies))
-	pageSize := int64(1000)
-	totalPage := total/pageSize + 1
-	startIndex := 0
-	var wg sync.WaitGroup
-	wg.Add(int(totalPage))
 	cons.IndexDone = false
-	o.DeleteAll()
-	for i := 0; i < int(totalPage); i++ {
-		lastIndex := startIndex + int(pageSize)
-		if lastIndex > int(total) {
-			lastIndex = int(total)
+	if total > 0 {
+		pageSize := int64(1000)
+		totalPage := total/pageSize + 1
+		startIndex := 0
+		var wg sync.WaitGroup
+		wg.Add(int(totalPage))
+		o.DeleteAll()
+		for i := 0; i < int(totalPage); i++ {
+			lastIndex := startIndex + int(pageSize)
+			if lastIndex > int(total) {
+				lastIndex = int(total)
+			}
+			pageNo := i + 1
+			fmt.Fprintf(gin.DefaultWriter, "开始启动，页码：%d:", pageNo)
+			curMovies := movies[startIndex:lastIndex]
+			go o.InsertBatch(curMovies, &wg, pageNo)
+			startIndex = lastIndex
 		}
-		pageNo := i + 1
-		fmt.Fprintf(gin.DefaultWriter, "开始启动，页码：%d:", pageNo)
-		curMovies := movies[startIndex:lastIndex]
-		go o.InsertBatch(curMovies, &wg, pageNo)
-		startIndex = lastIndex
+		wg.Wait()
 	}
-	wg.Wait()
 	cons.IndexDone = true
 	res := utils.NewSuccess()
 	res.EffectRows = total
