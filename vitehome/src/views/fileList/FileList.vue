@@ -27,12 +27,69 @@
 
     <div class="searchRow" :style="searchStyle">
 
-      <ElButton type="success" size="default" :loading-icon="Eleme" :loading="refreshIndexFlag" @click="refreshIndex()">
+      <ElButton type="warning" size="default" :loading-icon="Eleme" :loading="refreshIndexFlag" @click="refreshIndex()">
         扫 描
       </ElButton>
+
+      <el-dropdown size="default" type="primary" split-button class="ml1rem">
+        {{ SortFieldEnum[queryParam.SortField] }}
+        <template #dropdown>
+          <ElRadioGroup v-model="queryParam.SortField" size="default" @change="refreshData">
+            <ElRadioButton v-for="item in Object.keys(SortFieldEnum)" :label="item">{{ SortFieldEnum[item] }}
+            </ElRadioButton>
+          </ElRadioGroup>
+        </template>
+      </el-dropdown>
+
+
+      <el-dropdown size="default" type="primary" split-button class="ml1rem">
+        {{ SortTypeEnum[queryParam.SortType] }}
+        <template #dropdown>
+          <ElRadioGroup v-model="queryParam.SortType" @change="refreshData" size="default">
+            <ElRadioButton v-for="item in Object.keys(SortTypeEnum)" :label="item">{{ SortTypeEnum[item] }}
+            </ElRadioButton>
+          </ElRadioGroup>
+        </template>
+      </el-dropdown>
+
+      <el-dropdown size="default" type="primary" split-button class="ml1rem">
+        {{ queryParam.MovieType || '全部' }}
+        <template #dropdown>
+          <ElRadioGroup v-model="queryParam.MovieType" @change="refreshData" size="default">
+            <ElRadioButton label="">全</ElRadioButton>
+            <ElRadioButton v-for="tp in  view.settingInfo.MovieTypes" :label="tp">{{ tp.substring(0, 1) }}
+            </ElRadioButton>
+            <ElRadioButton label="无">无</ElRadioButton>
+          </ElRadioGroup>
+        </template>
+      </el-dropdown>
+
+      <ElAutocomplete id="searchInput" style="margin-left:1rem;min-width: 320px; width: auto" placeholder="请输入关键词"
+        v-model="queryParam.Keyword" clearable size="default" @change="keywordChange" @select="selectSuggestion"
+        :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
+        <template #append>
+          <el-dropdown size="small" split-button type="primary">
+            <ElLink type="danger" :underline="false" @click="() => {
+              queryParam.Page = 1;
+              queryList();
+            }">搜</ElLink>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click=" javCode(queryParam.Keyword)">javCode</el-dropdown-item>
+                <el-dropdown-item @click="javCode(queryParam.Keyword)">javSearch</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+        <template #default="{ item }">
+          <div class="value">{{ item }}</div>
+        </template>
+      </ElAutocomplete>
       <ElPopover placement="bottom-end" v-model="view.settingInfoShow" width="800px" trigger="click">
         <template #reference>
-          <ElLink> ({{ view.settingInfo.DirsCnt }})</ElLink>
+          <ElLink class="ml1rem" type="danger" :underline="false"> <el-icon>
+              <Tools />
+            </el-icon>({{ view.settingInfo.DirsCnt }})</ElLink>
         </template>
         <template #default>
           <h1 align="center">索引配置</h1>
@@ -85,65 +142,30 @@
           </div>
         </template>
       </ElPopover>
-
       <ElCheckbox class="ml1rem" v-model="queryParam.OnlyRepeat" label="重" size="large" @change="onlyRepeatQuery()" />
-
-      <el-dropdown size="default" type="primary" split-button class="ml1rem">
-        {{ SortFieldEnum[queryParam.SortField] }}
-        <template #dropdown>
-          <ElRadioGroup v-model="queryParam.SortField" size="default" @change="refreshData">
-            <ElRadioButton v-for="item in Object.keys(SortFieldEnum)" :label="item">{{ SortFieldEnum[item] }}
-            </ElRadioButton>
-          </ElRadioGroup>
-        </template>
-      </el-dropdown>
-
-
-      <el-dropdown size="default" type="primary" split-button class="ml1rem">
-        {{ SortTypeEnum[queryParam.SortType] }}
-        <template #dropdown>
-          <ElRadioGroup v-model="queryParam.SortType" @change="refreshData" size="default">
-            <ElRadioButton v-for="item in Object.keys(SortTypeEnum)" :label="item">{{ SortTypeEnum[item] }}
-            </ElRadioButton>
-          </ElRadioGroup>
-        </template>
-      </el-dropdown>
-
-      <el-dropdown size="default" type="primary" split-button class="ml1rem">
-        {{ queryParam.MovieType }}
-        <template #dropdown>
-          <ElRadioGroup v-model="queryParam.MovieType" @change="refreshData" size="default">
-            <ElRadioButton label="">全</ElRadioButton>
-            <ElRadioButton v-for="tp in  view.settingInfo.MovieTypes" :label="tp">{{ tp.substring(0, 1) }}
-            </ElRadioButton>
-            <ElRadioButton label="无">无</ElRadioButton>
-          </ElRadioGroup>
-        </template>
-      </el-dropdown>
-
-      <ElAutocomplete id="searchInput" style="margin-left:1rem;min-width: 320px; width: auto" placeholder="请输入关键词"
-        v-model="queryParam.Keyword" clearable size="default" @change="keywordChange" @select="selectSuggestion"
-        :fetch-suggestions="fetchSuggestion" @keyup.enter.native="queryList">
-        <template #append>
-          <el-dropdown size="small" split-button type="primary">
-            <ElLink type="danger" :underline="false" @click="() => {
-              queryParam.Page = 1;
-              queryList();
-            }">搜本地</ElLink>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click=" javCode(queryParam.Keyword)">javCode</el-dropdown-item>
-                <el-dropdown-item @click="javCode(queryParam.Keyword)">javSearch</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </template>
-        <template #default="{ item }">
-          <div class="value">{{ item }}</div>
-        </template>
-      </ElAutocomplete>
       <div style="margin-left: 10px">
-        <ElPopover :width="800" trigger="click" v-model:visible="tagPopover">
+        <ElPopover :width="400" trigger="hover" v-model:visible="diskPopover">
+          <template #reference>
+            <ElButton v-if="scanTime" type="success" bg text link style="margin-left: 10px">磁盘
+            </ElButton>
+          </template>
+          <div v-if="scanTime">
+            <el-space wrap>
+              <el-link v-for="folder in scanTime" :key="folder" class="d-tag" :underline="false">
+                <el-tag size="default" :value="folder" @click="
+                  diskPopover = false;
+                gotoSearch(folder.Name);
+                ">
+                  <span style="font-size: 10px">
+                    <b>{{ folder.Name }} (<i>{{ folder.Size }}</i>)
+                    </b>
+                  </span>
+                </el-tag>
+              </el-link>
+            </el-space>
+          </div>
+        </ElPopover>
+        <ElPopover :width="800" trigger="hover" v-model:visible="tagPopover">
           <template #reference>
             <ElButton type="success" bg text link style="margin-left: 10px">标签
             </ElButton>
@@ -306,7 +328,7 @@
             </li>
           </div>
           <ElPopover :teleported="true" placement="bottom-start" popperClass="tagPopover" width="auto"
-            v-model="view.addTagShow" trigger="click" :auto-close="0">
+            v-model="view.addTagShow" trigger="hover" :auto-close="0">
             <template #reference>
               <ElButton :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
                 :size="isShowCover(view) ? 'default' : 'large'" type="warning">
@@ -892,7 +914,7 @@
     :close-on-click-modal="true" :close-on-press-escape="true" :fullscreen="view.videoFullscreen"
     :before-close="closePlayVideo" top="0" width="1200px">
     <div class="playDiv">
-      <vue3VideoPlay ref="vue3VideoPlayRef" style="position: relative; max-height: 90vh; object-fit: contain"
+      <vue3VideoPlay ref="vue3VideoPlayRef" style="position: relative; max-height: 90vh; object-fit: cover"
         v-bind="optionsPC" @volumechange="volumechange" @ended="playNext(1)" :style="{
           backgroundSize: '100% 100%',
           backgroundImage:
@@ -1051,7 +1073,7 @@ import {
   notSiBaDa,
   volumechange,
 } from "@/views/fileList/fileList";
-import { TagSizeMap } from "@/api/home";
+import { ScanTime, TagSizeMap } from "@/api/home";
 
 import "vue3-video-play/dist/style.css";
 import "./filelist.css";
@@ -1067,6 +1089,7 @@ const pagePress = ref(null);
 
 const running = ref(true);
 const tagPopover = ref(false);
+const diskPopover = ref(false);
 const moreTag = ref(false);
 const loading = ref(false);
 const tagData = ref<any>([]);
@@ -1133,6 +1156,8 @@ const view = reactive<any>({
   transferTask: {},
   taskType: "等待",
 });
+
+const scanTime = ref<any>([]);
 
 const queryParam = reactive<MovieQuery>(new MovieQuery());
 
@@ -1679,10 +1704,16 @@ const refreshIndex = async () => {
     setTimeout(() => {
       refreshData();
       refreshIndexFlag.value = false;
+      loadScanTime()
     }, 1000);
   } else {
     ElMessage.error(res.Message);
   }
+};
+
+const loadScanTime = async () => {
+  const res3 = await ScanTime();
+  scanTime.value = res3;
 };
 
 const thisActress = async (actress: string) => {
@@ -1763,9 +1794,6 @@ const keywordChange = (value) => {
   throttledFn()
 };
 
-
-window.addEventListener('resize', throttledFn)
-
 const handleCurrentChange = (page: number) => {
   queryParam.Page = page;
   if (!queryParam.Keyword) {
@@ -1806,6 +1834,7 @@ onMounted(() => {
   }
   loadTagSize();
   setTimeout(queryList, 200);
+  loadScanTime()
 });
 </script>
 

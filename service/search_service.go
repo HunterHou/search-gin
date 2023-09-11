@@ -18,14 +18,18 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type FileService struct {
+type SearchService struct {
 }
 
-func CreateFileService() FileService {
-	return FileService{}
+func CreateSearchService() SearchService {
+	return SearchService{}
 }
 
-func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page {
+func (fs SearchService) SortMovieForce(){
+	datasource.SortMovieForce()
+}
+
+func (fs SearchService) SearchIndex(searchParam datamodels.SearchParam) utils.Page {
 	db := CreateOrmService()
 	result := utils.NewPage()
 	result.TotalCnt = len(datasource.FileLib)
@@ -44,7 +48,7 @@ func (fs FileService) SearchIndex(searchParam datamodels.SearchParam) utils.Page
 
 }
 
-func (fs FileService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
+func (fs SearchService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
 
 	result := utils.NewPage()
 	if len(datasource.FileList) == 0 {
@@ -73,7 +77,7 @@ func (fs FileService) SearchDataSource(searchParam datamodels.SearchParam) utils
 
 }
 
-func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) utils.Result {
+func (fs SearchService) SetMovieType(movie datamodels.Movie, movieType string) utils.Result {
 
 	//video
 	if movie.MovieType != "" && movie.MovieType != "无" {
@@ -128,7 +132,7 @@ func (fs FileService) SetMovieType(movie datamodels.Movie, movieType string) uti
 	return utils.NewSuccessByMsg("执行成功")
 }
 
-func (fs FileService) AddTag(id string, tag string) utils.Result {
+func (fs SearchService) AddTag(id string, tag string) utils.Result {
 	movie := fs.FindOne(id)
 	//video
 	if len(movie.Tags) > 0 {
@@ -206,7 +210,7 @@ func (fs FileService) AddTag(id string, tag string) utils.Result {
 	fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
-func (fs FileService) ClearTag(id string, tag string) utils.Result {
+func (fs SearchService) ClearTag(id string, tag string) utils.Result {
 	movie := fs.FindOne(id)
 	//video
 	if len(movie.Tags) == 0 {
@@ -240,7 +244,7 @@ func (fs FileService) ClearTag(id string, tag string) utils.Result {
 	return utils.NewSuccessByMsg("执行成功")
 }
 
-func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
+func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
 	result := utils.Result{}
 	root := srcFile.DirPath
 
@@ -354,7 +358,7 @@ func (fs FileService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie)
 	return result
 }
 
-func (fs FileService) DownImage(toFile datamodels.Movie) utils.Result {
+func (fs SearchService) DownImage(toFile datamodels.Movie) utils.Result {
 	if len(toFile.ImageList) <= 0 {
 		return utils.NewFailByMsg("No Image avaliable")
 	}
@@ -414,7 +418,7 @@ func downImageItem(url string, dirPath string, prefix string, sufix string, wg *
 	return result
 }
 
-func (fs FileService) MakeNfo(toFile datamodels.Movie) {
+func (fs SearchService) MakeNfo(toFile datamodels.Movie) {
 	nfo, _ := os.Create(toFile.Nfo)
 	defer nfo.Close()
 	nfoStr := "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?> \n"
@@ -457,7 +461,7 @@ func isOM(name string) bool {
 	return strings.Contains(name, "斯巴达")
 }
 
-func (fs FileService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
+func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
 
 	result := utils.Result{}
 	newFile := datamodels.Movie{}
@@ -551,7 +555,7 @@ func (fs FileService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result, 
 	return result, newFile
 }
 
-func (fs FileService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
+func (fs SearchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
 
 	result := utils.Result{}
 	newFile := datamodels.Movie{}
@@ -630,7 +634,7 @@ func (fs FileService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, 
 	return result, newFile
 }
 
-func (fs FileService) FindOne(Id string) datamodels.Movie {
+func (fs SearchService) FindOne(Id string) datamodels.Movie {
 	if cons.OSSetting.IsDb {
 		db := CreateOrmService()
 		return db.Find(Id)
@@ -642,44 +646,13 @@ func (fs FileService) FindOne(Id string) datamodels.Movie {
 	return curFile
 }
 
-func (fs FileService) UpdateOne(Id string, path string) {
+func (fs SearchService) UpdateOne(Id string, path string) {
 	if cons.OSSetting.IsDb {
 		db := CreateOrmService()
 		db.UpdateOne(Id, path)
 	}
 }
 
-func (fs FileService) GetPng(c *gin.Context) {
-	//path := c.Param("path")
-	id := c.Param("path")
-	file := fs.FindOne(id)
-	if !file.IsNull() && utils.ExistsFiles(file.Png) {
-		c.File(file.Png)
-	} else if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
-		c.File(file.Jpg)
-	} else if !file.IsNull() && utils.ExistsFiles(file.Gif) {
-		c.File(file.Gif)
-	} else {
-		writeNoPic(c)
-	}
-
-}
-
-func (fs FileService) GetJpg(c *gin.Context) {
-	//path := c.Param("path")
-	id := c.Param("path")
-	file := fs.FindOne(id)
-	if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
-		c.File(file.Jpg)
-	} else if !file.IsNull() && utils.ExistsFiles(file.Png) {
-		c.File(file.Png)
-	} else if !file.IsNull() && utils.ExistsFiles(file.Gif) {
-		c.File(file.Gif)
-	} else {
-		writeNoPic(c)
-	}
-
-}
 func cleanPath(name string) string {
 	newName := strings.Trim(name, " ")
 	newName = strings.ReplaceAll(newName, "《", "")
@@ -689,7 +662,7 @@ func cleanPath(name string) string {
 	return newName
 }
 
-func (fs FileService) Rename(movie datamodels.MovieEdit) utils.Result {
+func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 	res := utils.NewSuccess()
 	movieLib := fs.FindOne(movie.Id)
 	if movieLib.IsNull() {
@@ -789,7 +762,7 @@ func choose2To1(tr bool, str1 string, str2 string) string {
 	}
 }
 
-func (fs FileService) FindNext(Id string, sourceLib []datamodels.Movie, offset int) datamodels.Movie {
+func (fs SearchService) FindNext(Id string, sourceLib []datamodels.Movie, offset int) datamodels.Movie {
 
 	length := len(sourceLib)
 	for i := 0; i < length; i++ { //looping from 0 to the length of the array
@@ -804,7 +777,7 @@ func (fs FileService) FindNext(Id string, sourceLib []datamodels.Movie, offset i
 	return curFile
 }
 
-func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
+func (fs SearchService) SortAct(lib []datamodels.Actress, sortType string) {
 	if sortType == "desc" {
 		sort.Slice(lib, func(i, j int) bool {
 			return lib[i].Cnt > lib[j].Cnt
@@ -818,7 +791,7 @@ func (fs FileService) SortAct(lib []datamodels.Actress, sortType string) {
 }
 
 // 全局扫描
-func (fs FileService) ScanAll() {
+func (fs SearchService) ScanAll() {
 	//统计初始化
 	cons.TypeMenu = sync.Map{}
 	cons.TagMenu = sync.Map{}
@@ -835,8 +808,9 @@ func (fs FileService) ScanAll() {
 }
 
 // 扫描指定文佳佳
-func (fs FileService) ScanTarget(dirPath string) {
+func (fs SearchService) ScanTarget(dirPath string) {
 	//统计初始化
+	service:=CreateFileService()
 	cons.TypeMenu = sync.Map{}
 	cons.TagMenu = sync.Map{}
 	cons.SmallDir = []cons.MenuSize{}
@@ -846,33 +820,34 @@ func (fs FileService) ScanTarget(dirPath string) {
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
-	targetFiles, _ := WalkInnter(dirPath, cons.QueryTypes, 0, false)
+	targetFiles, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, false)
 	db := CreateOrmService()
 	db.DeleteByDirPath(dirPath)
 	fmt.Println("删除文件夹:" + dirPath)
 	db.InsertS(targetFiles, 1)
 	fmt.Fprintf(gin.DefaultWriter, "添加文件:%d", len(targetFiles))
-
-	fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
+	service.fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
 
 }
 
-func (fs FileService) Delete(id string) {
+func (fs SearchService) Delete(id string) {
 	file := fs.FindOne(id)
-	DeleteOne(file.DirPath, file.Title)
+	service:=CreateFileService()
+	service.DeleteOne(file.DirPath, file.Title)
 	fs.ScanTarget(file.DirPath)
 }
 
-func (fs FileService) ScanDisk(baseDir []string, types []string) {
+func (fs SearchService) ScanDisk(baseDir []string, types []string) {
 	// utils.PKIdRest()
+	service:=CreateFileService()
 	datasource.FileLib = make(map[string]datamodels.Movie)
-	files := Walks(baseDir, types)
-	makeDatasourceMap(files)
+	files := service.Walks(baseDir, types)
+	service.makeDatasourceMap(files)
 	// 添加索引
 
 }
 
-func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
+func (fs SearchService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
 	var result []datamodels.Movie
 	codeMap := make(map[string]datamodels.Movie)
 	for _, movie := range files {
@@ -895,7 +870,7 @@ func (fs FileService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
 	return result
 }
 
-func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64, keyWord string, movieType string) ([]datamodels.Movie, int64) {
+func (fs SearchService) SearchByKeyWord(files []datamodels.Movie, totalSize int64, keyWord string, movieType string) ([]datamodels.Movie, int64) {
 
 	if (keyWord == "" || keyWord == "undefined") && (movieType == "" || movieType == "undefined") {
 		return files, totalSize
@@ -903,31 +878,48 @@ func (fs FileService) SearchByKeyWord(files []datamodels.Movie, totalSize int64,
 	var result []datamodels.Movie
 	var size int64
 	for _, file := range files {
-		isMovieType := true
 		if movieType != "" {
 			if file.MovieType != movieType {
 				continue
 			}
 		}
-		if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(keyWord)) && isMovieType {
-			result = append(result, file)
-			size = size + file.Size
-		} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(keyWord)) && isMovieType {
-			result = append(result, file)
-			size = size + file.Size
-		} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(keyWord)) && isMovieType {
-			result = append(result, file)
-			size = size + file.Size
-		} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(keyWord)) && isMovieType {
+		isAdd := false
+		if len(keyWord) > 0 {
+			arr:=strings.Split(keyWord," ")
+			for i := 0; i < len(arr); i++ {
+				words:=arr[i]
+				if(len(words) == 0 || words == " "){
+					break
+				}
+				if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(words)){
+					isAdd=true
+					break
+				} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(words))  {
+					isAdd=true
+					break
+				} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(words))  {
+					isAdd=true
+					break
+				} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(words))  {
+					isAdd=true
+					break
+				}
+			}
+		}else{
+			isAdd = true
+		}
+		
+		if isAdd {
 			result = append(result, file)
 			size = size + file.Size
 		}
+		
 	}
 
 	return result, size
 }
 
-func (fs FileService) SearchActressByKeyWord(files []datamodels.Actress, keyWord string) ([]datamodels.Actress, int) {
+func (fs SearchService) SearchActressByKeyWord(files []datamodels.Actress, keyWord string) ([]datamodels.Actress, int) {
 
 	if keyWord == "" || keyWord == "undefined" {
 		return files, len(files)
@@ -943,7 +935,7 @@ func (fs FileService) SearchActressByKeyWord(files []datamodels.Actress, keyWord
 	return result, cnt
 }
 
-func (fs FileService) GetActressPage(files []datamodels.Actress, pageNo int, pageSize int) []datamodels.Actress {
+func (fs SearchService) GetActressPage(files []datamodels.Actress, pageNo int, pageSize int) []datamodels.Actress {
 
 	if len(files) == 0 {
 		return files
@@ -963,7 +955,7 @@ func (fs FileService) GetActressPage(files []datamodels.Actress, pageNo int, pag
 	return data
 }
 
-func (fs FileService) GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.Movie, int64) {
+func (fs SearchService) GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.Movie, int64) {
 	return GetPage(files, pageNo, pageSize)
 }
 
@@ -995,7 +987,7 @@ func GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.M
 	return data, volume
 }
 
-func (fs FileService) DataSize(data []datamodels.Movie) int64 {
+func (fs SearchService) DataSize(data []datamodels.Movie) int64 {
 	var dataSize int64
 	for _, d := range data {
 		dataSize = dataSize + d.Size

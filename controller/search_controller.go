@@ -28,7 +28,7 @@ func PostSearch(c *gin.Context) {
 func PostMovies(c *gin.Context) {
 	searchParam := datamodels.SearchParam{}
 	c.Bind(&searchParam)
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	result := fileService.SearchDataSource(searchParam)
 	result.PageSize = searchParam.PageSize
 	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
@@ -40,7 +40,7 @@ func PostMovies(c *gin.Context) {
 func PostSearchMovie(c *gin.Context) {
 	searchParam := datamodels.SearchParam{}
 	c.Bind(&searchParam)
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	result := fileService.SearchIndex(searchParam)
 	result.SetProgress(cons.IndexDone)
 	c.JSON(http.StatusOK, result)
@@ -95,7 +95,7 @@ func GetLastInfo(c *gin.Context) {
 
 func getNextOne(searchParam datamodels.SearchParam, _ int, currentId string) datamodels.Movie {
 	var res datamodels.Movie
-	fileService := service.CreateFileService()
+	fileService := service.CreateSearchService()
 	result := fileService.SearchIndex(searchParam)
 	datas := result.Data.([]datamodels.Movie)
 	for i := 0; i < len(datas); i++ {
@@ -116,7 +116,7 @@ func PostActess(c *gin.Context) {
 
 	param := datamodels.SearchParam{}
 	c.Bind(&param)
-	service := service.CreateFileService()
+	service := service.CreateSearchService()
 	if len(datasource.FileList) == 0 {
 		service.ScanAll()
 		service.SortAct(datasource.ActressList, param.SortType)
