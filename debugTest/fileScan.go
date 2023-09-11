@@ -18,7 +18,8 @@ func TestMain(t *testing.T) {
 	var imageTypes = []string{cons.JPG, cons.PNG, cons.GIF}
 	var queryTypes []string
 	queryTypes = utils.ExtandsItems(queryTypes, imageTypes)
-	items := service.Walk(baseDir, queryTypes, true)
+	serviceFile := service.CreateFileService()
+	items := serviceFile.Walk(baseDir, queryTypes, true)
 	i := 0
 	for {
 		if len(items) == i {

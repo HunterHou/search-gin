@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/gin-gonic/gin v1.9.0
-	github.com/goccy/go-json v0.10.0
+	github.com/goccy/go-json v0.10.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.16
 	golang.org/x/sync v0.1.0
 	golang.org/x/sys v0.6.0
