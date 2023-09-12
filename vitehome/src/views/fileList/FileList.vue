@@ -52,7 +52,8 @@
         </template>
       </el-dropdown>
 
-      <el-dropdown size="default" type="primary" split-button class="ml1rem">
+      <el-dropdown size="default" type="primary" split-button class="ml1rem"
+        @click="queryParam.MovieType = null; refreshData()">
         {{ queryParam.MovieType || '全部' }}
         <template #dropdown>
           <ElRadioGroup v-model="queryParam.MovieType" @change="refreshData" size="default">
@@ -60,6 +61,19 @@
             <ElRadioButton v-for="tp in  view.settingInfo.MovieTypes" :label="tp">{{ tp.substring(0, 1) }}
             </ElRadioButton>
             <ElRadioButton label="无">无</ElRadioButton>
+          </ElRadioGroup>
+          <ElRadioGroup v-model="queryParam.MovieType" @change="refreshData" size="default">
+            <!-- <el-dropdown-menu>
+              <el-dropdown-item>
+                <ElRadioButton label="">全部</ElRadioButton>
+              </el-dropdown-item>
+              <el-dropdown-item v-for="tp in  view.settingInfo.MovieTypes">
+                <ElRadioButton style="width:100%;height:100%" :label="tp">{{ tp }}</ElRadioButton>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <ElRadioButton label="无">无</ElRadioButton>
+              </el-dropdown-item>
+            </el-dropdown-menu> -->
           </ElRadioGroup>
         </template>
       </el-dropdown>
@@ -327,10 +341,21 @@
               </ElTag>
             </li>
           </div>
+          <el-dropdown v-if="noMovieType(item.MovieType)" :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
+            size="mini" type="warning" split-button>
+            无
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="tp in  view.settingInfo.MovieTypes">
+                  <span style="width:100%;height:100%" :label="tp" @click="setMovieType(item.Id, tp)">{{ tp }}</span>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <ElPopover :teleported="true" placement="bottom-start" popperClass="tagPopover" width="auto"
             v-model="view.addTagShow" trigger="hover" :auto-close="0">
             <template #reference>
-              <ElButton :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
+              <ElButton v-if="!noMovieType(item.MovieType)" :class="isShowCover(view) ? 'tag-buttom-cover' : 'tag-buttom'"
                 :size="isShowCover(view) ? 'default' : 'large'" type="warning">
                 <b>
                   {{ item.MovieType }}
@@ -339,8 +364,8 @@
             </template>
             <template #default>
               <div class="rightBtnPop">
-                <ElButton plain size="default" v-for="tp in view.settingInfo.MovieTypes"
-                  @click="setMovieType(item.Id, tp)">
+                <ElButton plain v-if="!noMovieType(item.MovieType)" size="default"
+                  v-for="tp in view.settingInfo.MovieTypes" @click="setMovieType(item.Id, tp)">
                   <i class="el-icon-bicycle icon-style" :title="tp">{{ tp }}</i>
                 </ElButton>
               </div>
