@@ -200,7 +200,7 @@ body {
   position: fixed;
   display: flex;
   flex-direction: column;
-  z-index: 9999;
+  z-index: 999;
   width: 48%;
   height: 84vh;
   padding: 2px;

@@ -6,7 +6,7 @@
     <div v-if="isPlaying" style="
         position: fixed;
         bottom: 500px;
-        z-index: 99;
+        z-index: 8;
         left: 25px;
         border-radius: 12%;
         background-color: rgba(0, 0, 0, 0.8);
