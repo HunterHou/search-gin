@@ -196,6 +196,15 @@ body {
 .d-tag {
   margin: 4px 8px;
 }
+.playDivMini {
+  position: fixed;
+  z-index: 999;
+  width: 48%;
+  height: 82vh;
+  padding: 2px;
+  background-color: #02101f;
+  border-radius: 10px;
+}
 .playDiv {
   padding: 0;
   margin: 0;
