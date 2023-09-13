@@ -198,9 +198,11 @@ body {
 }
 .playDivMini {
   position: fixed;
-  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
   width: 48%;
-  height: 82vh;
+  height: 84vh;
   padding: 2px;
   background-color: #02101f;
   border-radius: 10px;
@@ -247,4 +249,8 @@ body {
   padding: 0px;
   border-radius: 4px solid orange;
   background-color: rgba(0, 0, 0, 0.8);
+}
+
+.el-space {
+  margin-bottom: 0px;
 }
