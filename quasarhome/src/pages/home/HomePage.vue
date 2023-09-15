@@ -31,7 +31,7 @@
     </div>
     <q-page-sticky position="bottom" style="justify-items: center;z-index: 9;background-color: rgba(0, 0, 0, 0.6);"
       :offset="[0, 0]">
-      <div class="q-pa-lg flex flex-center">
+      <div class="q-pa-lg flex flex-center" ref="el" style="position: fixed" :style="style">
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="purple"
           :ellipses="false" :max="view.resultData.TotalPage || 0" :max-pages="6" boundary-numbers />
       </div>
@@ -40,18 +40,35 @@
     <div class="row justify-center q-gutter-sm">
       <q-intersection v-for="item  in view.resultData.Data" :key="item.Id" class="example-item">
         <q-card class="q-ma-sm">
-
           <q-img fit="cover" easier draggable :src="getPng(item.Id)" class="item-img" @click="openDialog(item)">
-            <div class="absolute-bottom text-body1 text-center" @click.stop="() => { }">
+            <div
+              style="padding:0;margin:0;background-color: rgba(0, 0, 0, 0);display: flex;flex-direction: row;justify-content: space-between;width: 100%;">
+
+              <div @click.stop="() => { }"
+                style="display: flex;flex-direction: column;justify-content: flex-start;width: fit-content;">
+                <q-chip square color="red" text-color="white" v-for="tag in item.Tags" :key="tag"
+                  style="margin-left: 0px;padding: 0 4px;">
+                  <span @click="view.queryParam.Keyword = tag; fetchSearch()">{{ tag }}</span>
+                </q-chip>
+              </div>
+              <q-chip @click.stop="() => { }" square color="green" text-color="white"
+                style="width: fit-content;margin-right: 0px;padding:  0 6px;">
+                <span @click="view.queryParam.Keyword = item.MovieType; fetchSearch()"> {{ item.MovieType }}</span>
+              </q-chip>
+
+            </div>
+            <div class="absolute-bottom text-body1 text-center" style="padding: 4px;" @click.stop="() => { }">
               <q-btn flat style="color: #59d89d" :label="item.Actress?.substring(0, 10)"
                 @click="view.queryParam.Keyword = item.Actress; fetchSearch()" />
-              <q-btn flat style="color: goldenrod" :label="item.Code?.substring(0, 10)" />
+              <q-btn flat style="color: goldenrod" :label="item.Code?.substring(0, 10)" @click="copy(item.Code)" />
+
             </div>
           </q-img>
           <q-card-section>
-            <div class="text-subtitle2"><q-chip color="red" text-color="white">
-                {{ item.MovieType }}
-              </q-chip>{{ item.Name }}</div>
+            <div class="text-subtitle2"><q-chip @click.stop="() => { }" square color="green" text-color="white"
+                style="padding: 0px 4px;">
+                {{ item.SizeStr }}
+              </q-chip>{{ item.Title }}</div>
           </q-card-section>
         </q-card>
       </q-intersection>
@@ -59,17 +76,19 @@
   </div>
   <q-dialog no-refocus no-focus square seamless allow-focus-outside :maximized="view.fullscreen" ref="dialogRef"
     @hide="onDialogHide">
-    <q-card class="q-dialog-plugin" :style="{ height: view.fullscreen ? '100%' : '40vh', width: 'auto' }">
-
-      <q-card-actions align="between">
-        <span style="overflow: hidden;">{{ view.currentData.Name }}</span>
-        <q-btn color="primary" :label="view.fullscreen ? '小屏' : '全屏'" @click="onOKClick" />
-        <q-btn color="primary" label="关闭" @click="onCancelClick" />
-      </q-card-actions>
-      <vue3VideoPlay ref="vue3VideoPlayRef" style="position: relative; object-fit: cover;height: auto;width: 100%;"
-        v-bind="optionsPC" />
-
-    </q-card>
+    <div>
+      <q-card class="q-dialog-plugin"
+        :style="{ height: view.fullscreen ? '100%' : '45vh', width: 'auto', backgroundColor: 'rgba(0,0,0,0.7)' }">
+        <q-card-actions align="right">
+          <span style="color:orange;overflow: hidden;">{{ view.currentData.Name?.substring(0, view.fullscreen ? null : 30)
+          }}</span>
+          <q-btn color="primary" :label="view.fullscreen ? '小屏' : '全屏'" @click="onOKClick" />
+          <q-btn color="primary" label="关闭" @click="onCancelClick" />
+        </q-card-actions>
+        <vue3VideoPlay ref="vue3VideoPlayRef" style="position: relative; object-fit: cover;height: auto;width: 100%;"
+          v-bind="optionsPC" />
+      </q-card>
+    </div>
   </q-dialog>
 </template>
 
@@ -78,15 +97,27 @@ import { useQuasar } from 'quasar'
 import vue3VideoPlay from 'vue3-video-play'
 import 'vue3-video-play/dist/style.css' // 引入css
 
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 import { useDialogPluginComponent } from 'quasar'
 
 import { onMounted, reactive } from 'vue';
 import { axios } from '../../boot/axios';
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from 'vue-router';
 import { getPng, getFileStream, getJpg } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
+import { useDraggable, useElementSize } from '@vueuse/core'
+
+import { useClipboard } from '@vueuse/core'
+
+const source = ref('Hello')
+const { copy } = useClipboard({ source })
+
+const el = ref < HTMLElement | null > (null)
+const { x, y, style } = useDraggable(el, {
+  initialValue: { x: 40, y: 40 },
+})
+useElementSize(el)
 
 const systemProperty = useSystemProperty();
 
@@ -99,7 +130,7 @@ const view = reactive({
     MovieType: '',
     OnlyRepeat: false,
     Page: 1,
-    PageSize: 30,
+    PageSize: 10,
     SortField: 'MTime',
     SortType: 'desc',
   },
@@ -109,8 +140,8 @@ const view = reactive({
 
 
 const optionsPC = reactive({
-  width: "100%", //播放器高度
-  height: "auto", //播放器高度
+  width: '100%', //播放器高度
+  height: 'auto', //播放器高度
   color: "#409eff", //主题色
   title: "", //视频名称
   src: "", //视频源
@@ -178,6 +209,7 @@ const currentPageChange = (e) => {
 
 const fetchSearch = async () => {
   systemProperty.syncSearchParam(view.queryParam)
+  localStorage.setItem("queryParam", JSON.stringify(view.queryParam))
   const { data } = await axios.post('/api/movieList', view.queryParam);
   console.log(data);
   view.resultData = data
@@ -200,22 +232,23 @@ onMounted(() => {
   const { Page, PageSize, MovieType, SortField, SortType, Keyword, showStyle } =
     thisRoute.query;
   if (Page && PageSize) {
-    queryParam.Page = Number(Page);
-    queryParam.PageSize = Number(PageSize);
-    queryParam.MovieType = MovieType as string;
-    queryParam.SortField = SortField as string;
-    queryParam.SortType = SortType as string;
-    queryParam.Keyword = Keyword as string;
-    queryParam.Keyword = Keyword as string;
-    queryParam.showStyle = showStyle as string;
+    view.queryParam.Page = Number(Page);
+    view.queryParam.PageSize = Number(PageSize);
+    view.queryParam.MovieType = MovieType;
+    view.queryParam.SortField = SortField;
+    view.queryParam.SortType = SortType;
+    view.queryParam.Keyword = Keyword;
+    view.queryParam.Keyword = Keyword;
+    view.queryParam.showStyle = showStyle;
   } else {
-    queryParam.Page = systemProperty.getSearchParam?.Page;
-    queryParam.PageSize = systemProperty.getSearchParam.PageSize;
-    queryParam.MovieType = systemProperty.getSearchParam.MovieType;
-    queryParam.SortField = systemProperty.getSearchParam.SortField;
-    queryParam.SortType = systemProperty.getSearchParam.SortType;
-    queryParam.Keyword = systemProperty.getSearchParam.Keyword;
-    queryParam.showStyle = systemProperty.getSearchParam.showStyle;
+    view.queryParam = JSON.parse(localStorage.getItem("queryParam"))
+    // view.queryParam.Page = systemProperty.getSearchParam?.Page;
+    // view.queryParam.PageSize = systemProperty.getSearchParam.PageSize;
+    // view.queryParam.MovieType = systemProperty.getSearchParam.MovieType;
+    // view.queryParam.SortField = systemProperty.getSearchParam.SortField;
+    // view.queryParam.SortType = systemProperty.getSearchParam.SortType;
+    // view.queryParam.Keyword = systemProperty.getSearchParam.Keyword;
+    // view.queryParam.showStyle = systemProperty.getSearchParam.showStyle;
   }
   fetchSearch();
 });
