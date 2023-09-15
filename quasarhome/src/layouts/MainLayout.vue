@@ -5,7 +5,7 @@
         <q-toolbar>
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
           <q-toolbar-title>Header</q-toolbar-title>
-          <q-btn flat @click="drawerRight = !drawerRight" round dense icon="menu" />
+          <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu" />
         </q-toolbar>
       </q-header>
 
@@ -20,8 +20,8 @@
         </q-scroll-area>
       </q-drawer>
 
-      <q-drawer side="right" v-model="drawerRight" bordered :width="400" :breakpoint="600" class="bg-grey-3">
-         
+      <q-drawer side="right" v-model="systemProperty.drawerRight" bordered :width="PlayMode" class="bg-grey-3">
+        <Playing />
       </q-drawer>
       <q-page-container>
         <router-view />
@@ -31,12 +31,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import Playing from 'src/components/PlayingVideo.vue';
+import { useSystemProperty } from '../stores/System';
+const systemProperty = useSystemProperty()
 
 import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
 
 const drawerLeft = ref(false)
-const drawerRight = ref(true)
+
+const PlayMode = computed(() => {
+  return systemProperty.PlayMode
+})
 
 const essentialLinks: EssentialLinkProps[] = [
   {
