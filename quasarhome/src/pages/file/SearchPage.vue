@@ -58,10 +58,12 @@
             <div>
               <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);" :label="item.MovieType"
                 @click.stop="() => { }">
-                <q-list>
-                  <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup>
-                    <q-item-section @click="setMovieType(item.Id, mt.value)">
-                      <q-item-label>{{ mt.label }}</q-item-label>
+                <q-list style="background-color: rgba(0, 0, 0, 0.7);">
+                  <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
+                    <q-item-section>
+                      <q-item-label @click="setMovieType(item.Id, mt.value)">{{
+                        mt.label
+                      }} </q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -127,12 +129,11 @@ const view = reactive({
 
 
 const MovieTypeOptions = [
-  ,
   { label: '骑兵', value: '骑兵' },
   { label: '步兵', value: '步兵' },
   { label: '国产', value: '国产' },
   { label: '斯巴达', value: '斯巴达' },
-  { label: '漫动', value: '漫动' },
+  { label: '漫动', value: '漫动' }
 ];
 
 const MovieTypeSelects = [{ label: '全部', value: '' }, ...MovieTypeOptions,
@@ -229,5 +230,14 @@ onMounted(() => {
 .item-img {
   height: auto;
   max-height: 300px;
+}
+
+.movieTypeSelectItem {
+  color: antiquewhite;
+
+  :hover {
+    color: rgba(0, 0, 0, 0.895);
+    font-size: large;
+  }
 }
 </style>
