@@ -54,6 +54,7 @@ const loadTypeSize = async () => {
     loadScanTime();
   }
 };
+
 const loadTagSize = async () => {
   const res = await TagSizeMap();
   if (res) {

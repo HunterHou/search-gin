@@ -4,8 +4,14 @@
       <q-header reveal class="bg-black">
         <q-toolbar>
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
-          <q-toolbar-title>Header</q-toolbar-title>
-          <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu" />
+          <q-toolbar-title>文件搜索</q-toolbar-title>
+          <q-space />
+          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link"
+            :style="{ color: currentPath == link.link ? 'red' : '', scale: 1.2 }" />
+          <q-space />
+          <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu">
+            {{ `${systemProperty.Playing?.Code || ''}` }}
+          </q-btn>
         </q-toolbar>
       </q-header>
 
@@ -15,7 +21,8 @@
             <q-item-label header>
               你的搜索工具
             </q-item-label>
-            <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+            <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link"
+              :style="{ color: currentPath == link.link ? 'red' : '', scale: 1.2 }" />
           </q-list>
         </q-scroll-area>
       </q-drawer>
@@ -23,7 +30,7 @@
       <q-drawer side="right" v-model="systemProperty.drawerRight" bordered :width="PlayMode" class="bg-grey-3">
         <Playing />
       </q-drawer>
-      <q-page-container>
+      <q-page-container style="height: 100%">
         <router-view />
       </q-page-container>
     </q-layout>
@@ -34,6 +41,7 @@
 import { computed, ref } from 'vue'
 import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from '../stores/System';
+import { useRoute } from 'vue-router';
 const systemProperty = useSystemProperty()
 
 import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
@@ -44,12 +52,16 @@ const PlayMode = computed(() => {
   return systemProperty.PlayMode
 })
 
+const currentPath = computed(() => {
+  return useRoute().path
+})
+
 const essentialLinks: EssentialLinkProps[] = [
   {
     title: '首页',
     caption: 'quasar.dev',
     icon: 'home',
-    link: '/home'
+    link: '/'
   },
   {
     title: '搜索',
@@ -72,7 +84,7 @@ const essentialLinks: EssentialLinkProps[] = [
   {
     title: '系统',
     caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
+    icon: 'chat',
     link: '/system'
   },
 ];

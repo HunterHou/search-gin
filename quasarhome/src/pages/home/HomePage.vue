@@ -28,10 +28,10 @@
         { label: '无', value: '无' }
       ]" />
       <q-input v-model="view.queryParam.Keyword" :dense="true" filled clearable @update:model-value="fetchSearch" />
+      <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch" label="重" />
     </div>
-    <q-page-sticky position="bottom" style="justify-items: center;z-index: 9;background-color: rgba(0, 0, 0, 0.6);"
-      :offset="[0, 0]">
-      <div class="q-pa-lg flex flex-center" ref="el" style="position: fixed" :style="style">
+    <q-page-sticky position="bottom" style="z-index: 9;background-color: rgba(0, 0, 0, 0.6);">
+      <div class="q-pa-lg flex flex-center">
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="purple"
           :ellipses="false" :max="view.resultData.TotalPage || 0" :max-pages="6" boundary-numbers />
       </div>
@@ -76,12 +76,13 @@
 
 <script setup>
 import { useQuasar } from 'quasar'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 import { onMounted, reactive } from 'vue';
 import { axios } from '../../boot/axios';
 import { useRoute } from 'vue-router';
 import { getPng } from '../../components/utils/images';
+import { SearchAPI,RefreshAPI } from '../../components/api/searchAPI';
 import { useSystemProperty } from '../../stores/System';
 import { useDraggable, useElementSize } from '@vueuse/core'
 
@@ -91,7 +92,7 @@ const source = ref('Hello')
 const { copy } = useClipboard({ source })
 
 const el = ref < HTMLElement | null > (null)
-const { x, y, style } = useDraggable(el, {
+const { style } = useDraggable(el, {
   initialValue: { x: 40, y: 40 },
 })
 useElementSize(el)
@@ -125,16 +126,6 @@ const openDialog = (item) => {
 }
 
 
-function getItemsPerPage() {
-  if ($q.screen.lt.sm) {
-    return 9
-  }
-  if ($q.screen.lt.md) {
-    return 9
-  }
-  return 9
-}
-
 const currentPageChange = (e) => {
   console.log('view.queryParam.Page', e)
   fetchSearch()
@@ -143,8 +134,8 @@ const currentPageChange = (e) => {
 
 const fetchSearch = async () => {
   systemProperty.syncSearchParam(view.queryParam)
-  localStorage.setItem("queryParam", JSON.stringify(view.queryParam))
-  const { data } = await axios.post('/api/movieList', view.queryParam);
+  localStorage.setItem('queryParam', JSON.stringify(view.queryParam))
+  const { data } = await SearchAPI('/api/movieList', view.queryParam);
   console.log(data);
   view.resultData = data
 };
@@ -152,7 +143,7 @@ const fetchSearch = async () => {
 const refreshIndexLoading = ref(false)
 const refreshIndex = async () => {
   refreshIndexLoading.value = true
-  const { Code, Message } = await axios.get('/api/refreshIndex');
+  const { Code, Message } = await RefreshAPI();
   if (Code === '200') {
     $q.notify(Message)
   }
@@ -174,8 +165,12 @@ onMounted(() => {
     view.queryParam.Keyword = Keyword;
     view.queryParam.Keyword = Keyword;
     view.queryParam.showStyle = showStyle;
-  } else {
-    view.queryParam = JSON.parse(localStorage.getItem("queryParam"))
+  }
+  else {
+    const storage = JSON.parse(localStorage.getItem('queryParam'));
+    if (storage) {
+      view.queryParam = storage
+    }
   }
   fetchSearch();
 });

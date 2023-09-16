@@ -41,7 +41,7 @@ export const useSystemProperty = defineStore({
     },
     History: [],
     Playing: {},
-    PlayMode: 600,
+    PlayMode: 800,
     drawerRight: false,
     Favorite: [],
     FileSearchParam: {
