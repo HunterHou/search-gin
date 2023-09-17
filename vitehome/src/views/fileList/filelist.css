@@ -197,15 +197,14 @@ body {
   margin: 4px 8px;
 }
 .playDivMini {
-  position: fixed;
+  position: relative;
   display: flex;
   flex-direction: column;
   z-index: 999;
-  width: 48%;
-  height: 84vh;
   padding: 2px;
   background-color: #02101f;
   border-radius: 10px;
+  height: 100%;
 }
 .playDiv {
   padding: 0;
