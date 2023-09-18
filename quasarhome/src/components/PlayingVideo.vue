@@ -1,6 +1,6 @@
 <template>
     <q-card class="q-dialog-plugin" style="height: auto;width: auto;background-color: rgba(0,0,0,0.7)">
-        <vue3VideoPlay ref="vue3VideoPlayRef" style="object-fit: cover;height: auto;width: 100%;max-height: 95vh;"
+        <vue3VideoPlay ref="vue3VideoPlayRef" style="object-fit: contain;height: auto;width: 100%;max-height: 95vh;"
             :style="{ width: systemProperty.PlayMode !== 800 ? '90%' : '100%' }" v-bind="optionsPC" @ended="playNext(1)" />
         <q-card-actions align="left">
             <q-btn flat style="color: #59d89d" :label="playing.Actress?.substring(0, 8)"

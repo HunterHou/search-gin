@@ -1,8 +1,8 @@
 <template>
-  <div class="q-mg-md" style="margin-bottom: 60px;">
-    <div class="row justify-center q-gutter-sm">
+  <div class="q-mg-md top" style="margin-bottom: 60px;">
+    <div class="row justify-center q-gutter-sm" ref="top">
       <q-btn :loading="refreshIndexLoading" color="red" @click="refreshIndex">
-        扫描
+        扫描【~】
         <template v-slot:loading>
           执行中
         </template>
@@ -22,7 +22,7 @@
       <q-btn-toggle v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()" toggle-color="primary"
         :options="MovieTypeSelects" />
       <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
-        @update:model-value="fetchSearch()" />
+        @update:model-value="fetchSearch()" @focus="focusEvent($event)" />
       <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch()" label="重" />
     </div>
     <q-page-sticky position="bottom" style="z-index: 9;background-color: rgba(0, 0, 0, 0.3);">
@@ -32,9 +32,9 @@
           v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
         </q-select> <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange"
           color="deep-orange" :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="10"
-          boundary-numbers>12313</q-pagination>
-        <q-input v-model="view.queryParam.Page" :dense="true"
-          style="background-color: aliceblue;width: 60px;text-align: center;"
+          boundary-numbers></q-pagination>
+        <q-input v-model="view.queryParam.Page" :dense="true" type="search"
+          style="background-color: aliceblue;width: 60px;text-align: center;" @focus="focusEvent($event)"
           @update:model-value="(no) => { view.queryParam.Page = Number(no); fetchSearch() }" />
       </div>
     </q-page-sticky>
@@ -73,11 +73,12 @@
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px;" @click.stop="() => { }">
             <q-btn flat style="color: #59d89d" :label="item.Actress?.substring(0, 6)"
               @click="view.queryParam.Keyword = item.Actress; fetchSearch()" />
-
-            <q-tabs v-model="item.index" inline-label mobile-arrows class="q-pa-md  text-white shadow-2 q-gutter-sm">
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="play_circle_outline"
-                @click="PlayMovie(item.Id)" />
-              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="edit" />
+            <!-- -->
+            <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
+              class="q-pa-md  text-white shadow-2 q-gutter-sm">
+              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ondemand_video" @click="PlayMovie(item.Id)" />
+              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="edit"
+                @click="() => { fileEditRef.open(item, refreshIndex) }" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="open_in_new"
                 @click="OpenFileFolder(item.Id)" />
               <!-- <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="home" /> -->
@@ -85,41 +86,63 @@
                 @click="SyncFileInfo(item.Id)" />
               <!-- <q-btn round class="q-mr-sm" size="sm" color="deep-orange" icon="edit_location" /> -->
               <!-- <q-btn round class="q-mr-sm" size="sm" color="purple" glossy icon="view_list" /> -->
-              <!-- <q-btn round class="q-mr-sm" size="sm" color="black" icon="my_location" /> -->
+              <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="near_me" />
+              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="info"
+                @click="() => { fileInfoRef.open(item, null) }" />
             </q-tabs>
           </div>
         </q-img>
         <q-card-section>
-          <div class="text-subtitle2 q-mr-sm">
-            <a flat style="color: green">{{ item.SizeStr }}</a>
-            <a flat style="color: goldenrod" @click="copy(item.Code); $q.notify({ message: `${item.Code}` })">{{
-              formatCode(item.Code) }}</a> {{ formatTitle(item.Title) }}
+          <div class="text-subtitle2">
+            <a flat style="color: goldenrod" class="mr10" @click="copyText(item.Code)">{{
+              formatCode(item.Code) }}</a>
+            <a flat style="color: green" class="mr10" @click="copyText(item.Name)">{{ item.SizeStr }}</a>
+            <span>{{ formatTitle(item.Title) }}</span>
           </div>
         </q-card-section>
       </q-card>
     </div>
   </div>
+  <FileEdit ref="fileEditRef" />
+  <FileInfo ref="fileInfoRef" />
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar'
-import { ref } from 'vue'
+import { scroll, useQuasar } from 'quasar';
+import { ref } from 'vue';
 
 import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
+import { FileRename, OpenFileFolder, PlayMovie, RefreshAPI, ResetMovieType, SearchAPI } from '../../components/api/searchAPI';
+import { MovieTypeOptions, MovieTypeSelects, formatCode, formatTitle } from '../../components/utils';
 import { getPng } from '../../components/utils/images';
-import { ResetMovieType, RefreshAPI, SearchAPI, OpenFileFolder, PlayMovie } from '../../components/api/searchAPI';
 import { useSystemProperty } from '../../stores/System';
+import FileEdit from './components/FileEdit.vue';
+import FileInfo from './components/FileInfo.vue';
 
-import { useClipboard } from '@vueuse/core'
+import { onKeyStroke, useClipboard } from '@vueuse/core';
 
+// const { getScrollTarget, setVerticalScrollPosition } = scroll
+
+const fileEditRef = ref(null)
+const fileInfoRef = ref(null)
+// const topRef = ref(null)
 const source = ref('Hello')
 const { copy } = useClipboard({ source })
 
+// 获取一个元素对象
+const scrollToTop = () => {
+  // const el = topRef.value
+  // const target = getScrollTarget(el)
+  // const offset = el.offsetTop
+  // const duration = 1000
+  // setVerticalScrollPosition(target, offset, duration)
+}
 
 const systemProperty = useSystemProperty();
 
 const $q = useQuasar()
+
 const view = reactive({
   currentData: {},
   queryParam: {
@@ -135,19 +158,23 @@ const view = reactive({
   fullscreen: false
 });
 
+const focusEvent = (e) => {
+  console.log(e)
+  e.target.select()
+}
+
+onKeyStroke(["`"], (e) => {
+  refreshIndex();
+});
+onKeyStroke(["Enter"], (e) => {
+  queryList();
+});
 
 
-const MovieTypeOptions = [
-  { label: '骑兵', value: '骑兵' },
-  { label: '步兵', value: '步兵' },
-  { label: '国产', value: '国产' },
-  { label: '斯巴达', value: '斯巴达' },
-  { label: '漫动', value: '漫动' }
-];
-
-const MovieTypeSelects = [{ label: '全部', value: '' }, ...MovieTypeOptions,
-{ label: '无', value: '无' }]
-
+const copyText = async (str) => {
+  await copy(str);
+  $q.notify({ message: `${str}` })
+}
 
 const openDialog = (item) => {
   view.currentData = item
@@ -155,32 +182,10 @@ const openDialog = (item) => {
   systemProperty.drawerRight = true
 }
 
-const formatCode = (code) => {
-  if (code) {
-    if (code.indexOf('-') == 0) {
-      return code = code.substring(1)
-    }
-    return code.substring(0, 10)
-  }
-  return ''
-}
-
-const formatTitle = (title) => {
-  if (title.lastIndexOf("]") >= 0) {
-    title = title.substring(title.lastIndexOf("]") + 1)
-  }
-  if (title.indexOf("{{") >= 0) {
-    title = title.split("{{")[0]
-  }
-  if (title.indexOf("《") >= 0) {
-    title = title.split("《")[0]
-  }
-  return title
-}
-
-const currentPageChange = (e) => {
+const currentPageChange = async (e) => {
   console.log('view.queryParam.Page', e)
-  fetchSearch()
+  await fetchSearch()
+  scrollToTop()
 }
 
 
@@ -188,21 +193,34 @@ const fetchSearch = async () => {
   systemProperty.syncSearchParam(view.queryParam)
   localStorage.setItem('queryParam', JSON.stringify(view.queryParam))
   const data = await SearchAPI(view.queryParam);
+  view.resultData = {}
   console.log(data)
   view.resultData = data
+};
+
+const moveThis = async (item) => {
+  const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
+  console.log(res)
+  if (res.Code == 200) {
+    refreshIndex()
+  } else {
+    $q.notify({ type: 'negative', message: res.Message })
+  }
 };
 
 const refreshIndexLoading = ref(false)
 const refreshIndex = async () => {
   refreshIndexLoading.value = true
   const { Code, Message } = await RefreshAPI('/api/refreshIndex');
-  if (Code === '200') {
+  console.log(Code, Message)
+  if (Code == '200') {
     $q.notify({ type: 'negative', message: Message })
-    fetchSearch()
+    await fetchSearch()
   }
   refreshIndexLoading.value = false
 
 };
+
 
 const setMovieType = async (Id, Type) => {
   const { Code, Message } = await ResetMovieType(Id, Type)
@@ -212,6 +230,7 @@ const setMovieType = async (Id, Type) => {
     $q.notify({ type: 'warning', message: Message })
   }
 }
+
 
 const thisRoute = useRoute();
 
@@ -261,6 +280,10 @@ onMounted(() => {
   height: auto;
   max-height: 300px;
   min-height: 250px;
+}
+
+.mr10 {
+  margin-right: 4px;
 }
 
 .movieTypeSelectItem {
