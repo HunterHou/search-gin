@@ -41,7 +41,7 @@
 
     <div class="row justify-center q-gutter-sm q-mr-sm">
       <q-card class="q-ma-sm example-item" v-for="item  in view.resultData.Data" :key="item.Id">
-        <q-img fit="cover" easier draggable :src="getPng(item.Id)" class="item-img" @click="openDialog(item)">
+        <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="openDialog(item)">
           <div
             style="padding:0;margin:0;background-color: rgba(0, 0, 0, 0);display: flex;flex-direction: row;justify-content: space-between;width: 100%;">
             <div @click.stop="() => { }"
@@ -69,23 +69,32 @@
                 </q-list>
               </q-btn-dropdown>
             </div>
-
-
-
-
           </div>
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px;" @click.stop="() => { }">
-            <q-btn flat style="color: #59d89d" :label="item.Actress?.substring(0, 10)"
+            <q-btn flat style="color: #59d89d" :label="item.Actress?.substring(0, 6)"
               @click="view.queryParam.Keyword = item.Actress; fetchSearch()" />
-            <q-btn flat style="color: goldenrod" :label="item.Code?.substring(0, 10)" @click="copy(item.Code)" />
 
+            <q-tabs v-model="item.index" inline-label mobile-arrows class="q-pa-md  text-white shadow-2 q-gutter-sm">
+              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="play_circle_outline"
+                @click="PlayMovie(item.Id)" />
+              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="edit" />
+              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="open_in_new"
+                @click="OpenFileFolder(item.Id)" />
+              <!-- <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="home" /> -->
+              <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
+                @click="SyncFileInfo(item.Id)" />
+              <!-- <q-btn round class="q-mr-sm" size="sm" color="deep-orange" icon="edit_location" /> -->
+              <!-- <q-btn round class="q-mr-sm" size="sm" color="purple" glossy icon="view_list" /> -->
+              <!-- <q-btn round class="q-mr-sm" size="sm" color="black" icon="my_location" /> -->
+            </q-tabs>
           </div>
         </q-img>
         <q-card-section>
-          <div class="text-subtitle2"><q-chip @click.stop="() => { }" square color="green" text-color="white"
-              style="padding: 0px 4px;">
-              {{ item.SizeStr }}
-            </q-chip>{{ item.Title }}</div>
+          <div class="text-subtitle2 q-mr-sm">
+            <a flat style="color: green">{{ item.SizeStr }}</a>
+            <a flat style="color: goldenrod" @click="copy(item.Code); $q.notify({ message: `${item.Code}` })">{{
+              formatCode(item.Code) }}</a> {{ formatTitle(item.Title) }}
+          </div>
         </q-card-section>
       </q-card>
     </div>
@@ -99,7 +108,7 @@ import { ref } from 'vue'
 import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { getPng } from '../../components/utils/images';
-import { ResetMovieType, RefreshAPI, SearchAPI } from '../../components/api/searchAPI';
+import { ResetMovieType, RefreshAPI, SearchAPI, OpenFileFolder, PlayMovie } from '../../components/api/searchAPI';
 import { useSystemProperty } from '../../stores/System';
 
 import { useClipboard } from '@vueuse/core'
@@ -146,6 +155,28 @@ const openDialog = (item) => {
   systemProperty.drawerRight = true
 }
 
+const formatCode = (code) => {
+  if (code) {
+    if (code.indexOf('-') == 0) {
+      return code = code.substring(1)
+    }
+    return code.substring(0, 10)
+  }
+  return ''
+}
+
+const formatTitle = (title) => {
+  if (title.lastIndexOf("]") >= 0) {
+    title = title.substring(title.lastIndexOf("]") + 1)
+  }
+  if (title.indexOf("{{") >= 0) {
+    title = title.split("{{")[0]
+  }
+  if (title.indexOf("《") >= 0) {
+    title = title.split("《")[0]
+  }
+  return title
+}
 
 const currentPageChange = (e) => {
   console.log('view.queryParam.Page', e)
@@ -156,7 +187,6 @@ const currentPageChange = (e) => {
 const fetchSearch = async () => {
   systemProperty.syncSearchParam(view.queryParam)
   localStorage.setItem('queryParam', JSON.stringify(view.queryParam))
-
   const data = await SearchAPI(view.queryParam);
   console.log(data)
   view.resultData = data
@@ -230,6 +260,7 @@ onMounted(() => {
 .item-img {
   height: auto;
   max-height: 300px;
+  min-height: 250px;
 }
 
 .movieTypeSelectItem {
