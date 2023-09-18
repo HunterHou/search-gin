@@ -76,14 +76,15 @@
             <!-- -->
             <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
               class="q-pa-md  text-white shadow-2 q-gutter-sm">
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ondemand_video" @click="PlayMovie(item.Id)" />
+              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ondemand_video"
+                @click="commonExec(PlayMovie(item.Id))" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="edit"
                 @click="() => { fileEditRef.open(item, refreshIndex) }" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="open_in_new"
-                @click="OpenFileFolder(item.Id)" />
+                @click="commonExec(OpenFileFolder(item.Id))" />
               <!-- <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="home" /> -->
               <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-                @click="SyncFileInfo(item.Id)" />
+                @click="commonExec(SyncFileInfo(item.Id))" />
               <!-- <q-btn round class="q-mr-sm" size="sm" color="deep-orange" icon="edit_location" /> -->
               <!-- <q-btn round class="q-mr-sm" size="sm" color="purple" glossy icon="view_list" /> -->
               <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="near_me" />
@@ -113,7 +114,7 @@ import { ref } from 'vue';
 
 import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
-import { FileRename, OpenFileFolder, PlayMovie, RefreshAPI, ResetMovieType, SearchAPI } from '../../components/api/searchAPI';
+import { FileRename, OpenFileFolder, PlayMovie, RefreshAPI, ResetMovieType, SearchAPI, SyncFileInfo } from '../../components/api/searchAPI';
 import { MovieTypeOptions, MovieTypeSelects, formatCode, formatTitle } from '../../components/utils';
 import { getPng } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
@@ -161,6 +162,14 @@ const view = reactive({
 const focusEvent = (e) => {
   console.log(e)
   e.target.select()
+}
+
+const commonExec = async (exec) => {
+  const { Code, Message } = await exec
+  console.log(Code, Message)
+  if (Code != 200) {
+    $q.notify({ message: `${Message}` })
+  }
 }
 
 onKeyStroke(["`"], (e) => {

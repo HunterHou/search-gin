@@ -1,4 +1,6 @@
 import { axios } from '../../boot/axios';
+import { useQuasar } from 'quasar';
+const $q = useQuasar();
 
 export const SearchAPI = async (params: object) => {
   const { data } = await axios.post('/api/movieList', params);
