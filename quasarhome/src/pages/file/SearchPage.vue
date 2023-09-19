@@ -24,7 +24,7 @@
       <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
         @update:model-value="fetchSearch()" @focus="focusEvent($event)" />
       <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch()" label="重" />
-      <q-btn class="q-mr-sm" size="sm" color="primary" icon="apps" @click="listEditRef.open(view.queryParam)"/>
+      <q-btn class="q-mr-sm" size="sm" color="primary" icon="apps" @click="listEditRef.open(view.queryParam)" />
     </div>
     <q-page-sticky position="bottom" style="z-index: 9;background-color: rgba(0, 0, 0, 0.3);">
       <div class="q-pa-sm flex flex-center">
@@ -72,11 +72,7 @@
             </div>
           </div>
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px;" @click.stop="() => { }">
-            <!-- <q-btn flat style="color: #59d89d" :label="item.Actress?.substring(0, 6)"
-              @click="view.queryParam.Keyword = item.Actress; fetchSearch()" /> -->
-            <!-- -->
-            <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
-              class="q-pa-md  text-white shadow-2 q-gutter-sm">
+            <div style="display: flex;flex-direction: row;overflow: auto;">
               <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ondemand_video"
                 @click="commonExec(PlayMovie(item.Id))" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="edit"
@@ -84,14 +80,18 @@
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="open_in_new"
                 @click="commonExec(OpenFileFolder(item.Id))" />
               <!-- <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="home" /> -->
-              <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
+              <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup" v-if="!item.MovieType"
                 @click="commonExec(SyncFileInfo(item.Id))" />
               <!-- <q-btn round class="q-mr-sm" size="sm" color="deep-orange" icon="edit_location" /> -->
               <!-- <q-btn round class="q-mr-sm" size="sm" color="purple" glossy icon="view_list" /> -->
               <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="near_me" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="info"
                 @click="() => { fileInfoRef.open(item, refreshIndex) }" />
-            </q-tabs>
+            </div>
+            <!-- <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
+              class="q-pa-md  text-white shadow-2 q-gutter-sm">
+              
+            </q-tabs> -->
           </div>
         </q-img>
         <div class="text-subtitles">
