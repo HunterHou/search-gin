@@ -71,8 +71,8 @@
             </div>
           </div>
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px;" @click.stop="() => { }">
-            <q-btn flat style="color: #59d89d" :label="item.Actress?.substring(0, 6)"
-              @click="view.queryParam.Keyword = item.Actress; fetchSearch()" />
+            <!-- <q-btn flat style="color: #59d89d" :label="item.Actress?.substring(0, 6)"
+              @click="view.queryParam.Keyword = item.Actress; fetchSearch()" /> -->
             <!-- -->
             <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
               class="q-pa-md  text-white shadow-2 q-gutter-sm">
@@ -95,6 +95,8 @@
         </q-img>
         <q-card-section>
           <div class="text-subtitle2">
+            <a flat style="color: #59d89d" class="mr10" @click="view.queryParam.Keyword = item.Actress; fetchSearch()">{{
+              item.Actress?.substring(0, 6) }}</a>
             <a flat style="color: goldenrod" class="mr10" @click="copyText(item.Code)">{{
               formatCode(item.Code) }}</a>
             <a flat style="color: green" class="mr10" @click="copyText(item.Name)">{{ item.SizeStr }}</a>
@@ -211,7 +213,7 @@ const moveThis = async (item) => {
   const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
   console.log(res)
   if (res.Code == 200) {
-    refreshIndex()
+    $q.notify({ type: 'negative', message: res.Message })
   } else {
     $q.notify({ type: 'negative', message: res.Message })
   }
