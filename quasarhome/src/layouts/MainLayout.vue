@@ -9,6 +9,7 @@
           <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link"
             :style="{ color: currentPath == link.link ? 'red' : '', scale: 1.2 }" />
           <q-space />
+          <q-btn @click="GetShutDown()">关机</q-btn>
           <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu">
             {{ `${systemProperty.Playing?.Code || ''}` }}
           </q-btn>
@@ -41,6 +42,8 @@
 import { computed, ref } from 'vue'
 import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from '../stores/System';
+import { GetShutDown } from '../components/api/settingAPI';
+
 import { useRoute } from 'vue-router';
 const systemProperty = useSystemProperty()
 

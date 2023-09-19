@@ -1,188 +1,102 @@
 <template>
   <div class="q-pa-md">
-
-    <div class="row justify-center q-gutter-sm">
-      <q-btn :loading="refreshIndexLoading" color="red" @click="refreshIndex">
-        扫描
-        <template v-slot:loading>
-          执行中
-        </template>
-      </q-btn>
-      <q-btn-toggle v-model="view.queryParam.SortField" @update:model-value="fetchSearch" toggle-color="primary" :options="[
-        { label: '时', value: 'MTime' },
-        { label: '容', value: 'Size' },
-        { label: '名', value: 'Code' }
-      ]" />
-      <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch" toggle-color="primary" :options="[
-        { label: '正', value: 'asc' },
-        { label: '倒', value: 'desc' }
-      ]" />
-
-      <q-btn-toggle v-model="view.queryParam.MovieType" @update:model-value="fetchSearch" toggle-color="primary" :options="[
-        { label: '全部', value: '' },
-        { label: '骑兵', value: '骑兵' },
-        { label: '步兵', value: '步兵' },
-        { label: '国产', value: '国产' },
-        { label: '斯巴达', value: '斯巴达' },
-        { label: '漫动', value: '漫动' },
-        { label: '无', value: '无' }
-      ]" />
-      <q-input v-model="view.queryParam.Keyword" :dense="true" filled clearable @update:model-value="fetchSearch" />
-      <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch" label="重" />
+    <!-- {{ view.settingInfo }} -->
+    <div style="display: flex;flex-direction: row;justify-content: space-between; width: 100%;">
+      <a :href="view.ipAddr">访问： {{ view.ipAddr }}</a>
     </div>
-    <q-page-sticky position="bottom" style="z-index: 9;background-color: rgba(0, 0, 0, 0.6);">
-      <div class="q-pa-lg flex flex-center">
-        <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="purple"
-          :ellipses="false" :max="view.resultData.TotalPage || 0" :max-pages="6" boundary-numbers />
-      </div>
-    </q-page-sticky>
+    <div style="margin: 0 10px 40px 10px;">
+      <q-tabs v-model="tab" dense class="text-grey" active-color="primary" indicator-color="primary" align="justify"
+        narrow-indicator>
+        <q-tab name="search" label="搜索设置" />
+        <q-tab name="base" label="基础设置" />
+        <q-tab name="system" label="系统设置" />
+      </q-tabs>
+      <q-separator />
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="search">
+          
+          
+          <q-input v-model="view.settingInfo.Buttons" label="Buttons" />
+          <q-input v-model="view.settingInfo.Dirs" label="Dirs" />
+          <q-input v-model="view.settingInfo.MovieTypes" label="MovieTypes" />
+          <q-input v-model="view.settingInfo.VideoTypes" label="VideoTypes" />
+          <q-input v-model="view.settingInfo.Tags" label="Tags" />
+        </q-tab-panel>
 
-    <div class="row justify-center q-gutter-sm">
-      <q-card class="q-ma-sm example-item" v-for="item  in view.resultData.Data" :key="item.Id">
-        <q-img fit="cover" easier draggable :src="getPng(item.Id)" class="item-img" @click="openDialog(item)">
-          <div
-            style="padding:0;margin:0;background-color: rgba(0, 0, 0, 0);display: flex;flex-direction: row;justify-content: space-between;width: 100%;">
+        <q-tab-panel name="base">
+          <q-input v-model="view.settingInfo.ControllerHost" label="ControllerHost" />
+          <q-input v-model="view.settingInfo.ImageHost" label="ImageHost" />
+          <q-input v-model="view.settingInfo.StreamHost" label="StreamHost" />
+          <q-input v-model="view.settingInfo.BaseUrl" label="BaseUrl" />
+          <q-input v-model="view.settingInfo.OMUrl" label="OMUrl" />
+          <q-input v-model="view.settingInfo.DirsLib" label="DirsLib" />
+          <q-input v-model="view.settingInfo.TagsLib" label="TagsLib" />
+          <q-input v-model="view.settingInfo.TagsLib" label="TagsLib" />
+          <q-input v-model="view.settingInfo.Types" label="Types" />
+        </q-tab-panel>
 
-            <div @click.stop="() => { }"
-              style="display: flex;flex-direction: column;justify-content: flex-start;width: fit-content;">
-              <q-chip square color="red" text-color="white" v-for="tag in item.Tags" :key="tag"
-                style="margin-left: 0px;padding: 0 4px;">
-                <span @click="view.queryParam.Keyword = tag; fetchSearch()">{{ tag }}</span>
-              </q-chip>
-            </div>
-            <q-chip @click.stop="() => { }" square color="green" text-color="white"
-              style="width: fit-content;margin-right: 0px;padding:  0 6px;">
-              <span @click="view.queryParam.Keyword = item.MovieType; fetchSearch()"> {{ item.MovieType }}</span>
-            </q-chip>
-
-          </div>
-          <div class="absolute-bottom text-body1 text-center" style="padding: 4px;" @click.stop="() => { }">
-            <q-btn flat style="color: #59d89d" :label="item.Actress?.substring(0, 10)"
-              @click="view.queryParam.Keyword = item.Actress; fetchSearch()" />
-            <q-btn flat style="color: goldenrod" :label="item.Code?.substring(0, 10)" @click="copy(item.Code)" />
-
-          </div>
-        </q-img>
-        <q-card-section>
-          <div class="text-subtitle2"><q-chip @click.stop="() => { }" square color="green" text-color="white"
-              style="padding: 0px 4px;">
-              {{ item.SizeStr }}
-            </q-chip>{{ item.Title }}</div>
-        </q-card-section>
-      </q-card>
+        <q-tab-panel name="system">
+          <q-input v-model="view.settingInfo.SystemHtml" label="SystemHtml" />
+        </q-tab-panel>
+      </q-tab-panels>
     </div>
+
+    <div style="position: fixed;bottom: 30px;align-items: center;margin: 0 auto;">
+      <q-btn style="width: 200px;" @click="submitForm">提交</q-btn>
+    </div>
+
   </div>
 </template>
 
 <script setup>
 import { useQuasar } from 'quasar'
-import { ref } from 'vue'
 
-import { onMounted, reactive } from 'vue';
-import { axios } from '../../boot/axios';
-import { useRoute } from 'vue-router';
-import { getPng } from '../../components/utils/images';
-import { useSystemProperty } from '../../stores/System';
-import { useDraggable, useElementSize } from '@vueuse/core'
-
-import { useClipboard } from '@vueuse/core'
-
-const source = ref('Hello')
-const { copy } = useClipboard({ source })
-
-const el = ref < HTMLElement | null > (null)
-const { style } = useDraggable(el, {
-  initialValue: { x: 40, y: 40 },
-})
-useElementSize(el)
-
-const systemProperty = useSystemProperty();
+import { onMounted, reactive, ref } from 'vue';
+import { GetSettingInfo, PostSettingInfo, GetIpAddr } from '../../components/api/settingAPI';
 
 const $q = useQuasar()
+const tab = ref('search')
 const view = reactive({
-  currentData: {},
-  queryParam: {
-    Keyword: '',
-    MovieType: '',
-    OnlyRepeat: false,
-    Page: 1,
-    PageSize: 10,
-    SortField: 'MTime',
-    SortType: 'desc',
-  },
-  resultData: {},
-  fullscreen: false
+  settingInfo: {},
+  ipAddr: ''
 });
 
-
-
-
-
-const openDialog = (item) => {
-  view.currentData = item
-  systemProperty.Playing = item
-  systemProperty.drawerRight = true
+const submitForm = async () => {
+  const { Code, Message } = await PostSettingInfo(view.settingInfo)
+  if (Code != 200) {
+    $q.notify({ message: `${Message}` })
+  } else {
+    $q.notify({ message: `${Message}` })
+  }
 }
 
-
-const currentPageChange = (e) => {
-  console.log('view.queryParam.Page', e)
-  fetchSearch()
+const commonExec = async (exec) => {
+  const { Code, Message } = await exec
+  console.log(Code, Message)
+  if (Code != 200) {
+    $q.notify({ message: `${Message}` })
+  } else {
+    $q.notify({ message: `${Message}` })
+  }
 }
-
 
 const fetchSearch = async () => {
-  systemProperty.syncSearchParam(view.queryParam)
-  localStorage.setItem('queryParam', JSON.stringify(view.queryParam))
-  const { data } = await axios.post('/api/movieList', view.queryParam);
+  const { data } = await GetSettingInfo();
   console.log(data);
-  view.resultData = data
+  view.settingInfo = data
 };
 
-const refreshIndexLoading = ref(false)
-const refreshIndex = async () => {
-  refreshIndexLoading.value = true
-  const { Code, Message } = await axios.get('/api/refreshIndex');
-  if (Code === '200') {
-    $q.notify(Message)
+const queryIpAddr = async () => {
+  const { Code, Data } = await GetIpAddr()
+  if (Code == '200') {
+    view.ipAddr = `http://${Data}:10081`
   }
-  refreshIndexLoading.value = false
-
-};
-const thisRoute = useRoute();
-
+}
 
 onMounted(() => {
-  const { Page, PageSize, MovieType, SortField, SortType, Keyword, showStyle } =
-    thisRoute.query;
-  if (Page && PageSize) {
-    view.queryParam.Page = Number(Page);
-    view.queryParam.PageSize = Number(PageSize);
-    view.queryParam.MovieType = MovieType;
-    view.queryParam.SortField = SortField;
-    view.queryParam.SortType = SortType;
-    view.queryParam.Keyword = Keyword;
-    view.queryParam.Keyword = Keyword;
-    view.queryParam.showStyle = showStyle;
-  }
-  else {
-    const storage = JSON.parse(localStorage.getItem('queryParam'));
-    if (storage) {
-      view.queryParam = storage
-    }
-  }
   fetchSearch();
+  queryIpAddr()
 });
 
 </script>
-<style lang="scss" scoped>
-.example-item {
-  height: auto;
-  width: 240px;
-  max-height: 500px;
-}
-
-.item-img {
-  max-height: 300px;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -24,6 +24,7 @@
       <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
         @update:model-value="fetchSearch()" @focus="focusEvent($event)" />
       <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch()" label="重" />
+      <q-btn class="q-mr-sm" size="sm" color="primary" icon="apps" @click="listEditRef.open(view.queryParam)"/>
     </div>
     <q-page-sticky position="bottom" style="z-index: 9;background-color: rgba(0, 0, 0, 0.3);">
       <div class="q-pa-sm flex flex-center">
@@ -39,7 +40,7 @@
       </div>
     </q-page-sticky>
 
-    <div class="row justify-center q-gutter-sm q-mr-sm">
+    <div class="row justify-center q-gutter-sm q-mr-sm q-mt-sm">
       <q-card class="q-ma-sm example-item" v-for="item  in view.resultData.Data" :key="item.Id">
         <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="openDialog(item)">
           <div
@@ -89,29 +90,28 @@
               <!-- <q-btn round class="q-mr-sm" size="sm" color="purple" glossy icon="view_list" /> -->
               <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="near_me" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="info"
-                @click="() => { fileInfoRef.open(item, null) }" />
+                @click="() => { fileInfoRef.open(item, refreshIndex) }" />
             </q-tabs>
           </div>
         </q-img>
-        <q-card-section>
-          <div class="text-subtitle2">
-            <a flat style="color: #59d89d" class="mr10" @click="view.queryParam.Keyword = item.Actress; fetchSearch()">{{
-              item.Actress?.substring(0, 6) }}</a>
-            <a flat style="color: goldenrod" class="mr10" @click="copyText(item.Code)">{{
-              formatCode(item.Code) }}</a>
-            <a flat style="color: green" class="mr10" @click="copyText(item.Name)">{{ item.SizeStr }}</a>
-            <span>{{ formatTitle(item.Title) }}</span>
-          </div>
-        </q-card-section>
+        <div class="text-subtitles">
+          <a flat style="color: #59d89d" class="mr10" @click="view.queryParam.Keyword = item.Actress; fetchSearch()">{{
+            item.Actress?.substring(0, 6) }}</a>
+          <a flat style="color: goldenrod" class="mr10" @click="copyText(item.Code)">{{
+            formatCode(item.Code) }}</a>
+          <a flat style="color: green" class="mr10" @click="copyText(item.Name)">{{ item.SizeStr }}</a>
+          <span>{{ formatTitle(item.Title) }}</span>
+        </div>
       </q-card>
     </div>
   </div>
   <FileEdit ref="fileEditRef" />
   <FileInfo ref="fileInfoRef" />
+  <ListEdit ref="listEditRef" />
 </template>
 
 <script setup>
-import { scroll, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
 import { onMounted, reactive } from 'vue';
@@ -122,6 +122,7 @@ import { getPng } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
 import FileEdit from './components/FileEdit.vue';
 import FileInfo from './components/FileInfo.vue';
+import ListEdit from './components/ListEdit.vue';
 
 import { onKeyStroke, useClipboard } from '@vueuse/core';
 
@@ -129,7 +130,7 @@ import { onKeyStroke, useClipboard } from '@vueuse/core';
 
 const fileEditRef = ref(null)
 const fileInfoRef = ref(null)
-// const topRef = ref(null)
+const listEditRef = ref(null)
 const source = ref('Hello')
 const { copy } = useClipboard({ source })
 
@@ -174,10 +175,10 @@ const commonExec = async (exec) => {
   }
 }
 
-onKeyStroke(["`"], (e) => {
+onKeyStroke(['`'], () => {
   refreshIndex();
 });
-onKeyStroke(["Enter"], (e) => {
+onKeyStroke(['Enter'], () => {
   queryList();
 });
 
@@ -249,14 +250,14 @@ const thisRoute = useRoute();
 onMounted(() => {
   const { Page, PageSize, MovieType, SortField, SortType, Keyword, showStyle, from } =
     thisRoute.query;
-  console.log(from)
+  console.log(thisRoute.query)
+
   if (Page && PageSize) {
     view.queryParam.Page = Number(Page);
     view.queryParam.PageSize = Number(PageSize);
     view.queryParam.MovieType = MovieType;
     view.queryParam.SortField = SortField;
     view.queryParam.SortType = SortType;
-    view.queryParam.Keyword = Keyword;
     view.queryParam.Keyword = Keyword;
     view.queryParam.showStyle = showStyle;
   }
@@ -275,21 +276,23 @@ onMounted(() => {
       }
     }
   }
+  view.queryParam.Keyword = Keyword;
   fetchSearch();
 });
 
 </script>
 <style lang="scss" scoped>
 .example-item {
-  width: 240px;
+  padding: 2px;
+  width: 220px;
   height: auto;
-  max-height: 400px;
   overflow: hidden;
 }
 
 .item-img {
   height: auto;
-  max-height: 300px;
+  width: 220px;
+  max-height: 280px;
   min-height: 250px;
 }
 
@@ -304,5 +307,16 @@ onMounted(() => {
     color: rgba(0, 0, 0, 0.895);
     font-size: large;
   }
+}
+
+.text-subtitles {
+  margin: 4px;
+  padding: 0;
+  height: 4rem;
+  overflow: hidden;
+}
+
+.q-card__section--vert {
+  padding: 2px;
 }
 </style>

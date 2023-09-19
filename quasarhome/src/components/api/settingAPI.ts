@@ -12,7 +12,7 @@ export const PostSettingInfo = async (data: any) => {
 
 export const GetIpAddr = async () => {
   const res = await axios.get('/api/GetIpAddr');
-  return res as unknown;
+  return res && res.data;
 };
 
 export const GetShutDown = async () => {
