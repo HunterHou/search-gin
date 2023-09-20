@@ -33,10 +33,10 @@ export const formatTitle = (title: string) => {
     title = title.substring(title.lastIndexOf(']') + 1);
   }
   if (title.indexOf('{{') >= 0) {
-    title = title.replaceAll(`{{${formatMovieType(title)}}}`, '');
+    title = title.replace(`{{${formatMovieType(title)}}}`, '');
   }
   if (title.indexOf('《') >= 0) {
-    title = title.replaceAll(`《${formatTags(title)}》`, '');
+    title = title.replace(`《${formatTags(title)}》`, '');
   }
   return title;
 };
