@@ -7,7 +7,7 @@ export const GetSettingInfo = async () => {
 
 export const PostSettingInfo = async (data: any) => {
   const res = await axios.post('/api/setting', data);
-  return res as unknown;
+  return res&&res.data;
 };
 
 export const GetIpAddr = async () => {

@@ -6,8 +6,15 @@
             </q-chip>
         </span>
         <div v-if="editStyle">
-            <q-checkbox class="checkItem" v-model="value" v-for="item in props.options" :key="item" :val="item"
-                :label="item" color="teal" @update:model-value="updateValue" cl />
+            <q-chip dense color="green" text-color="white" v-for="item in value" :key="item" removable
+                @remove="removeThis(item)">
+                {{ item }}
+            </q-chip>
+            <div style="display: flex;flex-direction: row;">
+                <q-input outlined v-model:model-value="inputText" class="inputText"></q-input>
+                <q-btn outlined @click="addValue">添加</q-btn>
+            </div>
+
         </div>
     </div>
 </template>
@@ -23,6 +30,7 @@ const { isOutside } = useMouseInElement(target)
 
 
 const value = ref([])
+const inputText = ref('')
 const editStyle = ref(false)
 const props = defineProps({
     modelValue: {
@@ -48,10 +56,34 @@ watch(() => isOutside.value, (v) => {
     }
 })
 
-const updateValue = (arr) => {
-    emits('update:model-value', arr)
-    emits('onchange', arr)
+const addValue = () => {
+    const str = inputText.value
+    if (!value.value) {
+        value.value = []
+    }
+    if (value.value.indexOf(str) >= 0) {
+        return
+    }
+    value.value.push(str)
+    inputText.value = null
+    emits('update:model-value', value.value)
+    emits('onchange', value.value)
 }
+
+const removeThis = (str) => {
+    if (!value.value) {
+        value.value = []
+    }
+    console.log(str)
+    if (value.value.indexOf(str) < 0) {
+        return
+    }
+    value.value = value.value.filter(it => it != str)
+    emits('update:model-value', value.value)
+    emits('onchange', value.value)
+}
+
+
 watch(() => props.modelValue, (e) => {
     value.value = e
 })
@@ -63,5 +95,9 @@ onMounted(() => {
 <style lang="scss">
 .checkItem {
     width: 8rem;
+}
+
+.inputText {
+    width: 10rem;
 }
 </style>
