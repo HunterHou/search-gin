@@ -12,6 +12,7 @@ import (
 )
 
 func Index(c *gin.Context) {
+	// c.JSON(http.StatusOK, "1")
 	c.HTML(http.StatusOK, "index.html", gin.H{"title": "首页"})
 }
 

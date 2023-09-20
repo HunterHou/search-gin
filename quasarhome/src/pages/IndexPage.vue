@@ -84,14 +84,14 @@ import { useRouter } from 'vue-router';
 const splitterModel = ref(50)
 const insideModel = ref(50)
 
-import { RefreshAPI, OpenFolerByPath, DeleteFolerByPath } from "../components/api/searchAPI";
-import { TypeSizeMap, TagSizeMap, ScanTime } from "../components/api/homeAPI";
-import { onKeyStroke } from "@vueuse/core";
-import { useSystemProperty } from "../stores/System";
+import { RefreshAPI, OpenFolerByPath, DeleteFolerByPath } from '../components/api/searchAPI';
+import { TypeSizeMap, TagSizeMap, ScanTime } from '../components/api/homeAPI';
+import { onKeyStroke } from '@vueuse/core';
+import { useSystemProperty } from '../stores/System';
 
 const { push, go } = useRouter();
 const systemProperty = useSystemProperty();
-document.title = "首页";
+document.title = '首页';
 
 const $q = useQuasar()
 const indexLoading = ref(false);

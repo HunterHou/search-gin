@@ -166,6 +166,7 @@ var IndexHtml = "./dist/index.html"
 var StaticFs = map[string]string{
 	"/css": "./dist/css",
 	"/js":  "./dist/js",
+	"/assets":  "./dist/assets",
 }
 
 var TransferTask = map[time.Time]datamodels.TransferTaskModel{}
