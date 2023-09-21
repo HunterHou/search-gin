@@ -64,7 +64,7 @@ const editMoveout = async () => {
 };
 
 const editItemSubmit = async (MoveOut) => {
-    const { Id, Name, Code, Actress, Tags, FileType, MovieType } = view.item;
+    const { Id, Name, Code, Actress, FileType, MovieType } = view.item;
     let code = Code.trim();
     if (code && code.indexOf('-') < 0) {
         code = '-' + code;
@@ -98,8 +98,8 @@ const editItemSubmit = async (MoveOut) => {
         }
     }
 
-    if (name.indexOf("." + FileType) < 0) {
-        name += "." + FileType
+    if (name.indexOf('.' + FileType) < 0) {
+        name += '.' + FileType
     }
     const param = {
         Id,

@@ -76,7 +76,9 @@ const view = reactive({
 watch(playing, (v) => {
     if (v && v.Id) {
         optionsPC.src = getFileStream(v.Id)
-        vue3VideoPlayRef.value.play()
+        setTimeout(() => {
+            vue3VideoPlayRef.value.play()
+        }, 1);
         if (!Keyword.value) {
             Keyword.value = v.Actress
             fetchSearch()

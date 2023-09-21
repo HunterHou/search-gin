@@ -72,18 +72,20 @@
             </div>
           </div>
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px;" @click.stop="() => { }">
-            <div style="display: flex;flex-direction: row;overflow: auto;">
+            <div style="display: flex;flex-direction: row;">
               <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ondemand_video"
                 @click="commonExec(PlayMovie(item.Id))" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="edit"
                 @click="() => { fileEditRef.open(item, refreshIndex) }" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="open_in_new"
                 @click="commonExec(OpenFileFolder(item.Id))" />
-              <!-- <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="home" /> -->
+
               <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup" v-if="!item.MovieType"
                 @click="commonExec(SyncFileInfo(item.Id))" />
               <!-- <q-btn round class="q-mr-sm" size="sm" color="deep-orange" icon="edit_location" /> -->
               <!-- <q-btn round class="q-mr-sm" size="sm" color="purple" glossy icon="view_list" /> -->
+              <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="delete"
+                @click="confirmDelete(item)" />
               <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="near_me" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="info"
                 @click="() => { fileInfoRef.open(item, refreshIndex) }" />
@@ -116,7 +118,7 @@ import { ref } from 'vue';
 
 import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
-import { FileRename, OpenFileFolder, PlayMovie, RefreshAPI, ResetMovieType, SearchAPI, SyncFileInfo } from '../../components/api/searchAPI';
+import { FileRename, OpenFileFolder, PlayMovie, RefreshAPI, ResetMovieType, SearchAPI, SyncFileInfo, DeleteFile } from '../../components/api/searchAPI';
 import { MovieTypeOptions, MovieTypeSelects, formatCode, formatTitle } from '../../components/utils';
 import { getPng } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
@@ -167,8 +169,25 @@ const focusEvent = (e) => {
   e.target.select()
 }
 
+const confirmDelete = (item) => {
+  $q.dialog({
+    title: item.Name,
+    message: '确定删除吗?',
+    cancel: true,
+    persistent: true
+  }).onOk(() => {
+    console.log('>>>> onOk')
+    commonExec(DeleteFile(item.Id))
+  }).onCancel(() => {
+    console.log('>>>> Cancel')
+  }).onDismiss(() => {
+    // console.log('I am triggered on both OK and Cancel')
+  })
+}
+
+
 const commonExec = async (exec) => {
-  const { Code, Message } = await exec
+  const { Code, Message } = await exec || {}
   console.log(Code, Message)
   if (Code != 200) {
     $q.notify({ message: `${Message}` })

@@ -1,44 +1,40 @@
 <template>
-    <q-dialog ref="dialogRef" @hide="dialogHide" width="80%">
-        <q-card class="q-dialog-plugin q-pa-md" :style="{
-            width: '80%',
-            backgroundImage: `linear-gradient(to left, rgba(255,255,255,0.1), rgba(255,255,255,0.1))`
-        }">
-            <div class="q-pa-md">
-                <div class="q-px-sm q-mt-sm">
-                    批量操作 <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh" @click="refreshIndex">刷新</q-btn>
-                </div>
-                <div class="q-gutter-sm">
-                    <q-list>
-                        <q-item tag="label" v-ripple v-for="item in view.resultData.Data" :key="item.Id">
-                            <q-item-section avatar>
-                                <q-checkbox v-model="view.selector" :val="item.Id" color="red" />
-                            </q-item-section>
-                            <q-item-section>
-                                <div style="display: flex;flex-direction: row;">
-                                    <q-btn-dropdown :label="item.MovieType" type="primary" style="width: 80px;">
-                                        <q-list>
-                                            <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup
-                                                class="movieTypeSelectItem">
-                                                <q-item-section>
-                                                    <q-item-label
-                                                        @click="item.MovieType = mt.value; commonExec(ResetMovieType(item.Id, mt.value))">{{
-                                                            mt.label
-                                                        }} </q-item-label>
-                                                </q-item-section>
-                                            </q-item>
-                                        </q-list>
-                                    </q-btn-dropdown>
-                                    <q-item-label>{{ item.Name }}</q-item-label>
-                                </div>
+    <q-dialog ref="dialogRef" @hide="dialogHide" width="1200px">
+        <q-card class="q-dialog-plugin q-pa-md" square style="width: 1200px;">
+            <div class="q-px-sm q-mt-sm">
+                批量操作 <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh" @click="refreshIndex">刷新</q-btn>
+            </div>
+            <div class="q-gutter-sm">
+                <q-list>
+                    <q-item v-ripple v-for="item in view.resultData.Data" :key="item.Id">
+                        <q-item-section avatar>
+                            <q-checkbox v-model="view.selector" :val="item.Id" color="red" />
+                        </q-item-section>
+                        <q-item-section>
+                            <div style="display: flex;flex-direction: row;">
+                                <q-btn round  size="sm" color="amber" glossy text-color="black" icon="delete"
+                                    @click="confirmDelete(item)" />
+                                <q-btn round  size="sm" color="black" @click="moveThis(item)"
+                                    icon="near_me" />
+                                <q-btn-dropdown :label="item.MovieType" type="primary">
+                                    <q-list>
+                                        <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup
+                                            class="movieTypeSelectItem">
+                                            <q-item-section>
+                                                <q-item-label
+                                                    @click="item.MovieType = mt.value; commonExec(ResetMovieType(item.Id, mt.value))">{{
+                                                        mt.label
+                                                    }} </q-item-label>
+                                            </q-item-section>
+                                        </q-item>
+                                    </q-list>
+                                </q-btn-dropdown>
 
-                            </q-item-section>
-                        </q-item>
-
-                    </q-list>
-                </div>
-
-
+                            </div>
+                            <q-item-label>{{ item.Name }}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                </q-list>
             </div>
         </q-card>
     </q-dialog>
@@ -50,7 +46,7 @@ import { useDialogPluginComponent } from 'quasar'
 import { reactive } from 'vue';
 
 import { MovieTypeOptions } from '../../../components/utils'
-import { ResetMovieType, SearchAPI, RefreshAPI } from '../../../components/api/searchAPI'
+import { ResetMovieType, SearchAPI, RefreshAPI, FileRename, DeleteFile } from '../../../components/api/searchAPI'
 // import { getJpg } from 'src/components/utils/images';
 
 const $q = useQuasar()
@@ -104,6 +100,33 @@ const dialogHide = async () => {
     onDialogOK()
     onDialogHide()
 }
+
+
+const confirmDelete = (item) => {
+    $q.dialog({
+        title: item.Name,
+        message: '确定删除吗?',
+        cancel: true,
+        persistent: true
+    }).onOk(() => {
+        console.log('>>>> onOk')
+        commonExec(DeleteFile(item.Id))
+    }).onCancel(() => {
+        console.log('>>>> Cancel')
+    }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+    })
+}
+
+const moveThis = async (item) => {
+    const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
+    console.log(res)
+    if (res.Code == 200) {
+        $q.notify({ type: 'negative', message: res.Message })
+    } else {
+        $q.notify({ type: 'negative', message: res.Message })
+    }
+};
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 // dialogRef      - 用在 QDialog 上的 Vue ref 模板引用

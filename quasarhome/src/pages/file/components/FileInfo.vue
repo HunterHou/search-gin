@@ -12,7 +12,7 @@
             </q-img>
             <q-field label="Code" stack-label>
                 <template v-slot:control>
-                    <div class="self-center full-width no-outline" tabindex="0">{{ view.item.Code }}</div>
+                    <div class="self-center full-width no-outline" style="color: blue;" tabindex="0" @click="searchCode">{{ view.item.Code }}</div>
                 </template>
             </q-field>
             <q-field label="Actress" stack-label>
@@ -30,31 +30,28 @@
                     <div class="self-center full-width no-outline" tabindex="0">{{ view.item.Path }}</div>
                 </template>
             </q-field>
-            <!-- <q-card-actions align=" right">
-                <q-btn color="primary" label="命名" @click="onDialogOK" />
-                <q-btn color="primary" label="关闭" @click="onDialogCancel" />
-            </q-card-actions> -->
         </q-card>
     </q-dialog>
 </template>
   
 <script setup>
-import { useQuasar } from 'quasar'
+// import { useQuasar } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
-import { reactive } from 'vue';
+import { onMounted, reactive } from 'vue';
 
-import { formatTitle, formatCode, MovieTypeOptions } from '../../../components/utils'
-// import { FileRename } from '../../../components/api/searchAPI'
+import { formatTitle} from '../../../components/utils'
+import { GetSettingInfo } from '../../../components/api/settingAPI'
 import { getJpg } from 'src/components/utils/images';
 
 // const props = defineProps({
 //     // ...自定义 props
 // })
 
-const $q = useQuasar()
+// const $q = useQuasar()
 
 const view = reactive({
     item: {},
+    settingInfo:{},
     callback: null
 })
 
@@ -73,7 +70,18 @@ const open = (item, cb) => {
     dialogRef.value.show()
 }
 
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
+
+const fetchSetting =async ()=>{
+ const res = await GetSettingInfo()
+ view.settingInfo = res.data
+}
+
+const searchCode = ()=>{
+    window.open(`${view.settingInfo.BaseUrl}/${view.item.Code}`)
+}
+
+// onDialogOK, onDialogCancel
+const { dialogRef, onDialogHide,  } = useDialogPluginComponent()
 // dialogRef      - 用在 QDialog 上的 Vue ref 模板引用
 // onDialogHide   - 处理 QDialog 上 @hide 事件的函数
 // onDialogOK     - 对话框结果为 ok 时会调用的函数
@@ -88,6 +96,11 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginC
 // 带参数的版本: onDialogOK({ ... })
 // ...会自动关闭对话框
 // }
+
+onMounted(()=>{
+    fetchSetting()
+})
+
 defineExpose({
     open
 })
