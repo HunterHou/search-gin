@@ -24,7 +24,8 @@
       <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
         @update:model-value="fetchSearch()" @focus="focusEvent($event)" />
       <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch()" label="重" />
-      <q-btn class="q-mr-sm" size="sm" color="primary" icon="apps" @click="listEditRef.open(view.queryParam)" />
+      <q-btn class="q-mr-sm" size="sm" color="primary" icon="apps"
+        @click="listEditRef.open(view.queryParam, null)" />
     </div>
     <q-page-sticky position="bottom" style="z-index: 9;background-color: rgba(0, 0, 0, 0.3);">
       <div class="q-pa-sm flex flex-center">
@@ -74,21 +75,22 @@
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px;" @click.stop="() => { }">
             <div style="display: flex;flex-direction: row;">
               <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ondemand_video"
-                @click="commonExec(PlayMovie(item.Id))" />
+                @click="commonExec(PlayMovie(item.Id))" v-if="showButton('播放')" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="edit"
-                @click="() => { fileEditRef.open(item, refreshIndex) }" />
+                @click="() => { fileEditRef.open(item, refreshIndex) }" v-if="showButton('编辑')" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="open_in_new"
-                @click="commonExec(OpenFileFolder(item.Id))" />
+                @click="commonExec(OpenFileFolder(item.Id))" v-if="showButton('文件夹')" />
 
-              <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup" v-if="!item.MovieType"
-                @click="commonExec(SyncFileInfo(item.Id))" />
+              <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
+                v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
               <!-- <q-btn round class="q-mr-sm" size="sm" color="deep-orange" icon="edit_location" /> -->
               <!-- <q-btn round class="q-mr-sm" size="sm" color="purple" glossy icon="view_list" /> -->
               <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="delete"
-                @click="confirmDelete(item)" />
-              <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="near_me" />
+                @click="confirmDelete(item)" v-if="showButton('删除')" />
+              <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="near_me"
+                v-if="showButton('移动')" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="info"
-                @click="() => { fileInfoRef.open(item, refreshIndex) }" />
+                @click="() => { fileInfoRef.open(item, refreshIndex) }" v-if="showButton('详情')" />
             </div>
             <!-- <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
               class="q-pa-md  text-white shadow-2 q-gutter-sm">
@@ -114,11 +116,12 @@
 
 <script setup>
 import { useQuasar } from 'quasar';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { FileRename, OpenFileFolder, PlayMovie, RefreshAPI, ResetMovieType, SearchAPI, SyncFileInfo, DeleteFile } from '../../components/api/searchAPI';
+import { GetSettingInfo } from '../../components/api/settingAPI'
 import { MovieTypeOptions, MovieTypeSelects, formatCode, formatTitle } from '../../components/utils';
 import { getPng } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
@@ -128,7 +131,6 @@ import ListEdit from './components/ListEdit.vue';
 
 import { onKeyStroke, useClipboard } from '@vueuse/core';
 
-// const { getScrollTarget, setVerticalScrollPosition } = scroll
 
 const fileEditRef = ref(null)
 const fileInfoRef = ref(null)
@@ -149,8 +151,22 @@ const systemProperty = useSystemProperty();
 
 const $q = useQuasar()
 
+const listButtons = computed(() => {
+  const str = localStorage.getItem('Buttons')
+  return JSON.parse(str)
+})
+
+const showButton = (name) => {
+  if (!listButtons.value || listButtons.value.length == 0) {
+    return true
+  }
+  return listButtons.value.indexOf(name) >= 0
+
+}
+
 const view = reactive({
   currentData: {},
+  settingInfo: {},
   queryParam: {
     Keyword: '',
     MovieType: '',
@@ -185,6 +201,11 @@ const confirmDelete = (item) => {
   })
 }
 
+const fetchGetSettingInfo = async () => {
+  const data = await GetSettingInfo();
+  view.settingInfo = data.data
+  localStorage.setItem('settingInfo', JSON.stringify(data.data))
+};
 
 const commonExec = async (exec) => {
   const { Code, Message } = await exec || {}
@@ -269,7 +290,7 @@ const thisRoute = useRoute();
 onMounted(() => {
   const { Page, PageSize, MovieType, SortField, SortType, Keyword, showStyle, from } =
     thisRoute.query;
-  console.log(thisRoute.query)
+  fetchGetSettingInfo()
 
   if (Page && PageSize) {
     view.queryParam.Page = Number(Page);

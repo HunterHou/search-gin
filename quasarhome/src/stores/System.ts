@@ -53,6 +53,7 @@ export const useSystemProperty = defineStore({
       Keyword: '',
       OnlyRepeat: false,
       showStyle: 'post',
+      listButton: ['播放', '编辑', '移动', '文件夹', '转换', '删除', '剪切', '详情'],
     },
     SettingInfo: {
       ControllerHost: 'http://127.0.0.1:10081',
@@ -88,7 +89,15 @@ export const useSystemProperty = defineStore({
     },
   },
   actions: {
-    syncSearchParam(param: { Keyword: any; Page?: any; PageSize?: any; MovieType?: any; SortField?: any; SortType?: any; showStyle?: any; }) {
+    syncSearchParam(param: {
+      Keyword: any;
+      Page?: any;
+      PageSize?: any;
+      MovieType?: any;
+      SortField?: any;
+      SortType?: any;
+      showStyle?: any;
+    }) {
       const {
         Page,
         PageSize,
@@ -108,30 +117,30 @@ export const useSystemProperty = defineStore({
       if (param.Keyword) {
         this.addSuggestions(param.Keyword);
       }
-      this.addHistory(param);
+      // this.addHistory(param);
     },
-    addHistory(param: any) {
-      let has = false;
-      for (let i = 0; i < this.History.length; i++) {
-        if (
-          this.History[i].Page == param.Page &&
-          this.History[i].PageSize == param.PageSize &&
-          this.History[i].Keyword == param.Keyword &&
-          this.History[i].SortField == param.SortField &&
-          this.History[i].SortType == param.SortType &&
-          this.History[i].MovieType == param.MovieType
-        ) {
-          has = true;
-          break;
-        }
-      }
-      if (!has) {
-        this.History.unshift({ ...param, createTime: new Date() });
-      }
-      if (this.History.length > 50) {
-        this.History.splice(0, 49);
-      }
-    },
+    // addHistory(param: any) {
+    //   let has = false;
+    //   for (let i = 0; i < this.History.length; i++) {
+    //     if (
+    //       this.History[i].Page == param.Page &&
+    //       this.History[i].PageSize == param.PageSize &&
+    //       this.History[i].Keyword == param.Keyword &&
+    //       this.History[i].SortField == param.SortField &&
+    //       this.History[i].SortType == param.SortType &&
+    //       this.History[i].MovieType == param.MovieType
+    //     ) {
+    //       has = true;
+    //       break;
+    //     }
+    //   }
+    //   if (!has) {
+    //     this.History.unshift({ ...param, createTime: new Date() });
+    //   }
+    //   if (this.History.length > 50) {
+    //     this.History.splice(0, 49);
+    //   }
+    // },
     addFavorite(param: any) {
       let has = false;
       for (let i = 0; i < this.Favorite.length; i++) {
@@ -148,7 +157,7 @@ export const useSystemProperty = defineStore({
         }
       }
       if (!has) {
-        this.Favorite.unshift({ ...param });
+        // this.Favorite.unshift({ ...param });
       }
       if (this.Favorite.length > 50) {
         this.Favorite.splice(0, 49);
