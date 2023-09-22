@@ -13,6 +13,8 @@
                         <q-btn class="q-mr-sm" color="amber" size="sm" glossy text-color="black" @click="selectAll">{{
                             view.selectAll ? '不选' : '全选' }}</q-btn>
                         <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh" @click="refreshIndex">刷新</q-btn>
+                        <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
+                            @update:model-value="fetchSearch()" />
                     </div>
                     <div class="q-gutter-sm q-mt-sm">
                         <div v-ripple v-for="item in view.resultData.Data" :key="item.Id"
@@ -244,7 +246,13 @@ const confirmDelete = (item) => {
         persistent: true
     }).onOk(() => {
         console.log('>>>> onOk')
-        commonExec(DeleteFile(item.Id))
+        commonExec(DeleteFile(item.Id)).then(() => {
+            for (let i = 0; i < view.resultData.Data.length; i++) {
+                if (view.resultData.Data[i].Id == item.Id) {
+                    view.resultData.Data.splice(i, 1)
+                }
+            }
+        })
     }).onCancel(() => {
         console.log('>>>> Cancel')
     }).onDismiss(() => {
@@ -256,6 +264,11 @@ const moveThis = async (item) => {
     const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
     console.log(res)
     if (res.Code == 200) {
+        for (let i = 0; i < view.resultData.Data.length; i++) {
+            if (view.resultData.Data[i].Id == item.Id) {
+                view.resultData.Data.splice(i, 1)
+            }
+        }
         $q.notify({ type: 'negative', message: res.Message })
     } else {
         $q.notify({ type: 'negative', message: res.Message })
