@@ -1,49 +1,71 @@
 <template>
-    <q-dialog ref="dialogRef" @hide="dialogHide" width="1200px">
-        <q-card class="q-dialog-plugin q-pa-md" square style="width: 1200px;">
-            <div class="q-px-sm q-mt-sm">
-                批量操作 <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh" @click="refreshIndex">刷新</q-btn>
-            </div>
-            <div class="q-gutter-sm">
-                <q-list>
-                    <q-item v-ripple v-for="item in view.resultData.Data" :key="item.Id">
-                        <q-item-section avatar>
-                            <q-checkbox v-model="view.selector" :val="item.Id" color="red" />
-                        </q-item-section>
-                        <q-item-section>
-                            <div style="display: flex;flex-direction: row;">
-                                <q-btn round  size="sm" color="amber" glossy text-color="black" icon="delete"
-                                    @click="confirmDelete(item)" />
-                                <q-btn round  size="sm" color="black" @click="moveThis(item)"
-                                    icon="near_me" />
-                                <q-btn-dropdown :label="item.MovieType" type="primary">
-                                    <q-list>
-                                        <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup
-                                            class="movieTypeSelectItem">
-                                            <q-item-section>
-                                                <q-item-label
-                                                    @click="item.MovieType = mt.value; commonExec(ResetMovieType(item.Id, mt.value))">{{
-                                                        mt.label
-                                                    }} </q-item-label>
-                                            </q-item-section>
-                                        </q-item>
-                                    </q-list>
-                                </q-btn-dropdown>
+    <q-dialog ref="dialogRef" @hide="dialogHide" style="width: 1000px;">
+        <q-card style="display: flex;flex-direction: column;height: 80vh;width: 80vw;">
+            <q-tabs v-model="tab" class="bg-purple text-white" style="" align="justify" narrow-indicator>
+                <q-tab name="filelist" label="批量操作" />
+                <q-tab name="setting" label="设置" />
+                <q-tab name="movies" label="Movies" />
+            </q-tabs>
+            <q-separator />
+            <q-tab-panels v-model="tab" animated class="bg-purple-1 text-center" style="height: 100%;overflow: auto;">
+                <q-tab-panel name="filelist">
+                    <div class="q-px-sm q-mt-sm">
+                        批量操作 <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh"
+                            @click="refreshIndex">刷新</q-btn>
+                    </div>
+                    <div class="q-gutter-sm">
+                        <q-list>
+                            <q-item v-ripple v-for="item in view.resultData.Data" :key="item.Id">
+                                <q-item-section avatar>
+                                    <q-checkbox v-model="view.selector" :val="item.Id" color="red" />
+                                </q-item-section>
+                                <q-item-section>
+                                    <div style="display: flex;flex-direction: row;">
+                                        <q-btn round size="sm" color="amber" glossy text-color="black" icon="delete"
+                                            @click="confirmDelete(item)" />
+                                        <q-btn round size="sm" color="black" @click="moveThis(item)" icon="near_me" />
+                                        <q-btn-dropdown :label="item.MovieType" type="primary">
+                                            <q-list>
+                                                <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup
+                                                    class="movieTypeSelectItem">
+                                                    <q-item-section>
+                                                        <q-item-label
+                                                            @click="item.MovieType = mt.value; commonExec(ResetMovieType(item.Id, mt.value))">{{
+                                                                mt.label
+                                                            }} </q-item-label>
+                                                    </q-item-section>
+                                                </q-item>
+                                            </q-list>
+                                        </q-btn-dropdown>
 
-                            </div>
-                            <q-item-label>{{ item.Name }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                </q-list>
-            </div>
+                                    </div>
+                                    <q-item-label>{{ item.Title }}</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </div>
+                </q-tab-panel>
+
+                <q-tab-panel name="setting" class="bg-purple-2">
+                    <div class="text-h6">Alarms</div>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                </q-tab-panel>
+
+                <q-tab-panel name="movies">
+                    <div class="text-h6">Movies</div>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                </q-tab-panel>
+            </q-tab-panels>
         </q-card>
+
+
     </q-dialog>
 </template>
   
 <script setup>
 import { useQuasar } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 
 import { MovieTypeOptions } from '../../../components/utils'
 import { ResetMovieType, SearchAPI, RefreshAPI, FileRename, DeleteFile } from '../../../components/api/searchAPI'
@@ -51,6 +73,7 @@ import { ResetMovieType, SearchAPI, RefreshAPI, FileRename, DeleteFile } from '.
 
 const $q = useQuasar()
 
+const tab = ref('filelist')
 const view = reactive({
     resultData: {},
     queryParam: {},

@@ -101,7 +101,7 @@
             item.Actress?.substring(0, 6) }}</a>
           <a flat style="color: goldenrod" class="mr10" @click="copyText(item.Code)">{{
             formatCode(item.Code) }}</a>
-          <a flat style="color: green" class="mr10" @click="copyText(item.Name)">{{ item.SizeStr }}</a>
+          <a flat style="color: green" class="mr10" @click="copyText(item.Title)">{{ item.SizeStr }}</a>
           <span>{{ formatTitle(item.Title) }}</span>
         </div>
       </q-card>

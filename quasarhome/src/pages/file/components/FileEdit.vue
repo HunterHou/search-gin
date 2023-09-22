@@ -8,7 +8,7 @@
                 <q-option-group v-model="view.item.MovieType" :options="MovieTypeOptions" color="primary" inline />
                 <q-input label="编码" autogrow v-model="view.item.Code" :dense="false" />
                 <q-input label="图鉴" autogrow v-model="view.item.Actress" :dense="false" />
-                <q-input label="名称" autogrow v-model="view.item.Name" :dense="false" />
+                <q-input label="名称" autogrow v-model="view.item.Title" :dense="false" />
             </q-form>
 
             <!-- <q-input label="名称"  standout v-model="view.item.Name" :dense="true" /> -->
