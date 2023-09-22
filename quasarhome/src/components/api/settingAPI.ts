@@ -2,7 +2,7 @@ import { axios } from '../../boot/axios';
 
 export const GetSettingInfo = async () => {
   const res = await axios.get('/api/buttoms');
-  return res as unknown;
+  return res;
 };
 
 export const PostSettingInfo = async (data: any) => {

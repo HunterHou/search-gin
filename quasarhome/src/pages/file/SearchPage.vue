@@ -204,6 +204,7 @@ const confirmDelete = (item) => {
 const fetchGetSettingInfo = async () => {
   const data = await GetSettingInfo();
   view.settingInfo = data.data
+  systemProperty.SettingInfo = data.data
   localStorage.setItem('settingInfo', JSON.stringify(data.data))
 };
 
@@ -250,6 +251,11 @@ const fetchSearch = async () => {
   view.resultData = data
 };
 
+const fetchSettingInfo = async () => {
+  const data = await SearchAPI();
+  systemProperty.setSettingInfo(data.data)
+};
+
 const moveThis = async (item) => {
   const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
   console.log(res)
@@ -287,11 +293,10 @@ const setMovieType = async (Id, Type) => {
 const thisRoute = useRoute();
 
 
-onMounted(() => {
+onMounted(async() => {
   const { Page, PageSize, MovieType, SortField, SortType, Keyword, showStyle, from } =
     thisRoute.query;
-  fetchGetSettingInfo()
-
+  await fetchGetSettingInfo()
   if (Page && PageSize) {
     view.queryParam.Page = Number(Page);
     view.queryParam.PageSize = Number(PageSize);
