@@ -17,6 +17,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/setting/SettingPage.vue'),
       },
       {
+        path: '/playing/:id',
+        component: () => import('pages/playing/PlayingFile.vue'),
+      },
+      {
         path: '/system',
         component: () => import('pages/system/SystemPage.vue'),
       },
