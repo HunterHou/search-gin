@@ -15,6 +15,7 @@ import (
 	"searchGin/utils"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -266,8 +267,10 @@ func (f *FileService) ArrayToMap(files []datamodels.Movie) (map[string]datamodel
 		}
 
 	}
-	db := CreateOrmService()
-	go db.InsertAllIndex(toInsert)
+	if cons.OSSetting.IsDb {
+		db := CreateOrmService()
+		go db.InsertAllIndex(toInsert)
+	}
 	return filemap, actessmap, suppliermap, size
 }
 
@@ -287,7 +290,7 @@ func ExpandsMovie(originArr []datamodels.Movie, insertArr []datamodels.Movie) []
 func (f *FileService) Walks(baseDir []string, types []string) []datamodels.Movie {
 
 	var wg sync.WaitGroup
-	var dataMovie = make(chan []datamodels.Movie, 10000)
+	var dataMovie = make(chan []datamodels.Movie, 20000)
 	var scanTime = make(chan cons.MenuSize, 100)
 	var result []datamodels.Movie
 	wg.Add(len(baseDir))
@@ -323,7 +326,7 @@ func (f *FileService) Walks(baseDir []string, types []string) []datamodels.Movie
 func (f *FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
-	files, _ := f.WalkInnter(baseDir, types, 0, true)
+	files, _ := f.WalkInnter(baseDir, types, 0, true,baseDir)
 	datas <- files
 	ti := time.Since(start)
 	thisTime := cons.MenuSize{
@@ -350,7 +353,7 @@ func (f *FileService) Walk(baseDir string, types []string, deep bool) []datamode
 				suffix := utils.GetSuffux(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType)
+					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType,"")
 					result = append(result, file)
 				}
 
@@ -370,16 +373,16 @@ types 扫描类型
 totalSize 总数
 queryChild 是否递归
 */
-func (f *FileService) WalkInnter(baseDir string, types []string, totalSize int64, queryChild bool) ([]datamodels.Movie, int64) {
+func (f *FileService) WalkInnter(currentDir string, types []string, totalSize int64, queryChild bool,basePath string) ([]datamodels.Movie, int64) {
 	var result []datamodels.Movie
 	currentSize := int64(0)
-	files, _ := ioutil.ReadDir(baseDir)
+	files, _ := ioutil.ReadDir(currentDir)
 	if len(files) > 0 {
 		for _, path := range files {
 
-			pathAbs := filepath.Join(baseDir, path.Name())
+			pathAbs := filepath.Join(currentDir, path.Name())
 			if path.IsDir() && queryChild {
-				childResult, innerSize := f.WalkInnter(pathAbs, types, currentSize, queryChild)
+				childResult, innerSize := f.WalkInnter(pathAbs, types, currentSize, queryChild,basePath)
 				result = ExpandsMovie(result, childResult)
 				currentSize += innerSize
 			} else {
@@ -388,23 +391,23 @@ func (f *FileService) WalkInnter(baseDir string, types []string, totalSize int64
 				suffix := utils.GetSuffux(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType)
+					file := datamodels.NewFile(currentDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType,basePath)
 					result = append(result, file)
 				}
 
 			}
 		}
 	} else {
-		emptyFile, er := os.Stat(baseDir)
+		emptyFile, er := os.Stat(currentDir)
 		if er == nil && emptyFile.ModTime().Day() == (time.Now().Day()-1) {
-			os.Remove(baseDir)
+			os.Remove(currentDir)
 		}
 
 	}
 	totalSize += currentSize
-	if currentSize <= 20000000 && utils.IndexOf(cons.OSSetting.Dirs, baseDir) < 0 {
+	if currentSize <= 20000000 && utils.IndexOf(cons.OSSetting.Dirs, currentDir) < 0 {
 
-		cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(baseDir, int64(currentSize), true))
+		cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(currentDir, int64(currentSize), true))
 	}
 	return result, currentSize
 }
@@ -488,7 +491,7 @@ func (f *FileService) ffmepgExec(args []string, thisNow time.Time) utils.Result 
 	cmd := exec.Command("./ffmpeg.exe ", args...)
 	if cmd != nil {
 		if runtime.GOOS == "windows" {
-			// cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+			cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 		}
 		out, cmdErr := cmd.CombinedOutput()
 		if cmdErr != nil {

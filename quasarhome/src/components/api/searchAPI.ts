@@ -75,6 +75,11 @@ export const AddTag = async (clickId: string, title: string) => {
   return res && res.data;
 };
 
+export const CloseTag = async (id: string, title: string) => {
+  const res = await axios.get(`/api/file/clearTag//${id}/${title}`);
+  return res && res.data;
+};
+
 export const FileRename = async (data: unknown) => {
   const res = await axios.post('/api/file/rename', data);
   return res && res.data;
@@ -89,7 +94,4 @@ export const DeleteFolerByPath = async (data: unknown) => {
   return res && res.data;
 };
 
-export const CloseTag = async (id: string, title: string) => {
-  const res = await axios.get(`/api/file/clearTag//${id}/${title}`);
-  return res && res.data;
-};
+

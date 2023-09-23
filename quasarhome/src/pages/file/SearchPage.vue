@@ -76,14 +76,14 @@
                 <q-popup-proxy context-menu>
                   <div class="tag-popup">
                     <div>
-                      <q-chip square text-color="white" class="tag-item" v-for="tag in view.settingInfo.Tags" :key="tag">
-                        <span>{{ tag }}</span>
-                      </q-chip>
+                      <q-btn size="sm" icon='ti-minus' square text-color="white" color="green" class="tag-item"
+                        v-for="tag in item.Tags" :key="tag" :label="tag"
+                        @click="commonExec(CloseTag(item.Id, tag), true)" />
                     </div>
                     <div>
-                      <q-chip square text-color="white" class="tag-item" v-for="tag in view.settingInfo.Tags" :key="tag">
-                        <span>{{ tag }}</span>
-                      </q-chip>
+                      <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
+                        v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
+                        @click="commonExec(AddTag(item.Id, tag), true)" />
                     </div>
                   </div>
                 </q-popup-proxy>
@@ -128,7 +128,7 @@
                 @click="commonExec(OpenFileFolder(item.Id))" v-if="showButton('文件夹')" />
 
               <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-                v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
+                v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id), true)" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-reload"
                 @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" />
               <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
@@ -178,6 +178,8 @@ import {
   ResetMovieType,
   SearchAPI,
   SyncFileInfo,
+  AddTag,
+  CloseTag,
   DeleteFile
 } from '../../components/api/searchAPI';
 import { GetSettingInfo } from '../../components/api/settingAPI';
@@ -267,7 +269,7 @@ const confirmDelete = (item) => {
   })
     .onOk(() => {
       console.log('>>>> onOk');
-      commonExec(DeleteFile(item.Id));
+      commonExec(DeleteFile(item.Id), true);
     })
     .onCancel(() => {
       console.log('>>>> Cancel');
@@ -283,11 +285,15 @@ const fetchGetSettingInfo = async () => {
   systemProperty.SettingInfo = data.data;
 };
 
-const commonExec = async (exec) => {
+const commonExec = async (exec, refresh) => {
   const { Code, Message } = (await exec) || {};
   console.log(Code, Message);
   if (Code != 200) {
     $q.notify({ message: `${Message}` });
+  } else {
+    if (refresh) {
+      refreshIndex();
+    }
   }
 };
 
@@ -450,9 +456,9 @@ onMounted(async () => {
   max-width: 400px;
 
   .tag-item {
-    margin-left: 0px;
-    padding: 0 4px;
-    background-color: rgba(188, 24, 24, 0.6);
+    margin: 2px 4px;
+    padding: 1px 6px;
+    border-radius: 8px;
   }
 }
 </style>

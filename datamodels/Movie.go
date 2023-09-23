@@ -13,6 +13,7 @@ type Movie struct {
 	Code      string `xorm:"Varchar(255)"`
 	Name      string `xorm:"Text"`
 	Path      string `xorm:"Text"`
+	BaseDir      string `xorm:"Text"`
 	Png       string `xorm:"Text"`
 	Nfo       string `xorm:"Text"  json:"Nfo,omitempty"`
 	Srt       string `xorm:"Text" json:"Srt,omitempty"`
@@ -49,7 +50,7 @@ type MovieEdit struct {
 	NoRefresh bool
 }
 
-func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string) Movie {
+func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string,baseDir string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
 	id, _ := utils.DirpathForId(path)
 	code := utils.GetCode(name)
@@ -77,6 +78,7 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		CTime:     "",
 		MTime:     modTime.Format("2006-01-02 15:04:05"),
 		MovieType: movieType,
+		BaseDir: baseDir,
 	}
 	return result
 }
