@@ -30,5 +30,5 @@ export const buttonEnum = [
   '图鉴',
   '转换',
   '剪切',
-  '更多'
+  '更多',
 ];

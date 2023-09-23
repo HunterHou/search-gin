@@ -22,7 +22,7 @@ export const useSystemProperty = defineStore({
     Logo: {
       title: 'M系统',
       logo: '',
-      url: '/mfilelist'
+      url: '/mfilelist',
     },
     videoOptions: {
       autoPlay: true,
@@ -38,8 +38,8 @@ export const useSystemProperty = defineStore({
         'setting',
         'pip',
         'pageFullScreen',
-        'fullScreen'
-      ]
+        'fullScreen',
+      ],
     },
     History: [],
     Playing: new FileModel(),
@@ -63,15 +63,15 @@ export const useSystemProperty = defineStore({
         '转换',
         '删除',
         '剪切',
-        '详情'
-      ]
+        '详情',
+      ],
     } as FileQuery,
     SettingInfo: {
       ControllerHost: 'http://127.0.0.1:10081',
       ImageHost: 'http://127.0.0.1:10081',
-      StreamHost: 'http://127.0.0.1:10081'
+      StreamHost: 'http://127.0.0.1:10081',
     } as SettingInfo,
-    SearchSuggestions: [] as Array<string>
+    SearchSuggestions: [] as Array<string>,
   }),
   getters: {
     getHistory(this) {
@@ -97,7 +97,7 @@ export const useSystemProperty = defineStore({
     },
     getSearchParam(this) {
       return this.FileSearchParam;
-    }
+    },
   },
   actions: {
     syncSearchParam(param: FileQuery) {
@@ -108,7 +108,7 @@ export const useSystemProperty = defineStore({
         SortField,
         SortType,
         Keyword,
-        showStyle
+        showStyle,
       } = param;
       this.FileSearchParam.Page = Page;
       this.FileSearchParam.PageSize = PageSize;
@@ -218,6 +218,6 @@ export const useSystemProperty = defineStore({
       if (this.SearchSuggestions.length > 100) {
         this.SearchSuggestions.pop();
       }
-    }
-  }
+    },
+  },
 });

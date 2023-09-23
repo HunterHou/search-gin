@@ -460,7 +460,6 @@ const fetchSearch = async () => {
   view.resultData = data;
 };
 
-
 const moveThis = async (item) => {
   const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
   console.log(res);

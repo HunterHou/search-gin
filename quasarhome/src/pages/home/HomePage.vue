@@ -186,7 +186,7 @@ import { useRoute } from 'vue-router';
 import { getPng } from '../../components/utils/images';
 import { SearchAPI, RefreshAPI } from '../../components/api/searchAPI';
 import { useSystemProperty } from '../../stores/System';
-import {  useElementSize } from '@vueuse/core';
+import { useElementSize } from '@vueuse/core';
 
 import { useClipboard } from '@vueuse/core';
 

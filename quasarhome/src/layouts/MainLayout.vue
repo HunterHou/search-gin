@@ -24,7 +24,7 @@
             v-show="isWideScreen"
             :style="{
               color: currentPath == link.link ? 'red' : '',
-              scale: 1.2
+              scale: 1.2,
             }"
           />
 
@@ -58,7 +58,7 @@
               v-bind="link"
               :style="{
                 color: currentPath == link.link ? 'red' : '',
-                scale: 1.2
+                scale: 1.2,
               }"
             />
           </q-list>
@@ -96,7 +96,7 @@ const isWideScreen = computed(() => {
 });
 
 import EssentialLink, {
-  EssentialLinkProps
+  EssentialLinkProps,
 } from 'components/EssentialLink.vue';
 
 const drawerLeft = ref(false);
@@ -114,31 +114,31 @@ const essentialLinks: EssentialLinkProps[] = [
     title: '首页',
     caption: 'quasar.dev',
     icon: 'home',
-    link: '/'
+    link: '/',
   },
   {
     title: '搜索',
     caption: 'github.com/quasarframework',
     icon: 'search',
-    link: '/search'
+    link: '/search',
   },
   {
     title: '图鉴',
     caption: 'chat.quasar.dev',
     icon: 'image',
-    link: '/picture'
+    link: '/picture',
   },
   {
     title: '设置',
     caption: 'chat.quasar.dev',
     icon: 'settings',
-    link: '/setting'
+    link: '/setting',
   },
   {
     title: '系统',
     caption: 'forum.quasar.dev',
     icon: 'chat',
-    link: '/system'
-  }
+    link: '/system',
+  },
 ];
 </script>
