@@ -1,6 +1,4 @@
 import { axios } from '../../boot/axios';
-import { useQuasar } from 'quasar';
-const $q = useQuasar();
 
 export const SearchAPI = async (params: object) => {
   const { data } = await axios.post('/api/movieList', params);
@@ -62,7 +60,7 @@ export const ResetMovieType = async (data: string, movieType: string) => {
   return res && res.data;
 };
 
-export const DownImageList = async (data: string): Promise<any> => {
+export const DownImageList = async (data: string): Promise<unknown> => {
   const res = await axios.get(`/api/imageList/${data}`);
   return res && res.data;
 };
@@ -77,16 +75,16 @@ export const AddTag = async (clickId: string, title: string) => {
   return res && res.data;
 };
 
-export const FileRename = async (data: any) => {
+export const FileRename = async (data: unknown) => {
   const res = await axios.post('/api/file/rename', data);
   return res && res.data;
 };
 
-export const OpenFolerByPath = async (data: any) => {
+export const OpenFolerByPath = async (data: unknown) => {
   const res = await axios.post('/api/OpenFolerByPath', data);
   return res && res.data;
 };
-export const DeleteFolerByPath = async (data: any) => {
+export const DeleteFolerByPath = async (data: unknown) => {
   const res = await axios.post('/api/DeleteFolerByPath', data);
   return res && res.data;
 };

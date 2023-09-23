@@ -1,281 +1,454 @@
 <template>
-    <q-dialog ref="dialogRef" @hide="dialogHide" style="width: 1000px;" @before-show="beforeShow">
-        <q-card style="display: flex;flex-direction: column;height: 60vh;width: 80vw;">
-            <q-tabs v-model="tab" class="bg-purple text-white" style="" align="justify" narrow-indicator>
-                <q-tab name="filelist" label="批量操作" />
-                <q-tab name="setting" label="设置" />
-                <q-tab name="tasking" label="任务执行" />
-            </q-tabs>
-            <q-separator />
-            <q-tab-panels v-model="tab" animated class="bg-purple-1" style="height: 100%;overflow: auto;">
-                <q-tab-panel name="filelist">
-                    <div class="q-px-sm">
-                        <q-btn class="q-mr-sm" color="amber" size="sm" glossy text-color="black" @click="selectAll">{{
-                            view.selectAll ? '不选' : '全选' }}</q-btn>
-                        <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh" @click="refreshIndex">刷新</q-btn>
-                        <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
-                            @update:model-value="fetchSearch()" />
-                    </div>
-                    <div class="q-gutter-sm q-mt-sm">
-                        <div v-ripple v-for="item in view.resultData.Data" :key="item.Id"
-                            style="border: 2px dotted purple;padding: 4px;border-radius: 10px;background-color: burlywood;">
-                            <div style="display: flex;flex-direction: column;">
-                                <q-item-label>
-                                    <span v-if="view.cutListIds.indexOf(item.Id) >= 0" style="color: red;">剪切中：：</span>{{
-                                        item.Title }}【{{ item.SizeStr }}】
-                                </q-item-label>
-                                <div style="display: flex;flex-direction: row;">
-                                    <q-checkbox size="sm" v-model="view.selector" :val="item.Id" color="red" />
-                                    <q-btn-dropdown class="q-mr-sm" size="sm" :label="item.MovieType" type="primary"
-                                        color="teal">
-                                        <q-list>
-                                            <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup
-                                                class="movieTypeSelectItem">
-                                                <q-item-section>
-                                                    <q-item-label
-                                                        @click="item.MovieType = mt.value; commonExec(ResetMovieType(item.Id, mt.value))">{{
-                                                            mt.label
-                                                        }} </q-item-label>
-                                                </q-item-section>
-                                            </q-item>
-                                        </q-list>
-                                    </q-btn-dropdown>
-                                    <q-btn size="sm" class="q-mr-sm" color="amber" glossy text-color="black" icon="delete"
-                                        @click="confirmDelete(item)" />
-                                    <q-btn size="sm" class="q-mr-sm" color="black-1" @click="moveThis(item)"
-                                        icon="near_me" />
-                                    <q-btn class="q-mr-sm" size="sm" color="secondary" icon="open_in_new"
-                                        @click="commonExec(OpenFileFolder(item.Id))" />
-                                    <q-btn size="sm" class="q-mr-sm" color="black" @click="item.showCut = true">剪切</q-btn>
-                                    <q-btn size="sm" class="q-mr-sm" color="green" @click="toMp4(item)">toMp4</q-btn>
-                                    <q-btn class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-                                        v-if="!item.MovieType || item.MovieType == '无'"
-                                        @click="commonExec(SyncFileInfo(item.Id))" />
-                                </div>
-                                <div v-if="item.showCut"
-                                    style="display: flex;flex-direction: row;align-items: center;background-color: antiquewhite;border-radius: 12px; padding: 4px;">
-                                    开始：
-                                    <q-input style="width: 40px;" v-model:model-value="cutParam.sH"></q-input>
-                                    <q-input style="width: 40px;" v-model:model-value="cutParam.sM"></q-input>
-                                    <q-input style="width: 40px;" v-model:model-value="cutParam.sS"></q-input>
-                                    结束：
-                                    <q-input style="width: 40px;" v-model:model-value="cutParam.eH"></q-input>
-                                    <q-input style="width: 40px;" v-model:model-value="cutParam.eM"></q-input>
-                                    <q-input style="width: 40px;" v-model:model-value="cutParam.eS"></q-input>
-                                    <q-btn size="sm" color="black" type="primary"
-                                        @click="cutThis(item); item.showCut = false" label="确认" />
-                                    <q-btn size="sm" color="blue" @click="item.showCut = false" label="取消" />
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </q-tab-panel>
-                <q-tab-panel name="setting" class="bg-purple-2">
-                    <q-field color="purple-12" label="Buttons" stack-label>
-                        <template v-slot:prepend>
-                            <q-icon name="event" />
-                        </template>
-                        <template v-slot:control>
-                            <q-checkbox v-model="view.Buttons" v-for="item in view.settingInfo.Buttons" :key="item"
-                                :val="item" :label="item" color="teal" @update:model-value="updateButtons" />
-                        </template>
-                    </q-field>
-                </q-tab-panel>
-
-                <q-tab-panel name="tasking">
-                    <q-list bordered separator>
-                        <q-expansion-item v-for="(v, k) in view.tasking" :key="k">
-                            <template v-slot:header>
-                                <q-item-section avatar>
-                                    <q-btn color="blue" class="q-mr-sm">{{ v.Type }}</q-btn>
-                                    {{ ` 格式：${v.To} ` }}
-                                </q-item-section>
-                                <q-item-section>
-                                    <div>{{ v.Name }}</div>
-                                    <div>
-                                        {{ `开始时间：${v.Start} ` }}
-                                        {{ ` 结束时间：${v.End} ` }}
-                                    </div>
-                                    <div>{{ `耗时：${(new Date(v.FinishTime).getTime() - new
-                                        Date(v.CreateTime).getTime()) / 1000}` }}
-                                    </div>
-                                </q-item-section>
-                                <q-item-section side>
-                                    <q-btn class="q-mr-sm" :color="v.Status == '成功' ? 'green' : 'black'">{{ v.Status }}
-                                    </q-btn>
-                                </q-item-section>
-                            </template>
-                            <q-card>
-                                <q-card-section>
-                                    <div style="max-height: 20vh;overflow: auto;">{{ v.Log }}</div>
-                                </q-card-section>
-                            </q-card>
-                        </q-expansion-item>
+  <q-dialog
+    ref="dialogRef"
+    @hide="dialogHide"
+    style="width: 1000px"
+    @before-show="beforeShow"
+  >
+    <q-card
+      style="display: flex; flex-direction: column; height: 60vh; width: 80vw"
+    >
+      <q-tabs
+        v-model="tab"
+        class="bg-purple text-white"
+        style=""
+        align="justify"
+        narrow-indicator
+      >
+        <q-tab name="filelist" label="批量操作" />
+        <q-tab name="setting" label="设置" />
+        <q-tab name="tasking" label="任务执行" />
+      </q-tabs>
+      <q-separator />
+      <q-tab-panels
+        v-model="tab"
+        animated
+        class="bg-purple-1"
+        style="height: 100%; overflow: auto"
+      >
+        <q-tab-panel name="filelist">
+          <div class="q-px-sm">
+            <q-btn
+              class="q-mr-sm"
+              color="amber"
+              size="sm"
+              glossy
+              text-color="black"
+              @click="selectAll"
+              >{{ view.selectAll ? '不选' : '全选' }}</q-btn
+            >
+            <q-btn
+              class="q-mr-sm"
+              size="sm"
+              color="secondary"
+              icon="refresh"
+              @click="refreshIndex"
+              >刷新</q-btn
+            >
+            <q-input
+              label="..."
+              v-model="view.queryParam.Keyword"
+              :dense="true"
+              filled
+              clearable
+              @update:model-value="fetchSearch()"
+            />
+          </div>
+          <div class="q-gutter-sm q-mt-sm">
+            <div
+              v-ripple
+              v-for="item in view.resultData.Data"
+              :key="item.Id"
+              style="
+                border: 2px dotted purple;
+                padding: 4px;
+                border-radius: 10px;
+                background-color: burlywood;
+              "
+            >
+              <div style="display: flex; flex-direction: column">
+                <q-item-label>
+                  <span
+                    v-if="view.cutListIds.indexOf(item.Id) >= 0"
+                    style="color: red"
+                    >剪切中：：</span
+                  >{{ item.Title }}【{{ item.SizeStr }}】
+                </q-item-label>
+                <div style="display: flex; flex-direction: row">
+                  <q-checkbox
+                    size="sm"
+                    v-model="view.selector"
+                    :val="item.Id"
+                    color="red"
+                  />
+                  <q-btn-dropdown
+                    class="q-mr-sm"
+                    size="sm"
+                    :label="item.MovieType"
+                    type="primary"
+                    color="teal"
+                  >
+                    <q-list>
+                      <q-item
+                        v-for="mt in MovieTypeOptions"
+                        :key="mt.value"
+                        v-close-popup
+                        class="movieTypeSelectItem"
+                      >
+                        <q-item-section>
+                          <q-item-label
+                            @click="
+                              item.MovieType = mt.value;
+                              commonExec(ResetMovieType(item.Id, mt.value));
+                            "
+                            >{{ mt.label }}
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
                     </q-list>
+                  </q-btn-dropdown>
+                  <q-btn
+                    size="sm"
+                    class="q-mr-sm"
+                    color="amber"
+                    glossy
+                    text-color="black"
+                    icon="delete"
+                    @click="confirmDelete(item)"
+                  />
+                  <q-btn
+                    size="sm"
+                    class="q-mr-sm"
+                    color="black-1"
+                    @click="moveThis(item)"
+                    icon="near_me"
+                  />
+                  <q-btn
+                    class="q-mr-sm"
+                    size="sm"
+                    color="secondary"
+                    icon="open_in_new"
+                    @click="commonExec(OpenFileFolder(item.Id))"
+                  />
+                  <q-btn
+                    size="sm"
+                    class="q-mr-sm"
+                    color="black"
+                    @click="item.showCut = true"
+                    >剪切</q-btn
+                  >
+                  <q-btn
+                    size="sm"
+                    class="q-mr-sm"
+                    color="green"
+                    @click="toMp4(item)"
+                    >toMp4</q-btn
+                  >
+                  <q-btn
+                    class="q-mr-sm"
+                    size="sm"
+                    color="brown-5"
+                    icon="wifi_protected_setup"
+                    v-if="!item.MovieType || item.MovieType == '无'"
+                    @click="commonExec(SyncFileInfo(item.Id))"
+                  />
+                </div>
+                <div
+                  v-if="item.showCut"
+                  style="
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    background-color: antiquewhite;
+                    border-radius: 12px;
+                    padding: 4px;
+                  "
+                >
+                  开始：
+                  <q-input
+                    style="width: 40px"
+                    v-model:model-value="cutParam.sH"
+                  ></q-input>
+                  <q-input
+                    style="width: 40px"
+                    v-model:model-value="cutParam.sM"
+                  ></q-input>
+                  <q-input
+                    style="width: 40px"
+                    v-model:model-value="cutParam.sS"
+                  ></q-input>
+                  结束：
+                  <q-input
+                    style="width: 40px"
+                    v-model:model-value="cutParam.eH"
+                  ></q-input>
+                  <q-input
+                    style="width: 40px"
+                    v-model:model-value="cutParam.eM"
+                  ></q-input>
+                  <q-input
+                    style="width: 40px"
+                    v-model:model-value="cutParam.eS"
+                  ></q-input>
+                  <q-btn
+                    size="sm"
+                    color="black"
+                    type="primary"
+                    @click="
+                      cutThis(item);
+                      item.showCut = false;
+                    "
+                    label="确认"
+                  />
+                  <q-btn
+                    size="sm"
+                    color="blue"
+                    @click="item.showCut = false"
+                    label="取消"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </q-tab-panel>
+        <q-tab-panel name="setting" class="bg-purple-2">
+          <q-field color="purple-12" label="Buttons" stack-label>
+            <template v-slot:prepend>
+              <q-icon name="event" />
+            </template>
+            <template v-slot:control>
+              <q-checkbox
+                v-model="view.Buttons"
+                v-for="item in view.settingInfo.Buttons"
+                :key="item"
+                :val="item"
+                :label="item"
+                color="teal"
+                @update:model-value="updateButtons"
+              />
+            </template>
+          </q-field>
+        </q-tab-panel>
 
-
-
-
-                </q-tab-panel>
-            </q-tab-panels>
-        </q-card>
-    </q-dialog>
+        <q-tab-panel name="tasking">
+          <q-list bordered separator>
+            <q-expansion-item v-for="(v, k) in view.tasking" :key="k">
+              <template v-slot:header>
+                <q-item-section avatar>
+                  <q-btn color="blue" class="q-mr-sm">{{ v.Type }}</q-btn>
+                  {{ ` 格式：${v.To} ` }}
+                </q-item-section>
+                <q-item-section>
+                  <div>{{ v.Name }}</div>
+                  <div>
+                    {{ `开始时间：${v.Start} ` }}
+                    {{ ` 结束时间：${v.End} ` }}
+                  </div>
+                  <div>
+                    {{
+                      `耗时：${
+                        (new Date(v.FinishTime).getTime() -
+                          new Date(v.CreateTime).getTime()) /
+                        1000
+                      }`
+                    }}
+                  </div>
+                </q-item-section>
+                <q-item-section side>
+                  <q-btn
+                    class="q-mr-sm"
+                    :color="v.Status == '成功' ? 'green' : 'black'"
+                    >{{ v.Status }}
+                  </q-btn>
+                </q-item-section>
+              </template>
+              <q-card>
+                <q-card-section>
+                  <div style="max-height: 20vh; overflow: auto">
+                    {{ v.Log }}
+                  </div>
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
+          </q-list>
+        </q-tab-panel>
+      </q-tab-panels>
+    </q-card>
+  </q-dialog>
 </template>
-  
+
 <script setup>
-import { useQuasar } from 'quasar'
-import { useDialogPluginComponent } from 'quasar'
+import { useQuasar } from 'quasar';
+import { useDialogPluginComponent } from 'quasar';
 import { reactive, ref, watch } from 'vue';
 
-import { MovieTypeOptions } from '../../../components/utils'
-import { ResetMovieType, SearchAPI, RefreshAPI, FileRename, DeleteFile, SyncFileInfo, CutFile, TransferTasksInfo, TansferFile } from '../../../components/api/searchAPI'
+import { MovieTypeOptions } from '../../../components/utils';
+import {
+  ResetMovieType,
+  SearchAPI,
+  RefreshAPI,
+  FileRename,
+  DeleteFile,
+  SyncFileInfo,
+  CutFile,
+  TransferTasksInfo,
+  TansferFile,
+} from '../../../components/api/searchAPI';
 
-const $q = useQuasar()
+const $q = useQuasar();
 
-
-const tab = ref('filelist')
-let timeFunc
-watch(() => tab.value, (v) => {
-    console.log(v)
+const tab = ref('filelist');
+let timeFunc;
+watch(
+  () => tab.value,
+  (v) => {
+    console.log(v);
     if (v === 'tasking') {
-        fetchTasking()
-        timeFunc = setInterval(fetchTasking, 2000)
+      fetchTasking();
+      timeFunc = setInterval(fetchTasking, 2000);
     } else {
-        clearInterval(timeFunc)
+      clearInterval(timeFunc);
     }
-})
+  }
+);
 
 const fetchTasking = async () => {
-    const res = await TransferTasksInfo();
-    view.tasking = res.Data
-}
+  const res = await TransferTasksInfo();
+  view.tasking = res.Data;
+};
 const view = reactive({
-    selectAll: false,
-    settingInfo: {},
-    resultData: {},
-    queryParam: {},
-    selector: [],
-    callback: null,
-    Buttons: null,
-    cutListIds: [],
-    tasking: {}
-})
+  selectAll: false,
+  settingInfo: {},
+  resultData: {},
+  queryParam: {},
+  selector: [],
+  callback: null,
+  Buttons: null,
+  cutListIds: [],
+  tasking: {},
+});
 const cutParam = reactive({
-    sH: '00',
-    sM: '00',
-    sS: '00',
-    eH: '99',
-    eM: '00',
-    eS: '00',
-})
-
+  sH: '00',
+  sM: '00',
+  sS: '00',
+  eH: '99',
+  eM: '00',
+  eS: '00',
+});
 
 const toMp4 = (item) => {
-    if (view.cutListIds.indexOf(item.Id) < 0) {
-        view.cutListIds.push(item.Id)
-    }
-    commonExec(TansferFile(item.Id))
-}
+  if (view.cutListIds.indexOf(item.Id) < 0) {
+    view.cutListIds.push(item.Id);
+  }
+  commonExec(TansferFile(item.Id));
+};
 
 const cutThis = (item) => {
-    if (view.cutListIds.indexOf(item.Id) < 0) {
-        view.cutListIds.push(item.Id)
-    }
-    commonExec(CutFile(item.Id, [cutParam.sH, cutParam.sM, cutParam.sS].join(':'), [cutParam.eH, cutParam.eM, cutParam.eS].join(':')))
-}
+  if (view.cutListIds.indexOf(item.Id) < 0) {
+    view.cutListIds.push(item.Id);
+  }
+  commonExec(
+    CutFile(
+      item.Id,
+      [cutParam.sH, cutParam.sM, cutParam.sS].join(':'),
+      [cutParam.eH, cutParam.eM, cutParam.eS].join(':')
+    )
+  );
+};
 
 defineEmits([
-    // REQUIRED; 需要明确指出
-    // 组件通过 useDialogPluginComponent() 暴露哪些事件
-    ...useDialogPluginComponent.emits
-])
+  // REQUIRED; 需要明确指出
+  // 组件通过 useDialogPluginComponent() 暴露哪些事件
+  ...useDialogPluginComponent.emits,
+]);
 
 const selectAll = () => {
-    view.selectAll = !view.selectAll
-    if (view.selectAll) {
-        view.selector = view.resultData.Data.map(item => item.Id)
-    } else {
-        view.selector = []
-    }
-}
+  view.selectAll = !view.selectAll;
+  if (view.selectAll) {
+    view.selector = view.resultData.Data.map((item) => item.Id);
+  } else {
+    view.selector = [];
+  }
+};
 
 const refreshIndex = async () => {
-    await RefreshAPI()
-    await fetchSearch()
-}
+  await RefreshAPI();
+  await fetchSearch();
+};
 
 const fetchSearch = async () => {
-    const data = await SearchAPI(view.queryParam);
-    view.resultData = data
+  const data = await SearchAPI(view.queryParam);
+  view.resultData = data;
 };
-
 
 const commonExec = async (exec) => {
-    const { Code, Message } = await exec
-    console.log(Code, Message)
-    if (Code != 200) {
-        $q.notify({ message: `${Message}` })
-    } else {
-        $q.notify({ message: `${Message}` })
-    }
-}
-
-const open = (queryParam, cb) => {
-    view.queryParam = queryParam
-    view.callback = cb
-    dialogRef.value.show()
-    fetchSearch()
-}
-
-const dialogHide = async () => {
-    if (view.callback) {
-        await view.callback()
-    }
-    onDialogCancel()
-    onDialogOK()
-    onDialogHide()
-}
-
-
-const confirmDelete = (item) => {
-    $q.dialog({
-        title: item.Name,
-        message: '确定删除吗?',
-        cancel: true,
-        persistent: true
-    }).onOk(() => {
-        console.log('>>>> onOk')
-        commonExec(DeleteFile(item.Id)).then(() => {
-            for (let i = 0; i < view.resultData.Data.length; i++) {
-                if (view.resultData.Data[i].Id == item.Id) {
-                    view.resultData.Data.splice(i, 1)
-                }
-            }
-        })
-    }).onCancel(() => {
-        console.log('>>>> Cancel')
-    }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-    })
-}
-
-const moveThis = async (item) => {
-    const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
-    console.log(res)
-    if (res.Code == 200) {
-        for (let i = 0; i < view.resultData.Data.length; i++) {
-            if (view.resultData.Data[i].Id == item.Id) {
-                view.resultData.Data.splice(i, 1)
-            }
-        }
-        $q.notify({ type: 'negative', message: res.Message })
-    } else {
-        $q.notify({ type: 'negative', message: res.Message })
-    }
+  const { Code, Message } = await exec;
+  console.log(Code, Message);
+  if (Code != 200) {
+    $q.notify({ message: `${Message}` });
+  } else {
+    $q.notify({ message: `${Message}` });
+  }
 };
 
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
+const open = (queryParam, cb) => {
+  view.queryParam = queryParam;
+  view.callback = cb;
+  dialogRef.value.show();
+  fetchSearch();
+};
+
+const dialogHide = async () => {
+  if (view.callback) {
+    await view.callback();
+  }
+  onDialogCancel();
+  onDialogOK();
+  onDialogHide();
+};
+
+const confirmDelete = (item) => {
+  $q.dialog({
+    title: item.Name,
+    message: '确定删除吗?',
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(() => {
+      console.log('>>>> onOk');
+      commonExec(DeleteFile(item.Id)).then(() => {
+        for (let i = 0; i < view.resultData.Data.length; i++) {
+          if (view.resultData.Data[i].Id == item.Id) {
+            view.resultData.Data.splice(i, 1);
+          }
+        }
+      });
+    })
+    .onCancel(() => {
+      console.log('>>>> Cancel');
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
+
+const moveThis = async (item) => {
+  const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
+  console.log(res);
+  if (res.Code == 200) {
+    for (let i = 0; i < view.resultData.Data.length; i++) {
+      if (view.resultData.Data[i].Id == item.Id) {
+        view.resultData.Data.splice(i, 1);
+      }
+    }
+    $q.notify({ type: 'negative', message: res.Message });
+  } else {
+    $q.notify({ type: 'negative', message: res.Message });
+  }
+};
+
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+  useDialogPluginComponent();
 // dialogRef      - 用在 QDialog 上的 Vue ref 模板引用
 // onDialogHide   - 处理 QDialog 上 @hide 事件的函数
 // onDialogOK     - 对话框结果为 ok 时会调用的函数
@@ -292,19 +465,19 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginC
 // }
 
 const updateButtons = (arr) => {
-    localStorage.setItem('Buttons', JSON.stringify(arr))
-}
+  localStorage.setItem('Buttons', JSON.stringify(arr));
+};
 
 const beforeShow = () => {
-    const settingInfo = JSON.parse(localStorage.getItem('settingInfo'))
-    const Buttons = JSON.parse(localStorage.getItem('Buttons')) || []
-    view.settingInfo = settingInfo || {}
-    view.Buttons = Buttons || []
-    console.log(Buttons)
-    console.log(view.settingInfo.Buttons)
-}
+  const settingInfo = JSON.parse(localStorage.getItem('settingInfo'));
+  const Buttons = JSON.parse(localStorage.getItem('Buttons')) || [];
+  view.settingInfo = settingInfo || {};
+  view.Buttons = Buttons || [];
+  console.log(Buttons);
+  console.log(view.settingInfo.Buttons);
+};
 
 defineExpose({
-    open
-})
+  open,
+});
 </script>

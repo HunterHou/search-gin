@@ -18,7 +18,7 @@ export const formatTags = (title: string) => {
   return title;
 };
 
-export const formatCode = (code: string) => {
+export const formatCode = (code: string | undefined) => {
   if (code) {
     if (code.indexOf('-') == 0) {
       return (code = code.substring(1));
@@ -28,7 +28,10 @@ export const formatCode = (code: string) => {
   return '';
 };
 
-export const formatTitle = (title: string) => {
+export const formatTitle = (title: string | undefined) => {
+  if (!title) {
+    return '';
+  }
   if (title.lastIndexOf(']') >= 0) {
     title = title.substring(title.lastIndexOf(']') + 1);
   }

@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia';
+import { FileModel, FileQuery } from 'components/model/File';
+import { SettingInfo } from 'components/model/Setting';
 
 export const useSystemProperty = defineStore({
   id: 'system',
@@ -20,7 +22,7 @@ export const useSystemProperty = defineStore({
     Logo: {
       title: 'M系统',
       logo: '',
-      url: '/mfilelist',
+      url: '/mfilelist'
     },
     videoOptions: {
       autoPlay: true,
@@ -36,14 +38,14 @@ export const useSystemProperty = defineStore({
         'setting',
         'pip',
         'pageFullScreen',
-        'fullScreen',
-      ],
+        'fullScreen'
+      ]
     },
     History: [],
-    Playing: {},
+    Playing: new FileModel(),
     PlayMode: 800,
     drawerRight: false,
-    Favorite: [],
+    Favorite: [] as FileQuery[],
     FileSearchParam: {
       Page: 1,
       PageSize: 14,
@@ -53,14 +55,23 @@ export const useSystemProperty = defineStore({
       Keyword: '',
       OnlyRepeat: false,
       showStyle: 'post',
-      listButton: ['播放', '编辑', '移动', '文件夹', '转换', '删除', '剪切', '详情'],
-    },
+      listButton: [
+        '播放',
+        '编辑',
+        '移动',
+        '文件夹',
+        '转换',
+        '删除',
+        '剪切',
+        '详情'
+      ]
+    } as FileQuery,
     SettingInfo: {
       ControllerHost: 'http://127.0.0.1:10081',
       ImageHost: 'http://127.0.0.1:10081',
-      StreamHost: 'http://127.0.0.1:10081',
-    },
-    SearchSuggestions: [],
+      StreamHost: 'http://127.0.0.1:10081'
+    } as SettingInfo,
+    SearchSuggestions: [] as Array<string>
   }),
   getters: {
     getHistory(this) {
@@ -86,18 +97,10 @@ export const useSystemProperty = defineStore({
     },
     getSearchParam(this) {
       return this.FileSearchParam;
-    },
+    }
   },
   actions: {
-    syncSearchParam(param: {
-      Keyword: any;
-      Page?: any;
-      PageSize?: any;
-      MovieType?: any;
-      SortField?: any;
-      SortType?: any;
-      showStyle?: any;
-    }) {
+    syncSearchParam(param: FileQuery) {
       const {
         Page,
         PageSize,
@@ -105,7 +108,7 @@ export const useSystemProperty = defineStore({
         SortField,
         SortType,
         Keyword,
-        showStyle,
+        showStyle
       } = param;
       this.FileSearchParam.Page = Page;
       this.FileSearchParam.PageSize = PageSize;
@@ -141,16 +144,17 @@ export const useSystemProperty = defineStore({
     //     this.History.splice(0, 49);
     //   }
     // },
-    addFavorite(param: any) {
+    addFavorite(param: FileQuery) {
       let has = false;
       for (let i = 0; i < this.Favorite.length; i++) {
+        const item = this.Favorite[i] as FileQuery;
         if (
-          this.Favorite[i].Page == param.Page &&
-          this.Favorite[i].PageSize == param.PageSize &&
-          this.Favorite[i].Keyword == param.Keyword &&
-          this.Favorite[i].SortField == param.SortField &&
-          this.Favorite[i].SortType == param.SortType &&
-          this.Favorite[i].MovieType == param.MovieType
+          item.Page == param.Page &&
+          item.PageSize == param.PageSize &&
+          item.Keyword == param.Keyword &&
+          item.SortField == param.SortField &&
+          item.SortType == param.SortType &&
+          item.MovieType == param.MovieType
         ) {
           has = true;
           break;
@@ -163,7 +167,7 @@ export const useSystemProperty = defineStore({
         this.Favorite.splice(0, 49);
       }
     },
-    setSettingInfo(settingInfo: any) {
+    setSettingInfo(settingInfo: SettingInfo) {
       this.SettingInfo = settingInfo;
     },
 
@@ -214,6 +218,6 @@ export const useSystemProperty = defineStore({
       if (this.SearchSuggestions.length > 100) {
         this.SearchSuggestions.pop();
       }
-    },
-  },
+    }
+  }
 });

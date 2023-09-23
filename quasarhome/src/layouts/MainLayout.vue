@@ -16,7 +16,7 @@
             icon="menu"
           />
           <q-toolbar-title>文件搜索</q-toolbar-title>
-          <q-space />
+          <!-- <q-space /> -->
           <EssentialLink
             v-for="link in essentialLinks"
             :key="link.title"
@@ -73,10 +73,7 @@
       >
         <Playing />
       </q-drawer>
-      <q-page-container
-        style="h
-eight: 100%"
-      >
+      <q-page-container>
         <router-view />
       </q-page-container>
     </q-layout>
@@ -104,9 +101,9 @@ import EssentialLink, {
 
 const drawerLeft = ref(false);
 
-const PlayMode = computed(() => {
-  return systemProperty.PlayMode;
-});
+// const PlayMode = computed(() => {
+//   return systemProperty.PlayMode;
+// });
 
 const currentPath = computed(() => {
   return useRoute().path;

@@ -1,6 +1,5 @@
 <template>
-  <div class="q-pa-md SystemHtml" v-html="view.settingInfo.SystemHtml">
-  </div>
+  <div class="q-pa-md SystemHtml" v-html="view.settingInfo.SystemHtml"></div>
 </template>
 
 <script setup>
@@ -11,23 +10,19 @@ const view = reactive({
   settingInfo: {},
 });
 
-
 const fetchSearch = async () => {
   const { data } = await GetSettingInfo();
   console.log(data);
-  view.settingInfo = data
+  view.settingInfo = data;
 };
-
 
 onMounted(() => {
   fetchSearch();
 });
-
 </script>
 <style lang="scss" scoped>
 .SystemHtml {
   padding: 1rem;
   margin: 0;
 }
-
 </style>

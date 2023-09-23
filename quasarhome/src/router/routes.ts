@@ -8,9 +8,18 @@ const routes: RouteRecordRaw[] = [
       { path: '/', component: () => import('pages/IndexPage.vue') },
       { path: '/home', component: () => import('pages/home/HomePage.vue') },
       { path: '/search', component: () => import('pages/file/SearchPage.vue') },
-      { path: '/picture', component: () => import('pages/picture/PicturePage.vue') },
-      { path: '/setting', component: () => import('pages/setting/SettingPage.vue') },
-      { path: '/system', component: () => import('pages/system/SystemPage.vue') },
+      {
+        path: '/picture',
+        component: () => import('pages/picture/PicturePage.vue'),
+      },
+      {
+        path: '/setting',
+        component: () => import('pages/setting/SettingPage.vue'),
+      },
+      {
+        path: '/system',
+        component: () => import('pages/system/SystemPage.vue'),
+      },
     ],
   },
 
