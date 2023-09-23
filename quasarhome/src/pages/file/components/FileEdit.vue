@@ -54,7 +54,7 @@ const open = (item, cb) => {
     view.item = {}
     view.item = { ...item }
     view.item.Code = formatCode(item.Code)
-    view.item.Name = formatTitle(item.Name)
+    view.item.Title = formatTitle(item.Title)
     view.callback = cb
     dialogRef.value.show()
 }
@@ -64,7 +64,7 @@ const editMoveout = async () => {
 };
 
 const editItemSubmit = async (MoveOut) => {
-    const { Id, Name, Code, Actress, FileType, MovieType } = view.item;
+    const { Id, Title, Code, Actress, FileType, MovieType } = view.item;
     let code = Code.trim();
     if (code && code.indexOf('-') < 0) {
         code = '-' + code;
@@ -76,14 +76,14 @@ const editItemSubmit = async (MoveOut) => {
     if (code.length != 0) {
         name += ' [' + code.trim() + ']';
     }
-    if (MovieType) {
+    if (MovieType && MovieType != '无') {
         if (name.indexOf('{{') < 0) {
             name += `{{${MovieType}}}`
         }else {
 
         }
     }
-    const arr = Name.trim().split('.');
+    const arr = Title.trim().split('.');
     const arrLength = arr.length;
     for (let idx = 0; idx < arrLength; idx++) {
         const str = arr[idx];
