@@ -218,8 +218,8 @@
             </template>
             <template v-slot:control>
               <q-checkbox
-                v-model="view.Buttons"
-                v-for="item in view.settingInfo.Buttons"
+                v-model="view.settingInfo.Buttons"
+                v-for="item in buttonEnum"
                 :key="item"
                 :val="item"
                 :label="item"
@@ -283,6 +283,7 @@ import { useDialogPluginComponent } from 'quasar';
 import { reactive, ref, watch } from 'vue';
 
 import { MovieTypeOptions } from '../../../components/utils';
+import { buttonEnum } from '../../../components/model/Setting';
 import {
   ResetMovieType,
   SearchAPI,
@@ -292,7 +293,7 @@ import {
   SyncFileInfo,
   CutFile,
   TransferTasksInfo,
-  TansferFile,
+  TansferFile
 } from '../../../components/api/searchAPI';
 
 const $q = useQuasar();
@@ -323,9 +324,8 @@ const view = reactive({
   queryParam: {},
   selector: [],
   callback: null,
-  Buttons: null,
   cutListIds: [],
-  tasking: {},
+  tasking: {}
 });
 const cutParam = reactive({
   sH: '00',
@@ -333,7 +333,7 @@ const cutParam = reactive({
   sS: '00',
   eH: '99',
   eM: '00',
-  eS: '00',
+  eS: '00'
 });
 
 const toMp4 = (item) => {
@@ -359,7 +359,7 @@ const cutThis = (item) => {
 defineEmits([
   // REQUIRED; 需要明确指出
   // 组件通过 useDialogPluginComponent() 暴露哪些事件
-  ...useDialogPluginComponent.emits,
+  ...useDialogPluginComponent.emits
 ]);
 
 const selectAll = () => {
@@ -391,8 +391,10 @@ const commonExec = async (exec) => {
   }
 };
 
-const open = (queryParam, cb) => {
+const open = (data) => {
+  const { queryParam, settingInfo, cb } = data;
   view.queryParam = queryParam;
+  view.settingInfo = settingInfo;
   view.callback = cb;
   dialogRef.value.show();
   fetchSearch();
@@ -412,7 +414,7 @@ const confirmDelete = (item) => {
     title: item.Name,
     message: '确定删除吗?',
     cancel: true,
-    persistent: true,
+    persistent: true
   })
     .onOk(() => {
       console.log('>>>> onOk');
@@ -465,19 +467,17 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 // }
 
 const updateButtons = (arr) => {
-  localStorage.setItem('Buttons', JSON.stringify(arr));
+  if (view.callback) {
+    view.settingInfo = arr;
+    view.callback({ settingInfo: view.settingInfo });
+  }
 };
 
 const beforeShow = () => {
-  const settingInfo = JSON.parse(localStorage.getItem('settingInfo'));
-  const Buttons = JSON.parse(localStorage.getItem('Buttons')) || [];
-  view.settingInfo = settingInfo || {};
-  view.Buttons = Buttons || [];
-  console.log(Buttons);
-  console.log(view.settingInfo.Buttons);
+  console.log('beforeShow');
 };
 
 defineExpose({
-  open,
+  open
 });
 </script>

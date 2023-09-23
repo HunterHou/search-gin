@@ -12,7 +12,7 @@
         :options="[
           { label: '时', value: 'MTime' },
           { label: '容', value: 'Size' },
-          { label: '名', value: 'Code' },
+          { label: '名', value: 'Code' }
         ]"
       />
       <q-btn-toggle
@@ -21,7 +21,7 @@
         toggle-color="primary"
         :options="[
           { label: '正', value: 'asc' },
-          { label: '倒', value: 'desc' },
+          { label: '倒', value: 'desc' }
         ]"
       />
 
@@ -42,7 +42,7 @@
       />
       <q-checkbox
         v-model="view.queryParam.OnlyRepeat"
-        @update:model-value="fetchSearch()"
+        @update:model-value="fetchSearch"
         label="重"
       />
       <q-btn
@@ -50,7 +50,13 @@
         size="sm"
         color="primary"
         icon="apps"
-        @click="listEditRef.open(view.queryParam, null)"
+        @click="
+          listEditRef.open({
+            queryParam: view.queryParam,
+            settingInfo: view.settingInfo,
+            cb: listEditCallback
+          })
+        "
       />
     </div>
     <q-page-sticky
@@ -324,14 +330,14 @@ import {
   ResetMovieType,
   SearchAPI,
   SyncFileInfo,
-  DeleteFile,
+  DeleteFile
 } from '../../components/api/searchAPI';
 import { GetSettingInfo } from '../../components/api/settingAPI';
 import {
   MovieTypeOptions,
   MovieTypeSelects,
   formatCode,
-  formatTitle,
+  formatTitle
 } from '../../components/utils';
 import { getPng } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
@@ -361,9 +367,13 @@ const systemProperty = useSystemProperty();
 const $q = useQuasar();
 
 const listButtons = computed(() => {
-  const str = localStorage.getItem('Buttons');
-  return JSON.parse(str);
+  return view.settingInfo.Buttons;
 });
+
+const listEditCallback = (data) => {
+  const { settingInfo } = data;
+  view.settingInfo = settingInfo;
+};
 
 const showButton = (name) => {
   if (!listButtons.value || listButtons.value.length == 0) {
@@ -382,10 +392,10 @@ const view = reactive({
     Page: 1,
     PageSize: 10,
     SortField: 'MTime',
-    SortType: 'desc',
+    SortType: 'desc'
   },
   resultData: {},
-  fullscreen: false,
+  fullscreen: false
 });
 
 const focusEvent = (e) => {
@@ -398,7 +408,7 @@ const confirmDelete = (item) => {
     title: item.Name,
     message: '确定删除吗?',
     cancel: true,
-    persistent: true,
+    persistent: true
   })
     .onOk(() => {
       console.log('>>>> onOk');
@@ -416,7 +426,6 @@ const fetchGetSettingInfo = async () => {
   const data = await GetSettingInfo();
   view.settingInfo = data.data;
   systemProperty.SettingInfo = data.data;
-  localStorage.setItem('settingInfo', JSON.stringify(data.data));
 };
 
 const commonExec = async (exec) => {
@@ -502,7 +511,7 @@ onMounted(async () => {
     SortType,
     Keyword,
     showStyle,
-    from,
+    from
   } = thisRoute.query;
   await fetchGetSettingInfo();
   if (Page && PageSize) {

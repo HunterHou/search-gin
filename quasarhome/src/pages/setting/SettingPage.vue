@@ -36,8 +36,13 @@
               <q-icon name="event" />
             </template>
             <template v-slot:control>
-              <MutiInput
+              <!-- <MutiInput
                 v-model="view.settingInfo.Buttons"
+                @onchange="(arr) => (view.settingInfo.Buttons = arr)"
+              /> -->
+              <MutiSelector
+                v-bind:model-value="view.settingInfo.Buttons"
+                :options="buttonEnum"
                 @onchange="(arr) => (view.settingInfo.Buttons = arr)"
               />
             </template>
@@ -149,14 +154,14 @@
                   icon: $q.iconSet.editor.align,
                   fixedLabel: true,
                   list: 'only-icons',
-                  options: ['left', 'center', 'right', 'justify'],
+                  options: ['left', 'center', 'right', 'justify']
                 },
                 {
                   label: $q.lang.editor.align,
                   icon: $q.iconSet.editor.align,
                   fixedLabel: true,
-                  options: ['left', 'center', 'right', 'justify'],
-                },
+                  options: ['left', 'center', 'right', 'justify']
+                }
               ],
               [
                 'bold',
@@ -164,7 +169,7 @@
                 'strike',
                 'underline',
                 'subscript',
-                'superscript',
+                'superscript'
               ],
               ['token', 'hr', 'link', 'custom_btn'],
               ['print', 'fullscreen'],
@@ -173,7 +178,7 @@
                   label: $q.lang.editor.formatting,
                   icon: $q.iconSet.editor.formatting,
                   list: 'no-icons',
-                  options: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code'],
+                  options: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code']
                 },
                 {
                   label: $q.lang.editor.fontSize,
@@ -188,8 +193,8 @@
                     'size-4',
                     'size-5',
                     'size-6',
-                    'size-7',
-                  ],
+                    'size-7'
+                  ]
                 },
                 {
                   label: $q.lang.editor.defaultFont,
@@ -205,15 +210,15 @@
                     'impact',
                     'lucida_grande',
                     'times_new_roman',
-                    'verdana',
-                  ],
+                    'verdana'
+                  ]
                 },
-                'removeFormat',
+                'removeFormat'
               ],
               ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
 
               ['undo', 'redo'],
-              ['viewsource'],
+              ['viewsource']
             ]"
             :fonts="{
               arial: 'Arial',
@@ -223,7 +228,7 @@
               impact: 'Impact',
               lucida_grande: 'Lucida Grande',
               times_new_roman: 'Times New Roman',
-              verdana: 'Verdana',
+              verdana: 'Verdana'
             }"
           />
         </q-tab-panel>
@@ -242,16 +247,17 @@ import { onMounted, reactive, ref } from 'vue';
 import {
   GetSettingInfo,
   PostSettingInfo,
-  GetIpAddr,
+  GetIpAddr
 } from '../../components/api/settingAPI';
 import MutiSelector from '../../components/MutiSelector.vue';
 import MutiInput from '../../components/MutiInput.vue';
+import { buttonEnum } from '../../components/model/Setting';
 
 const $q = useQuasar();
 const tab = ref('search');
 const view = reactive({
   settingInfo: {},
-  ipAddr: '',
+  ipAddr: ''
 });
 
 const submitForm = async () => {
