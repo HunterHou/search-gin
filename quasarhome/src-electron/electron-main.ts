@@ -35,7 +35,7 @@ function createWindow() {
       mainWindow?.webContents.closeDevTools();
     });
   }
-  mainWindow.webContents.openDevTools();
+  mainWindow.setMenu(null)
 
   mainWindow.on('closed', () => {
     mainWindow = undefined;
