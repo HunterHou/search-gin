@@ -468,6 +468,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 	code := srcFile.Code
 	if code == "" {
 		result.Fail()
+		result.Message = "Code：" + code + " srcFile:" + srcFile.Name
 		return result, newFile
 	}
 	if strings.Contains(code, "{{") {
@@ -483,6 +484,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 	if err != nil {
 		fmt.Println("err", err)
 		result.Fail()
+		result.Message = "请求失败：" + resp.Status + " url:" + url
 		return result, newFile
 	}
 	defer resp.Body.Close()

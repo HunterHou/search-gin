@@ -22,12 +22,13 @@ export class SettingInfo {
 }
 
 export const buttonEnum = [
-  '刮图',
+  '播放',
   '删除',
   '移动',
   '编辑',
   '文件夹',
-  '图鉴',
+  '详情',
+  '刮图',
   '转换',
   '剪切',
   '更多',

@@ -12,7 +12,7 @@ export const RefreshAPI = async (params: object) => {
 
 export const FindFileInfo = async (data: string) => {
   const res = await axios.get(`/api/info/${data}`);
-  return res;
+  return res&&res.data;
 };
 
 export const QueryDirImageBase64 = async (data: string) => {
