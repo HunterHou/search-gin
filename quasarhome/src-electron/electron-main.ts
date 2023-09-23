@@ -15,6 +15,7 @@ function createMainWindow() {
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1600,
     height: 900,
+    left:0,
     // transparent: true,
     titleBarStyle: 'hidden',
     backgroundColor: 'rgba(250,250,250,1)',
@@ -56,8 +57,10 @@ function createSonWindow(params: any | undefined) {
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1600,
     height: 900,
-    // transparent: true,
+    right:0,
+    transparent: true,
     titleBarStyle: 'hidden',
+    titleBarOverlay: true,
     backgroundColor: 'rgba(250,250,250,1)',
     useContentSize: true,
     webPreferences: {
@@ -80,6 +83,7 @@ function createSonWindow(params: any | undefined) {
     });
   }
   indow.setMenu(null);
+  indow.on('show', indow.focus);
   indow.on('closed', () => {
     mainWindow?.focus();
   });
