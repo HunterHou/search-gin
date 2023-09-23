@@ -13,9 +13,8 @@ function createMainWindow() {
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1600,
-    height: 900,
-    left:0,
+    width: 1400,
+    height: 1000,
     // transparent: true,
     titleBarStyle: 'hidden',
     backgroundColor: 'rgba(250,250,250,1)',
@@ -57,7 +56,6 @@ function createSonWindow(params: any | undefined) {
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1600,
     height: 900,
-    right:0,
     transparent: true,
     titleBarStyle: 'hidden',
     titleBarOverlay: true,
@@ -71,11 +69,12 @@ function createSonWindow(params: any | undefined) {
     },
     ...params,
   });
-  const url = `${process.env.APP_URL}/#/${params?.router || ''}`;
+  const url = `${process.env.APP_URL}#${params?.router || ''}`;
+  // console.log(url);
   indow.loadURL(url);
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
-    mainWindow.webContents.openDevTools();
+    indow.webContents.openDevTools();
   } else {
     // we're on production; no access to devtools pls
     indow.webContents.on('devtools-opened', () => {

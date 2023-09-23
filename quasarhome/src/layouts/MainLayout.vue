@@ -9,6 +9,7 @@
             color: currentPath == link.link ? 'red' : '',
             scale: 1.2,
           }" />
+          <q-btn @click="closeWindow">关闭</q-btn>
           <q-btn @click="GetShutDown()">关机</q-btn>
           <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu">
             {{ `${systemProperty && systemProperty.Playing?.Code || ''}` }}
@@ -74,6 +75,10 @@ const drawerLeft = ref(false);
 const currentPath = computed(() => {
   return useRoute().path;
 });
+
+const closeWindow = () => {
+  window.close()
+}
 
 const essentialLinks = [
   {

@@ -248,7 +248,7 @@ const showButton = (name) => {
 
 const openPlay = (item) => {
   console.log($q.platform)
-  const url = `playing/${item.Id}`
+  const url = `/playing/${item.Id}`
   // push(`/playing/${item.Id}`,'_blank')
   // window.open()
   window.electron.createWindow({ router: url, width: 1280, height: 1000 })
