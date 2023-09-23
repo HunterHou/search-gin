@@ -212,7 +212,7 @@
           </div>
         </q-tab-panel>
         <q-tab-panel name="setting" class="bg-purple-2">
-          <q-field color="purple-12" label="Buttons" stack-label>
+          <q-field color="purple-12" label="Buttons（最佳5）" stack-label>
             <template v-slot:prepend>
               <q-icon name="event" />
             </template>
@@ -295,6 +295,7 @@ import {
   TransferTasksInfo,
   TansferFile
 } from '../../../components/api/searchAPI';
+import { PostSettingInfo } from 'src/components/api/settingAPI';
 
 const $q = useQuasar();
 
@@ -402,11 +403,12 @@ const open = (data) => {
 
 const dialogHide = async () => {
   if (view.callback) {
-    await view.callback();
+    view.callback({ settingInfo: view.settingInfo });;
   }
   onDialogCancel();
   onDialogOK();
   onDialogHide();
+  console.log('dialogHide')
 };
 
 const confirmDelete = (item) => {
@@ -466,9 +468,9 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 // ...会自动关闭对话框
 // }
 
-const updateButtons = (arr) => {
+const updateButtons = () => {
   if (view.callback) {
-    view.settingInfo = arr;
+    PostSettingInfo(view.settingInfo)
     view.callback({ settingInfo: view.settingInfo });
   }
 };

@@ -93,6 +93,11 @@ export const useSystemProperty = defineStore({
       return this.SettingInfo?.ControllerHost;
     },
     getSuggestions(this) {
+      if (!this.SearchSuggestions || this.SearchSuggestions.length == 0) {
+        this.SearchSuggestions = JSON.parse(
+          localStorage.getItem('SearchSuggestions') || '[]'
+        );
+      }
       return this.SearchSuggestions;
     },
     getSearchParam(this) {
@@ -120,30 +125,7 @@ export const useSystemProperty = defineStore({
       if (param.Keyword) {
         this.addSuggestions(param.Keyword);
       }
-      // this.addHistory(param);
     },
-    // addHistory(param: any) {
-    //   let has = false;
-    //   for (let i = 0; i < this.History.length; i++) {
-    //     if (
-    //       this.History[i].Page == param.Page &&
-    //       this.History[i].PageSize == param.PageSize &&
-    //       this.History[i].Keyword == param.Keyword &&
-    //       this.History[i].SortField == param.SortField &&
-    //       this.History[i].SortType == param.SortType &&
-    //       this.History[i].MovieType == param.MovieType
-    //     ) {
-    //       has = true;
-    //       break;
-    //     }
-    //   }
-    //   if (!has) {
-    //     this.History.unshift({ ...param, createTime: new Date() });
-    //   }
-    //   if (this.History.length > 50) {
-    //     this.History.splice(0, 49);
-    //   }
-    // },
     addFavorite(param: FileQuery) {
       let has = false;
       for (let i = 0; i < this.Favorite.length; i++) {
@@ -218,6 +200,10 @@ export const useSystemProperty = defineStore({
       if (this.SearchSuggestions.length > 100) {
         this.SearchSuggestions.pop();
       }
+      localStorage.setItem(
+        'SearchSuggestions',
+        JSON.stringify(this.SearchSuggestions)
+      );
     },
   },
 });

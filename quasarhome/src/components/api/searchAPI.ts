@@ -12,7 +12,7 @@ export const RefreshAPI = async (params: object) => {
 
 export const FindFileInfo = async (data: string) => {
   const res = await api.get(`/api/info/${data}`);
-  return res;
+  return res&&res.data;
 };
 
 export const QueryDirImageBase64 = async (data: string) => {
@@ -75,6 +75,11 @@ export const AddTag = async (clickId: string, title: string) => {
   return res && res.data;
 };
 
+export const CloseTag = async (id: string, title: string) => {
+  const res = await api.get(`/api/file/clearTag//${id}/${title}`);
+  return res && res.data;
+};
+
 export const FileRename = async (data: unknown) => {
   const res = await api.post('/api/file/rename', data);
   return res && res.data;
@@ -89,7 +94,3 @@ export const DeleteFolerByPath = async (data: unknown) => {
   return res && res.data;
 };
 
-export const CloseTag = async (id: string, title: string) => {
-  const res = await api.get(`/api/file/clearTag//${id}/${title}`);
-  return res && res.data;
-};

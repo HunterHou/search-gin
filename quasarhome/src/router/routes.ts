@@ -16,13 +16,17 @@ const routes: RouteRecordRaw[] = [
         path: '/setting',
         component: () => import('pages/setting/SettingPage.vue'),
       },
+
       {
         path: '/system',
         component: () => import('pages/system/SystemPage.vue'),
       },
     ],
   },
-
+  {
+    path: '/playing/:id',
+    component: () => import('pages/playing/PlayingFile.vue'),
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

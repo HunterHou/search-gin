@@ -1,77 +1,38 @@
 <template>
   <div>
-    <q-layout
-      view="LHR lpr lfr"
-      container
-      style="height: 100vh"
-      class="shadow-2 rounded-borders"
-    >
+    <q-layout view="LHR lpr lfr" container style="height: 100vh" class="shadow-2 rounded-borders">
       <q-header reveal class="bg-black">
         <q-toolbar>
-          <q-btn
-            flat
-            @click="drawerLeft = !drawerLeft"
-            round
-            dense
-            icon="menu"
-          />
+          <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
           <q-toolbar-title>文件搜索</q-toolbar-title>
           <!-- <q-space /> -->
-          <EssentialLink
-            v-for="link in essentialLinks"
-            :key="link.title"
-            v-bind="link"
-            v-show="isWideScreen"
-            :style="{
-              color: currentPath == link.link ? 'red' : '',
-              scale: 1.2,
-            }"
-          />
+          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
+            color: currentPath == link.link ? 'red' : '',
+            scale: 1.2,
+          }" />
 
           <q-space />
           <q-btn @click="GetShutDown()">关机</q-btn>
-          <q-btn
-            flat
-            @click="systemProperty.drawerRight = !systemProperty.drawerRight"
-            round
-            dense
-            icon="menu"
-          >
-            {{ `${systemProperty.Playing?.Code || ''}` }}
+          <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu">
+            {{ `${systemProperty && systemProperty.Playing?.Code || ''}` }}
           </q-btn>
         </q-toolbar>
       </q-header>
 
-      <q-drawer
-        v-model="drawerLeft"
-        :width="200"
-        :breakpoint="700"
-        bordered
-        class="bg-grey-3"
-      >
+      <q-drawer v-model="drawerLeft" :width="200" :breakpoint="700" bordered class="bg-grey-3">
         <q-scroll-area class="fit">
           <q-list>
             <q-item-label header> 你的搜索工具 </q-item-label>
-            <EssentialLink
-              v-for="link in essentialLinks"
-              :key="link.title"
-              v-bind="link"
-              :style="{
-                color: currentPath == link.link ? 'red' : '',
-                scale: 1.2,
-              }"
-            />
+            <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :style="{
+              color: currentPath == link.link ? 'red' : '',
+              scale: 1.2,
+            }" />
           </q-list>
         </q-scroll-area>
       </q-drawer>
-      <q-drawer
-        side="right"
-        :breakpoint="700"
-        v-model="systemProperty.drawerRight"
-        bordered
-        class="bg-grey-3"
-      >
-        <Playing />
+      <q-drawer side="right" :width="isWideScreen ? 750 : 400" v-model="systemProperty.drawerRight" bordered
+        class="bg-grey-3">
+        <Playing ref="vue3VideoPlayRef" mode="drawer" />
       </q-drawer>
       <q-page-container>
         <router-view />
@@ -80,12 +41,13 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, ref } from 'vue';
+<script setup>
+import { computed, ref, watch } from 'vue';
 import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from '../stores/System';
 import { GetShutDown } from '../components/api/settingAPI';
 import { useQuasar } from 'quasar';
+import EssentialLink from 'components/EssentialLink.vue';
 
 import { useRoute } from 'vue-router';
 const systemProperty = useSystemProperty();
@@ -95,21 +57,28 @@ const isWideScreen = computed(() => {
   return $q.screen.width > 1000;
 });
 
-import EssentialLink, {
-  EssentialLinkProps,
-} from 'components/EssentialLink.vue';
+const playing = computed(() => {
+  return systemProperty.Playing || {};
+});
+
+const vue3VideoPlayRef = ref(null)
+
+
+watch(playing, (v) => {
+  if (v && v.Id) {
+    vue3VideoPlayRef.value.open(v)
+  } else {
+    vue3VideoPlayRef.value.stop()
+  }
+});
 
 const drawerLeft = ref(false);
-
-// const PlayMode = computed(() => {
-//   return systemProperty.PlayMode;
-// });
 
 const currentPath = computed(() => {
   return useRoute().path;
 });
 
-const essentialLinks: EssentialLinkProps[] = [
+const essentialLinks = [
   {
     title: '首页',
     caption: 'quasar.dev',

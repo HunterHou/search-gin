@@ -1,57 +1,54 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card
-      class="q-dialog-plugin q-pa-md"
-      :style="{
+  <q-dialog ref="dialogRef" @hide="onDialogHide" style="width: 80vw !important;">
+    <div style="max-width: 80vw !important;">
+      <q-card class="q-dialog-plugin q-pa-md" :style="{
         color: 'white',
         width: '100%',
-        height: 'auto',
+        maxHeight: '90vh',
         padding: '20px',
         lineHeight: '32px',
-      }"
-    >
-      <q-img
-        fit="fit"
-        easier
-        draggable
-        :src="getJpg(view.item.Id)"
-        style="max-height: 40vh"
-      >
-      </q-img>
-      <q-field label="Code" stack-label>
-        <template v-slot:control>
-          <div
-            class="self-center full-width no-outline"
-            style="color: blue"
-            tabindex="0"
-            @click="searchCode"
-          >
-            {{ view.item.Code }}
-          </div>
-        </template>
-      </q-field>
-      <q-field label="Actress" stack-label>
-        <template v-slot:control>
-          <div class="self-center full-width no-outline" tabindex="0">
-            {{ view.item.Actress }}
-          </div>
-        </template>
-      </q-field>
-      <q-field label="Name" stack-label>
-        <template v-slot:control>
-          <div class="self-center full-width no-outline" tabindex="0">
-            {{ formatTitle(view.item.Name) }}
-          </div>
-        </template>
-      </q-field>
-      <q-field label="Code" stack-label>
-        <template v-slot:control>
-          <div class="self-center full-width no-outline" tabindex="0">
-            {{ view.item.Path }}
-          </div>
-        </template>
-      </q-field>
-    </q-card>
+      }">
+
+        <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)" style="max-height: 40vh">
+        </q-img>
+        <q-field label="Code" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" style="color: blue" tabindex="0" @click="searchCode">
+              {{ view.item.Code }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Actress" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ view.item.Actress }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Name" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ formatTitle(view.item.Name) }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Code" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ view.item.Path }}
+            </div>
+          </template>
+        </q-field>
+
+      </q-card>
+      <div v-if="view.prewiewImages">
+        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item.Id" :src="getTempImage(item.Id)"
+          style="width: 100%;height: auto;"></q-img>
+      </div>
+    </div>
+
+
+
   </q-dialog>
 </template>
 
@@ -62,7 +59,8 @@ import { onMounted, reactive } from 'vue';
 
 import { formatTitle } from '../../../components/utils';
 import { GetSettingInfo } from '../../../components/api/settingAPI';
-import { getJpg } from 'src/components/utils/images';
+import { QueryDirImageBase64 } from '../../../components/api/searchAPI';
+import { getJpg, getTempImage } from 'src/components/utils/images';
 
 // const props = defineProps({
 //     // ...自定义 props
@@ -74,6 +72,7 @@ const view = reactive({
   item: {},
   settingInfo: {},
   callback: null,
+  prewiewImages: [],
 });
 
 defineEmits([
@@ -83,10 +82,17 @@ defineEmits([
 ]);
 
 const open = (item, cb) => {
-  view.item = {};
+  view.prewiewImages = [];
   view.item = { ...item };
   view.callback = cb;
   dialogRef.value.show();
+
+  setTimeout(() => {
+    QueryDirImageBase64(item.Id).then((res) => {
+      console.log(res.data)
+      view.prewiewImages = res.data
+    })
+  }, 500);
 };
 
 const fetchSetting = async () => {

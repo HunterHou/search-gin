@@ -13,7 +13,7 @@ const { configure } = require('quasar/wrappers');
 module.exports = configure(function (/* ctx */) {
   return {
     eslint: {
-      // fix: true,
+      fix: true,
       // include: [],
       // exclude: [],
       // rawOptions: {},
@@ -38,7 +38,7 @@ module.exports = configure(function (/* ctx */) {
       // 'mdi-v5',
       // 'fontawesome-v6',
       // 'eva-icons',
-      // 'themify',
+      'themify',
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
