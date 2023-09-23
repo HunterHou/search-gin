@@ -182,7 +182,7 @@ import { useQuasar } from 'quasar';
 import { computed, ref } from 'vue';
 
 import { onMounted, reactive } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   FileRename,
   OpenFileFolder,
@@ -217,6 +217,8 @@ const listEditRef = ref(null);
 const source = ref('Hello');
 const { copy } = useClipboard({ source });
 
+const { push } = useRouter()
+
 const systemProperty = useSystemProperty();
 const suggestions = computed(() => {
   return systemProperty.getSuggestions
@@ -245,7 +247,11 @@ const showButton = (name) => {
 };
 
 const openPlay = (item) => {
-  window.open(`/playing/${item.Id}`)
+  console.log($q.platform)
+  const url = `playing/${item.Id}`
+  // push(`/playing/${item.Id}`,'_blank')
+  // window.open()
+  window.electron.createWindow({ router: url, width: 1280, height: 1000 })
 }
 
 const view = reactive({

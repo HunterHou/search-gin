@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import os from 'os';
 
@@ -7,14 +7,17 @@ const platform = process.platform || os.platform();
 
 let mainWindow: BrowserWindow | undefined;
 
-function createWindow() {
+function createMainWindow() {
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1000,
-    height: 600,
+    width: 1600,
+    height: 900,
+    // transparent: true,
+    titleBarStyle: 'hidden',
+    backgroundColor: 'rgba(250,250,250,1)',
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
@@ -23,9 +26,8 @@ function createWindow() {
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
     },
   });
-
-  mainWindow.loadURL(process.env.APP_URL);
-
+  const url = `${process.env.APP_URL}`;
+  mainWindow.loadURL(url);
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools();
@@ -35,14 +37,54 @@ function createWindow() {
       mainWindow?.webContents.closeDevTools();
     });
   }
-  mainWindow.setMenu(null)
+  mainWindow.setMenu(null);
 
   mainWindow.on('closed', () => {
     mainWindow = undefined;
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createMainWindow();
+});
+
+function createSonWindow(params: any | undefined) {
+  /**
+   * Initial window options
+   */
+  const indow = new BrowserWindow({
+    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
+    width: 1600,
+    height: 900,
+    // transparent: true,
+    titleBarStyle: 'hidden',
+    backgroundColor: 'rgba(250,250,250,1)',
+    useContentSize: true,
+    webPreferences: {
+      contextIsolation: true,
+      webSecurity: false,
+      // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
+      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+    },
+    ...params,
+  });
+  const url = `${process.env.APP_URL}/#/${params?.router || ''}`;
+  indow.loadURL(url);
+  if (process.env.DEBUGGING) {
+    // if on DEV or Production with debug enabled
+    mainWindow.webContents.openDevTools();
+  } else {
+    // we're on production; no access to devtools pls
+    indow.webContents.on('devtools-opened', () => {
+      indow?.webContents.closeDevTools();
+    });
+  }
+  indow.setMenu(null);
+  indow.on('closed', () => {
+    mainWindow?.focus();
+  });
+  return indow;
+}
 
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
@@ -52,6 +94,12 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (mainWindow === undefined) {
-    createWindow();
+    createMainWindow();
   }
+});
+
+ipcMain.on('new-window', (event, params) => {
+  console.log(params);
+  // 打开网址（加载页面）
+  createSonWindow(params);
 });

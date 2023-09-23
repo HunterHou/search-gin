@@ -1,10 +1,17 @@
 <template>
   <q-card class="q-dialog-plugin" style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
-    <span style="color: orange; overflow: hidden">{{ view.playing.Title }}</span>
+    <div style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;">
+      <!-- <q-btn class="q-mr-sm" color="primary" label="返回" v-if="props.mode == 'page'" @click="go(-1)" /> -->
+      <q-btn class="q-mr-sm" size="sm" color="red" label="关闭" @click="closeThis" />
+      <span class="q-mr-sm"
+        style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden">{{
+          view.playing.Title }}</span>
+    </div>
+
     <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
       style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC" @ended="playNext(1)" />
     <q-card-actions align="left">
-      <q-btn color="red" label="关闭" @click="closeThis" />
+
       <q-btn flat style="color: #59d89d" :label="view.playing.Actress?.substring(0, 8)" @click="
         view.queryParam.Keyword = view.playing.Actress;
       fetchSearch();
@@ -50,7 +57,7 @@
   <div style="overflow: auto; background-color: rgba(0, 0, 0, 0.4)">
 
     <div class="row justify-center">
-      <q-card class="q-ma-sm example-item" v-for="item in view.playList" :key="item.Id">
+      <q-card class="q-ma-sm example-item" v-for="item in [view.playing,...view.playList]" :key="item.Id">
         <q-img fit="cover" easier draggable :src="getPng(item.Id)" class="item-img" @click="open(item)">
           <div style="
               padding: 0;
@@ -100,6 +107,8 @@ import { SearchAPI } from './api/searchAPI';
 import { GetSettingInfo } from './api/settingAPI';
 import { useRouter } from 'vue-router';
 
+import { onKeyStroke } from '@vueuse/core';
+
 const systemProperty = useSystemProperty();
 const vue3VideoPlayRef = ref(null);
 const { replace } = useRouter()
@@ -119,6 +128,12 @@ const props = defineProps({
     default: 'drawer'
   }
 })
+
+
+onKeyStroke(['Enter'], () => {
+  fetchSearch();
+});
+
 
 const suggestions = computed(() => {
   return systemProperty.getSuggestions
@@ -248,6 +263,7 @@ defineExpose({
   open,
   stop,
 });
+
 
 </script>
 <style lang="scss" scoped>

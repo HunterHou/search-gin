@@ -4,14 +4,11 @@
       <q-header reveal class="bg-black">
         <q-toolbar>
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
-          <q-toolbar-title>文件搜索</q-toolbar-title>
-          <!-- <q-space /> -->
+          <q-toolbar-title style=" -webkit-app-region: drag;">文件搜索</q-toolbar-title>
           <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
             color: currentPath == link.link ? 'red' : '',
             scale: 1.2,
           }" />
-
-          <q-space />
           <q-btn @click="GetShutDown()">关机</q-btn>
           <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu">
             {{ `${systemProperty && systemProperty.Playing?.Code || ''}` }}

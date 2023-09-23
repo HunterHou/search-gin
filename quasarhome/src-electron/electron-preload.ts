@@ -27,3 +27,11 @@
  *   }
  * }
  */
+
+const { contextBridge, ipcRenderer } = require('electron')
+contextBridge.exposeInMainWorld(
+  'electron',
+  {
+    createWindow: (args: any) => ipcRenderer.send('new-window',args)
+  }
+)
