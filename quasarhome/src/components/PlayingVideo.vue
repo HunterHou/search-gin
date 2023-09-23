@@ -1,24 +1,50 @@
 <template>
-  <q-card class="q-dialog-plugin" style="width:100%;background-color: rgba(0, 0, 0, 0.7)">
+  <q-card class="q-dialog-plugin" style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
     <span style="color: orange; overflow: hidden">{{ view.playing.Title }}</span>
     <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
       style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC" @ended="playNext(1)" />
     <q-card-actions align="left">
+      <q-btn color="red" label="关闭" @click="closeThis" />
       <q-btn flat style="color: #59d89d" :label="view.playing.Actress?.substring(0, 8)" @click="
-        Keyword = view.playing.Actress;
+        view.queryParam.Keyword = view.playing.Actress;
       fetchSearch();
       " />
       <q-btn flat style="color: goldenrod" :label="view.playing.Code?.substring(0, 8)" @click="
-        Keyword = view.playing.Code;
+        view.queryParam.Keyword = view.playing.Code;
       fetchSearch();
       " />
-      <q-input v-model="Keyword" :dense="true" clearable @update:model-value="fetchSearch" />
+      <q-input v-model="view.queryParam.Keyword" :dense="true" clearable @update:model-value="fetchSearch">
+        <q-popup-proxy>
+          <div style="width: 200px;max-height: 30vh;">
+            <q-list>
+              <q-item clickable v-ripple v-for="word in suggestions" :key="word"
+                @click="view.queryParam.Keyword = word; fetchSearch()">
+                <q-item-section>
+                  <q-item-label>{{ word }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </q-popup-proxy>
+      </q-input>
+      <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch()" toggle-color="primary"
+        :options="[
+          { label: '正', value: 'asc' },
+          { label: '倒', value: 'desc' }
+        ]" />
       <q-btn color="primary" :label="systemProperty.PlayMode !== 800 ? '小屏' : '全屏'" v-if="props.mode == 'drawer'"
         @click="changeMode" />
-      <q-btn color="primary" label="关闭" @click="closeThis" />
       <q-btn v-if="!view.playlist" color="primary" label="上一个" @click="playNext(-1)" />
       <q-btn v-if="!view.playlist" color="primary" label="下一个" @click="playNext(1)" />
       <q-btn color="primary" label="隐藏" v-if="props.mode == 'drawer'" @click="hideThis" />
+      <q-btn color="orange" label="更多" @click="view.showMore = !view.showMore; fetchGetSettingInfo()" />
+      <span v-if="view.showMore">
+        <q-chip square color="red" text-color="white" v-for="tag in view.settingInfo.Tags" :key="tag"
+          style="margin-left: 0px; padding: 0 4px">
+          <span @click="view.queryParam.Keyword = tag; fetchSearch()">{{ tag }}</span>
+        </q-chip>
+      </span>
+
     </q-card-actions>
   </q-card>
   <div style="overflow: auto; background-color: rgba(0, 0, 0, 0.4)">
@@ -43,7 +69,7 @@
               ">
               <q-chip square color="red" text-color="white" v-for="tag in item.Tags" :key="tag"
                 style="margin-left: 0px; padding: 0 4px">
-                <span @click="fetchSearch(tag)">{{ tag }}</span>
+                <span @click="view.queryParam.Keyword = tag; fetchSearch()">{{ tag }}</span>
               </q-chip>
             </div>
             <q-chip @click.stop="() => { }" square color="green" text-color="white"
@@ -71,16 +97,19 @@ import { useSystemProperty } from '../stores/System';
 import { getFileStream } from './utils/images';
 import { getPng } from './utils/images';
 import { SearchAPI } from './api/searchAPI';
-import { scroll } from 'quasar'
-const { getVerticalScrollPosition, setVerticalScrollPosition } = scroll
+import { GetSettingInfo } from './api/settingAPI';
+import { useRouter } from 'vue-router';
 
 const systemProperty = useSystemProperty();
 const vue3VideoPlayRef = ref(null);
+const { replace } = useRouter()
 
-const Keyword = ref('');
 const $q = useQuasar();
 const view = reactive({
   playList: [],
+  queryParam: { SortType: 'desc' },
+  showMore: false,
+  settingInfo: {},
   playing: {}
 });
 
@@ -90,6 +119,11 @@ const props = defineProps({
     default: 'drawer'
   }
 })
+
+const suggestions = computed(() => {
+  return systemProperty.getSuggestions
+})
+
 
 const drawerRight = computed(() => {
   return systemProperty.drawerRight;
@@ -105,16 +139,24 @@ watch(drawerRight, (v) => {
 const open = (v) => {
   view.playing = v
   optionsPC.src = getFileStream(v.Id);
+  window.scrollTo(0, 0);
 
-  window.scrollTo(0,0);
+  if (props.mode == 'page') {
+    replace(`/playing/${v.Id}`)
+  }
 
   setTimeout(() => {
     vue3VideoPlayRef.value.play();
   }, 800);
-  if (!Keyword.value) {
-    Keyword.value = v.Actress;
+  if (!view.queryParam.Keyword) {
+    view.queryParam.Keyword = v.Actress;
     fetchSearch();
   }
+};
+
+const fetchGetSettingInfo = async () => {
+  const data = await GetSettingInfo();
+  view.settingInfo = data.data;
 };
 
 const stop = () => {
@@ -138,11 +180,10 @@ const closeThis = () => {
 const fetchSearch = async () => {
   const data = await SearchAPI({
     ...systemProperty.FileSearchParam,
+    ...view.queryParam,
     Page: 1,
     PageSize: 999,
-    Keyword: Keyword.value,
   });
-  console.log(data);
   view.playList = data.Data;
   if (!view.playing) {
     view.playing = view.playList[0];
@@ -207,6 +248,7 @@ defineExpose({
   open,
   stop,
 });
+
 </script>
 <style lang="scss" scoped>
 .example-item {

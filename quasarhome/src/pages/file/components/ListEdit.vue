@@ -468,7 +468,7 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 // ...会自动关闭对话框
 // }
 
-const updateButtons = (arr) => {
+const updateButtons = () => {
   if (view.callback) {
     PostSettingInfo(view.settingInfo)
     view.callback({ settingInfo: view.settingInfo });
