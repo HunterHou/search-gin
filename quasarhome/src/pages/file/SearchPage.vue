@@ -21,7 +21,7 @@
         :options="MovieTypeSelects" />
       <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
         @update:model-value="fetchSearch()" @focus="focusEvent($event)">
-        <q-popup-proxy >
+        <q-popup-proxy>
           <div style="width: 200px;max-height: 50vh;">
             <q-list>
               <q-item clickable v-ripple v-for="word in suggestions" :key="word"
@@ -64,7 +64,7 @@
       </div>
     </q-page-sticky>
 
-    <div class="row justify-center q-gutter-sm q-mr-sm q-mt-sm">
+    <div class="row justify-center q-gutter-sm q-mr-sm q-mt-sm mainlist">
       <q-card class="q-ma-sm example-item" v-for="item in view.resultData.Data" :key="item.Id">
         <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="openDialog(item)">
           <div style="
@@ -217,14 +217,6 @@ const listEditRef = ref(null);
 const source = ref('Hello');
 const { copy } = useClipboard({ source });
 
-// 获取一个元素对象
-const scrollToTop = () => {
-  // const el = topRef.value
-  // const target = getScrollTarget(el)
-  // const offset = el.offsetTop
-  // const duration = 1000
-  // setVerticalScrollPosition(target, offset, duration)
-};
 const systemProperty = useSystemProperty();
 const suggestions = computed(() => {
   return systemProperty.getSuggestions
@@ -335,7 +327,11 @@ const openDialog = (item) => {
 const currentPageChange = async (e) => {
   console.log('view.queryParam.Page', e);
   await fetchSearch();
-  window.scrollTo(0, 0);
+  const top = document.querySelector('.scroll')
+  console.log(top)
+  if (top) {
+    top.scrollTo(0, 0)
+  }
 };
 
 const fetchSearch = async () => {
