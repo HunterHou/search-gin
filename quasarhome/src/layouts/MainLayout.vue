@@ -1,37 +1,82 @@
 <template>
   <div>
-    <q-layout view="lhh LpR lff" container style="height: 100vh" class="shadow-2 rounded-borders">
+    <q-layout
+      view="LHR lpr lfr"
+      container
+      style="height: 100vh"
+      class="shadow-2 rounded-borders"
+    >
       <q-header reveal class="bg-black">
         <q-toolbar>
-          <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
+          <q-btn
+            flat
+            @click="drawerLeft = !drawerLeft"
+            round
+            dense
+            icon="menu"
+          />
           <q-toolbar-title>文件搜索</q-toolbar-title>
           <q-space />
-          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link"
-            :style="{ color: currentPath == link.link ? 'red' : '', scale: 1.2 }" />
+          <EssentialLink
+            v-for="link in essentialLinks"
+            :key="link.title"
+            v-bind="link"
+            v-show="isWideScreen"
+            :style="{
+              color: currentPath == link.link ? 'red' : '',
+              scale: 1.2
+            }"
+          />
+
           <q-space />
           <q-btn @click="GetShutDown()">关机</q-btn>
-          <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu">
+          <q-btn
+            flat
+            @click="systemProperty.drawerRight = !systemProperty.drawerRight"
+            round
+            dense
+            icon="menu"
+          >
             {{ `${systemProperty.Playing?.Code || ''}` }}
           </q-btn>
         </q-toolbar>
       </q-header>
 
-      <q-drawer v-model="drawerLeft" :width="200" :breakpoint="700" bordered class="bg-grey-3">
+      <q-drawer
+        v-model="drawerLeft"
+        :width="200"
+        :breakpoint="700"
+        bordered
+        class="bg-grey-3"
+      >
         <q-scroll-area class="fit">
           <q-list>
-            <q-item-label header>
-              你的搜索工具
-            </q-item-label>
-            <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link"
-              :style="{ color: currentPath == link.link ? 'red' : '', scale: 1.2 }" />
+            <q-item-label header> 你的搜索工具 </q-item-label>
+            <EssentialLink
+              v-for="link in essentialLinks"
+              :key="link.title"
+              v-bind="link"
+              :style="{
+                color: currentPath == link.link ? 'red' : '',
+                scale: 1.2
+              }"
+            />
           </q-list>
         </q-scroll-area>
       </q-drawer>
-
-      <q-drawer side="right" v-model="systemProperty.drawerRight" bordered :width="PlayMode" class="bg-grey-3">
+      <q-drawer
+        side="right"
+        :breakpoint="700"
+        v-model="systemProperty.drawerRight"
+        bordered
+        class="bg-grey-3"
+      >
         <Playing />
       </q-drawer>
-      <q-page-container style="height: 100%">
+      <q-page-container
+        style="h
+eight: 100%"
+      >
         <router-view />
       </q-page-container>
     </q-layout>
@@ -39,25 +84,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from '../stores/System';
 import { GetShutDown } from '../components/api/settingAPI';
+import { useQuasar } from 'quasar';
 
 import { useRoute } from 'vue-router';
-const systemProperty = useSystemProperty()
+const systemProperty = useSystemProperty();
+const $q = useQuasar();
 
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
+const isWideScreen = computed(() => {
+  return $q.screen.width > 1000;
+});
 
-const drawerLeft = ref(false)
+import EssentialLink, {
+  EssentialLinkProps
+} from 'components/EssentialLink.vue';
+
+const drawerLeft = ref(false);
 
 const PlayMode = computed(() => {
-  return systemProperty.PlayMode
-})
+  return systemProperty.PlayMode;
+});
 
 const currentPath = computed(() => {
-  return useRoute().path
-})
+  return useRoute().path;
+});
 
 const essentialLinks: EssentialLinkProps[] = [
   {
@@ -89,10 +142,6 @@ const essentialLinks: EssentialLinkProps[] = [
     caption: 'forum.quasar.dev',
     icon: 'chat',
     link: '/system'
-  },
+  }
 ];
-
-
-
-
 </script>
