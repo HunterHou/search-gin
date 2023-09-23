@@ -335,7 +335,7 @@ const openDialog = (item) => {
 const currentPageChange = async (e) => {
   console.log('view.queryParam.Page', e);
   await fetchSearch();
-  scrollToTop();
+  window.scrollTo(0, 0);
 };
 
 const fetchSearch = async () => {
