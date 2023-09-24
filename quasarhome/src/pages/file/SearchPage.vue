@@ -19,21 +19,25 @@
 
       <q-btn-toggle v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()" toggle-color="primary"
         :options="MovieTypeSelects" />
-      <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
-        @update:model-value="fetchSearch()" @focus="focusEvent($event)">
-        <q-popup-proxy>
-          <div style="width: 200px;max-height: 50vh;">
-            <q-list>
-              <q-item clickable v-ripple v-for="word in suggestions" :key="word"
-                @click="view.queryParam.Keyword = word; fetchSearch()">
-                <q-item-section>
-                  <q-item-label>{{ word }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </div>
+      <q-input id="searchBtn" label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
+        @update:model-value="fetchSearch()">
+        <template v-slot:prepend>
+          <q-icon name="ti-list" class="cursor-pointer">
+            <q-popup-proxy>
+              <div style="width: 200px;max-height: 50vh;">
+                <q-list>
+                  <q-item clickable v-ripple v-for="word in suggestions" :key="word"
+                    @click="view.queryParam.Keyword = word; fetchSearch()">
+                    <q-item-section>
+                      <q-item-label>{{ word }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
 
-        </q-popup-proxy>
       </q-input>
       <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch" label="重" />
       <q-btn class="q-mr-sm" size="sm" color="primary" icon="apps" @click="

@@ -1,52 +1,24 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card
-      class="q-dialog-plugin q-pa-md"
-      :style="{
-        width: '600px',
-        backgroundImage: `linear-gradient(to left, rgba(255,255,255,0.1), rgba(255,255,255,0.1))`,
-      }"
-    >
+    <q-card class="q-dialog-plugin q-pa-md" :style="{
+      width: '600px',
+      backgroundImage: `linear-gradient(to left, rgba(255,255,255,0.1), rgba(255,255,255,0.1))`,
+    }">
       <q-form class="q-gutter-md">
-        <q-option-group
-          v-model="view.item.MovieType"
-          :options="MovieTypeOptions"
-          color="primary"
-          inline
-        />
-        <q-input
-          label="编码"
-          autogrow
-          v-model="view.item.Code"
-          :dense="false"
-        />
-        <q-input
-          label="图鉴"
-          autogrow
-          v-model="view.item.Actress"
-          :dense="false"
-        />
-        <q-input
-          label="名称"
-          autogrow
-          v-model="view.item.Title"
-          :dense="false"
-        />
+        <q-option-group v-model="view.item.MovieType" :options="MovieTypeOptions" color="primary" inline />
+        <q-input label="编码" autogrow v-model="view.item.Code" :dense="false" />
+        <q-input label="图鉴" autogrow v-model="view.item.Actress" :dense="false" />
+        <q-input label="名称" autogrow v-model="view.item.Title" :dense="false" />
       </q-form>
 
       <!-- <q-input label="名称"  standout v-model="view.item.Name" :dense="true" /> -->
       <!-- 按钮示例 -->
       <q-card-actions align="right">
         <q-btn color="primary" label="移动" @click="editMoveout" />
-        <q-btn
-          color="primary"
-          label="命名"
-          @click="
-            () => {
-              editItemSubmit(false);
-            }
-          "
-        />
+        <q-btn color="primary" label="命名" @click="() => {
+            editItemSubmit(false);
+          }
+          " />
         <q-btn color="primary" label="关闭" @click="onDialogCancel" />
       </q-card-actions>
     </q-card>
@@ -118,15 +90,8 @@ const editItemSubmit = async (MoveOut) => {
   const arrLength = arr.length;
   for (let idx = 0; idx < arrLength; idx++) {
     const str = arr[idx];
-    if (idx == arrLength - 1) {
-      name += '.' + str;
-    } else if (idx == 0) {
-      const strNew = str.replace(str.charAt(0), str.charAt(0).toUpperCase());
-      name += strNew;
-    } else {
-      const strNew = str.replace(str.charAt(0), str.charAt(0).toUpperCase());
-      name += ' ' + strNew;
-    }
+    const strNew = str.replace(str.charAt(0), str.charAt(0).toUpperCase());
+    name += strNew;
   }
 
   if (name.indexOf('.' + FileType) < 0) {
