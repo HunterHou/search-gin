@@ -1,5 +1,17 @@
 <template>
   <div class="q-mg-md top" style="margin-bottom: 60px">
+
+    <q-page-sticky style="z-index: 9;" position="left" :offset="[0, 0]">
+      <q-btn round class="page-sticky" color="amber" text-color="black" icon="keyboard_arrow_left"
+        v-if="view.queryParam.Page > 1" @click="nextPage(-1)"></q-btn>
+    </q-page-sticky>
+
+    <q-page-sticky style="z-index: 9;" position="right" :offset="[10, 10]">
+      <q-btn round class="page-sticky" color="secondary" text-color="black" icon="keyboard_arrow_right"
+        @click="nextPage(1)"></q-btn>
+    </q-page-sticky>
+
+
     <div class="row justify-center q-gutter-sm" ref="top">
       <q-btn :loading="refreshIndexLoading" color="red" @click="refreshIndex">
         扫描【~】
@@ -339,6 +351,11 @@ const currentPageChange = async (e) => {
   }
 };
 
+const nextPage = (n) => {
+  view.queryParam.Page = view.queryParam.Page + n
+  currentPageChange()
+}
+
 const fetchSearch = async () => {
   saveParam()
   const data = await SearchAPI(view.queryParam);
@@ -478,5 +495,10 @@ onMounted(async () => {
     padding: 1px 6px;
     border-radius: 8px;
   }
+}
+
+.page-sticky {
+  width: 4rem;
+  height: 3rem;
 }
 </style>
