@@ -8,8 +8,22 @@
         padding: '20px',
         lineHeight: '32px',
       }">
-
-        <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)" style="max-height: 40vh">
+        <q-btn round class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen" @click="openPlay(view.item)" />
+        <q-btn round class="q-mr-sm" size="sm" ripple color="green-7" icon="ti-blackboard"
+          @click="openDialog(view.item)" />
+        <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
+          @click="commonExec(PlayMovie(view.item.Id))" />
+        <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
+          @click="commonExec(OpenFileFolder(view.item.Id))" />
+        <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
+          v-if="!view.item.MovieType || view.item.MovieType == '无'"
+          @click="commonExec(SyncFileInfo(view.item.Id), true)" />
+        <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
+          @click="commonExec(DownImageList(view.item.Id))" />
+        <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
+          @click="confirmDelete(view.item)" />
+        <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(view.item)" icon="ti-control-shuffle" />
+        <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)" style="min-width:600px ;max-height: 50vh">
         </q-img>
         <q-field label="Code" stack-label>
           <template v-slot:control>
@@ -32,6 +46,13 @@
             </div>
           </template>
         </q-field>
+        <q-field label="Time" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ formatTitle(view.item.MTime) }}
+            </div>
+          </template>
+        </q-field>
         <q-field label="Code" stack-label>
           <template v-slot:control>
             <div class="self-center full-width no-outline" tabindex="0">
@@ -46,27 +67,72 @@
           style="width: 100%;height: auto;"></q-img>
       </div>
     </div>
-
-
-
   </q-dialog>
 </template>
-
 <script setup>
-// import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useDialogPluginComponent } from 'quasar';
 import { onMounted, reactive } from 'vue';
 
 import { formatTitle } from '../../../components/utils';
 import { GetSettingInfo } from '../../../components/api/settingAPI';
-import { QueryDirImageBase64 } from '../../../components/api/searchAPI';
+import {
+  QueryDirImageBase64, OpenFileFolder,
+  DownImageList, FileRename, DeleteFile,
+  PlayMovie, SyncFileInfo
+} from '../../../components/api/searchAPI';
 import { getJpg, getTempImage } from 'src/components/utils/images';
+import { useSystemProperty } from '../../../stores/System';
 
-// const props = defineProps({
-//     // ...自定义 props
-// })
+const $q = useQuasar()
+const systemProperty = useSystemProperty();
 
-// const $q = useQuasar()
+const commonExec = async (exec) => {
+  const { Code, Message } = (await exec) || {};
+  console.log(Code, Message);
+  if (Code != 200) {
+    $q.notify({ message: `${Message}` });
+  }
+}
+
+const openPlay = (item) => {
+  window.open(`/playing/${item.Id}`)
+}
+
+const moveThis = async (item) => {
+  const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
+  console.log(res);
+  if (res.Code == 200) {
+    $q.notify({ type: 'negative', message: res.Message });
+  } else {
+    $q.notify({ type: 'negative', message: res.Message });
+  }
+};
+
+
+const confirmDelete = (item) => {
+  $q.dialog({
+    title: item.Name,
+    message: '确定删除吗?',
+    cancel: true,
+    persistent: true
+  })
+    .onOk(() => {
+      commonExec(DeleteFile(item.Id), true);
+    })
+    .onCancel(() => {
+      console.log('>>>> Cancel');
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
+
+const openDialog = (item) => {
+  view.currentData = item;
+  systemProperty.Playing = item;
+  systemProperty.drawerRight = true;
+};
 
 const view = reactive({
   item: {},

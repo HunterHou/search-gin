@@ -19,21 +19,25 @@
 
       <q-btn-toggle v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()" toggle-color="primary"
         :options="MovieTypeSelects" />
-      <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
-        @update:model-value="fetchSearch()" @focus="focusEvent($event)">
-        <q-popup-proxy>
-          <div style="width: 200px;max-height: 50vh;">
-            <q-list>
-              <q-item clickable v-ripple v-for="word in suggestions" :key="word"
-                @click="view.queryParam.Keyword = word; fetchSearch()">
-                <q-item-section>
-                  <q-item-label>{{ word }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </div>
+      <q-input id="searchBtn" label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
+        @update:model-value="fetchSearch()">
+        <template v-slot:prepend>
+          <q-icon name="ti-list" class="cursor-pointer">
+            <q-popup-proxy>
+              <div style="width: 200px;max-height: 50vh;">
+                <q-list>
+                  <q-item clickable v-ripple v-for="word in suggestions" :key="word"
+                    @click="view.queryParam.Keyword = word; fetchSearch()">
+                    <q-item-section>
+                      <q-item-label>{{ word }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
 
-        </q-popup-proxy>
       </q-input>
       <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch" label="重" />
       <q-btn class="q-mr-sm" size="sm" color="primary" icon="apps" @click="
@@ -66,12 +70,15 @@
 
     <div class="row justify-center q-gutter-sm q-mr-sm q-mt-sm mainlist">
       <q-card class="q-ma-sm example-item" v-for="item in view.resultData.Data" :key="item.Id">
-        <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="openDialog(item)">
+        <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="() => {
+          fileInfoRef.open(item, refreshIndex);
+        }">
           <div style="
               padding: 0;
               margin: 0;
               background-color: rgba(0, 0, 0, 0);
               display: flex;
+              height: 2rem;
               flex-direction: row;
               justify-content: space-between;
               width: 100%;
@@ -114,8 +121,13 @@
                 ">{{ tag }}</span>
               </q-chip>
             </div>
+            <div class="row" @click.stop="() => { }">
+              <q-btn round class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen" @click="openPlay(item)" />
+              <q-btn round class="q-mr-sm" size="sm" ripple color="green-7" icon="ti-blackboard"
+                @click="openDialog(item)" />
+            </div>
             <div>
-              <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8)" :label="item.MovieType"
+              <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;" :label="item.MovieType"
                 @click.stop="() => { }">
                 <q-list style="background-color: rgba(0, 0, 0, 0.7)">
                   <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
@@ -130,29 +142,22 @@
           </div>
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px" @click.stop="() => { }">
             <div style="display: flex; flex-direction: row">
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-blackboard"
+              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
                 @click="commonExec(PlayMovie(item.Id))" v-if="showButton('播放')" />
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-layout-media-right-alt"
-                @click="openPlay(item)" />
-              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-save" @click="() => {
+              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice" @click="() => {
                 fileEditRef.open(item, refreshIndex);
               }
                 " v-if="showButton('编辑')" />
-              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="open_in_new"
+              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
                 @click="commonExec(OpenFileFolder(item.Id))" v-if="showButton('文件夹')" />
-
               <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
                 v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id), true)" />
-              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-reload"
+              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
                 @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" />
               <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
                 @click="confirmDelete(item)" v-if="showButton('删除')" />
               <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-control-shuffle"
                 v-if="showButton('移动')" />
-              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-fullscreen" @click="() => {
-                fileInfoRef.open(item, refreshIndex);
-              }
-                " v-if="showButton('详情')" />
             </div>
             <!-- <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
               class="q-pa-md  text-white shadow-2 q-gutter-sm">

@@ -12,7 +12,7 @@
           <q-btn @click="closeWindow">关闭</q-btn>
           <q-btn @click="GetShutDown()">关机</q-btn>
           <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu">
-            {{ `${systemProperty && systemProperty.Playing?.Code || ''}` }}
+            {{ `${systemProperty && systemProperty.Playing?.Code?.substring(0,8) || systemProperty.Playing?.Title?.substring(0,8)}` }}
           </q-btn>
         </q-toolbar>
       </q-header>

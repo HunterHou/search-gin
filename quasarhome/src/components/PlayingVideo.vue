@@ -1,17 +1,17 @@
 <template>
+  <div class="topRef"> </div>
   <q-card class="q-dialog-plugin" style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
+
     <div style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;">
-      <!-- <q-btn class="q-mr-sm" color="primary" label="返回" v-if="props.mode == 'page'" @click="go(-1)" /> -->
       <q-btn class="q-mr-sm" size="sm" color="red" label="关闭" @click="closeThis" />
       <span class="q-mr-sm"
         style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden">{{
           view.playing.Title }}</span>
     </div>
-
     <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
       style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC" @ended="playNext(1)" />
     <q-card-actions align="left">
-
+     
       <q-btn flat style="color: #59d89d" :label="view.playing.Actress?.substring(0, 8)" @click="
         view.queryParam.Keyword = view.playing.Actress;
       fetchSearch();
@@ -21,18 +21,22 @@
       fetchSearch();
       " />
       <q-input v-model="view.queryParam.Keyword" :dense="true" clearable @update:model-value="fetchSearch">
-        <q-popup-proxy>
-          <div style="width: 200px;max-height: 30vh;">
-            <q-list>
-              <q-item clickable v-ripple v-for="word in suggestions" :key="word"
-                @click="view.queryParam.Keyword = word; fetchSearch()">
-                <q-item-section>
-                  <q-item-label>{{ word }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </div>
-        </q-popup-proxy>
+        <template v-slot:prepend>
+          <q-icon name="ti-list" class="cursor-pointer">
+            <q-popup-proxy>
+              <div style="width: 200px;max-height: 50vh;">
+                <q-list>
+                  <q-item clickable v-ripple v-for="word in suggestions" :key="word"
+                    @click="view.queryParam.Keyword = word; fetchSearch()">
+                    <q-item-section>
+                      <q-item-label>{{ word }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
       </q-input>
       <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch()" toggle-color="primary"
         :options="[
@@ -43,7 +47,6 @@
         @click="changeMode" />
       <q-btn v-if="!view.playlist" color="primary" label="上一个" @click="playNext(-1)" />
       <q-btn v-if="!view.playlist" color="primary" label="下一个" @click="playNext(1)" />
-      <q-btn color="primary" label="隐藏" v-if="props.mode == 'drawer'" @click="hideThis" />
       <q-btn color="orange" label="更多" @click="view.showMore = !view.showMore; fetchGetSettingInfo()" />
       <span v-if="view.showMore">
         <q-chip square color="red" text-color="white" v-for="tag in view.settingInfo.Tags" :key="tag"
@@ -55,7 +58,6 @@
     </q-card-actions>
   </q-card>
   <div style="overflow: auto; background-color: rgba(0, 0, 0, 0.4)">
-
     <div class="row justify-center">
       <q-card class="q-ma-sm example-item" v-for="item in [view.playing, ...view.playList]" :key="item.Id">
         <q-img fit="cover" easier draggable :src="getPng(item.Id)" class="item-img" @click="open(item)">
@@ -154,9 +156,7 @@ watch(drawerRight, (v) => {
 const open = (v) => {
   view.playing = v
   optionsPC.src = getFileStream(v.Id);
-  
-  const top = document.querySelector('.q-dialog-plugin')
-  console.log(top)
+  const top = document.querySelector('.topRef')
   if (top) {
     top.scrollTo(0, 0)
   }
