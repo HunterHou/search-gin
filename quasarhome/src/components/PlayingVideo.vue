@@ -154,7 +154,12 @@ watch(drawerRight, (v) => {
 const open = (v) => {
   view.playing = v
   optionsPC.src = getFileStream(v.Id);
-  window.scrollTo(0, 0);
+  
+  const top = document.querySelector('.q-dialog-plugin')
+  console.log(top)
+  if (top) {
+    top.scrollTo(0, 0)
+  }
 
   if (props.mode == 'page') {
     replace(`/playing/${v.Id}`)
