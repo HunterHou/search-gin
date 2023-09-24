@@ -27,7 +27,7 @@
         style="height: 100%; overflow: auto"
       >
         <q-tab-panel name="filelist">
-          <div class="q-px-sm">
+          <div class="q-px-sm row justify-left">
             <q-btn
               class="q-mr-sm"
               color="amber"
@@ -134,8 +134,9 @@
                     size="sm"
                     class="q-mr-sm"
                     color="black"
+                    icon="ti-pencil-alt2"
                     @click="item.showCut = true"
-                    >剪切</q-btn
+                    ></q-btn
                   >
                   <q-btn
                     size="sm"
