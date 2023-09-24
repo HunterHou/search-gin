@@ -1,4 +1,5 @@
 <template>
+  <div class="topRef"> </div>
   <q-card class="q-dialog-plugin" style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
     <span style="color: orange; overflow: hidden">{{ view.playing.Title }}</span>
     <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
@@ -48,7 +49,6 @@
     </q-card-actions>
   </q-card>
   <div style="overflow: auto; background-color: rgba(0, 0, 0, 0.4)">
-
     <div class="row justify-center">
       <q-card class="q-ma-sm example-item" v-for="item in view.playList" :key="item.Id">
         <q-img fit="cover" easier draggable :src="getPng(item.Id)" class="item-img" @click="open(item)">
@@ -139,7 +139,11 @@ watch(drawerRight, (v) => {
 const open = (v) => {
   view.playing = v
   optionsPC.src = getFileStream(v.Id);
-  window.scrollTo(0, 0);
+
+  const top = document.querySelector('.topRef')
+  if (top) {
+    top.scrollTo(0, 0)
+  }
 
   if (props.mode == 'page') {
     replace(`/playing/${v.Id}`)
