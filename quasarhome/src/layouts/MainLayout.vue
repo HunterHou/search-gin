@@ -5,15 +5,23 @@
         <q-toolbar>
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
           <q-toolbar-title style=" -webkit-app-region: drag;">文件搜索</q-toolbar-title>
-          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
-            color: currentPath == link.link ? 'red' : '',
-            scale: 1.2,
-          }" />
-          <q-btn @click="closeWindow">关闭</q-btn>
-          <q-btn @click="GetShutDown()">关机</q-btn>
-          <q-btn flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense icon="menu">
-            {{ `${systemProperty && systemProperty.Playing?.Code?.substring(0,8) || systemProperty.Playing?.Title?.substring(0,8)}` }}
+          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link"
+            v-show="isWideScreen" :style="{
+              color: currentPath == link.link ? 'red' : '',
+              scale: 1.2,
+            }" />
+          <q-space />
+          <q-btn color="green" flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense
+            icon="menu">
+            {{ `${systemProperty && systemProperty.Playing?.Code?.substring(0, 8) ||
+              systemProperty.Playing?.Title?.substring(0, 8)}` }}
           </q-btn>
+          <q-bar class="bg-black text-white">
+            <q-btn dense flat icon="minimize" @click="hideMainWindow" />
+            <q-btn dense flat icon="crop_square" @click="maxMainWindow" />
+            <q-btn dense flat icon="close" @click="confirmClose" />
+            <q-btn dense flat icon="ti-timer" @click="confirmDelete" />
+          </q-bar>
         </q-toolbar>
       </q-header>
 
@@ -79,6 +87,51 @@ const currentPath = computed(() => {
 const closeWindow = () => {
   window.close()
 }
+
+const maxMainWindow = () => {
+  window.electron.maxMainWindow()
+}
+
+
+const hideMainWindow = () => {
+  window.electron.hideMainWindow()
+}
+
+const confirmClose = () => {
+  $q.dialog({
+    message: '确定关闭吗?',
+    cancel: true,
+    persistent: true
+  })
+    .onOk(() => {
+      console.log('>>>> onOk');
+      closeWindow()
+    })
+    .onCancel(() => {
+      console.log('>>>> Cancel');
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
+
+const confirmDelete = () => {
+  $q.dialog({
+    message: '确定关机吗?',
+    cancel: true,
+    persistent: true
+  })
+    .onOk(() => {
+      console.log('>>>> onOk');
+      GetShutDown()
+    })
+    .onCancel(() => {
+      console.log('>>>> Cancel');
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
 
 const essentialLinks = [
   {

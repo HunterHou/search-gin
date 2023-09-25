@@ -1,16 +1,12 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, nativeImage, Menu } from 'electron';
 import path from 'path';
 import os from 'os';
 
-// needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
 let mainWindow: BrowserWindow | undefined;
-
+// 创建主窗口
 function createMainWindow() {
-  /**
-   * Initial window options
-   */
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1400,
@@ -44,14 +40,8 @@ function createMainWindow() {
   });
 }
 
-app.whenReady().then(() => {
-  createMainWindow();
-});
-
-function createSonWindow(params: any | undefined) {
-  /**
-   * Initial window options
-   */
+// 创建子窗口
+function createSonWindow(params: object | undefined) {
   const indow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1600,
@@ -89,6 +79,35 @@ function createSonWindow(params: any | undefined) {
   return indow;
 }
 
+let tray;
+// 启动
+app.whenReady().then(() => {
+  createMainWindow();
+
+  const icon = nativeImage.createFromPath(
+    path.resolve(__dirname, 'icons/icon.png')
+  );
+  tray = new Tray(icon);
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '显示',
+      type: 'normal',
+      click: () => {
+        mainWindow?.show();
+      },
+    },
+    {
+      label: '重启',
+      type: 'normal',
+      click: () => {
+        app?.relaunch();
+      },
+    },
+  ]);
+  tray.setContextMenu(contextMenu);
+});
+
+// 所有窗口都关闭
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
     app.quit();
@@ -101,8 +120,24 @@ app.on('activate', () => {
   }
 });
 
+// 监听 新窗口时间
 ipcMain.on('new-window', (event, params) => {
-  console.log(params);
-  // 打开网址（加载页面）
   createSonWindow(params);
+});
+
+// 监听 z最大化
+ipcMain.on('main-maximize', () => {
+  if (mainWindow?.isMaximized()) {
+    mainWindow?.restore();
+  } else {
+    mainWindow?.maximize();
+  }
+});
+// 监听 z最大化
+ipcMain.on('main-hide', () => {
+  mainWindow?.minimize();
+});
+
+ipcMain.on('main-resize', () => {
+  mainWindow?.restore();
 });

@@ -1,6 +1,5 @@
 <template>
   <div class="q-mg-md top" style="margin-bottom: 60px">
-
     <q-page-sticky style="z-index: 9;" position="left" :offset="[0, 0]">
       <q-btn round class="page-sticky" color="amber" text-color="black" icon="keyboard_arrow_left"
         v-if="view.queryParam.Page > 1" @click="nextPage(-1)"></q-btn>
@@ -10,7 +9,6 @@
       <q-btn round class="page-sticky" color="secondary" text-color="black" icon="keyboard_arrow_right"
         @click="nextPage(1)"></q-btn>
     </q-page-sticky>
-
 
     <div class="row justify-center q-gutter-sm" ref="top">
       <q-btn :loading="refreshIndexLoading" color="red" @click="refreshIndex">
@@ -130,27 +128,24 @@
                 <span @click="
                   view.queryParam.Keyword = tag;
                 fetchSearch();
-                ">{{ tag }}</span>
+                ">{{ tag?.substring(0, 4) }}</span>
               </q-chip>
             </div>
             <div class="row" @click.stop="() => { }">
-              <q-btn round class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen" @click="openPlay(item)" />
-              <q-btn round class="q-mr-sm" size="sm" ripple color="green-7" icon="ti-blackboard"
-                @click="openDialog(item)" />
+              <q-btn round class="mr10" size="sm" ripple color="orange" icon="ti-fullscreen" @click="openPlay(item)" />
+              <q-btn round size="sm" ripple color="orange-4" icon="ti-blackboard" @click="openDialog(item)" />
             </div>
-            <div>
-              <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;" :label="item.MovieType"
-                @click.stop="() => { }">
-                <q-list style="background-color: rgba(0, 0, 0, 0.7)">
-                  <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
-                    <q-item-section>
-                      <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
-            </div>
+            <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 74px;" :label="item.MovieType"
+              @click.stop="() => { }">
+              <q-list style="background-color: rgba(0, 0, 0, 0.7)">
+                <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
+                  <q-item-section>
+                    <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
           </div>
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px" @click.stop="() => { }">
             <div style="display: flex; flex-direction: row">
@@ -199,7 +194,7 @@ import { useQuasar } from 'quasar';
 import { computed, ref } from 'vue';
 
 import { onMounted, reactive } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute /* ,useRouter */ } from 'vue-router';
 import {
   FileRename,
   OpenFileFolder,
@@ -234,7 +229,7 @@ const listEditRef = ref(null);
 const source = ref('Hello');
 const { copy } = useClipboard({ source });
 
-const { push } = useRouter()
+// const { push } = useRouter()
 
 const systemProperty = useSystemProperty();
 const suggestions = computed(() => {
@@ -279,7 +274,8 @@ const view = reactive({
     MovieType: '',
     OnlyRepeat: false,
     Page: 1,
-    PageSize: 10,
+    PageSize: 20,
+    PageSize: 20,
     SortField: 'MTime',
     SortType: 'desc'
   },
@@ -471,7 +467,8 @@ onMounted(async () => {
 
 .movieTypeSelectItem {
   color: antiquewhite;
-
+  padding: 0;
+  margin: 0;
   :hover {
     color: rgba(0, 0, 0, 0.895);
     font-size: large;
