@@ -48,7 +48,7 @@ function createSonWindow(params: object | undefined) {
     height: 900,
     transparent: true,
     titleBarStyle: 'hidden',
-    titleBarOverlay: true,
+    // titleBarOverlay: true,
     backgroundColor: 'rgba(250,250,250,1)',
     useContentSize: true,
     webPreferences: {
@@ -60,13 +60,10 @@ function createSonWindow(params: object | undefined) {
     ...params,
   });
   const url = `${process.env.APP_URL}#${params?.router || ''}`;
-  // console.log(url);
   indow.loadURL(url);
   if (process.env.DEBUGGING) {
-    // if on DEV or Production with debug enabled
     indow.webContents.openDevTools();
   } else {
-    // we're on production; no access to devtools pls
     indow.webContents.on('devtools-opened', () => {
       indow?.webContents.closeDevTools();
     });
