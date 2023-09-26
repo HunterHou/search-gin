@@ -81,7 +81,6 @@ func GetDirInfo(c *gin.Context) {
 	searchService := service.CreateSearchService()
 	fileService := service.CreateFileService()
 	file := searchService.FindOne(id)
-
 	files := fileService.Walk(file.DirPath, cons.Images, false)
 	for i := 0; i < len(files); i++ {
 		// files[i].SetImageBase64()
@@ -102,14 +101,14 @@ func GetDelete(c *gin.Context) {
 // GetSync 同步 挂图
 func GetSync(c *gin.Context) {
 	id := c.Param("id")
-	serviceFile := service.CreateSearchService()
-	curFile := serviceFile.FindOne(id)
-	result, newFile := serviceFile.RequestBusToFile(curFile)
+	searchService := service.CreateSearchService()
+	curFile := searchService.FindOne(id)
+	result, newFile := searchService.RequestBusToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return
 	}
-	result = serviceFile.MoveCut(curFile, newFile)
+	result = searchService.MoveCut(curFile, newFile)
 	c.JSON(http.StatusOK, result)
 }
 
