@@ -99,24 +99,28 @@ func GetDelete(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// GetSync 同步 挂图
-func GetSync(c *gin.Context) {
-	id := c.Param("id")
-	serviceFile := service.CreateSearchService()
-	curFile := serviceFile.FindOne(id)
-	result, newFile := serviceFile.RequestBusToFile(curFile)
+// PostSync 同步 挂图
+func PostSync(c *gin.Context) {
+	currentFile := datamodels.MovieEdit{}
+	err := c.ShouldBindJSON(&currentFile)
+	if err != nil {
+		fmt.Println(err)
+	}
+	searchService := service.CreateSearchService()
+	curFile := searchService.FindOne(currentFile.Id)
+	result, newFile := searchService.RequestBusToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return
 	}
-	result = serviceFile.MoveCut(curFile, newFile)
+	result = searchService.MoveCut(curFile, newFile)
 	c.JSON(http.StatusOK, result)
 }
 
 // GetImageList 下拉相关图片
 func GetImageList(c *gin.Context) {
 	id := c.Param("id")
-	fmt.Println("id:"+id)
+	fmt.Println("id:" + id)
 	serviceFile := service.CreateSearchService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestBusToFile(curFile)
@@ -236,7 +240,7 @@ func GetCutMovie(c *gin.Context) {
 		return
 	}
 	from := utils.GetSuffux(model.Path)
-	task := datamodels.NewCutTask(model.Path, model.Name, start,end, from)
+	task := datamodels.NewCutTask(model.Path, model.Name, start, end, from)
 	task.SetStatus("等待")
 	cons.TransferTask[task.CreateTime] = task
 	c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))

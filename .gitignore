@@ -1,6 +1,7 @@
 /.idea/
 /search.iml
 app/
+qapp/
 vapp/
 .vscode/settings.json
 /app/

@@ -35,8 +35,8 @@ export const DeleteFile = async (data: string) => {
   return res && res.data;
 };
 
-export const SyncFileInfo = async (data: string) => {
-  const res = await axios.get(`/api/sync/${data}`);
+export const SyncFileInfo = async (data: object) => {
+  const res = await axios.post('/api/sync',data);
   return res && res.data;
 };
 
