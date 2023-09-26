@@ -27,7 +27,7 @@
         </q-img>
         <q-field label="Code" stack-label>
           <template v-slot:control>
-            <div class="self-center full-width no-outline" style="color: blue" tabindex="0" @click="searchCode">
+            <div class="self-center full-width no-outline cursor-pointer" style="color: blue" tabindex="0" @click="searchCode">
               {{ view.item.Code }}
             </div>
           </template>
