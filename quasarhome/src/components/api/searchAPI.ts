@@ -12,7 +12,7 @@ export const RefreshAPI = async (params: object) => {
 
 export const FindFileInfo = async (data: string) => {
   const res = await api.get(`/api/info/${data}`);
-  return res&&res.data;
+  return res && res.data;
 };
 
 export const QueryDirImageBase64 = async (data: string) => {
@@ -35,8 +35,8 @@ export const DeleteFile = async (data: string) => {
   return res && res.data;
 };
 
-export const SyncFileInfo = async (data: string) => {
-  const res = await api.post(`/api/sync/${data}`);
+export const SyncFileInfo = async (data: object) => {
+  const res = await api.post(`/api/sync`, data);
   return res && res.data;
 };
 
@@ -93,4 +93,3 @@ export const DeleteFolerByPath = async (data: unknown) => {
   const res = await api.post('/api/DeleteFolerByPath', data);
   return res && res.data;
 };
-
