@@ -173,7 +173,7 @@
             </div>
             <!-- <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
               class="q-pa-md  text-white shadow-2 q-gutter-sm">
-              
+
             </q-tabs> -->
           </div>
         </q-img>
@@ -273,7 +273,7 @@ const view = reactive({
     MovieType: '',
     OnlyRepeat: false,
     Page: 1,
-    PageSize: 10,
+    PageSize: 20,
     SortField: 'MTime',
     SortType: 'desc'
   },
@@ -359,9 +359,8 @@ const nextPage = (n) => {
 const fetchSearch = async () => {
   saveParam()
   const data = await SearchAPI(view.queryParam);
-  view.resultData = {};
   console.log(data);
-  view.resultData = data;
+  view.resultData = {...data};
 };
 
 const moveThis = async (item) => {
