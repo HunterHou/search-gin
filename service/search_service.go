@@ -8,12 +8,11 @@ import (
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/datasource"
+	"searchGin/router"
 	"searchGin/utils"
 	"sort"
 	"strings"
 	"sync"
-
-	"github.com/gin-gonic/gin"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -42,7 +41,7 @@ func (fs SearchService) SearchIndex(searchParam datamodels.SearchParam) utils.Pa
 	result.SetResultCnt(int(searchCount), searchParam.Page)
 	result.CurSize = utils.GetSizeStr(pageSize)
 	result.CurCnt = len(pageList)
-	fmt.Fprintf(gin.DefaultWriter, "query over :searchCnt[%d] searchSize [%d]", searchCount, searchSize)
+	fmt.Fprintf(router.LogWriter, "query over :searchCnt[%d] searchSize [%d]", searchCount, searchSize)
 	result.Data = pageList
 	return result
 
@@ -247,8 +246,8 @@ func (fs SearchService) ClearTag(id string, tag string) utils.Result {
 func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
 	result := utils.Result{}
 	root := srcFile.DirPath
-	fmt.Fprintf(gin.DefaultWriter, "MoveCut： srcFile [%v]", srcFile)
-	fmt.Fprintf(gin.DefaultWriter, "MoveCut： toFile [%v]", toFile)
+	fmt.Fprintf(router.LogWriter, "MoveCut： srcFile [%v]", srcFile)
+	fmt.Fprintf(router.LogWriter, "MoveCut： toFile [%v]", toFile)
 	if toFile.Actress == "" && toFile.Code == "" {
 		result.Message = "信息不全"
 		return result
@@ -468,7 +467,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 	newFile := datamodels.Movie{}
 	code := srcFile.Code
 	if code == "" {
-		fmt.Fprintf(gin.DefaultWriter, "RequestBusToFile srcFile [%v]", srcFile)
+		fmt.Fprintf(router.LogWriter, "RequestBusToFile srcFile [%v]", srcFile)
 		result.Fail()
 		result.Message = "Code：" + code + " srcFile:" + srcFile.Name
 		return result, newFile
@@ -487,7 +486,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 		fmt.Println("err", err)
 		result.Fail()
 		result.Message = "请求失败：" + resp.Status + " url:" + url
-		fmt.Fprintf(gin.DefaultWriter, "请求失败： url [%v]", url)
+		fmt.Fprintf(router.LogWriter, "请求失败： url [%v]", url)
 		return result, newFile
 	}
 	defer resp.Body.Close()
@@ -503,7 +502,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 			fmt.Println("status error:", resp.StatusCode, resp.Status)
 			result.Fail()
 			result.Message = "请求失败：" + resp.Status + " url:" + url
-			fmt.Fprintf(gin.DefaultWriter, "请求失败： url [%v]", url)
+			fmt.Fprintf(router.LogWriter, "请求失败： url [%v]", url)
 			return result, newFile
 		}
 
@@ -703,18 +702,18 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 		}
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
-			fmt.Fprintf(gin.DefaultWriter, "err: %v\n", err)
+			fmt.Fprintf(router.LogWriter, "err: %v\n", err)
 			res.FailByMsg("执行失败")
 			res.Data = err
 			return res
 		}
 	}
 	newPath = newDir + utils.PathSeparator + movie.Name
-	fmt.Fprintf(gin.DefaultWriter, "oldPath: %s", oldPath)
-	fmt.Fprintf(gin.DefaultWriter, "newPath: %s", newPath)
+	fmt.Fprintf(router.LogWriter, "oldPath: %s", oldPath)
+	fmt.Fprintf(router.LogWriter, "newPath: %s", newPath)
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
-		fmt.Fprintf(gin.DefaultWriter, "err: %v\n", err)
+		fmt.Fprintf(router.LogWriter, "err: %v\n", err)
 		res.FailByMsg("执行失败")
 		res.Data = err
 		return res
@@ -832,7 +831,7 @@ func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 		db.DeleteByDirPath(dirPath)
 		fmt.Println("删除文件夹:" + dirPath)
 		db.InsertS(targetFiles, 1)
-		fmt.Fprintf(gin.DefaultWriter, "添加文件:%d", len(targetFiles))
+		fmt.Fprintf(router.LogWriter, "添加文件:%d", len(targetFiles))
 	}
 	service.fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
 

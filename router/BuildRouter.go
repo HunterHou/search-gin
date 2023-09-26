@@ -12,22 +12,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var fLog, _ = os.OpenFile("gin.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0644)
+
+var LogWriter = io.MultiWriter(fLog, os.Stdout)
+
 func BuildRouter() *gin.Engine {
 	router := gin.Default()
-
 	router.Use(gin.Recovery())
-
-	fLog, _ := os.OpenFile("gin.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0644)
-	router.Use(gin.LoggerWithWriter(io.MultiWriter(fLog, os.Stdout)))
-
+	router.Use(gin.LoggerWithWriter(LogWriter))
 	if utils.ExistsFiles(cons.IndexHtml) {
-		fmt.Fprintf(gin.DefaultWriter, "static exists:%s", cons.IndexHtml)
+		fmt.Fprintf(LogWriter, "static exists:%s", cons.IndexHtml)
 		router.LoadHTMLFiles(cons.IndexHtml)
 		for k, v := range cons.StaticFs {
 			router.StaticFS(k, http.Dir(v))
 		}
 	} else {
-		fmt.Fprintf(gin.DefaultWriter, "static not exists:%s", cons.IndexHtml)
+		fmt.Fprintf(LogWriter, "static not exists:%s", cons.IndexHtml)
 	}
 
 	router.NoRoute(controller.Index)
