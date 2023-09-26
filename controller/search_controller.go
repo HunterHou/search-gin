@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"searchGin/cons"
 	"searchGin/datamodels"
@@ -28,6 +29,7 @@ func PostSearch(c *gin.Context) {
 func PostMovies(c *gin.Context) {
 	searchParam := datamodels.SearchParam{}
 	c.Bind(&searchParam)
+	fmt.Fprintf(cons.LogWriter, "PostMovies： [%v]", searchParam)
 	fileService := service.CreateSearchService()
 	result := fileService.SearchDataSource(searchParam)
 	result.PageSize = searchParam.PageSize

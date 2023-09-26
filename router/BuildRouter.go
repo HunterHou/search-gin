@@ -2,9 +2,7 @@ package router
 
 import (
 	"fmt"
-	"io"
 	"net/http"
-	"os"
 	"searchGin/cons"
 	"searchGin/controller"
 	"searchGin/utils"
@@ -14,20 +12,16 @@ import (
 
 func BuildRouter() *gin.Engine {
 	router := gin.Default()
-
 	router.Use(gin.Recovery())
-
-	fLog, _ := os.OpenFile("gin.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0644)
-	router.Use(gin.LoggerWithWriter(io.MultiWriter(fLog, os.Stdout)))
-
+	router.Use(gin.LoggerWithWriter(cons.LogWriter))
 	if utils.ExistsFiles(cons.IndexHtml) {
-		fmt.Fprintf(gin.DefaultWriter, "static exists:%s", cons.IndexHtml)
+		fmt.Fprintf(cons.LogWriter, "static exists:%s", cons.IndexHtml)
 		router.LoadHTMLFiles(cons.IndexHtml)
 		for k, v := range cons.StaticFs {
 			router.StaticFS(k, http.Dir(v))
 		}
 	} else {
-		fmt.Fprintf(gin.DefaultWriter, "static not exists:%s", cons.IndexHtml)
+		fmt.Fprintf(cons.LogWriter, "static not exists:%s", cons.IndexHtml)
 	}
 
 	router.NoRoute(controller.Index)
@@ -49,7 +43,9 @@ func BuildRouter() *gin.Engine {
 	router.GET("/api/imageList/:id", controller.GetImageList)
 	router.GET("/api/dir/:id", controller.GetDirInfo)
 	router.GET("/api/delete/:id", controller.GetDelete)
-	router.GET("/api/sync/:id", controller.GetSync)
+
+	router.POST("/api/sync", controller.PostSync)
+
 	router.GET("/api/openFolder/:id", controller.GetOpenFolder)
 	router.POST("/api/OpenFolerByPath", controller.PostOpenFolderByPath)
 	router.POST("/api/DeleteFolerByPath", controller.PostDeleteFolerByPath)

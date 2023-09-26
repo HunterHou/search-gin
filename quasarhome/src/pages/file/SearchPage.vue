@@ -158,7 +158,7 @@
               <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
                 @click="commonExec(OpenFileFolder(item.Id))" v-if="showButton('文件夹')" />
               <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-                v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id), true)" />
+                v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item), true)" />
               <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
                 @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" />
               <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
@@ -168,7 +168,7 @@
             </div>
             <!-- <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
               class="q-pa-md  text-white shadow-2 q-gutter-sm">
-              
+
             </q-tabs> -->
           </div>
         </q-img>
@@ -275,7 +275,6 @@ const view = reactive({
     OnlyRepeat: false,
     Page: 1,
     PageSize: 20,
-    PageSize: 20,
     SortField: 'MTime',
     SortType: 'desc'
   },
@@ -361,9 +360,8 @@ const nextPage = (n) => {
 const fetchSearch = async () => {
   saveParam()
   const data = await SearchAPI(view.queryParam);
-  view.resultData = {};
   console.log(data);
-  view.resultData = data;
+  view.resultData = {...data};
 };
 
 const moveThis = async (item) => {

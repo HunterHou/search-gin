@@ -1,9 +1,10 @@
 /.idea/
 /search.iml
-app/
-vapp/
+app/**/**
+qapp/**/**
+vapp/**/**
 .vscode/settings.json
-/app/
+/app/**/**
 
 election/node_modules/
 searchGin

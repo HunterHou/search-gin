@@ -13,8 +13,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -25,7 +23,7 @@ func CreateSearchService() SearchService {
 	return SearchService{}
 }
 
-func (fs SearchService) SortMovieForce(){
+func (fs SearchService) SortMovieForce() {
 	datasource.SortMovieForce()
 }
 
@@ -42,7 +40,7 @@ func (fs SearchService) SearchIndex(searchParam datamodels.SearchParam) utils.Pa
 	result.SetResultCnt(int(searchCount), searchParam.Page)
 	result.CurSize = utils.GetSizeStr(pageSize)
 	result.CurCnt = len(pageList)
-	fmt.Fprintf(gin.DefaultWriter, "query over :searchCnt[%d] searchSize [%d]", searchCount, searchSize)
+	fmt.Fprintf(cons.LogWriter, "query over :searchCnt[%d] searchSize [%d]", searchCount, searchSize)
 	result.Data = pageList
 	return result
 
@@ -94,7 +92,7 @@ func (fs SearchService) SetMovieType(movie datamodels.Movie, movieType string) u
 		path = strings.ReplaceAll(movie.Nfo, originVideoType, movieType)
 		os.Rename(movie.Nfo, path)
 		// 执行当前目录搜索
-		fs.ScanTarget(movie.DirPath,movie.BaseDir)
+		fs.ScanTarget(movie.DirPath, movie.BaseDir)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 	newMovieType := "{{" + movieType + "}}"
@@ -164,7 +162,7 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 			fmt.Println(err)
 		}
 		// 执行当前目录搜索
-		fs.ScanTarget(movie.DirPath,movie.BaseDir)
+		fs.ScanTarget(movie.DirPath, movie.BaseDir)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 
@@ -207,7 +205,7 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 
 	}
 	// 执行当前目录搜索
-	fs.ScanTarget(movie.DirPath,movie.BaseDir)
+	fs.ScanTarget(movie.DirPath, movie.BaseDir)
 	return utils.NewSuccessByMsg("执行成功")
 }
 func (fs SearchService) ClearTag(id string, tag string) utils.Result {
@@ -240,14 +238,15 @@ func (fs SearchService) ClearTag(id string, tag string) utils.Result {
 	path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
 	os.Rename(movie.Nfo, path)
 	// 执行当前目录搜索
-	fs.ScanTarget(movie.DirPath,movie.BaseDir)
+	fs.ScanTarget(movie.DirPath, movie.BaseDir)
 	return utils.NewSuccessByMsg("执行成功")
 }
 
 func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
 	result := utils.Result{}
 	root := srcFile.DirPath
-
+	fmt.Fprintf(cons.LogWriter, "MoveCut： srcFile [%v]", srcFile)
+	fmt.Fprintf(cons.LogWriter, "MoveCut： toFile [%v]", toFile)
 	if toFile.Actress == "" && toFile.Code == "" {
 		result.Message = "信息不全"
 		return result
@@ -467,6 +466,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 	newFile := datamodels.Movie{}
 	code := srcFile.Code
 	if code == "" {
+		fmt.Fprintf(cons.LogWriter, "RequestBusToFile srcFile [%v]", srcFile)
 		result.Fail()
 		result.Message = "Code：" + code + " srcFile:" + srcFile.Name
 		return result, newFile
@@ -485,6 +485,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 		fmt.Println("err", err)
 		result.Fail()
 		result.Message = "请求失败：" + resp.Status + " url:" + url
+		fmt.Fprintf(cons.LogWriter, "请求失败： url [%v]", url)
 		return result, newFile
 	}
 	defer resp.Body.Close()
@@ -500,6 +501,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 			fmt.Println("status error:", resp.StatusCode, resp.Status)
 			result.Fail()
 			result.Message = "请求失败：" + resp.Status + " url:" + url
+			fmt.Fprintf(cons.LogWriter, "请求失败： url [%v]", url)
 			return result, newFile
 		}
 
@@ -699,18 +701,18 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 		}
 		err := os.MkdirAll(newDir, os.ModePerm)
 		if err != nil {
-			fmt.Fprintf(gin.DefaultWriter, "err: %v\n", err)
+			fmt.Fprintf(cons.LogWriter, "err: %v\n", err)
 			res.FailByMsg("执行失败")
 			res.Data = err
 			return res
 		}
 	}
 	newPath = newDir + utils.PathSeparator + movie.Name
-	fmt.Fprintf(gin.DefaultWriter, "oldPath: %s", oldPath)
-	fmt.Fprintf(gin.DefaultWriter, "newPath: %s", newPath)
+	fmt.Fprintf(cons.LogWriter, "oldPath: %s", oldPath)
+	fmt.Fprintf(cons.LogWriter, "newPath: %s", newPath)
 	err := os.Rename(oldPath, newPath)
 	if err != nil {
-		fmt.Fprintf(gin.DefaultWriter, "err: %v\n", err)
+		fmt.Fprintf(cons.LogWriter, "err: %v\n", err)
 		res.FailByMsg("执行失败")
 		res.Data = err
 		return res
@@ -751,7 +753,7 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 		os.Rename(oldPath, newPath)
 	}
 	if !movie.NoRefresh {
-		fs.ScanTarget(movieLib.DirPath,movieLib.BaseDir)
+		fs.ScanTarget(movieLib.DirPath, movieLib.BaseDir)
 	}
 	return res
 }
@@ -810,9 +812,9 @@ func (fs SearchService) ScanAll() {
 }
 
 // 扫描指定文佳佳
-func (fs SearchService) ScanTarget(dirPath string,BaseDir string) {
+func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 	//统计初始化
-	service:=CreateFileService()
+	service := CreateFileService()
 	cons.TypeMenu = sync.Map{}
 	cons.TagMenu = sync.Map{}
 	cons.SmallDir = []cons.MenuSize{}
@@ -822,13 +824,13 @@ func (fs SearchService) ScanTarget(dirPath string,BaseDir string) {
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
-	targetFiles, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, false,BaseDir)
+	targetFiles, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, false, BaseDir)
 	if cons.OSSetting.IsDb {
 		db := CreateOrmService()
 		db.DeleteByDirPath(dirPath)
 		fmt.Println("删除文件夹:" + dirPath)
 		db.InsertS(targetFiles, 1)
-		fmt.Fprintf(gin.DefaultWriter, "添加文件:%d", len(targetFiles))
+		fmt.Fprintf(cons.LogWriter, "添加文件:%d", len(targetFiles))
 	}
 	service.fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
 
@@ -836,14 +838,14 @@ func (fs SearchService) ScanTarget(dirPath string,BaseDir string) {
 
 func (fs SearchService) Delete(id string) {
 	file := fs.FindOne(id)
-	service:=CreateFileService()
+	service := CreateFileService()
 	service.DeleteOne(file.DirPath, file.Title)
-	fs.ScanTarget(file.DirPath,file.BaseDir)
+	fs.ScanTarget(file.DirPath, file.BaseDir)
 }
 
 func (fs SearchService) ScanDisk(baseDir []string, types []string) {
 	// utils.PKIdRest()
-	fileService:=CreateFileService()
+	fileService := CreateFileService()
 	datasource.FileLib = make(map[string]datamodels.Movie)
 	files := fileService.Walks(baseDir, types)
 	fileService.makeDatasourceMap(files)
@@ -889,35 +891,35 @@ func (fs SearchService) SearchByKeyWord(files []datamodels.Movie, totalSize int6
 		}
 		isAdd := false
 		if len(keyWord) > 0 {
-			arr:=strings.Split(keyWord," ")
+			arr := strings.Split(keyWord, " ")
 			for i := 0; i < len(arr); i++ {
-				words:=arr[i]
-				if(len(words) == 0 || words == " "){
+				words := arr[i]
+				if len(words) == 0 || words == " " {
 					break
 				}
-				if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(words)){
-					isAdd=true
+				if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(words)) {
+					isAdd = true
 					break
-				} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(words))  {
-					isAdd=true
+				} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(words)) {
+					isAdd = true
 					break
-				} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(words))  {
-					isAdd=true
+				} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(words)) {
+					isAdd = true
 					break
-				} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(words))  {
-					isAdd=true
+				} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(words)) {
+					isAdd = true
 					break
 				}
 			}
-		}else{
+		} else {
 			isAdd = true
 		}
-		
+
 		if isAdd {
 			result = append(result, file)
 			size = size + file.Size
 		}
-		
+
 	}
 
 	return result, size
