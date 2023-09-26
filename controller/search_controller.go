@@ -6,7 +6,6 @@ import (
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/datasource"
-	"searchGin/router"
 	"searchGin/service"
 	"searchGin/utils"
 	"strconv"
@@ -30,7 +29,7 @@ func PostSearch(c *gin.Context) {
 func PostMovies(c *gin.Context) {
 	searchParam := datamodels.SearchParam{}
 	c.Bind(&searchParam)
-	fmt.Fprintf(router.LogWriter, "PostMovies： [%v]", searchParam)
+	fmt.Fprintf(cons.LogWriter, "PostMovies： [%v]", searchParam)
 	fileService := service.CreateSearchService()
 	result := fileService.SearchDataSource(searchParam)
 	result.PageSize = searchParam.PageSize
