@@ -1,1 +1,0 @@
-import{api as s}from"./axios.68af7fa3.js";const e=async()=>await s.get("/api/buttoms"),r=async t=>{const a=await s.post("/api/setting",t);return a&&a.data},o=async()=>{const t=await s.get("/api/GetIpAddr");return t&&t.data},i=async()=>await s.get("/api/shutDown");export{i as G,r as P,e as a,o as b};
