@@ -131,54 +131,58 @@
                 ">{{ tag?.substring(0, 4) }}</span>
               </q-chip>
             </div>
-            <div class="row" @click.stop="() => { }">
-              <q-btn round class="mr10" size="sm" ripple color="orange" icon="ti-fullscreen" @click="openPlay(item)" />
-              <q-btn round size="sm" ripple color="orange-4" icon="ti-blackboard" @click="openDialog(item)" />
+            <div style="float: right;">
+              <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;" :label="item.MovieType"
+                @click.stop="() => { }">
+                <q-list style="background-color: rgba(0, 0, 0, 0.7)">
+                  <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
+                    <q-item-section>
+                      <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
             </div>
-            <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 74px;" :label="item.MovieType"
-              @click.stop="() => { }">
-              <q-list style="background-color: rgba(0, 0, 0, 0.7)">
-                <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
-                  <q-item-section>
-                    <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
           </div>
-          <div class="absolute-bottom text-body1 text-center" style="padding: 4px" @click.stop="() => { }">
-            <div style="display: flex; flex-direction: row">
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
-                @click="commonExec(PlayMovie(item.Id))" v-if="showButton('播放')" />
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice" @click="() => {
-                fileEditRef.open(item, refreshIndex);
-              }
-                " v-if="showButton('编辑')" />
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
-                @click="commonExec(OpenFileFolder(item.Id))" v-if="showButton('文件夹')" />
-              <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-                v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item), true)" />
-              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
-                @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" />
-              <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
-                @click="confirmDelete(item)" v-if="showButton('删除')" />
-              <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-control-shuffle"
-                v-if="showButton('移动')" />
-            </div>
-            <!-- <q-tabs inline-label outside-arrows mobile-arrows v-model="item.btn"
-              class="q-pa-md  text-white shadow-2 q-gutter-sm">
 
-            </q-tabs> -->
+          <div class="absolute-bottom" style="padding: 6px" @click.stop="() => { }">
+            <div class="text-body1" @click.stop="() => { }">
+              <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen" @click="openPlay(item)" />
+              <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard"
+                @click="openDialog(item)" />
+
+            </div>
+
           </div>
         </q-img>
         <div class="text-subtitles">
-          <a flat style="color: #59d89d" class="mr10" @click="
+          <div style="display: flex; flex-direction: row">
+            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
+              @click="commonExec(PlayMovie(item.Id))" v-if="showButton('播放')" />
+            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice" @click="() => {
+              fileEditRef.open(item, refreshIndex);
+            }
+              " v-if="showButton('编辑')" />
+            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
+              @click="commonExec(OpenFileFolder(item.Id))" v-if="showButton('文件夹')" />
+            <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
+              v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item), true)" />
+            <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
+              @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" />
+            <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
+              @click="confirmDelete(item)" v-if="showButton('删除')" />
+            <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-control-shuffle"
+              v-if="showButton('移动')" />
+          </div>
+          <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10" @click="
             view.queryParam.Keyword = item.Actress;
           fetchSearch();
           ">{{ item.Actress?.substring(0, 6) }}</a>
-          <a flat style="color: goldenrod" class="mr10" @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
-          <a flat style="color: green" class="mr10" @click="copyText(item.Title)">{{ item.SizeStr }}</a>
+          <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10"
+            @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
+          <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10"
+            @click="copyText(item.Title)">{{ item.SizeStr }}</a>
           <span>{{ formatTitle(item.Title) }}</span>
         </div>
       </q-card>
@@ -361,7 +365,7 @@ const fetchSearch = async () => {
   saveParam()
   const data = await SearchAPI(view.queryParam);
   console.log(data);
-  view.resultData = {...data};
+  view.resultData = { ...data };
 };
 
 const moveThis = async (item) => {
@@ -474,10 +478,8 @@ onMounted(async () => {
 }
 
 .text-subtitles {
-  margin: 4px;
-  padding: 0;
-  height: 4rem;
-  overflow: hidden;
+  height: 6rem;
+  padding: 4px;
 }
 
 .q-card__section--vert {
