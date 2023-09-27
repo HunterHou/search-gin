@@ -105,7 +105,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useSystemProperty } from '../stores/System';
 import { getFileStream } from './utils/images';
 import { getPng } from './utils/images';
-import { SearchAPI, DeleteFile } from './api/searchAPI';
+import { SearchAPI, DeleteFile, RefreshAPI } from './api/searchAPI';
 import { GetSettingInfo } from './api/settingAPI';
 import { useRouter } from 'vue-router';
 
@@ -129,8 +129,10 @@ const props = defineProps({
   }
 })
 
-const deleteThis = () => {
-  DeleteFile()
+const deleteThis =async () => {
+ await DeleteFile()
+ await RefreshAPI()
+ await fetchSearch()
 }
 
 const suggestions = computed(() => {
@@ -199,9 +201,9 @@ const fetchSearch = async () => {
     ...systemProperty.FileSearchParam,
     ...view.queryParam,
     Page: 1,
-    PageSize: 999,
+    PageSize: 500,
   });
-  view.playList = data.Data;
+  view.playList = [...data.Data];
   if (!view.playing) {
     view.playing = view.playList[0];
     open(view.playing)
