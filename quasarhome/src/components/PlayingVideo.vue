@@ -6,7 +6,7 @@
     <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
       style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC" @ended="playNext(1)" />
     <q-card-actions align="left">
-     
+
       <q-btn flat style="color: #59d89d" :label="view.playing.Actress?.substring(0, 8)" @click="
         view.queryParam.Keyword = view.playing.Actress;
       fetchSearch();
@@ -71,10 +71,15 @@
                 justify-content: flex-start;
                 width: fit-content;
               ">
+              <q-btn square color="red" text-color="white" style="margin-left: 0px; padding: 0 4px">
+                <span @click="deleteThis(item.Id)">删除</span>
+              </q-btn>
               <q-chip square color="red" text-color="white" v-for="tag in item.Tags" :key="tag"
                 style="margin-left: 0px; padding: 0 4px">
                 <span @click="view.queryParam.Keyword = tag; fetchSearch()">{{ tag }}</span>
               </q-chip>
+
+
             </div>
             <q-chip @click.stop="() => { }" square color="green" text-color="white"
               style="width: fit-content; margin-right: 0px; padding: 0 6px">
@@ -100,7 +105,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useSystemProperty } from '../stores/System';
 import { getFileStream } from './utils/images';
 import { getPng } from './utils/images';
-import { SearchAPI } from './api/searchAPI';
+import { SearchAPI, DeleteFile } from './api/searchAPI';
 import { GetSettingInfo } from './api/settingAPI';
 import { useRouter } from 'vue-router';
 
@@ -123,6 +128,10 @@ const props = defineProps({
     default: 'drawer'
   }
 })
+
+const deleteThis = () => {
+  DeleteFile()
+}
 
 const suggestions = computed(() => {
   return systemProperty.getSuggestions
