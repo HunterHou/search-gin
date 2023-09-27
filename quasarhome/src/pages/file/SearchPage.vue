@@ -47,6 +47,10 @@
             </q-popup-proxy>
           </q-icon>
         </template>
+        <template v-slot:append>
+          <q-icon name="ti-search" class="cursor-pointer" @click="fetchSearch">
+          </q-icon>
+        </template>
 
       </q-input>
       <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch" label="重" />
@@ -175,13 +179,13 @@
             <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-control-shuffle"
               v-if="showButton('移动')" />
           </div>
-          <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10" @click="
+          <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer" @click="
             view.queryParam.Keyword = item.Actress;
           fetchSearch();
           ">{{ item.Actress?.substring(0, 6) }}</a>
-          <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10"
+          <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
             @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
-          <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10"
+          <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
             @click="copyText(item.Title)">{{ item.SizeStr }}</a>
           <span>{{ formatTitle(item.Title) }}</span>
         </div>
