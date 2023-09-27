@@ -28,13 +28,14 @@
  * }
  */
 
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer,shell } = require('electron')
 contextBridge.exposeInMainWorld(
   'electron',
   {
     createWindow: (args: any) => ipcRenderer.send('new-window',args),
     maxMainWindow: (args: any) => ipcRenderer.send('main-maximize',args),
     hideMainWindow: (args: any) => ipcRenderer.send('main-hide',args),
-    resizeMainWindow: (args: any) => ipcRenderer.send('main-resize',args)
+    resizeMainWindow: (args: any) => ipcRenderer.send('main-resize',args),
+    showInFolder: (args: any) => ipcRenderer.send('show-in-folder',args),
   }
 )

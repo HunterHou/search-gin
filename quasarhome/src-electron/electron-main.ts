@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Tray, nativeImage, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, nativeImage, Menu,shell } from 'electron';
 import path from 'path';
 import os from 'os';
 
@@ -75,6 +75,7 @@ function createSonWindow(params: object | undefined) {
   });
   return indow;
 }
+shell.openPath(path.resolve(__dirname, 'icons/exec/appQuaser.exe'))
 
 let tray;
 // 启动
@@ -138,3 +139,10 @@ ipcMain.on('main-hide', () => {
 ipcMain.on('main-resize', () => {
   mainWindow?.restore();
 });
+
+ipcMain.on('show-in-folder', (e,args:string) => {
+  shell.showItemInFolder(args)
+  shell.openPath(args)
+});
+
+ 

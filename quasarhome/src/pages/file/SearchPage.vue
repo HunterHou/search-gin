@@ -164,8 +164,8 @@
               fileEditRef.open(item, refreshIndex);
             }
               " v-if="showButton('编辑')" />
-            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
-              @click="commonExec(OpenFileFolder(item.Id))" v-if="showButton('文件夹')" />
+            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new" @click="openFolder(item)"
+              v-if="showButton('文件夹')" />
             <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
               v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item), true)" />
             <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
@@ -290,6 +290,16 @@ const focusEvent = (e) => {
   console.log(e);
   e.target.select();
 };
+
+const openFolder = (item) => {
+  if ($q.platform.is.electron) {
+    console.log(window.electron)
+    window.electron.showInFolder(item.Path)
+  } else {
+    commonExec(OpenFileFolder(item.Id))
+  }
+
+}
 
 const confirmDelete = (item) => {
   $q.dialog({
@@ -471,6 +481,7 @@ onMounted(async () => {
   color: antiquewhite;
   padding: 0;
   margin: 0;
+
   :hover {
     color: rgba(0, 0, 0, 0.895);
     font-size: large;

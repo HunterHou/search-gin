@@ -9,6 +9,7 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require('quasar/wrappers');
+const path = require('path');
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -182,11 +183,8 @@ module.exports = configure(function (/* ctx */) {
     electron: {
       // extendElectronMainConf (esbuildConf)
       // extendElectronPreloadConf (esbuildConf)
-
       inspectPort: 5858,
-
       bundler: 'packager', // 'packager' or 'builder'
-
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
         // OS X / Mac App Store
@@ -196,6 +194,7 @@ module.exports = configure(function (/* ctx */) {
         // protocol: 'myapp://path',
         // Windows only
         // win32metadata: { ... }
+        asar:false,
       },
 
       builder: {
