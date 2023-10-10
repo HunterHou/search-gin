@@ -110,10 +110,9 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useSystemProperty } from '../stores/System';
 import { getFileStream } from './utils/images';
 import { getPng } from './utils/images';
-import { SearchAPI, DeleteFile,RefreshAPI } from './api/searchAPI';
+import { SearchAPI, DeleteFile, RefreshAPI } from './api/searchAPI';
 import { GetSettingInfo } from './api/settingAPI';
 import { useRouter } from 'vue-router';
-import { aw } from 'app/dist/spa/assets/index.b7139dbc';
 
 const systemProperty = useSystemProperty();
 const vue3VideoPlayRef = ref(null);

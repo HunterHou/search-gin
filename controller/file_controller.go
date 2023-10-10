@@ -101,7 +101,7 @@ func GetDelete(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// PostSync 同步 挂图
+// PostSync 同步 挂图 20231010 自动刮涂失败 功能遗弃
 func PostSync(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
 	err := c.ShouldBindJSON(&currentFile)

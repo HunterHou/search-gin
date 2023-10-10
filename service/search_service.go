@@ -357,6 +357,41 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	return result
 }
 
+func (fs SearchService) DownJpgMakePng(finalpath string, url string) utils.Result {
+	result := utils.Result{}
+	jpgpath := utils.GetPng(finalpath, "jpg")
+	jpgOut, createErr := os.Create(jpgpath)
+	if createErr != nil {
+
+	}
+	if !strings.Contains(url, cons.OSSetting.BaseUrl) {
+		url = cons.OSSetting.BaseUrl + url
+	}
+	fmt.Println(url)
+	resp, downErr := httpGet(url)
+	if downErr != nil {
+		result.Fail()
+		fmt.Println("downErr:", downErr)
+		result.Message = "文件下载失败：" + url
+		return result
+	}
+	body, readErr := ioutil.ReadAll(resp.Body)
+	if readErr != nil {
+		result.Fail()
+		fmt.Println("readErr:", readErr)
+		result.Message = "请求读取response失败"
+		return result
+	}
+	jpgOut.Write(body)
+	jpgOut.Close()
+	pngErr := utils.ImageToPng(jpgpath)
+	if pngErr != nil {
+
+	}
+	result.Success()
+	return result
+}
+
 func (fs SearchService) DownImage(toFile datamodels.Movie) utils.Result {
 	if len(toFile.ImageList) <= 0 {
 		return utils.NewFailByMsg("No Image avaliable")
@@ -678,7 +713,12 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 		res.FailByMsg("文件不存在")
 		return res
 	}
-
+	if movie.Jpg != "" {
+		res = fs.DownJpgMakePng(movieLib.Path, movie.Jpg)
+		if !res.IsSuccess() {
+			return res
+		}
+	}
 	newPath := cleanPath(movieLib.DirPath)
 	newDir := newPath
 	if movie.MoveOut {
