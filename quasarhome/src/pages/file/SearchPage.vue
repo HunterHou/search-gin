@@ -172,8 +172,8 @@
               " v-if="showButton('编辑')" />
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
               @click="commonExec(OpenFileFolder(item.Id))" v-if="showButton('文件夹')" />
-            <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-              v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item), true)" />
+<!--            <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"-->
+<!--              v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item), true)" />-->
             <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
               @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" />
             <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
@@ -213,7 +213,6 @@ import {
   RefreshAPI,
   ResetMovieType,
   SearchAPI,
-  SyncFileInfo,
   AddTag,
   CloseTag,
   DeleteFile

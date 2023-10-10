@@ -9,6 +9,7 @@
         <q-input label="编码" autogrow v-model="view.item.Code" :dense="false" />
         <q-input label="图鉴" autogrow v-model="view.item.Actress" :dense="false" />
         <q-input label="名称" autogrow v-model="view.item.Title" :dense="false" />
+        <q-input label="图片地址" autogrow v-model="view.item.Jpg" :dense="false" />
       </q-form>
 
       <!-- <q-input label="名称"  standout v-model="view.item.Name" :dense="true" /> -->
@@ -57,6 +58,7 @@ defineEmits([
 
 const open = (item, cb) => {
   view.item = new FileModel().fromObject(item);
+  view.item.Jpg = null
   view.item.Code = formatCode(item.Code);
   view.item.Title = formatTitle(item.Title);
   view.callback = cb;
@@ -68,7 +70,7 @@ const editMoveout = async () => {
 };
 
 const editItemSubmit = async (MoveOut) => {
-  const { Id, Title, Code, Actress, FileType, MovieType } = view.item;
+  const { Id, Title, Code, Actress, FileType, MovieType,Jpg } = view.item;
   let code = Code.trim();
   if (code && code.indexOf('-') < 0) {
     code = '-' + code;
@@ -103,6 +105,7 @@ const editItemSubmit = async (MoveOut) => {
     Code: code,
     Actress,
     MoveOut,
+    Jpg,
     NoRefresh: true,
   };
   const res = await FileRename(param);

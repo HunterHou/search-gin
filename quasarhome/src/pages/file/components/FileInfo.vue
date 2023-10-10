@@ -15,9 +15,9 @@
           @click="commonExec(PlayMovie(view.item.Id))" />
         <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
           @click="commonExec(OpenFileFolder(view.item.Id))" />
-        <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-          v-if="!view.item.MovieType || view.item.MovieType == '无'"
-          @click="commonExec(SyncFileInfo(view.item.Id), true)" />
+<!--        <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"-->
+<!--          v-if="!view.item.MovieType || view.item.MovieType == '无'"-->
+<!--          @click="commonExec(SyncFileInfo(view.item.Id), true)" />-->
         <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
           @click="commonExec(DownImageList(view.item.Id))" />
         <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
@@ -79,7 +79,7 @@ import { GetSettingInfo } from '../../../components/api/settingAPI';
 import {
   QueryDirImageBase64, OpenFileFolder,
   DownImageList, FileRename, DeleteFile,
-  PlayMovie, SyncFileInfo
+  PlayMovie
 } from '../../../components/api/searchAPI';
 import { getJpg, getTempImage } from 'src/components/utils/images';
 import { useSystemProperty } from '../../../stores/System';
