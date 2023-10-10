@@ -103,6 +103,7 @@ const editItemSubmit = async (MoveOut) => {
     Id,
     Name: name,
     Code: code,
+    Title,
     Actress,
     MoveOut,
     Jpg,
