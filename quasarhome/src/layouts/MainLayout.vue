@@ -17,9 +17,9 @@
               systemProperty.Playing?.Title?.substring(0, 8)}` }}
           </q-btn>
           <q-bar class="bg-black text-white">
-            <q-btn dense flat icon="minimize" @click="hideMainWindow" />
+            <!-- <q-btn dense flat icon="minimize" @click="hideMainWindow" />
             <q-btn dense flat icon="crop_square" @click="maxMainWindow" />
-            <q-btn dense flat icon="close" @click="confirmClose" />
+            <q-btn dense flat icon="close" @click="confirmClose" /> -->
             <q-btn dense flat icon="ti-timer" @click="confirmDelete" />
           </q-bar>
         </q-toolbar>
@@ -84,36 +84,36 @@ const currentPath = computed(() => {
   return useRoute().path;
 });
 
-const closeWindow = () => {
-  window.close()
-}
+// const closeWindow = () => {
+//   window.close()
+// }
 
-const maxMainWindow = () => {
-  window.electron.maxMainWindow()
-}
+// const maxMainWindow = () => {
+//   window.electron.maxMainWindow()
+// }
 
 
-const hideMainWindow = () => {
-  window.electron.hideMainWindow()
-}
+// const hideMainWindow = () => {
+//   window.electron.hideMainWindow()
+// }
 
-const confirmClose = () => {
-  $q.dialog({
-    message: '确定关闭吗?',
-    cancel: true,
-    persistent: true
-  })
-    .onOk(() => {
-      console.log('>>>> onOk');
-      closeWindow()
-    })
-    .onCancel(() => {
-      console.log('>>>> Cancel');
-    })
-    .onDismiss(() => {
-      // console.log('I am triggered on both OK and Cancel')
-    });
-};
+// const confirmClose = () => {
+//   $q.dialog({
+//     message: '确定关闭吗?',
+//     cancel: true,
+//     persistent: true
+//   })
+//     .onOk(() => {
+//       console.log('>>>> onOk');
+//       closeWindow()
+//     })
+//     .onCancel(() => {
+//       console.log('>>>> Cancel');
+//     })
+//     .onDismiss(() => {
+//       // console.log('I am triggered on both OK and Cancel')
+//     });
+// };
 
 const confirmDelete = () => {
   $q.dialog({

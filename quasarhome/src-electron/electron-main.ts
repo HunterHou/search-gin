@@ -1,5 +1,17 @@
-import { app, BrowserWindow, ipcMain, Tray, nativeImage, Menu,shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  Notification,
+  clipboard,
+  ipcMain,
+  dialog,
+  Tray,
+  nativeImage,
+  Menu,
+  shell,
+} from 'electron';
 import path from 'path';
+import { access } from 'fs';
 import os from 'os';
 
 const platform = process.platform || os.platform();
@@ -11,8 +23,8 @@ function createMainWindow() {
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1400,
     height: 1000,
-    // transparent: true,
-    titleBarStyle: 'hidden',
+    transparent: true,
+    // titleBarStyle: 'hidden',
     backgroundColor: 'rgba(250,250,250,1)',
     useContentSize: true,
     webPreferences: {
@@ -34,10 +46,36 @@ function createMainWindow() {
     });
   }
   mainWindow.setMenu(null);
-
+  mainWindow.webContents.on('context-menu', onContextMenu);
   mainWindow.on('closed', () => {
     mainWindow = undefined;
   });
+}
+
+function onContextMenu(e, params) {
+  const {
+    mediaType,
+    srcURL,
+    selectionText,
+    editFlags: { canPaste },
+  } = params;
+  console.log('======================================');
+  console.log(params);
+  if (canPaste) {
+    clipboard.readText();
+  } else if (mediaType === 'image') {
+    clipboard.writeText(srcURL);
+    new Notification({
+      title: '已复制',
+      body: srcURL
+    }).show();
+  } else {
+    clipboard.writeText(selectionText);
+    new Notification({
+      title: '已复制',
+      body: selectionText
+    }).show();
+  }
 }
 
 // 创建子窗口
@@ -59,8 +97,14 @@ function createSonWindow(params: object | undefined) {
     },
     ...params,
   });
-  const url = `${process.env.APP_URL}#${params?.router || ''}`;
-  indow.loadURL(url);
+
+  if (params?.router.indexOf('http') >= 0) {
+    indow.loadURL(params?.router);
+  } else {
+    const url = `${process.env.APP_URL}#${params?.router || ''}`;
+    indow.loadURL(url);
+  }
+
   if (process.env.DEBUGGING) {
     indow.webContents.openDevTools();
   } else {
@@ -73,9 +117,17 @@ function createSonWindow(params: object | undefined) {
   indow.on('closed', () => {
     mainWindow?.focus();
   });
+  indow.webContents.on('context-menu', onContextMenu);
   return indow;
 }
-shell.openPath(path.resolve(__dirname, 'icons/exec/appQuaser.exe'))
+const appUri = path.resolve(__dirname, 'icons/exec/appQuaser.exe');
+access(appUri, (err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    shell.openPath(appUri);
+  }
+});
 
 let tray;
 // 启动
@@ -140,9 +192,7 @@ ipcMain.on('main-resize', () => {
   mainWindow?.restore();
 });
 
-ipcMain.on('show-in-folder', (e,args:string) => {
-  shell.showItemInFolder(args)
-  shell.openPath(args)
+ipcMain.on('show-in-folder', (e, args: string) => {
+  shell.showItemInFolder(args);
+  shell.openPath(args);
 });
-
- 
