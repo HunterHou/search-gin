@@ -713,7 +713,7 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 		res.FailByMsg("文件不存在")
 		return res
 	}
-	if movie.Jpg != "" {
+	if movie.Jpg != "" && strings.HasPrefix(movie.Jpg,"http") {
 		res = fs.DownJpgMakePng(movieLib.Path, movie.Jpg)
 		if !res.IsSuccess() {
 			return res

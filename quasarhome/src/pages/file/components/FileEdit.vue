@@ -58,7 +58,6 @@ defineEmits([
 
 const open = (item, cb) => {
   view.item = new FileModel().fromObject(item);
-  view.item.Jpg = null
   view.item.Code = formatCode(item.Code);
   view.item.Title = formatTitle(item.Title);
   view.callback = cb;
