@@ -4,24 +4,28 @@
       <q-header reveal class="bg-black">
         <q-toolbar>
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
-          <q-toolbar-title style=" -webkit-app-region: drag;">文件搜索</q-toolbar-title>
-          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link"
-            v-show="isWideScreen" :style="{
-              color: currentPath == link.link ? 'red' : '',
-              scale: 1.2,
-            }" />
+          <q-toolbar-title style=" -webkit-app-region: drag;">
+            文件搜索<q-btn dense flat icon="refresh" @click="refreshThis"> </q-btn>
+          </q-toolbar-title>
+          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
+            color: currentPath == link.link ? 'red' : '',
+            scale: 1.2,
+          }" />
           <q-space />
+
           <q-btn color="green" flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense
             icon="menu">
-            {{ `${systemProperty && systemProperty.Playing?.Code?.substring(0, 8) ||
-              systemProperty.Playing?.Title?.substring(0, 8)}` }}
+            <span v-if="systemProperty.drawerRight">{{ `${systemProperty && systemProperty.Playing?.Code?.substring(0, 8)
+              ||
+              systemProperty.Playing?.Title?.substring(0, 8)}` }}</span>
           </q-btn>
-          <q-bar class="bg-black text-white">
-            <!-- <q-btn dense flat icon="minimize" @click="hideMainWindow" />
-            <q-btn dense flat icon="crop_square" @click="maxMainWindow" />
-            <q-btn dense flat icon="close" @click="confirmClose" /> -->
+          <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
+          <!-- <q-bar class="bg-black text-white">
+             <q-btn dense flat icon="minimize"  />
+           <q-btn dense flat icon="crop_square" @click="maxMainWindow" />
+            <q-btn dense flat icon="close" @click="confirmClose" />
             <q-btn dense flat icon="ti-timer" @click="confirmDelete" />
-          </q-bar>
+          </q-bar>-->
         </q-toolbar>
       </q-header>
 
@@ -84,6 +88,10 @@ const currentPath = computed(() => {
   return useRoute().path;
 });
 
+const refreshThis = () => {
+  window.location.reload()
+}
+
 // const closeWindow = () => {
 //   window.close()
 // }
@@ -115,7 +123,7 @@ const currentPath = computed(() => {
 //     });
 // };
 
-const confirmDelete = () => {
+const confirmShutDown = () => {
   $q.dialog({
     message: '确定关机吗?',
     cancel: true,

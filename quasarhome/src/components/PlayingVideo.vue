@@ -163,14 +163,12 @@ const open = (v) => {
   if (top) {
     top.scrollTo(0, 0)
   }
-
   if (props.mode == 'page') {
     replace(`/playing/${v.Id}`)
   }
-
   setTimeout(() => {
     vue3VideoPlayRef.value.play();
-  }, 800);
+  }, 100);
   if (!view.queryParam.Keyword) {
     view.queryParam.Keyword = v.Actress;
     fetchSearch();

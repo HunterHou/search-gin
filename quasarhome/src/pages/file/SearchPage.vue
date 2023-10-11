@@ -49,7 +49,7 @@
           </q-icon>
         </template>
         <template v-slot:append>
-          <q-icon name="ti-search" class="cursor-pointer" @click="fetchSearch">
+          <q-icon name="ti-search" title="搜" class="cursor-pointer" @click="fetchSearch">
           </q-icon>
         </template>
 
@@ -88,6 +88,11 @@
         <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="() => {
           fileInfoRef.open(item, refreshIndex);
         }">
+        <template v-slot:loading>
+          <div class="text-subtitle1 text-white">
+            Loading...
+          </div>
+        </template>
           <div style="
               padding: 0;
               margin: 0;
@@ -153,31 +158,30 @@
 
           <div class="absolute-bottom" style="padding: 6px" @click.stop="() => { }">
             <div class="text-body1" @click.stop="() => { }">
-              <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen" @click="openPlay(item)" />
+              <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen"  title="单页播放" @click="openPlay(item)" />
               <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard"
-                @click="openDialog(item)" />
-
+                @click="openDialog(item)"  title="小播放"  />
             </div>
-
           </div>
         </q-img>
         <div class="text-subtitles">
           <div style="display: flex; flex-direction: row">
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
-              @click="commonExec(PlayMovie(item.Id))" v-if="showButton('播放')" />
+              @click="commonExec(PlayMovie(item.Id))" title="播放" v-if="showButton('播放')" />
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice" @click="() => {
               fileEditRef.open(item, refreshIndex);
             }
-              " v-if="showButton('编辑')" />
+              " v-if="showButton('编辑')" title="编辑" />
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
-              @click="commonExec(openFolder(item.Id))" v-if="showButton('文件夹')" />
-            <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="ti-search" @click="searchCode(item)" />
+              @click="commonExec(openFolder(item.Id))" v-if="showButton('文件夹')" title="文件夹" />
+            <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="ti-search" title="网搜"
+              @click="searchCode(item)" />
             <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
-              @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" />
+              @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" title="刮图" />
             <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
-              @click="confirmDelete(item)" v-if="showButton('删除')" />
+              @click="confirmDelete(item)" v-if="showButton('删除')" title="删除" />
             <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-location-arrow"
-              v-if="showButton('移动')" />
+              v-if="showButton('移动')" title="移动" />
           </div>
           <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer" @click="
             view.queryParam.Keyword = item.Actress;
@@ -283,10 +287,10 @@ const view = reactive({
 });
 
 const searchCode = (item) => {
-  const url =`${view.settingInfo.BaseUrl}/${item.Code}`
+  const url = `${view.settingInfo.BaseUrl}/${item.Code}`
   console.log(url)
   if ($q.platform.is.electron) {
-    window.electron.createWindow({ router: url, width: 1280, height: 1000 ,titleBarStyle: '',})
+    window.electron.createWindow({ router: url, width: 1280, height: 1000, titleBarStyle: '', })
   } else {
     window.open(url)
   }

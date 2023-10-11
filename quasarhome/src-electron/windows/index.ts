@@ -1,0 +1,136 @@
+import {
+  app,
+  BrowserWindow,
+  Notification,
+  clipboard,
+  ipcMain,
+  dialog,
+  Tray,
+  nativeImage,
+  Menu,
+  shell,
+  BrowserWindowConstructorOptions,
+  ContextMenuParams,
+} from 'electron';
+import path from 'path';
+import { mainWindow } from '../electron-main';
+
+// 创建主窗口
+export function createMainWindow(mainWindow: BrowserWindow) {
+  mainWindow = new BrowserWindow({
+    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
+    width: 1400,
+    height: 1000,
+    // transparent: true, //禁止resize
+    darkTheme: true,
+    maximizable: true,
+    minimizable: true,
+    resizable: true,
+    simpleFullscreen: true,
+    skipTaskbar: true,
+    titleBarOverlay: true,
+    zoomToPageWidth: true,
+    titleBarStyle: 'customButtonsOnHover',
+    backgroundMaterial: 'mica',
+    vibrancy: 'sidebar',
+    x: 0,
+    y: 0,
+    title: '搜索',
+    backgroundColor: 'rgba(250,250,250,1)',
+    useContentSize: true,
+    webPreferences: {
+      scrollBounce: true,
+      experimentalFeatures: true,
+      backgroundThrottling: true,
+      contextIsolation: true,
+      webSecurity: false,
+      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+    },
+  });
+  const url = `${process.env.APP_URL}`;
+  mainWindow.loadURL(url);
+  if (process.env.DEBUGGING) {
+    // if on DEV or Production with debug enabled
+    mainWindow.webContents.openDevTools();
+  } else {
+    // we're on production; no access to devtools pls
+    mainWindow.webContents.on('devtools-opened', () => {
+      mainWindow?.webContents.closeDevTools();
+    });
+  }
+  mainWindow.setMenu(null);
+  mainWindow.webContents.on('context-menu', onContextMenu);
+  mainWindow.on('closed', () => {
+    mainWindow.close();
+  });
+}
+
+const onContextMenu = (_e: Event, params: ContextMenuParams) => {
+  const {
+    mediaType,
+    srcURL,
+    selectionText,
+    editFlags: { canPaste },
+  } = params;
+  if (canPaste) {
+    clipboard.readText();
+  } else if (mediaType === 'image') {
+    clipboard.writeText(srcURL);
+    new Notification({
+      title: '已复制',
+      body: srcURL,
+    }).show();
+  } else {
+    clipboard.writeText(selectionText);
+    new Notification({
+      title: '已复制',
+      body: selectionText,
+    }).show();
+  }
+};
+
+interface SonWindowParam extends BrowserWindowConstructorOptions {
+  router: string;
+}
+
+// 创建子窗口
+export function createSonWindow(params: SonWindowParam) {
+  const indow = new BrowserWindow({
+    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
+    width: 1600,
+    height: 900,
+    titleBarStyle: 'hidden',
+    // titleBarOverlay: true,
+    backgroundColor: 'rgba(250,250,250,1)',
+    useContentSize: true,
+    webPreferences: {
+      contextIsolation: true,
+      webSecurity: false,
+      // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
+      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+    },
+    ...params,
+  });
+
+  if (params?.router.indexOf('http') >= 0) {
+    indow.loadURL(params?.router);
+  } else {
+    const url = `${process.env.APP_URL}#${params?.router || ''}`;
+    indow.loadURL(url);
+  }
+
+  if (process.env.DEBUGGING) {
+    indow.webContents.openDevTools();
+  } else {
+    indow.webContents.on('devtools-opened', () => {
+      indow?.webContents.closeDevTools();
+    });
+  }
+  indow.setMenu(null);
+  indow.on('show', indow.focus);
+  indow.on('closed', () => {
+    mainWindow?.focus();
+  });
+  indow.webContents.on('context-menu', onContextMenu);
+  return indow;
+}
