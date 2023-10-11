@@ -1,91 +1,21 @@
 import {
-  app,
   BrowserWindow,
   Notification,
   clipboard,
-  ipcMain,
-  dialog,
-  Tray,
-  nativeImage,
-  Menu,
-  shell,
   BrowserWindowConstructorOptions,
   ContextMenuParams,
 } from 'electron';
 import path from 'path';
 import { mainWindow } from '../electron-main';
+let xw = 20;
+let yw = 20;
 
-// 创建主窗口
-export function createMainWindow(mainWindow: BrowserWindow) {
-  mainWindow = new BrowserWindow({
-    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1400,
-    height: 1000,
-    // transparent: true, //禁止resize
-    darkTheme: true,
-    maximizable: true,
-    minimizable: true,
-    resizable: true,
-    simpleFullscreen: true,
-    skipTaskbar: true,
-    titleBarOverlay: true,
-    zoomToPageWidth: true,
-    titleBarStyle: 'customButtonsOnHover',
-    backgroundMaterial: 'mica',
-    vibrancy: 'sidebar',
-    x: 0,
-    y: 0,
-    title: '搜索',
-    backgroundColor: 'rgba(250,250,250,1)',
-    useContentSize: true,
-    webPreferences: {
-      scrollBounce: true,
-      experimentalFeatures: true,
-      backgroundThrottling: true,
-      contextIsolation: true,
-      webSecurity: false,
-      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
-    },
-  });
-  const url = `${process.env.APP_URL}`;
-  mainWindow.loadURL(url);
-  if (process.env.DEBUGGING) {
-    // if on DEV or Production with debug enabled
-    mainWindow.webContents.openDevTools();
-  } else {
-    // we're on production; no access to devtools pls
-    mainWindow.webContents.on('devtools-opened', () => {
-      mainWindow?.webContents.closeDevTools();
-    });
-  }
-  mainWindow.setMenu(null);
-  mainWindow.webContents.on('context-menu', onContextMenu);
-  mainWindow.on('closed', () => {
-    mainWindow.close();
-  });
-}
-
-const onContextMenu = (_e: Event, params: ContextMenuParams) => {
-  const {
-    mediaType,
-    srcURL,
-    selectionText,
-    editFlags: { canPaste },
-  } = params;
-  if (canPaste) {
-    clipboard.readText();
-  } else if (mediaType === 'image') {
-    clipboard.writeText(srcURL);
-    new Notification({
-      title: '已复制',
-      body: srcURL,
-    }).show();
-  } else {
-    clipboard.writeText(selectionText);
-    new Notification({
-      title: '已复制',
-      body: selectionText,
-    }).show();
+const moveWindow = () => {
+  xw += 40;
+  yw += 40;
+  if (xw > 100) {
+    xw = 40;
+    yw += 40;
   }
 };
 
@@ -99,6 +29,8 @@ export function createSonWindow(params: SonWindowParam) {
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1600,
     height: 900,
+    x: xw,
+    y: yw,
     titleBarStyle: 'hidden',
     // titleBarOverlay: true,
     backgroundColor: 'rgba(250,250,250,1)',
@@ -132,5 +64,81 @@ export function createSonWindow(params: SonWindowParam) {
     mainWindow?.focus();
   });
   indow.webContents.on('context-menu', onContextMenu);
+  moveWindow()
   return indow;
 }
+// 创建主窗口
+export function createMainWindow(mainWindow: BrowserWindow) {
+  mainWindow = new BrowserWindow({
+    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
+    width: 1560,
+    height: 1000,
+    // transparent: true, //禁止resize
+    darkTheme: true,
+    maximizable: true,
+    minimizable: true,
+    resizable: true,
+    simpleFullscreen: true,
+    skipTaskbar: true,
+    titleBarOverlay: true,
+    zoomToPageWidth: true,
+    titleBarStyle: 'customButtonsOnHover',
+    backgroundMaterial: 'mica',
+    vibrancy: 'sidebar',
+    x: xw,
+    y: yw,
+    title: '搜索',
+    backgroundColor: 'rgba(250,250,250,1)',
+    useContentSize: true,
+    webPreferences: {
+      scrollBounce: true,
+      experimentalFeatures: true,
+      backgroundThrottling: true,
+      contextIsolation: true,
+      webSecurity: false,
+      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+    },
+  });
+  const url = `${process.env.APP_URL}`;
+  mainWindow.loadURL(url);
+  if (process.env.DEBUGGING) {
+    // if on DEV or Production with debug enabled
+    mainWindow.webContents.openDevTools();
+  } else {
+    // we're on production; no access to devtools pls
+    mainWindow.webContents.on('devtools-opened', () => {
+      mainWindow?.webContents.closeDevTools();
+    });
+  }
+  mainWindow.setMenu(null);
+  mainWindow.webContents.on('context-menu', onContextMenu);
+  mainWindow.on('closed', () => {
+    mainWindow.close();
+  });
+  moveWindow()
+}
+
+const onContextMenu = (_e: Event, params: ContextMenuParams) => {
+  const {
+    mediaType,
+    srcURL,
+    selectionText,
+    editFlags: { canPaste },
+  } = params;
+  if (canPaste) {
+    clipboard.readText();
+  } else if (mediaType === 'image') {
+    clipboard.writeText(srcURL);
+    new Notification({
+      title: '已复制',
+      body: srcURL,
+    }).show();
+  } else {
+    clipboard.writeText(selectionText);
+    new Notification({
+      title: '已复制',
+      body: selectionText,
+    }).show();
+  }
+};
+

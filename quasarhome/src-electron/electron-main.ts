@@ -13,7 +13,6 @@ import { createTray } from './windows/tray';
 const platform = process.platform || os.platform();
 
 export let mainWindow: BrowserWindow;
-
 export const iconMain = nativeImage.createFromPath(
   path.resolve(__dirname, 'icons/icon.png')
 );
