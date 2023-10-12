@@ -11,11 +11,11 @@ let xw = 20;
 let yw = 20;
 
 const moveWindow = () => {
-  xw += 40;
+  xw += 50;
   yw += 40;
-  if (xw > 100) {
-    xw = 40;
-    yw += 40;
+  if (yw >200) {
+    yw = 20;
+    xw += 50;
   }
 };
 
@@ -27,11 +27,11 @@ interface SonWindowParam extends BrowserWindowConstructorOptions {
 export function createSonWindow(params: SonWindowParam) {
   const indow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1600,
+    width: 1280,
     height: 900,
     x: xw,
     y: yw,
-    titleBarStyle: 'hidden',
+    // titleBarStyle: 'hidden',
     // titleBarOverlay: true,
     backgroundColor: 'rgba(250,250,250,1)',
     useContentSize: true,
@@ -71,8 +71,8 @@ export function createSonWindow(params: SonWindowParam) {
 export function createMainWindow(mainWindow: BrowserWindow) {
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1560,
-    height: 1000,
+    width: 1280,
+    height: 960,
     // transparent: true, //禁止resize
     darkTheme: true,
     maximizable: true,

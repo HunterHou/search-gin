@@ -263,7 +263,7 @@ const showButton = (name) => {
 const openPlay = (item) => {
   const url = `/playing/${item.Id}`
   if ($q.platform.is.electron) {
-    window.electron.createWindow({ router: url, width: 1280, height: 1000 })
+    window.electron.createWindow({ router: url})
   } else {
     window.open(url)
   }
