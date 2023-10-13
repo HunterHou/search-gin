@@ -1,5 +1,14 @@
 <template>
   <div class="q-pa-md">
+    <q-page-sticky style="z-index: 9;" position="left" :offset="[0, 0]">
+      <q-btn round class="page-sticky" color="amber" text-color="black" icon="keyboard_arrow_left"
+        v-if="view.queryParam.Page > 1" @click="nextPage(-1)"></q-btn>
+    </q-page-sticky>
+
+    <q-page-sticky style="z-index: 9;" position="right" :offset="[10, 10]">
+      <q-btn round class="page-sticky" color="secondary" text-color="black" icon="keyboard_arrow_right"
+        @click="nextPage(1)"></q-btn>
+    </q-page-sticky>
     <div class="row justify-center q-gutter-sm">
       <q-btn-toggle v-model="view.queryParam.SortField" @update:model-value="fetchSearch" toggle-color="primary" :options="[
         { label: '时', value: 'MTime' },
@@ -87,6 +96,11 @@ const currentPageChange = (e) => {
   fetchSearch();
 };
 
+const nextPage = (n) => {
+  view.queryParam.Page = view.queryParam.Page + n
+  currentPageChange()
+}
+
 const fetchSearch = async () => {
   const { data } = await QueryActressList(view.queryParam);
   console.log(data);
@@ -106,5 +120,10 @@ onMounted(() => {
 .item-img {
   width: 220px;
   height: 282px;
+}
+
+.page-sticky {
+  width: 4rem;
+  height: 3rem;
 }
 </style>
