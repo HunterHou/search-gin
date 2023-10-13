@@ -302,11 +302,12 @@ const focusEvent = (e) => {
 };
 
 const openFolder = (item) => {
-  if ($q.platform.is.electron) {
-    window.electron.showInFolder(item.Path)
-  } else {
-    commonExec(OpenFileFolder(item.Id))
-  }
+  commonExec(OpenFileFolder(item.Id))
+  // if ($q.platform.is.electron) {
+  //   window.electron.showInFolder(item.Path)
+  // } else {
+  //   commonExec(OpenFileFolder(item.Id))
+  // }
 
 }
 
