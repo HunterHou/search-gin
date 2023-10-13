@@ -88,11 +88,11 @@
         <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="() => {
           fileInfoRef.open(item, refreshIndex);
         }">
-        <template v-slot:loading>
-          <div class="text-subtitle1 text-white">
-            Loading...
-          </div>
-        </template>
+          <template v-slot:loading>
+            <div class="text-subtitle1 text-white">
+              Loading...
+            </div>
+          </template>
           <div style="
               padding: 0;
               margin: 0;
@@ -158,22 +158,23 @@
 
           <div class="absolute-bottom" style="padding: 6px" @click.stop="() => { }">
             <div class="text-body1" @click.stop="() => { }">
-              <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen"  title="单页播放" @click="openPlay(item)" />
-              <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard"
-                @click="openDialog(item)"  title="小播放"  />
+              <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen" title="单页播放"
+                @click="openPlay(item)" />
+              <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard" @click="openDialog(item)"
+                title="小播放" />
             </div>
           </div>
         </q-img>
         <div class="text-subtitles">
           <div style="display: flex; flex-direction: row">
-            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
-              @click="commonExec(PlayMovie(item.Id))" title="播放" v-if="showButton('播放')" />
+            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject" @click="playBySystem(item)"
+              title="播放" v-if="showButton('播放')" />
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice" @click="() => {
               fileEditRef.open(item, refreshIndex);
             }
               " v-if="showButton('编辑')" title="编辑" />
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
-              @click="commonExec(openFolder(item.Id))" v-if="showButton('文件夹')" title="文件夹" />
+              @click="openFolder(item)" v-if="showButton('文件夹')" title="文件夹" />
             <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="ti-search" title="网搜"
               @click="searchCode(item)" />
             <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
@@ -245,6 +246,16 @@ const listButtons = computed(() => {
   return view.settingInfo.Buttons;
 });
 
+const playBySystem = (item) => {
+  if ($q.platform.is.electron) {
+    const { Path } = item
+    window.electron.openBySystem({ Path })
+  } else {
+    commonExec(PlayMovie(item.Id))
+  }
+
+}
+
 const listEditCallback = (data) => {
   const { settingInfo } = data;
   if (settingInfo) {
@@ -263,7 +274,7 @@ const showButton = (name) => {
 const openPlay = (item) => {
   const url = `/playing/${item.Id}`
   if ($q.platform.is.electron) {
-    window.electron.createWindow({ router: url})
+    window.electron.createWindow({ router: url })
   } else {
     window.open(url)
   }
@@ -302,12 +313,11 @@ const focusEvent = (e) => {
 };
 
 const openFolder = (item) => {
-  commonExec(OpenFileFolder(item.Id))
-  // if ($q.platform.is.electron) {
-  //   window.electron.showInFolder(item.Path)
-  // } else {
-  //   commonExec(OpenFileFolder(item.Id))
-  // }
+  if ($q.platform.is.electron) {
+    window.electron.showInFolder(item.Path)
+  } else {
+    commonExec(OpenFileFolder(item.Id))
+  }
 
 }
 

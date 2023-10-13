@@ -4,6 +4,7 @@ import {
   clipboard,
   BrowserWindowConstructorOptions,
   ContextMenuParams,
+  app,
 } from 'electron';
 import path from 'path';
 import { mainWindow } from '../electron-main';
@@ -113,9 +114,10 @@ export function createMainWindow(mainWindow: BrowserWindow) {
   mainWindow.setMenu(null);
   mainWindow.webContents.on('context-menu', onContextMenu);
   mainWindow.on('closed', () => {
-    mainWindow.close();
+    console.log('closed mainWindow')
   });
   moveWindow()
+  return mainWindow
 }
 
 const onContextMenu = (_e: Event, params: ContextMenuParams) => {

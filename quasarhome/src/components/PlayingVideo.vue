@@ -2,11 +2,11 @@
   <div class="topRef"> </div>
   <q-card class="q-dialog-plugin" style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
 
-    <div style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;">
-      <q-btn class="q-mr-sm" size="sm" color="red" label="关闭" @click="closeThis" />
+    <div style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
       <span class="q-mr-sm"
         style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden">{{
           view.playing.Title }}</span>
+
     </div>
     <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
       style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC" @ended="playNext(1)" />
@@ -42,13 +42,12 @@
           </q-icon>
         </template>
       </q-input>
+      <q-btn color="red" label="关闭" @click="closeThis" />
       <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch()" toggle-color="primary"
         :options="[
           { label: '正', value: 'asc' },
           { label: '倒', value: 'desc' }
         ]" />
-      <q-btn color="primary" :label="systemProperty.PlayMode !== 800 ? '小屏' : '全屏'" v-if="props.mode == 'drawer'"
-        @click="changeMode" />
       <q-btn v-if="!view.playlist" color="primary" label="上一个" @click="playNext(-1)" />
       <q-btn v-if="!view.playlist" color="primary" label="下一个" @click="playNext(1)" />
       <q-btn color="orange" label="更多" @click="view.showMore = !view.showMore; fetchGetSettingInfo()" />
@@ -80,7 +79,7 @@
                 justify-content: flex-start;
                 width: fit-content;
               ">
-              <q-btn square color="red" text-color="white" style="margin-left: 0px; padding: 0 4px">
+              <q-btn square color="red" size="sm" text-color="white" style="margin-left: 0px; padding: 0 4px">
                 <span @click="deleteThis(item.Id)">删除</span>
               </q-btn>
               <q-chip square color="red" text-color="white" v-for="tag in item.Tags" :key="tag"
@@ -109,7 +108,7 @@
 <script setup>
 import vue3VideoPlay from 'vue3-video-play';
 import 'vue3-video-play/dist/style.css'; // 引入css
-import { useQuasar } from 'quasar';
+// import { useQuasar } from 'quasar';
 import { computed, reactive, ref, watch } from 'vue';
 import { useSystemProperty } from '../stores/System';
 import { getFileStream } from './utils/images';
@@ -122,7 +121,7 @@ const systemProperty = useSystemProperty();
 const vue3VideoPlayRef = ref(null);
 const { replace } = useRouter()
 
-const $q = useQuasar();
+// const $q = useQuasar();
 const view = reactive({
   playList: [],
   queryParam: { SortType: 'desc' },
@@ -138,10 +137,10 @@ const props = defineProps({
   }
 })
 
-const deleteThis =async (Id) => {
- await DeleteFile(Id)
- await RefreshAPI()
- await fetchSearch()
+const deleteThis = async (Id) => {
+  await DeleteFile(Id)
+  await RefreshAPI()
+  await fetchSearch()
 }
 
 const suggestions = computed(() => {
@@ -163,6 +162,7 @@ watch(drawerRight, (v) => {
 const open = (v) => {
   view.playing = v
   optionsPC.src = getFileStream(v.Id);
+  optionsPC.webFullScreen = true;
   const top = document.querySelector('.topRef')
   if (top) {
     top.scrollTo(0, 0)
@@ -217,16 +217,6 @@ const fetchSearch = async () => {
 };
 
 
-const changeMode = () => {
-  if (systemProperty.PlayMode == 800) {
-    systemProperty.PlayMode = $q.screen.width;
-  } else {
-    systemProperty.PlayMode = 800;
-  }
-};
-
-
-
 const playNext = (step) => {
   if (!view.playList) {
     return;
@@ -258,12 +248,13 @@ const optionsPC = reactive({
   muted: false, //静音
   preload: 'false',
   webFullScreen: false,
+  pageFullScreen: true,
   speedRate: ['1.0', '1.25', '1.5', '2.0'], //播放倍速
   autoPlay: false, //自动播放
   loop: false, //循环播放
   mirror: false, //镜像画面
   ligthOff: true, //关灯模式
-  currentTime: 10,
+  currentTime: 1,
   volume: systemProperty.videoOptions?.volume, //默认音量大小
   control: systemProperty.videoOptions?.control, //是否显示控制
   controlBtns: systemProperty.videoOptions?.controlBtns, //显示所有按钮,

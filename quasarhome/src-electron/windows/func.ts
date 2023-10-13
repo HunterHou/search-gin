@@ -11,6 +11,13 @@ ipcMain.on('new-window', (event, params) => {
   createSonWindow(params);
 });
 
+ipcMain.on('open-by-system', (event, data) => {
+  const {Path} =data
+  shell.openPath(Path);
+});
+
+
+
 // 监听 z最大化
 ipcMain.on('main-maximize', () => {
   if (mainWindow?.isMaximized()) {
@@ -30,5 +37,4 @@ ipcMain.on('main-resize', () => {
 
 ipcMain.on('show-in-folder', (e, args: string) => {
   shell.showItemInFolder(args);
-  shell.openPath(args);
 });

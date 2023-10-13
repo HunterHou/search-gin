@@ -4,7 +4,6 @@
       <q-card class="q-dialog-plugin q-pa-md" :style="{
         color: 'white',
         width: '100%',
-        maxHeight: '90vh',
         padding: '20px',
         lineHeight: '32px',
       }">
@@ -50,14 +49,13 @@
             </div>
           </template>
         </q-field>
-        <q-field label="Code" stack-label>
+        <q-field label="Path" stack-label>
           <template v-slot:control>
             <div class="self-center full-width no-outline" tabindex="0">
               {{ view.item.Path }}
             </div>
           </template>
         </q-field>
-
       </q-card>
       <div v-if="view.prewiewImages">
         <q-img fit="fit" v-for="item in view.prewiewImages" :key="item.Id" :src="getTempImage(item.Id)"
@@ -86,7 +84,6 @@ const systemProperty = useSystemProperty();
 
 const commonExec = async (exec) => {
   const { Code, Message } = (await exec) || {};
-  console.log(Code, Message);
   if (Code != 200) {
     $q.notify({ message: `${Message}` });
   }
@@ -98,7 +95,6 @@ const openPlay = (item) => {
 
 const moveThis = async (item) => {
   const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
-  console.log(res);
   if (res.Code == 200) {
     $q.notify({ type: 'negative', message: res.Message });
   } else {
@@ -152,7 +148,6 @@ const open = (item, cb) => {
 
   setTimeout(() => {
     QueryDirImageBase64(item.Id).then((res) => {
-      console.log(res.data)
       view.prewiewImages = res.data
     })
   }, 500);
@@ -164,7 +159,13 @@ const fetchSetting = async () => {
 };
 
 const searchCode = (item) => {
-  window.open(`${view.settingInfo.BaseUrl}/${item.Code}`);
+  const url = `${view.settingInfo.BaseUrl}/${item.Code}`
+  console.log(url)
+  if ($q.platform.is.electron) {
+    window.electron.createWindow({ router: url, width: 1280, height: 1000, titleBarStyle: '', })
+  } else {
+    window.open(url)
+  }
 };
 
 // onDialogOK, onDialogCancel

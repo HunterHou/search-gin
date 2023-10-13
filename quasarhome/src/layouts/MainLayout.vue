@@ -40,7 +40,7 @@
           </q-list>
         </q-scroll-area>
       </q-drawer>
-      <q-drawer side="right" :width="isWideScreen ? 750 : 400" v-model="systemProperty.drawerRight" bordered
+      <q-drawer side="right" :width="isWideScreen ? 750 : 420" v-model="systemProperty.drawerRight" bordered
         class="bg-grey-3">
         <Playing ref="vue3VideoPlayRef" mode="drawer" />
       </q-drawer>
