@@ -48,7 +48,7 @@ export function createSonWindow(params: SonWindowParam) {
   if (params?.router.indexOf('http') >= 0) {
     indow.loadURL(params?.router);
   } else {
-    const url = `${process.env.APP_URL}#${params?.router || ''}`;
+    const url = `${process.env.APP_URL}${params?.router || ''}`;
     indow.loadURL(url);
   }
 
