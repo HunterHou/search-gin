@@ -48,7 +48,7 @@ export const useSystemProperty = defineStore({
     Favorite: [] as FileQuery[],
     FileSearchParam: {
       Page: 1,
-      PageSize: 14,
+      PageSize: 10,
       MovieType: '',
       SortField: 'MTime',
       SortType: 'desc',

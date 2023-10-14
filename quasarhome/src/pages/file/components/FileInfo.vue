@@ -118,7 +118,13 @@ const commonExec = async (exec) => {
 }
 
 const openPlay = (item) => {
-  window.open(`/playing/${item.Id}`)
+  const url = `/playing/${item.Id}`
+  if ($q.platform.is.electron) {
+    window.electron.createWindow({ router: url })
+  } else {
+    window.open(url)
+  }
+
 }
 
 const showMovie = () => {
