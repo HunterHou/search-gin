@@ -9,6 +9,7 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require('quasar/wrappers');
+const path = require('path');
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -53,7 +54,7 @@ module.exports = configure(function (/* ctx */) {
         node: 'node16',
       },
 
-      vueRouterMode: 'history', // available values: 'hash', 'history'
+      vueRouterMode: 'hash', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -90,7 +91,7 @@ module.exports = configure(function (/* ctx */) {
       open: true, // opens browser window automatically
       proxy: {
         '/api': {
-          target: 'http://127.0.0.1:10081/',
+          target: 'http://localhost:10081/',
           changeOrigin: true,
           pathRewrite: {
             '^/api': '',
@@ -182,11 +183,8 @@ module.exports = configure(function (/* ctx */) {
     electron: {
       // extendElectronMainConf (esbuildConf)
       // extendElectronPreloadConf (esbuildConf)
-
       inspectPort: 5858,
-
       bundler: 'packager', // 'packager' or 'builder'
-
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
         // OS X / Mac App Store
@@ -196,6 +194,7 @@ module.exports = configure(function (/* ctx */) {
         // protocol: 'myapp://path',
         // Windows only
         // win32metadata: { ... }
+        asar:false,
       },
 
       builder: {
