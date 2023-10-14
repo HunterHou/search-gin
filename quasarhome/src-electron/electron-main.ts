@@ -11,6 +11,7 @@ export let mainWindow: BrowserWindow;
 export const iconMain = nativeImage.createFromPath(
   path.resolve(__dirname, 'icons/icon.png')
 );
+app.disableHardwareAcceleration()
 // 启动第三方工具
 const appUri = path.resolve(__dirname, 'icons/exec/appQuaser.exe');
 access(appUri, (err) => {
@@ -23,6 +24,18 @@ access(appUri, (err) => {
 export const init = () => {
   console.log('init');
   mainWindow = createMainWindow(mainWindow);
+  mainWindow.once('focus', () => mainWindow.flashFrame(false));
+  mainWindow.flashFrame(true);
+  app.setUserTasks([
+    {
+      program: process.execPath,
+      arguments: '--new-window',
+      iconPath: process.execPath,
+      iconIndex: 0,
+      title: 'New Window',
+      description: 'Create a new window',
+    },
+  ]);
 };
 // 启动
 app.whenReady().then(() => {
@@ -49,5 +62,7 @@ app.on('window-all-closed', () => {
 //   }
 //   mainWindow.show()
 // });
+
+
 
 import './windows/func';

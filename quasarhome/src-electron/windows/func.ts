@@ -1,5 +1,6 @@
 import {
   ipcMain,
+  nativeTheme,
   shell,
 } from 'electron';
 import { createSonWindow } from '.';
@@ -38,3 +39,16 @@ ipcMain.on('main-resize', () => {
 ipcMain.on('show-in-folder', (e, args: string) => {
   shell.showItemInFolder(args);
 });
+
+ipcMain.handle('dark-mode:toggle', () => {
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = 'light'
+  } else {
+    nativeTheme.themeSource = 'dark'
+  }
+  return nativeTheme.shouldUseDarkColors
+})
+
+ipcMain.handle('dark-mode:system', () => {
+  nativeTheme.themeSource = 'system'
+})

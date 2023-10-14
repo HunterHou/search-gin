@@ -4,7 +4,6 @@ import {
   clipboard,
   BrowserWindowConstructorOptions,
   ContextMenuParams,
-  app,
 } from 'electron';
 import path from 'path';
 import { mainWindow } from '../electron-main';
@@ -81,7 +80,7 @@ export function createMainWindow(mainWindow: BrowserWindow) {
     resizable: true,
     simpleFullscreen: true,
     skipTaskbar: true,
-    titleBarOverlay: true,
+    titleBarOverlay: false,
     zoomToPageWidth: true,
     titleBarStyle: 'customButtonsOnHover',
     backgroundMaterial: 'mica',
