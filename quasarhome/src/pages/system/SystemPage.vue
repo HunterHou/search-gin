@@ -21,6 +21,7 @@ const fetchSearch = async () => {
 };
 
 onMounted(() => {
+  document.title = '系统信息'
   fetchSearch();
 });
 </script>
