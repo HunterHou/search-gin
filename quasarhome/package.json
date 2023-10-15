@@ -2,7 +2,7 @@
   "name": "quasarhome",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "SearchIndex",
+  "productName": "文件搜索系统",
   "author": "hunterPC <hunter@hnter>",
   "private": true,
   "scripts": {
