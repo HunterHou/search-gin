@@ -6,7 +6,7 @@ import {
   ContextMenuParams,
 } from 'electron';
 import path from 'path';
-import { mainWindow } from '../electron-main';
+
 let xw = 20;
 let yw = 20;
 
@@ -31,14 +31,11 @@ export function createSonWindow(params: SonWindowParam) {
     height: 900,
     x: xw,
     y: yw,
-    // titleBarStyle: 'hidden',
-    // titleBarOverlay: true,
     backgroundColor: 'rgba(250,250,250,1)',
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
       webSecurity: false,
-      // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
     },
     ...params,
@@ -59,10 +56,6 @@ export function createSonWindow(params: SonWindowParam) {
     });
   }
   indow.setMenu(null);
-  indow.on('show', indow.focus);
-  indow.on('closed', () => {
-    mainWindow?.focus();
-  });
   indow.webContents.on('context-menu', onContextMenu);
   moveWindow()
   return indow;
@@ -112,9 +105,6 @@ export function createMainWindow(mainWindow: BrowserWindow) {
   }
   mainWindow.setMenu(null);
   mainWindow.webContents.on('context-menu', onContextMenu);
-  mainWindow.on('closed', () => {
-    console.log('closed mainWindow')
-  });
   moveWindow()
   return mainWindow
 }

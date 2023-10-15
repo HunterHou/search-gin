@@ -22,20 +22,7 @@ access(appUri, (err) => {
   }
 });
 export const init = () => {
-  console.log('init');
   mainWindow = createMainWindow(mainWindow);
-  mainWindow.once('focus', () => mainWindow.flashFrame(false));
-  mainWindow.flashFrame(true);
-  app.setUserTasks([
-    {
-      program: process.execPath,
-      arguments: '--new-window',
-      iconPath: process.execPath,
-      iconIndex: 0,
-      title: 'New Window',
-      description: 'Create a new window',
-    },
-  ]);
 };
 // 启动
 app.whenReady().then(() => {
@@ -55,14 +42,5 @@ app.on('window-all-closed', () => {
     console.log('window-all-closed');
   }
 });
-
-// app.on('activate', () => {
-//   if (mainWindow === undefined) {
-//     createMainWindow(mainWindow);
-//   }
-//   mainWindow.show()
-// });
-
-
 
 import './windows/func';
