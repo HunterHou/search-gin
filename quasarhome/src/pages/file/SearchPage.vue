@@ -401,7 +401,7 @@ const fetchSearch = async () => {
   console.log(data);
   view.resultData = { ...data };
   const { ResultSize, ResultCnt } = data
-  document.title = `搜索 ${Keyword || ''} :${ResultSize} {${ResultCnt}}`
+  document.title = `搜索 ${Keyword || ''} : ${ResultSize} {${ResultCnt}}`
 };
 
 const moveThis = async (item) => {
