@@ -86,7 +86,7 @@
     <div class="row justify-center q-gutter-sm q-mr-sm q-mt-sm mainlist">
       <q-card class="q-ma-sm example-item" v-for="item in view.resultData.Data" :key="item.Id">
         <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="() => {
-          fileInfoRef.open(item, refreshIndex);
+          fileInfoRef.open({ item, cb: refreshIndex });
         }">
           <template v-slot:loading>
             <div class="text-subtitle1 text-white">
@@ -160,8 +160,11 @@
             <div class="text-body1" @click.stop="() => { }">
               <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen" title="单页播放"
                 @click="openPlay(item)" />
-              <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard" @click="openDialog(item)"
-                title="小播放" />
+              <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-arrow-right"
+                @click="openRightDrawer(item)" title="小播放" />
+              <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard" @click="() => {
+                fileInfoRef.open({ item, playing: true });
+              }" title="小播放" />
             </div>
           </div>
         </q-img>
@@ -173,8 +176,8 @@
               fileEditRef.open(item, refreshIndex);
             }
               " v-if="showButton('编辑')" title="编辑" />
-            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
-              @click="openFolder(item)" v-if="showButton('文件夹')" title="文件夹" />
+            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new" @click="openFolder(item)"
+              v-if="showButton('文件夹')" title="文件夹" />
             <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="ti-search" title="网搜"
               @click="searchCode(item)" />
             <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
@@ -370,7 +373,7 @@ const copyText = async (str) => {
   $q.notify({ message: `${str}` });
 };
 
-const openDialog = (item) => {
+const openRightDrawer = (item) => {
   view.currentData = item;
   systemProperty.Playing = item;
   systemProperty.drawerRight = true;

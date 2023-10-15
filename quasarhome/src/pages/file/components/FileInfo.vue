@@ -181,12 +181,15 @@ defineEmits([
   ...useDialogPluginComponent.emits,
 ]);
 
-const open = (item, cb) => {
+const open = (data) => {
+  const { item, cb, playing } = data
   view.prewiewImages = [];
   view.item = { ...item };
   view.callback = cb;
   dialogRef.value.show();
-
+  if (playing) {
+    showMovie()
+  }
   setTimeout(() => {
     QueryDirImageBase64(item.Id).then((res) => {
       view.prewiewImages = res.data
