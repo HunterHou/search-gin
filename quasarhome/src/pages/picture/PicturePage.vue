@@ -108,6 +108,7 @@ const fetchSearch = async () => {
 };
 
 onMounted(() => {
+  document.title = '图鉴'
   fetchSearch();
 });
 </script>

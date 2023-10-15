@@ -285,6 +285,7 @@ const queryIpAddr = async () => {
 };
 
 onMounted(() => {
+  document.title = '设置'
   fetchSearch();
   queryIpAddr();
 });
