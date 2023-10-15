@@ -188,7 +188,7 @@ const open = (data) => {
   view.callback = cb;
   dialogRef.value.show();
   if (playing) {
-    showDetail.value = 'movie';
+    showMovie()
   }
   setTimeout(() => {
     QueryDirImageBase64(item.Id).then((res) => {
