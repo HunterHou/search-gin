@@ -1,50 +1,25 @@
 <template>
   <div>
-    <q-banner
-      inline-actions
-      rounded
-      class="bg-blue text-white q-mt-sd"
-      style="position: relative"
-    >
+    <q-banner inline-actions rounded class="bg-blue text-white q-mt-sd" style="position: relative">
       <div class="text-h5 q-pa-md">文件扫描分析</div>
       <template v-slot:action>
-        <q-btn
-          style="background: #ff0080; color: white"
-          label="扫描"
-          icon="search"
-          :loading="indexLoading"
-          size="small"
-          @click="refreshIndex()"
-        />
-        <q-btn
-          color="green"
-          class="q-ml-md"
-          label="刷新"
-          icon="refresh"
-          @click="f5"
-        />
+        <q-btn style="background: #ff0080; color: white" label="扫描" icon="search" :loading="indexLoading" size="small"
+          @click="refreshIndex()" />
+        <q-btn color="green" class="q-ml-md" label="刷新" icon="refresh" @click="f5" />
       </template>
     </q-banner>
     <q-splitter v-model="splitterModel">
       <template v-slot:before>
         <div class="q-pa-md">
           <div class="text-h5 q-mb-md">标签分布</div>
-          <div
-            class="q-gutter-sm"
-            style="
+          <div class="q-gutter-sm" style="
               display: flex;
               flex-direction: row;
               flex-wrap: wrap;
               justify-content: flex-start;
-            "
-          >
+            ">
             <div v-for="tag in tagData" :key="tag" style="width: auto">
-              <q-btn
-                color="secondary"
-                class="btn-fixed-width"
-                v-if="tag.Cnt > 1"
-                @click="folderGotoMenu(tag.Name)"
-              >
+              <q-btn color="secondary" class="btn-fixed-width" v-if="tag.Cnt > 1" @click="folderGotoMenu(tag.Name)">
                 {{ `${tag.Name} (${tag.Cnt})` }}
                 <q-badge color="orange" floating>{{ tag.SizeStr }}</q-badge>
               </q-btn>
@@ -67,12 +42,7 @@
                   </q-card-section>
                   <q-separator />
                   <q-card-actions vertical>
-                    <q-btn
-                      flat
-                      color="blue"
-                      @click="gotoMenu({ ...sc, IsDir: true })"
-                      >传送</q-btn
-                    >
+                    <q-btn flat color="blue" @click="gotoMenu({ ...sc, IsDir: true })">传送</q-btn>
                   </q-card-actions>
                 </q-card>
               </div>
@@ -82,7 +52,6 @@
           <template v-slot:after>
             <div class="q-pa-md">
               <div class="text-h5 q-mb-md">文件分析</div>
-              {{}}
               <div class="row justify-center q-gutter-sm">
                 <q-card class="my-card" v-for="sc in tableData" :key="sc">
                   <q-card-section>
@@ -92,34 +61,14 @@
                   </q-card-section>
                   <q-separator />
                   <q-card-actions vertical>
-                    <div
-                      style="
+                    <div style="
                         display: flex;
                         flex-direction: row;
                         justify-content: space-around;
-                      "
-                    >
-                      <q-btn
-                        color="blue"
-                        flat
-                        v-if="!sc.IsDir"
-                        @click="gotoMenu(sc)"
-                        >传送</q-btn
-                      >
-                      <q-btn
-                        color="blue"
-                        flat
-                        v-if="sc.IsDir"
-                        @click="openThis(sc)"
-                        >打开</q-btn
-                      >
-                      <q-btn
-                        color="red"
-                        flat
-                        v-if="sc.IsDir"
-                        @click="deleteThis(sc)"
-                        >删除</q-btn
-                      >
+                      ">
+                      <q-btn color="blue" flat v-if="!sc.IsDir" @click="gotoMenu(sc)">传送</q-btn>
+                      <q-btn color="blue" flat v-if="sc.IsDir" @click="openThis(sc)">打开</q-btn>
+                      <q-btn color="red" flat v-if="sc.IsDir" @click="deleteThis(sc)">删除</q-btn>
                     </div>
                   </q-card-actions>
                 </q-card>
@@ -150,7 +99,7 @@ import { useSystemProperty } from '../stores/System';
 
 const { push } = useRouter();
 const systemProperty = useSystemProperty();
-document.title = '首页';
+document.title = '分析';
 
 const $q = useQuasar();
 const indexLoading = ref(false);
