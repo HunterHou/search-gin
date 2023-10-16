@@ -12,9 +12,9 @@
           <div class="q-mr-sm q-mb-sm  row justify-left">
             <q-btn-toggle v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()" toggle-color="primary"
               :options="MovieTypeSelects" />
-            <q-btn class="q-mr-sm" v-if="view.queryParam.Page != 1" size="sm" color="secondary" icon="refresh"
+            <q-btn class="q-mr-sm" v-if="view.queryParam.Page != 1" size="sm" color="secondary"
               @click="nextPage(-1)">上</q-btn>
-            <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh" @click="nextPage(1)">下</q-btn>
+            <q-btn class="q-mr-sm" size="sm" color="secondary" @click="nextPage(1)">下</q-btn>
 
           </div>
           <div class="q-mr-sm row justify-left">
