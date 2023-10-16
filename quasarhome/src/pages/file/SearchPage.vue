@@ -208,7 +208,7 @@
 <script setup>
 import { useQuasar } from 'quasar';
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   AddTag,
   CloseTag,
@@ -438,9 +438,29 @@ const setMovieType = async (Id, Type) => {
 const saveParam = () => {
   systemProperty.syncSearchParam(view.queryParam);
   localStorage.setItem('queryParam', JSON.stringify(view.queryParam));
+
+  const { Page,
+    PageSize,
+    MovieType,
+    SortField,
+    SortType,
+    Keyword } = view.queryParam
+  replace({
+    path: '/search',
+    query: {
+      Page,
+      PageSize,
+      MovieType,
+      SortField,
+      SortType,
+      Keyword
+    }
+  })
+
 }
 
 const thisRoute = useRoute();
+const { replace } = useRouter();
 
 onMounted(async () => {
   document.title = '搜索'
