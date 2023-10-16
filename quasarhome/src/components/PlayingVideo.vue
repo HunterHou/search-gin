@@ -243,12 +243,11 @@ const optionsPC = reactive({
   width: '100%', //播放器高度
   height: 'auto', //播放器高度
   color: '#409eff', //主题色
-  title: null, //视频名称
+  title: view.playing?.Title, //视频名称
   src: getFileStream(view.playing.Id), //视频源
   muted: false, //静音
   preload: 'false',
   webFullScreen: false,
-  pageFullScreen: true,
   speedRate: ['1.0', '1.25', '1.5', '2.0'], //播放倍速
   autoPlay: false, //自动播放
   loop: false, //循环播放
