@@ -25,7 +25,7 @@
 </template>
 <script setup>
 import { reactive, ref } from 'vue';
-// import { GetShutDown } from '../components/api/settingAPI';
+import { GetShutDown } from '../components/api/settingAPI';
 const card = ref(false)
 
 const view = reactive(
