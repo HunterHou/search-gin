@@ -128,21 +128,6 @@ const refreshThis = () => {
 
 const confirmShutDown = () => {
   shutdown.value.open()
-  // $q.dialog({
-  //   message: '确定关机吗?',
-  //   cancel: true,
-  //   persistent: true
-  // })
-  //   .onOk(() => {
-  //     console.log('>>>> onOk');
-  //     GetShutDown()
-  //   })
-  //   .onCancel(() => {
-  //     console.log('>>>> Cancel');
-  //   })
-  //   .onDismiss(() => {
-  //     // console.log('I am triggered on both OK and Cancel')
-  //   });
 };
 
 const essentialLinks = [
