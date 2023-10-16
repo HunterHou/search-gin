@@ -76,7 +76,7 @@ export const AddTag = async (clickId: string, title: string) => {
 };
 
 export const CloseTag = async (id: string, title: string) => {
-  const res = await axios.get(`/api/file/clearTag//${id}/${title}`);
+  const res = await axios.get(`/api/file/clearTag/${id}/${title}`);
   return res && res.data;
 };
 
