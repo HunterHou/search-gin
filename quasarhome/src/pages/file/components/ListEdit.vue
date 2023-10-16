@@ -12,6 +12,10 @@
           <div class="q-mr-sm q-mb-sm  row justify-left">
             <q-btn-toggle v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()" toggle-color="primary"
               :options="MovieTypeSelects" />
+            <q-btn class="q-mr-sm" v-if="view.queryParam.Page != 1" size="sm" color="secondary" icon="refresh"
+              @click="nextPage(-1)">上</q-btn>
+            <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh" @click="nextPage(1)">下</q-btn>
+
           </div>
           <div class="q-mr-sm row justify-left">
             <q-btn class=" q-mr-sm" color="amber" size="sm" glossy text-color="black" @click="selectAll">{{
@@ -75,7 +79,8 @@
                   <q-btn size="sm" class="q-mr-sm" color="green" @click="toMp4(item)">toMp4</q-btn>
                   <q-btn class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
                     v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
-                  <q-btn color="red" v-for="ta in item.Tags" :key="ta" @click="commonExec(CloseTag(item.Id, ta), true)">{{ `- ${ta}` }}</q-btn>
+                  <q-btn color="red" v-for="ta in item.Tags" :key="ta" @click="commonExec(CloseTag(item.Id, ta), true)">{{
+                    `- ${ta}` }}</q-btn>
                 </div>
                 <div v-if="item.showCut" style="
                     display: flex;
@@ -285,6 +290,11 @@ const refreshIndex = async () => {
   await RefreshAPI();
   await fetchSearch();
 };
+
+const nextPage = (n) => {
+  view.queryParam.Page = view.queryParam.Page + n
+  fetchSearch()
+}
 
 const fetchSearch = async () => {
   const data = await SearchAPI(view.queryParam);
