@@ -97,8 +97,12 @@
         </q-img>
         <q-card-section style="overflow: auto; padding: 4px">
           <div class="text-subtitle2" style="overflow: auto; padding: 0">
-            <q-chip @click.stop="() => { }" square color="green" text-color="white" style="padding: 0px 4px">
-              {{ item.SizeStr }} </q-chip>{{ item.Title }}
+            <q-chip @click.stop="() => { }" square color="green" text-color="orange" style="padding: 0px 4px">
+              {{ item.SizeStr }}
+            </q-chip>
+            <span style="color: #0e4a2e;">
+              {{ item.Title?.substring(0, 20) }}
+            </span>
           </div>
         </q-card-section>
       </q-card>
