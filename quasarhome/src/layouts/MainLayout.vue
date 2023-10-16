@@ -48,6 +48,7 @@
         <router-view />
       </q-page-container>
     </q-layout>
+    <ShutdownComponent ref="shutdown" />
   </div>
 </template>
 
@@ -55,13 +56,15 @@
 import { computed, ref, watch } from 'vue';
 import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from '../stores/System';
-import { GetShutDown } from '../components/api/settingAPI';
 import { useQuasar } from 'quasar';
 import EssentialLink from 'components/EssentialLink.vue';
+import ShutdownComponent from 'components/ShutdownComponent.vue';
 
 import { useRoute } from 'vue-router';
 const systemProperty = useSystemProperty();
 const $q = useQuasar();
+
+const shutdown = ref(null)
 
 const isWideScreen = computed(() => {
   return $q.screen.width > 1000;
@@ -124,21 +127,22 @@ const refreshThis = () => {
 // };
 
 const confirmShutDown = () => {
-  $q.dialog({
-    message: '确定关机吗?',
-    cancel: true,
-    persistent: true
-  })
-    .onOk(() => {
-      console.log('>>>> onOk');
-      GetShutDown()
-    })
-    .onCancel(() => {
-      console.log('>>>> Cancel');
-    })
-    .onDismiss(() => {
-      // console.log('I am triggered on both OK and Cancel')
-    });
+  shutdown.value.open()
+  // $q.dialog({
+  //   message: '确定关机吗?',
+  //   cancel: true,
+  //   persistent: true
+  // })
+  //   .onOk(() => {
+  //     console.log('>>>> onOk');
+  //     GetShutDown()
+  //   })
+  //   .onCancel(() => {
+  //     console.log('>>>> Cancel');
+  //   })
+  //   .onDismiss(() => {
+  //     // console.log('I am triggered on both OK and Cancel')
+  //   });
 };
 
 const essentialLinks = [
