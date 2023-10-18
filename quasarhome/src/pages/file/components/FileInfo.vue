@@ -17,6 +17,8 @@
             icon="ti-arrow-circle-right">详情</q-btn>
           <q-btn class="q-mr-sm" size="sm" v-if="showDetail != 'image'" color="deep-orange" @click="showDetail = 'image'"
             icon="ti-arrow-circle-right">图层</q-btn>
+          <q-btn class="q-mr-sm" size="sm" v-if="showDetail != 'web'" color="deep-orange" @click="showDetail = 'web'"
+            icon="ti-world">JavBus</q-btn>
         </div>
         <div><q-btn class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen"
             @click="openPlay(view.item)">大屏</q-btn>
@@ -36,6 +38,9 @@
       </div>
 
       <div style="margin-top: 0;height: 96%;overflow: auto;">
+        <div v-if="showDetail == 'web'" style="overflow: auto;">
+          <iframe :frameborder="0"  :allowfullscreen="true" width="100%" height="900px" :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
+        </div>
         <div v-if="showDetail == 'movie'">
           <Playing ref="vue3VideoPlayRef" mode="drawer" />
         </div>

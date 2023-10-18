@@ -301,7 +301,7 @@ const view = reactive({
 });
 
 const searchCode = (item) => {
-  const url = `${view.settingInfo.BaseUrl}/${item.Code}`
+  const url = `${view.settingInfo.BaseUrl}${item.Code}`
   console.log(url)
   if ($q.platform.is.electron) {
     window.electron.createWindow({ router: url, width: 1280, height: 1000, titleBarStyle: '', })
