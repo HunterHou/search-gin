@@ -222,6 +222,7 @@ const { dialogRef, onDialogHide } = useDialogPluginComponent();
 
 const onDialogClose = () => {
   showDetail.value = 'detail'
+  vue3VideoPlayRef.value.stop()
   onDialogHide()
 }
 // dialogRef      - 用在 QDialog 上的 Vue ref 模板引用
