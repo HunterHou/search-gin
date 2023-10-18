@@ -19,6 +19,8 @@ export const useSystemProperty = defineStore({
   // },
   state: () => ({
     isFullscreen: false,
+    shutdownLeftSecond:null,
+    shutdownTimer:null,
     Logo: {
       title: 'M系统',
       logo: '',
