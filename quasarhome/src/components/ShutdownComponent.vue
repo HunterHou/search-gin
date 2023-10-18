@@ -8,14 +8,11 @@
             <q-radio v-model="view.shutdownType" val="now" label="立即" />
             <q-radio v-model="view.shutdownType" val="target" label="定时" />
           </div>
-          <div
-            v-if="view.shutdownType == 'target'"
-            style="
+          <div v-if="view.shutdownType == 'target'" style="
               display: flex;
               flex-direction: row;
               justify-content: space-between;
-            "
-          >
+            ">
             <q-input class="timeSelect" v-model="view.shutdownHH"></q-input>
             <q-input class="timeSelect" v-model="view.shutdownMM"></q-input>
             <q-input class="timeSelect" v-model="view.shutdownSS"></q-input>
@@ -24,9 +21,7 @@
       </div>
       <q-card-actions align="right">
         <q-btn v-close-popup flat color="primary">取消</q-btn>
-        <q-btn v-close-popup flat color="primary" @click="submitBtn"
-          >确定</q-btn
-        >
+        <q-btn v-close-popup flat color="primary" @click="submitBtn">确定</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -34,10 +29,10 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import { GetShutDown } from '../components/api/settingAPI';
-import { useSystemProperty } from '../store/systemProperty';
+import { useSystemProperty } from '../stores/System';
 const card = ref(false);
 
-const { systemProperty } = useSystemProperty();
+const systemProperty = useSystemProperty();
 
 const view = reactive({
   shutdownHH: 0,
@@ -69,7 +64,7 @@ const submitBtn = () => {
     console.log('shutdownLeftSecond', systemProperty.shutdownLeftSecond);
     systemProperty.shutdownTimer = setInterval(() => {
       console.log(systemProperty.shutdownLeftSecond);
-      systemProperty.shutdownLeftSecond = systemProperty.shutdownLeftSecond;
+      systemProperty.shutdownLeftSecond = systemProperty.shutdownLeftSecond - 1;
       if (systemProperty.shutdownLeftSecond < 0) {
         clearTimeout(systemProperty.shutdownTimer);
         GetShutDown();

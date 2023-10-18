@@ -123,7 +123,7 @@ const playing = computed(() => {
 });
 
 const shutdownLeftSecond = computed(() => {
-  const left = systemProperty.shutdownLeftSecond;
+  let left = systemProperty.shutdownLeftSecond;
   if (!left) {
     return null;
   }
@@ -132,7 +132,7 @@ const shutdownLeftSecond = computed(() => {
   const m = (left / 60).toFixed(0);
   const s = left % 60;
   return (
-    (h > 0 ? `${h} h` : '') + (m > 0 ? `${m} m` : '') + (s ? `${s} s` : '')
+    (h > 0 ? `${h} 时` : '') + (m > 0 ? `${m} 分` : '') + (s ? `${s} 秒` : '')
   );
 });
 
