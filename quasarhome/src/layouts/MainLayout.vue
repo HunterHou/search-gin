@@ -30,6 +30,9 @@
             }"
           />
           <q-space />
+          <q-btn dense flat color="red" v-if="shutdownLeftSecond"
+            >关机倒计时：{{ shutdownLeftSecond }}</q-btn
+          >
 
           <q-btn
             color="green"
@@ -48,9 +51,7 @@
             }}</span>
           </q-btn>
           <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
-          <q-btn dense flat color="red" v-if="shutdownLeftSecond"
-            >关机倒计时：{{ shutdownLeftSecond }}</q-btn
-          >
+
           <!-- <q-bar class="bg-black text-white">
              <q-btn dense flat icon="minimize"  />
            <q-btn dense flat icon="crop_square" @click="maxMainWindow" />
