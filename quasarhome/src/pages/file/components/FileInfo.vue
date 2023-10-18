@@ -33,7 +33,7 @@
           <q-btn class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
             @click="confirmDelete(view.item)">删除</q-btn>
           <q-btn class="q-mr-sm" size="sm" color="black" @click="moveThis(view.item)" icon="ti-control-shuffle">移动</q-btn>
-          <q-btn class="q-mr-sm" size="sm" ripple color="red" icon="ti-close" @click="showDialog = !showDialog">关闭</q-btn>
+          <q-btn class="q-mr-sm" size="sm" ripple color="red" icon="ti-close" @click="onDialogClose">关闭</q-btn>
         </div>
       </div>
 
@@ -223,6 +223,7 @@ const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const onDialogClose = () => {
   showDetail.value = 'detail'
   vue3VideoPlayRef.value.stop()
+  showDialog.value = false
   onDialogHide()
 }
 // dialogRef      - 用在 QDialog 上的 Vue ref 模板引用
