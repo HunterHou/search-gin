@@ -1,53 +1,26 @@
 <template>
   <div>
-    <q-layout
-      view="LHR lpr lfr"
-      container
-      style="height: 100vh"
-      class="shadow-2 rounded-borders"
-    >
+    <q-layout view="LHR lpr lfr" container style="height: 100vh" class="shadow-2 rounded-borders">
       <q-header reveal class="bg-black">
         <q-toolbar>
-          <q-btn
-            flat
-            @click="drawerLeft = !drawerLeft"
-            round
-            dense
-            icon="menu"
-          />
+          <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
           <q-toolbar-title style="-webkit-app-region: drag">
             文件搜索<q-btn dense flat icon="refresh" @click="refreshThis">
             </q-btn>
           </q-toolbar-title>
-          <EssentialLink
-            v-for="link in essentialLinks"
-            :key="link.title"
-            v-bind="link"
-            v-show="isWideScreen"
-            :style="{
-              color: currentPath == link.link ? 'red' : '',
-              scale: 1.2,
-            }"
-          />
+          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
+            color: currentPath == link.link ? 'red' : '',
+            scale: 1.2,
+          }" />
+          <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-space />
-          <q-btn dense flat color="red" v-if="shutdownLeftSecond"
-            >关机倒计时：{{ shutdownLeftSecond }}</q-btn
-          >
-
-          <q-btn
-            color="green"
-            flat
-            @click="systemProperty.drawerRight = !systemProperty.drawerRight"
-            round
-            dense
-            icon="menu"
-          >
+          <q-btn color="green" flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense
+            icon="menu">
             <span v-if="systemProperty.drawerRight">{{
-              `${
-                (systemProperty &&
-                  systemProperty.Playing?.Code?.substring(0, 8)) ||
+              `${(systemProperty &&
+                systemProperty.Playing?.Code?.substring(0, 8)) ||
                 systemProperty.Playing?.Title?.substring(0, 8)
-              }`
+                }`
             }}</span>
           </q-btn>
           <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
@@ -61,35 +34,19 @@
         </q-toolbar>
       </q-header>
 
-      <q-drawer
-        v-model="drawerLeft"
-        :width="200"
-        :breakpoint="700"
-        bordered
-        class="bg-grey-3"
-      >
+      <q-drawer v-model="drawerLeft" :width="200" :breakpoint="700" bordered class="bg-grey-3">
         <q-scroll-area class="fit">
           <q-list>
             <q-item-label header> 你的搜索工具 </q-item-label>
-            <EssentialLink
-              v-for="link in essentialLinks"
-              :key="link.title"
-              v-bind="link"
-              :style="{
-                color: currentPath == link.link ? 'red' : '',
-                scale: 1.2,
-              }"
-            />
+            <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :style="{
+              color: currentPath == link.link ? 'red' : '',
+              scale: 1.2,
+            }" />
           </q-list>
         </q-scroll-area>
       </q-drawer>
-      <q-drawer
-        side="right"
-        :width="isWideScreen ? 750 : 420"
-        v-model="systemProperty.drawerRight"
-        bordered
-        class="bg-grey-3"
-      >
+      <q-drawer side="right" :width="isWideScreen ? 750 : 420" v-model="systemProperty.drawerRight" bordered
+        class="bg-grey-3">
         <Playing ref="vue3VideoPlayRef" mode="drawer" />
       </q-drawer>
       <q-page-container>
@@ -127,12 +84,9 @@ const shutdownLeftSecond = computed(() => {
   if (!left) {
     return null;
   }
-  const h = (left / 3600).toFixed(0);
-  left = left % 3600;
-  const m = (left / 60).toFixed(0);
-  const s = left % 60;
+
   return (
-    (h > 0 ? `${h} 时` : '') + (m > 0 ? `${m} 分` : '') + (s ? `${s} 秒` : '')
+    `${Math.floor(systemProperty.shutdownLeftSecond / 3600)} 时 ${Math.floor((systemProperty.shutdownLeftSecond / 60) % 60)} 分 ${Math.floor(systemProperty.shutdownLeftSecond % 60)} 秒`
   );
 });
 
