@@ -14,7 +14,7 @@ import (
 func BuildRouter() *gin.Engine {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"}
-	config.AllowCredentials = false
+	config.AllowCredentials = true
 
 	router := gin.Default()
 	router.Use(cors.New(config))
