@@ -12,10 +12,12 @@ import (
 )
 
 func BuildRouter() *gin.Engine {
-	router := gin.Default()
-
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"}
+	
+	router := gin.Default()
+
+	
 
 	router.Use(cors.New(config))
 	router.Use(gin.Recovery())
