@@ -7,13 +7,14 @@ import (
 	"searchGin/controller"
 	"searchGin/utils"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func BuildRouter() *gin.Engine {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"}
+	config.AllowCredentials = false
 
 	router := gin.Default()
 	router.Use(cors.New(config))
