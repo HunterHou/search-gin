@@ -8,10 +8,16 @@ import (
 	"searchGin/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 )
 
 func BuildRouter() *gin.Engine {
 	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"}
+
+	router.Use(cors.New(config))
 	router.Use(gin.Recovery())
 	router.Use(gin.LoggerWithWriter(cons.LogWriter))
 	if utils.ExistsFiles(cons.IndexHtml) {
