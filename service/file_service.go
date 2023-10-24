@@ -326,7 +326,7 @@ func (f *FileService) Walks(baseDir []string, types []string) []datamodels.Movie
 func (f *FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
-	files, _ := f.WalkInnter(baseDir, types, 0, true,baseDir)
+	files, _ := f.WalkInnter(baseDir, types, 0, true, baseDir)
 	datas <- files
 	ti := time.Since(start)
 	thisTime := cons.MenuSize{
@@ -353,7 +353,7 @@ func (f *FileService) Walk(baseDir string, types []string, deep bool) []datamode
 				suffix := utils.GetSuffux(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType,"")
+					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType, "")
 					result = append(result, file)
 				}
 
@@ -373,7 +373,7 @@ types 扫描类型
 totalSize 总数
 queryChild 是否递归
 */
-func (f *FileService) WalkInnter(currentDir string, types []string, totalSize int64, queryChild bool,basePath string) ([]datamodels.Movie, int64) {
+func (f *FileService) WalkInnter(currentDir string, types []string, totalSize int64, queryChild bool, basePath string) ([]datamodels.Movie, int64) {
 	var result []datamodels.Movie
 	currentSize := int64(0)
 	files, _ := ioutil.ReadDir(currentDir)
@@ -382,7 +382,7 @@ func (f *FileService) WalkInnter(currentDir string, types []string, totalSize in
 
 			pathAbs := filepath.Join(currentDir, path.Name())
 			if path.IsDir() && queryChild {
-				childResult, innerSize := f.WalkInnter(pathAbs, types, currentSize, queryChild,basePath)
+				childResult, innerSize := f.WalkInnter(pathAbs, types, currentSize, queryChild, basePath)
 				result = ExpandsMovie(result, childResult)
 				currentSize += innerSize
 			} else {
@@ -391,7 +391,7 @@ func (f *FileService) WalkInnter(currentDir string, types []string, totalSize in
 				suffix := utils.GetSuffux(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.NewFile(currentDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType,basePath)
+					file := datamodels.NewFile(currentDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType, basePath)
 					result = append(result, file)
 				}
 
