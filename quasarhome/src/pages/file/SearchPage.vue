@@ -83,9 +83,60 @@
       </div>
     </q-page-sticky>
 
-    <div class="row justify-center q-gutter-sm q-mr-sm q-mt-sm mainlist">
+    <div class="row justify-center q-mt-sm mainlist">
       <q-card class="q-ma-sm example-item" v-for="item in view.resultData.Data" :key="item.Id">
-        <q-img fit="fit" easier draggable :src="getPng(item.Id)" class="item-img" @click="() => {
+        <div class="float-head absolute-top">
+          <div style="
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                width: fit-content;
+              ">
+            <q-chip square text-color="white" style="
+                  margin-left: 0px;
+                  padding: 0 4px;
+                  background-color: rgba(236, 15, 15, 0.872);
+                ">
+              <q-popup-proxy context-menu>
+                <div class="tag-popup">
+                  <div>
+                    <q-btn size="sm" icon='ti-minus' square text-color="white" color="green" class="tag-item"
+                      v-for="tag in item.Tags" :key="tag" :label="tag"
+                      @click="commonExec(CloseTag(item.Id, tag), true)" />
+                  </div>
+                  <div>
+                    <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
+                      v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
+                      @click="commonExec(AddTag(item.Id, tag), true)" />
+                  </div>
+                </div>
+              </q-popup-proxy>
+              <span>种草</span>
+            </q-chip>
+            <q-chip square text-color="white" v-for="tag in item.Tags" :key="tag" style="
+                  margin-left: 0px;
+                  padding: 0 4px;
+                  background-color: rgba(188, 24, 24, 0.6);
+                ">
+              <span @click="
+                view.queryParam.Keyword = tag;
+              fetchSearch();
+              ">{{ tag?.substring(0, 4) }}</span>
+            </q-chip>
+          </div>
+          <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:2rem;color: antiquewhite;"
+            :label="item.MovieType">
+            <q-list style="background-color: rgba(0, 0, 0, 0.7)">
+              <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
+                <q-item-section>
+                  <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
+        <q-img fit="fit" easier draggable class="img-self" :src="getPng(item.Id)" @click="() => {
           fileInfoRef.open({ item, cb: refreshIndex });
         }">
           <template v-slot:loading>
@@ -93,82 +144,17 @@
               Loading...
             </div>
           </template>
-          <div style="
-              padding: 0;
-              margin: 0;
-              background-color: rgba(0, 0, 0, 0);
-              display: flex;
-              height: 2rem;
-              flex-direction: row;
-              justify-content: space-between;
-              width: 100%;
-            ">
-            <div @click.stop="() => { }" style="
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                width: fit-content;
-              ">
-              <q-chip square text-color="white" style="
-                  margin-left: 0px;
-                  padding: 0 4px;
-                  background-color: rgba(236, 15, 15, 0.872);
-                ">
-                <q-popup-proxy context-menu>
-                  <div class="tag-popup">
-                    <div>
-                      <q-btn size="sm" icon='ti-minus' square text-color="white" color="green" class="tag-item"
-                        v-for="tag in item.Tags" :key="tag" :label="tag"
-                        @click="commonExec(CloseTag(item.Id, tag), true)" />
-                    </div>
-                    <div>
-                      <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
-                        v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
-                        @click="commonExec(AddTag(item.Id, tag), true)" />
-                    </div>
-                  </div>
-                </q-popup-proxy>
-                <span>种草</span>
-              </q-chip>
-              <q-chip square text-color="white" v-for="tag in item.Tags" :key="tag" style="
-                  margin-left: 0px;
-                  padding: 0 4px;
-                  background-color: rgba(188, 24, 24, 0.6);
-                ">
-                <span @click="
-                  view.queryParam.Keyword = tag;
-                fetchSearch();
-                ">{{ tag?.substring(0, 4) }}</span>
-              </q-chip>
-            </div>
-            <div style="float: right;">
-              <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;" :label="item.MovieType"
-                @click.stop="() => { }">
-                <q-list style="background-color: rgba(0, 0, 0, 0.7)">
-                  <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
-                    <q-item-section>
-                      <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
-            </div>
-          </div>
-
-          <div class="absolute-bottom" style="padding: 6px" @click.stop="() => { }">
-            <div class="text-body1" @click.stop="() => { }">
-              <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen" title="单页播放"
-                @click="openPlay(item)" />
-              <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-arrow-right"
-                @click="openRightDrawer(item)" title="小播放" />
-              <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard" @click="() => {
-                fileInfoRef.open({ item, playing: true });
-              }" title="小播放" />
-            </div>
-          </div>
         </q-img>
-        <div class="text-subtitles">
+        <div class="absolute-bottom float-btn">
+          <div>
+            <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen" title="单页播放"
+              @click="openPlay(item)" />
+            <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-arrow-right"
+              @click="openRightDrawer(item)" title="小播放" />
+            <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard" @click="() => {
+              fileInfoRef.open({ item, playing: true });
+            }" title="小播放" />
+          </div>
           <div style="display: flex; flex-direction: row">
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject" @click="playBySystem(item)"
               title="播放" v-if="showButton('播放')" />
@@ -187,15 +173,17 @@
             <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-location-arrow"
               v-if="showButton('移动')" title="移动" />
           </div>
-          <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer" @click="
-            view.queryParam.Keyword = item.Actress;
-          fetchSearch();
-          ">{{ item.Actress?.substring(0, 6) }}</a>
-          <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-            @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
-          <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-            @click="copyText(item.Title)">{{ item.SizeStr }}</a>
-          <span>{{ formatTitle(item.Title) }}</span>
+          <div class="float-text">
+            <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer" @click="
+              view.queryParam.Keyword = item.Actress;
+            fetchSearch();
+            ">{{ item.Actress?.substring(0, 6) }}</a>
+            <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
+              @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
+            <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
+              @click="copyText(item.Title)">{{ item.SizeStr }}</a>
+            <span>{{ formatTitle(item.Title) }}</span>
+          </div>
         </div>
       </q-card>
     </div>
@@ -506,22 +494,37 @@ onMounted(async () => {
 });
 </script>
 <style lang="scss" scoped>
+.mr10 {
+  margin-right: 4px;
+}
+
+.float-head {
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .example-item {
   padding: 2px;
   width: 220px;
-  height: auto;
+  height: 400px;
   overflow: hidden;
 }
 
-.item-img {
-  height: auto;
-  width: 220px;
-  max-height: 280px;
-  min-height: 250px;
+.img-self {
+  min-height: 280px;
 }
 
-.mr10 {
-  margin-right: 4px;
+.float-btn {
+  background-color: rgba(250, 250, 250, 0.4);
+  height: 130px;
+  margin: 0;
+  padding: 0;
+}
+
+.float-text {
+  height: 10rem;
 }
 
 .movieTypeSelectItem {
