@@ -1,5 +1,6 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogClose" style="width: 80vw !important;" v-model:model-value="showDialog">
+  <q-dialog ref="dialogRef" @escape-key="onDialogClose" @before-hide="onDialogClose" @hide="onDialogClose"
+    style="width: 80vw !important;" v-model:model-value="showDialog">
     <q-card class="q-dialog-plugin q-pa-md" :style="{
       color: 'white',
       height: '100%',
@@ -39,7 +40,8 @@
 
       <div style="margin-top: 0;height: 96%;overflow: auto;">
         <div v-if="showDetail == 'web'" style="overflow: auto;">
-          <iframe :frameborder="0"  :allowfullscreen="true" width="100%" height="900px" :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
+          <iframe :frameborder="0" :allowfullscreen="true" width="100%" height="900px"
+            :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
         </div>
         <div v-if="showDetail == 'movie'">
           <Playing ref="vue3VideoPlayRef" mode="drawer" />
@@ -221,8 +223,8 @@ const searchCode = (item) => {
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 
 const onDialogClose = () => {
-  showDetail.value = 'detail'
   vue3VideoPlayRef.value.stop()
+  showDetail.value = 'detail'
   showDialog.value = false
   onDialogHide()
 }
