@@ -1,11 +1,11 @@
 <template>
-  <div class="q-mg-md top" style="margin-bottom: 60px">
-    <q-page-sticky style="z-index: 9;" position="left" :offset="[0, 0]">
+  <div class="q-mg-md top" style="margin-bottom: 40px">
+    <q-page-sticky style="z-index: 9;" position="bottom-left" :offset="[6, 60]">
       <q-btn round class="page-sticky" color="amber" text-color="black" icon="keyboard_arrow_left"
         v-if="view.queryParam.Page > 1" @click="nextPage(-1)"></q-btn>
     </q-page-sticky>
 
-    <q-page-sticky style="z-index: 9;" position="right" :offset="[10, 10]">
+    <q-page-sticky style="z-index: 9;" position="bottom-right" :offset="[10, 60]">
       <q-btn round class="page-sticky" color="secondary" text-color="black" icon="keyboard_arrow_right"
         @click="nextPage(1)"></q-btn>
     </q-page-sticky>
@@ -63,7 +63,7 @@
         })
         " />
     </div>
-    <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.3)">
+    <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.4)">
       <div class="q-pa-sm flex flex-center">
         <q-select color="lime-11 q-mr-md" bg-color="green" dense @update:model-value="(no) => {
           view.queryParam.PageSize = Number(no);
