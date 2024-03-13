@@ -9,7 +9,7 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17
 	golang.org/x/sync v0.4.0
-	golang.org/x/sys v0.13.0
+	golang.org/x/sys v0.13.0 // indirect
 	xorm.io/xorm v1.3.3
 )
 
@@ -38,7 +38,7 @@ require (
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
-	google.golang.org/protobuf v1.31.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	xorm.io/builder v0.3.13 // indirect
 )
