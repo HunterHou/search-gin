@@ -267,10 +267,6 @@ func (f *FileService) ArrayToMap(files []datamodels.Movie) (map[string]datamodel
 		}
 
 	}
-	if cons.OSSetting.IsDb {
-		db := CreateOrmService()
-		go db.InsertAllIndex(toInsert)
-	}
 	return filemap, actessmap, suppliermap, size
 }
 

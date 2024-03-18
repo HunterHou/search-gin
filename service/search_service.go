@@ -27,24 +27,6 @@ func (fs SearchService) SortMovieForce() {
 	datasource.SortMovieForce()
 }
 
-func (fs SearchService) SearchIndex(searchParam datamodels.SearchParam) utils.Page {
-	db := CreateOrmService()
-	result := utils.NewPage()
-	result.TotalCnt = len(datasource.FileLib)
-	result.PageNo = searchParam.Page
-	result.PageSize = searchParam.PageSize
-	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
-	pageList, pageSize := db.query(searchParam)
-	searchCount, searchSize := db.queryCount(searchParam)
-	result.ResultSize = utils.GetSizeStr(searchSize)
-	result.SetResultCnt(int(searchCount), searchParam.Page)
-	result.CurSize = utils.GetSizeStr(pageSize)
-	result.CurCnt = len(pageList)
-	fmt.Fprintf(cons.LogWriter, "query over :searchCnt[%d] searchSize [%d]", searchCount, searchSize)
-	result.Data = pageList
-	return result
-
-}
 
 func (fs SearchService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
 
@@ -674,10 +656,6 @@ func (fs SearchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result
 }
 
 func (fs SearchService) FindOne(Id string) datamodels.Movie {
-	if cons.OSSetting.IsDb {
-		db := CreateOrmService()
-		return db.Find(Id)
-	}
 	if len(datasource.FileLib) == 0 {
 		fs.ScanAll()
 	}
@@ -686,10 +664,6 @@ func (fs SearchService) FindOne(Id string) datamodels.Movie {
 }
 
 func (fs SearchService) UpdateOne(Id string, path string) {
-	if cons.OSSetting.IsDb {
-		db := CreateOrmService()
-		db.UpdateOne(Id, path)
-	}
 }
 
 func cleanPath(name string) string {
@@ -865,13 +839,6 @@ func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
 	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
 	targetFiles, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, false, BaseDir)
-	if cons.OSSetting.IsDb {
-		db := CreateOrmService()
-		db.DeleteByDirPath(dirPath)
-		fmt.Println("删除文件夹:" + dirPath)
-		db.InsertS(targetFiles, 1)
-		fmt.Fprintf(cons.LogWriter, "添加文件:%d", len(targetFiles))
-	}
 	service.fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
 
 }

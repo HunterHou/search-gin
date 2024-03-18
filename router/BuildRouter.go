@@ -56,9 +56,6 @@ func BuildRouter() *gin.Engine {
 	router.POST("/api/OpenFolerByPath", controller.PostOpenFolderByPath)
 	router.POST("/api/DeleteFolerByPath", controller.PostDeleteFolerByPath)
 
-	router.GET("/api/infoNext/:id", controller.GetNextInfo)
-	router.GET("/api/infoLast/:id", controller.GetLastInfo)
-
 	router.GET("/api/png/:path", controller.GetPng)
 	router.GET("/api/jpg/:path", controller.GetJpg)
 	router.GET("/api/tempimage/:path", controller.GetTempImage)

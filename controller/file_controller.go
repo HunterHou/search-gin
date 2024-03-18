@@ -167,7 +167,7 @@ func GetTempImage(c *gin.Context) {
 	}
 }
 func GetTempImageByPath(c *gin.Context) {
-	idpath := c.Param("path")
+	path := c.Param("path")
 	if utils.ExistsFiles(path) {
 		c.File(path)
 	} else {
