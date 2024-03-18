@@ -166,6 +166,14 @@ func GetTempImage(c *gin.Context) {
 		return
 	}
 }
+func GetTempImageByPath(c *gin.Context) {
+	idpath := c.Param("path")
+	if utils.ExistsFiles(path) {
+		c.File(path)
+	} else {
+		return
+	}
+}
 
 // GetFile 获取文件流
 func GetFile(c *gin.Context) {

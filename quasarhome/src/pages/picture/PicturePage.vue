@@ -25,7 +25,9 @@
     </div>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap">
       <q-card class="q-ma-sm example-item" v-for="item in view.resultData.Data" :key="item.Id">
-        <q-img fit="fill" :src="getActressImage(item.Name)" class="item-img">
+        <q-img fit="fill" :src="getActressImage(item.Name)" class="item-img" @click="() => {
+          fileEditRef.open(item);
+        }">
           <div style="
               padding: 0;
               margin: 0;
@@ -51,22 +53,26 @@
             </q-chip>
           </div>
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px" @click.stop="() => { }">
-            <q-btn flat style="color: #59d89d" :label="item.Name?.substring(0, 10) || '未知'"  @click="searchFiles(item.Name)" />
+            <q-btn flat style="color: #59d89d" :label="item.Name?.substring(0, 10) || '未知'"
+              @click="searchFiles(item.Name)" />
           </div>
         </q-img>
       </q-card>
     </div>
+    <PictureInfo ref="fileEditRef" />
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { getActressImage } from '../../components/utils/images';
 import { QueryActressList } from '../../components/api/actressAPI';
 import { useSystemProperty } from '../../stores/System';
 import { useRouter } from 'vue-router';
+import PictureInfo from './components/PictureInfo.vue';
 
 const { push } = useRouter();
+const fileEditRef = ref(null);
 
 const systemProperty = useSystemProperty();
 

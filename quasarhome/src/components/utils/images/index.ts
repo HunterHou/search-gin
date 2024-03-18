@@ -17,6 +17,10 @@ export const getFileStream = (id: string) => {
   return settingInfo.value.StreamHost + '/api/file/' + id;
 };
 
+export const tempimageByPath = (path: string) => {
+  return settingInfo.value.StreamHost + '/api/tempimagebypath/' + path;
+};
+
 export const getTempImage = (id: string) => {
   return settingInfo.value.StreamHost + '/api/tempimage/' + id;
 };

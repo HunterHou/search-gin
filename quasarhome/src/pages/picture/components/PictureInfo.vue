@@ -10,8 +10,8 @@
       maxWidth: '80vw !important'
     }">
       <div style="margin-top: 0;height: 96%;overflow: auto;">
-        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item.Id" :src="getTempImage(item.Id)"
-               style="width: 100%;height: auto;"></q-img>
+        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item" :src="tempimageByPath(item)"
+          style="width: 100%;height: auto;"></q-img>
       </div>
     </q-card>
   </q-dialog>
@@ -19,10 +19,7 @@
 <script setup>
 import { useDialogPluginComponent } from 'quasar';
 import { reactive, ref } from 'vue';
-import {
-  QueryDirImageBase64
-} from '../../../components/api/searchAPI';
-import { getTempImage } from 'src/components/utils/images';
+import { tempimageByPath } from 'src/components/utils/images';
 
 const showDialog = ref(false)
 
@@ -39,15 +36,12 @@ defineEmits([
 ]);
 
 const open = (data) => {
-  const { item } = data
+  const item = data
+  console.log(data)
   view.prewiewImages = [];
   view.item = { ...item };
   dialogRef.value.show();
-  setTimeout(() => {
-    QueryDirImageBase64(item.Id).then((res) => {
-      view.prewiewImages = res.data
-    })
-  }, 500);
+  view.prewiewImages = item.Images
 };
 
 
