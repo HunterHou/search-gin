@@ -25,7 +25,7 @@
     </div>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap">
       <q-card class="q-ma-sm example-item" v-for="item in view.resultData.Data" :key="item.Id">
-        <q-img fit="fill" :src="getActressImage(item.Name)" class="item-img" @click="searchFiles(item.Name)">
+        <q-img fit="fill" :src="getActressImage(item.Name)" class="item-img">
           <div style="
               padding: 0;
               margin: 0;
@@ -41,17 +41,17 @@
                 justify-content: flex-start;
                 width: fit-content;
               ">
-              <q-chip square color="red" text-color="white" style="margin-left: 0px; padding: 0 4px">
+              <q-chip square color="red" text-color="white" style="margin-left: 0; padding: 0 4px">
                 <span>{{ item.SizeStr }}</span>
               </q-chip>
             </div>
             <q-chip @click.stop="() => { }" square color="green" text-color="white"
-              style="width: fit-content; margin-right: 0px; padding: 0 6px">
+              style="width: fit-content; margin-right: 0; padding: 0 6px">
               <span> {{ item.Cnt }}</span>
             </q-chip>
           </div>
           <div class="absolute-bottom text-body1 text-center" style="padding: 4px" @click.stop="() => { }">
-            <q-btn flat style="color: #59d89d" :label="item.Name?.substring(0, 10)" />
+            <q-btn flat style="color: #59d89d" :label="item.Name?.substring(0, 10) || '未知'"  @click="searchFiles(item.Name)" />
           </div>
         </q-img>
       </q-card>
