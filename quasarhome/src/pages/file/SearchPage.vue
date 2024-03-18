@@ -147,6 +147,8 @@
         </q-img>
         <div class="absolute-bottom float-btn">
           <div>
+            <q-btn round class="q-mr-sm" size="md" ripple color="primary" icon="ti-control-eject" @click="playBySystem(item)"
+                   title="播放" v-if="showButton('播放')" />
             <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen" title="单页播放"
               @click="openPlay(item)" />
             <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-arrow-right"
@@ -156,8 +158,6 @@
             }" title="小播放" />
           </div>
           <div style="display: flex; flex-direction: row">
-            <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject" @click="playBySystem(item)"
-              title="播放" v-if="showButton('播放')" />
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice" @click="() => {
               fileEditRef.open(item, refreshIndex);
             }

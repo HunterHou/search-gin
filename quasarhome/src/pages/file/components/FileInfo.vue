@@ -12,14 +12,14 @@
       <div
         style="position: relative;margin-top: 0;display: flex;flex-direction: row;flex-wrap:nowrap;justify-content: space-between;overflow: hidden;">
         <div>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail != 'movie'" color="red" @click="showMovie"
-            icon="ti-arrow-circle-right">播放</q-btn>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail != 'detail'" color="purple" @click="showDetail = 'detail'"
-            icon="ti-arrow-circle-right">详情</q-btn>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail != 'image'" color="deep-orange" @click="showDetail = 'image'"
-            icon="ti-arrow-circle-right">图层</q-btn>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail != 'web'" color="deep-orange" @click="showDetail = 'web'"
-            icon="ti-world">JavBus</q-btn>
+          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'movie'" color="red" @click="showMovie"
+                 icon="ti-arrow-circle-right">播放</q-btn>
+          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'detail'" color="purple" @click="showDetail = 'detail'"
+                 icon="ti-arrow-circle-right">详情</q-btn>
+          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'image'" color="deep-orange" @click="showDetail = 'image'"
+                 icon="ti-arrow-circle-right">图层</q-btn>
+          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'web'" color="deep-orange" @click="showDetail = 'web'"
+                 icon="ti-world">JavBus</q-btn>
         </div>
         <div><q-btn class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen"
             @click="openPlay(view.item)">大屏</q-btn>
