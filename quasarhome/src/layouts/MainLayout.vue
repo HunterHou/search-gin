@@ -9,7 +9,7 @@
             </q-btn>
           </q-toolbar-title>
           <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
-            color: currentPath == link.link ? 'red' : '',
+            color: currentPath === link.link ? 'red' : '',
             scale: 1.2,
           }" />
           <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
@@ -25,12 +25,6 @@
           </q-btn>
           <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
 
-          <!-- <q-bar class="bg-black text-white">
-             <q-btn dense flat icon="minimize"  />
-           <q-btn dense flat icon="crop_square" @click="maxMainWindow" />
-            <q-btn dense flat icon="close" @click="confirmClose" />
-            <q-btn dense flat icon="ti-timer" @click="confirmDelete" />
-          </q-bar>-->
         </q-toolbar>
       </q-header>
 
@@ -39,7 +33,7 @@
           <q-list>
             <q-item-label header> 你的搜索工具 </q-item-label>
             <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :style="{
-              color: currentPath == link.link ? 'red' : '',
+              color: currentPath === link.link ? 'red' : '',
               scale: 1.2,
             }" />
           </q-list>
@@ -60,7 +54,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import Playing from 'src/components/PlayingVideo.vue';
-import { useSystemProperty } from '../stores/System';
+import { useSystemProperty } from 'stores/System';
 import { useQuasar } from 'quasar';
 import EssentialLink from 'components/EssentialLink.vue';
 import ShutdownComponent from 'components/ShutdownComponent.vue';
@@ -109,36 +103,6 @@ const currentPath = computed(() => {
 const refreshThis = () => {
   window.location.reload();
 };
-
-// const closeWindow = () => {
-//   window.close()
-// }
-
-// const maxMainWindow = () => {
-//   window.electron.maxMainWindow()
-// }
-
-// const hideMainWindow = () => {
-//   window.electron.hideMainWindow()
-// }
-
-// const confirmClose = () => {
-//   $q.dialog({
-//     message: '确定关闭吗?',
-//     cancel: true,
-//     persistent: true
-//   })
-//     .onOk(() => {
-//       console.log('>>>> onOk');
-//       closeWindow()
-//     })
-//     .onCancel(() => {
-//       console.log('>>>> Cancel');
-//     })
-//     .onDismiss(() => {
-//       // console.log('I am triggered on both OK and Cancel')
-//     });
-// };
 
 const confirmShutDown = () => {
   shutdown.value.open();
