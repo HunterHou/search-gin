@@ -25,9 +25,7 @@
     </div>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap">
       <q-card class="q-ma-sm example-item" v-for="item in view.resultData.Data" :key="item.Id">
-        <q-img fit="fill" :src="getActressImage(item.Name)" class="item-img" @click="() => {
-          fileEditRef.open(item);
-        }">
+        <q-img fit="fill" :src="getActressImage(item.Name)" class="item-img">
           <div style="
               padding: 0;
               margin: 0;

@@ -10,8 +10,10 @@
       maxWidth: '80vw !important'
     }">
       <div style="margin-top: 0;height: 96%;overflow: auto;">
-        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item" :src="tempimageByPath(item)"
-          style="width: 100%;height: auto;"></q-img>
+        <div v-for="item in view.prewiewImages" :key="item">{{ item }}</div>
+        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item" :src="getTempImage(item)"
+          style="width: 100%;height: auto;">
+        </q-img>
       </div>
     </q-card>
   </q-dialog>
@@ -19,7 +21,7 @@
 <script setup>
 import { useDialogPluginComponent } from 'quasar';
 import { reactive, ref } from 'vue';
-import { tempimageByPath } from 'src/components/utils/images';
+import { getTempImage } from 'src/components/utils/images';
 
 const showDialog = ref(false)
 
