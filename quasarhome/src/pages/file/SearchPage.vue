@@ -18,15 +18,15 @@
       </q-btn>
       <q-btn-toggle v-model="view.queryParam.SortField" @update:model-value="fetchSearch()" toggle-color="primary"
         :options="[
-          { label: '时', value: 'MTime' },
-          { label: '容', value: 'Size' },
-          { label: '名', value: 'Code' }
-        ]" />
+      { label: '时', value: 'MTime' },
+      { label: '容', value: 'Size' },
+      { label: '名', value: 'Code' }
+    ]" />
       <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch()" toggle-color="primary"
         :options="[
-          { label: '正', value: 'asc' },
-          { label: '倒', value: 'desc' }
-        ]" />
+      { label: '正', value: 'asc' },
+      { label: '倒', value: 'desc' }
+    ]" />
 
       <q-btn-toggle v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()" toggle-color="primary"
         :options="MovieTypeSelects" />
@@ -56,30 +56,30 @@
       </q-input>
       <q-checkbox v-model="view.queryParam.OnlyRepeat" @update:model-value="fetchSearch" label="重" />
       <q-btn class="q-mr-sm" size="sm" color="primary" icon="apps" @click="
-        listEditRef.open({
-          queryParam: view.queryParam,
-          settingInfo: view.settingInfo,
-          cb: listEditCallback
-        })
-        " />
+      listEditRef.open({
+        queryParam: view.queryParam,
+        settingInfo: view.settingInfo,
+        cb: listEditCallback
+      })
+      " />
     </div>
     <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.4)">
       <div class="q-pa-sm flex flex-center">
         <q-select color="lime-11 q-mr-md" bg-color="green" dense @update:model-value="(no) => {
-          view.queryParam.PageSize = Number(no);
-          fetchSearch();
-        }
-          " filled v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
+      view.queryParam.PageSize = Number(no);
+      fetchSearch();
+    }
+      " filled v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
         </q-select>
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="deep-orange"
           :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="10" boundary-numbers></q-pagination>
         <q-input v-model="view.queryParam.Page" :dense="true" type="search"
           style="background-color: aliceblue; width: 60px; text-align: center" @focus="focusEvent($event)"
           @update:model-value="(no) => {
-            view.queryParam.Page = Number(no);
-            fetchSearch();
-          }
-            " />
+      view.queryParam.Page = Number(no);
+      fetchSearch();
+    }
+      " />
       </div>
     </q-page-sticky>
 
@@ -119,9 +119,9 @@
                   background-color: rgba(188, 24, 24, 0.6);
                 ">
               <span @click="
-                view.queryParam.Keyword = tag;
-              fetchSearch();
-              ">{{ tag?.substring(0, 4) }}</span>
+      view.queryParam.Keyword = tag;
+    fetchSearch();
+    ">{{ tag?.substring(0, 4) }}</span>
             </q-chip>
           </div>
           <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:2rem;color: antiquewhite;"
@@ -137,8 +137,8 @@
           </q-btn-dropdown>
         </div>
         <q-img fit="fit" easier draggable class="img-self" :src="getPng(item.Id)" @click="() => {
-          fileInfoRef.open({ item, cb: refreshIndex });
-        }">
+      fileInfoRef.open({ item, cb: refreshIndex });
+    }">
           <template v-slot:loading>
             <div class="text-subtitle1 text-white">
               Loading...
@@ -147,21 +147,21 @@
         </q-img>
         <div class="absolute-bottom float-btn">
           <div>
-            <q-btn round class="q-mr-sm" size="md" ripple color="primary" icon="ti-control-eject" @click="playBySystem(item)"
-                   title="播放" v-if="showButton('播放')" />
+            <q-btn round class="q-mr-sm" size="md" ripple color="primary" icon="ti-control-eject"
+              @click="playBySystem(item)" title="播放" v-if="showButton('播放')" />
             <q-btn round class="q-mr-sm" size="md" ripple color="red" icon="ti-fullscreen" title="单页播放"
               @click="openPlay(item)" />
             <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-arrow-right"
               @click="openRightDrawer(item)" title="小播放" />
             <q-btn round class="q-mr-sm" size="md" ripple color="orange" icon="ti-blackboard" @click="() => {
-              fileInfoRef.open({ item, playing: true });
-            }" title="小播放" />
+      fileInfoRef.open({ item, playing: true });
+    }" title="小播放" />
           </div>
           <div style="display: flex; flex-direction: row">
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice" @click="() => {
-              fileEditRef.open(item, refreshIndex);
-            }
-              " v-if="showButton('编辑')" title="编辑" />
+      fileEditRef.open(item, refreshIndex);
+    }
+      " v-if="showButton('编辑')" title="编辑" />
             <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new" @click="openFolder(item)"
               v-if="showButton('文件夹')" title="文件夹" />
             <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="ti-search" title="网搜"
@@ -174,10 +174,8 @@
               v-if="showButton('移动')" title="移动" />
           </div>
           <div class="float-text">
-            <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer" @click="
-              view.queryParam.Keyword = item.Actress;
-            fetchSearch();
-            ">{{ item.Actress?.substring(0, 6) }}</a>
+            <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer" target="_blank"
+              @click="goActress(item.Actress)">{{ item.Actress?.substring(0, 6) }}</a>
             <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
               @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
             <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
@@ -361,6 +359,29 @@ const copyText = async (str) => {
   $q.notify({ message: `${str}` });
 };
 
+const goActress = (Actress) => {
+  view.queryParam.Keyword = Actress;
+  const { Page,
+    PageSize,
+    MovieType,
+    SortField,
+    SortType,
+    Keyword } = view.queryParam
+  const routeData = resolve({
+    path: '/search',
+    query: {
+      Page,
+      PageSize,
+      MovieType,
+      SortField,
+      SortType,
+      Keyword
+    }
+  })
+  window.open(routeData.href, '_blank')
+
+}
+
 const openRightDrawer = (item) => {
   view.currentData = item;
   systemProperty.Playing = item;
@@ -382,8 +403,8 @@ const nextPage = (n) => {
   currentPageChange()
 }
 
-const fetchSearch = async () => {
-  saveParam()
+const fetchSearch = async (newBlank) => {
+  saveParam(newBlank)
   const { Keyword } = view.queryParam
   const data = await SearchAPI(view.queryParam);
   console.log(data);
@@ -433,7 +454,8 @@ const saveParam = () => {
     SortField,
     SortType,
     Keyword } = view.queryParam
-  replace({
+
+  push({
     path: '/search',
     query: {
       Page,
@@ -445,10 +467,12 @@ const saveParam = () => {
     }
   })
 
+
+
 }
 
 const thisRoute = useRoute();
-const { replace } = useRouter();
+const { push, resolve } = useRouter();
 
 onMounted(async () => {
   document.title = '搜索'
