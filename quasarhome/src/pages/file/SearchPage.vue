@@ -360,13 +360,11 @@ const copyText = async (str) => {
 };
 
 const goActress = (Actress) => {
-  view.queryParam.Keyword = Actress;
   const { Page,
     PageSize,
     MovieType,
     SortField,
-    SortType,
-    Keyword } = view.queryParam
+    SortType } = view.queryParam
   const routeData = resolve({
     path: '/search',
     query: {
@@ -375,7 +373,7 @@ const goActress = (Actress) => {
       MovieType,
       SortField,
       SortType,
-      Keyword
+      Keyword: Actress
     }
   })
   window.open(routeData.href, '_blank')
