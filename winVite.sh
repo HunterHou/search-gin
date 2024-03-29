@@ -36,14 +36,18 @@ if [ $levelKey -ge 1 ]; then
     cp -R dist ../viteApp/
 fi
 cd ..
+cd gosrc
 if [ $levelKey -ge 2 ]; then
     echo '移动完成，打包APP'
-    go build -o viteApp/appVite.exe -ldflags "-H=windowsgui" -tags=prod
+    go build -o ../viteApp/appVite.exe -ldflags "-H=windowsgui" -tags=prod
+    
     echo 移动配置文件 '*.*(1)'
-    echo 'cp setting.json viteApp/setting.json(1)'
-    cp setting.json 'viteApp/setting.json(1)'
-    echo 'cp ffmpeg.exe viteApp/ffmpeg.exe'
-    cp ffmpeg.exe 'viteApp/ffmpeg.exe'
+    echo 'cp setting.json ../viteApp/setting.json(1)'
+    cp setting.json '../viteApp/setting.json(1)'
+
+    echo 'cp ffmpeg.exe ../viteApp/ffmpeg.exe'
+    cp ffmpeg.exe '../viteApp/ffmpeg.exe'
+
     echo 'APP打包完成！！！'
 fi
 if [ $levelKey -ge 3 ]; then
