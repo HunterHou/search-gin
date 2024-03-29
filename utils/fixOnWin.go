@@ -1,7 +1,7 @@
-//go:build darwin
-// +build darwin
+//go:build windows
+// +build windows
 
-//go:run darwin
+//go:run windows
 
 package utils
 
