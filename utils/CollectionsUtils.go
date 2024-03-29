@@ -20,7 +20,7 @@ func XItem(lib []string, items []string) []string {
 	return res
 }
 
-//判断集合是否包含
+// 判断集合是否包含
 func HasItem(lib []string, item string) bool {
 	if lib == nil {
 		return false
@@ -37,7 +37,7 @@ func HasItem(lib []string, item string) bool {
 	return false
 }
 
-func ExtandsItems(lib []string, items []string) []string {
+func ExtendsItems(lib []string, items []string) []string {
 	if len(items) == 0 || items == nil {
 		return lib
 	}
@@ -67,7 +67,7 @@ func IndexOf(lib []string, item string) int {
 func RemoveItem(lib []string, item string) []string {
 	index := IndexOf(lib, item)
 	if index != -1 {
-		return ExtandsItems(lib[0:index], lib[(index+1):])
+		return ExtendsItems(lib[0:index], lib[(index+1):])
 	}
 	return lib
 }

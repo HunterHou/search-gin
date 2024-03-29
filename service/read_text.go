@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func FlushDictionart(path string) {
+func FlushDictionary(path string) {
 	WriteDictionaryToJson(path, cons.OSSetting)
 }
 

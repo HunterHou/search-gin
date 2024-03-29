@@ -338,10 +338,10 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	return result
 }
 
-func (fs SearchService) DownJpgMakePng(finalpath string, url string) utils.Result {
+func (fs SearchService) DownJpgMakePng(finalPath string, url string) utils.Result {
 	result := utils.Result{}
-	jpgpath := utils.GetPng(finalpath, "jpg")
-	jpgOut, createErr := os.Create(jpgpath)
+	jpgPath := utils.GetPng(finalPath, "jpg")
+	jpgOut, createErr := os.Create(jpgPath)
 	if createErr != nil {
 		fmt.Println("createErr:", createErr)
 	}
@@ -365,7 +365,7 @@ func (fs SearchService) DownJpgMakePng(finalpath string, url string) utils.Resul
 	}
 	jpgOut.Write(body)
 	jpgOut.Close()
-	pngErr := utils.ImageToPng(jpgpath)
+	pngErr := utils.ImageToPng(jpgPath)
 	if pngErr != nil {
 		fmt.Println("pngErr:", pngErr)
 	}
@@ -395,12 +395,12 @@ func (fs SearchService) DownImage(toFile datamodels.Movie) utils.Result {
 
 }
 
-func downImageItem(url string, dirPath string, prefix string, sufix string, wg *sync.WaitGroup) utils.Result {
+func downImageItem(url string, dirPath string, prefix string, suffix string, wg *sync.WaitGroup) utils.Result {
 	defer wg.Done()
 	result := utils.NewResult()
 	filepath := dirPath + utils.PathSeparator + prefix
-	if len(sufix) > 0 {
-		filepath = filepath + "-" + sufix + ".jpg"
+	if len(suffix) > 0 {
+		filepath = filepath + "-" + suffix + ".jpg"
 	}
 	filepath = filepath + ".jpg"
 	if !strings.HasPrefix(url, "http") {
@@ -818,9 +818,9 @@ func (fs SearchService) ScanAll() {
 	setting := cons.OSSetting
 	dirList = append(dirList, setting.Dirs...)
 	cons.QueryTypes = []string{}
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
+	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.VideoTypes)
+	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.DocsTypes)
+	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.ImageTypes)
 	fs.ScanDisk(dirList, cons.QueryTypes)
 }
 
@@ -834,9 +834,9 @@ func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 	//初始化查询条件
 	setting := cons.OSSetting
 	cons.QueryTypes = []string{}
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.VideoTypes)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.DocsTypes)
-	cons.QueryTypes = utils.ExtandsItems(cons.QueryTypes, setting.ImageTypes)
+	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.VideoTypes)
+	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.DocsTypes)
+	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.ImageTypes)
 	targetFiles, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, false, BaseDir)
 	service.fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
 
