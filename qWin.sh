@@ -38,12 +38,13 @@ fi
 cd ..
 if [ $levelKey -ge 2 ]; then
     echo '移动完成，打包APP'
-    go build -o qapp/appQuaser.exe -ldflags "-H=windowsgui" -tags=prod
+    cd gosrc
+    go build -o ../qapp/appQuaser.exe -ldflags "-H=windowsgui" -tags=prod
     echo 移动配置文件 '*.*(1)'
-    echo 'cp setting.json qapp/setting.json(1)'
-    cp setting.json 'qapp/setting.json(1)'
-    echo 'cp ffmpeg.exe qapp/ffmpeg.exe'
-    cp ffmpeg.exe 'qapp/ffmpeg.exe'
+    echo 'cp setting.json ../qapp/setting.json(1)'
+    cp setting.json '../qapp/setting.json(1)'
+    echo 'cp ffmpeg.exe ../lsqapp/ffmpeg.exe'
+    cp ffmpeg.exe '../qapp/ffmpeg.exe'
     echo 'APP打包完成！！！'
 fi
 echo 'SUCCESS,OVER !!!'
