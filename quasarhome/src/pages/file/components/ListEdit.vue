@@ -136,7 +136,7 @@
                   </div>
                   <div>
                     {{
-                      `耗时：${(new Date(v.FinishTime || new Date()).getTime() -
+                      `耗时：${((v.FinishTime?new Date(v.FinishTime):new Date()).getTime() -
                         new Date(v.CreateTime).getTime()) /
                         1000
                         }`
@@ -202,6 +202,8 @@ watch(
     }
   }
 );
+
+
 
 const fetchTasking = async () => {
   const res = await TransferTasksInfo();
