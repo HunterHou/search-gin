@@ -1,6 +1,8 @@
 //go:build darwin
 // +build darwin
 
+//go:run darwin
+
 package utils
 
 import (
