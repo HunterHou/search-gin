@@ -18,7 +18,7 @@ func ExecCmd(path string, cmdType string) int {
 	cmd := exec.Command("cmd", "/C", cmdType, "", path)
 	if cmd != nil {
 		if runtime.GOOS == "windows" {
-			// cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+			FixOnWin(cmd)
 		}
 		cmdErr := cmd.Start()
 		if cmdErr != nil {

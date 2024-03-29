@@ -15,7 +15,6 @@ import (
 	"searchGin/utils"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -150,8 +149,8 @@ func (f *FileService) UpDirClear(dirname string) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		newpath := dirname[0:strings.LastIndex(dirname, utils.PathSeparator)]
-		f.UpDirClear(newpath)
+		newPath := dirname[0:strings.LastIndex(dirname, utils.PathSeparator)]
+		f.UpDirClear(newPath)
 	} else {
 		return
 
@@ -487,7 +486,7 @@ func (f *FileService) ffmepgExec(args []string, thisNow time.Time) utils.Result 
 	cmd := exec.Command("./ffmpeg.exe ", args...)
 	if cmd != nil {
 		if runtime.GOOS == "windows" {
-			cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+			utils.FixOnWin(cmd)
 		}
 		out, cmdErr := cmd.CombinedOutput()
 		if cmdErr != nil {
