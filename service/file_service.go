@@ -216,12 +216,11 @@ func (f *FileService) makeDatasourceMap(files []datamodels.Movie) {
 
 // 总文件 转不同数据模型
 func (f *FileService) ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[string]datamodels.Actress, map[string]datamodels.Supplier, int64) {
-	filemap := make(map[string]datamodels.Movie)
-	filemapCount := make(map[string]int)
-	actessmap := make(map[string]datamodels.Actress)
-	suppliermap := make(map[string]datamodels.Supplier)
+	fileMap := make(map[string]datamodels.Movie)
+	fileMapCount := make(map[string]int)
+	actressMap := make(map[string]datamodels.Actress)
+	supplierMap := make(map[string]datamodels.Supplier)
 	var size int64
-	var toInsert []datamodels.Movie
 	for i := 0; i < len(files); i++ {
 		curFile := files[i]
 		cons.TypeSizePlus(curFile.MovieType, curFile.Size)
@@ -232,41 +231,38 @@ func (f *FileService) ArrayToMap(files []datamodels.Movie) (map[string]datamodel
 
 		}
 		size = size + curFile.Size
-		_, ok := filemap[curFile.Id]
+		_, ok := fileMap[curFile.Id]
 		if ok {
 			//重名处理
-			count := filemapCount[curFile.Id]
+			count := fileMapCount[curFile.Id]
 			count++
 			curFile.SetId(utils.PKId(curFile.Path + fmt.Sprintf("repeat(%d)", count)))
-			filemap[curFile.Id] = curFile
-			toInsert = append(toInsert, curFile)
+			fileMap[curFile.Id] = curFile
 		} else {
-			filemap[curFile.Id] = curFile
-			filemapCount[curFile.Id] = 1
-
-			toInsert = append(toInsert, curFile)
+			fileMap[curFile.Id] = curFile
+			fileMapCount[curFile.Id] = 1
 		}
 
-		curActress, ok := actessmap[curFile.Actress]
+		curActress, ok := actressMap[curFile.Actress]
 		if ok {
 			curActress.PlusCnt()
 			curActress.PlusSize(curFile.Size)
 			curActress.AddImage(curFile.Png)
 			curActress.AddImage(curFile.Jpg)
-			actessmap[curFile.Actress] = curActress
+			actressMap[curFile.Actress] = curActress
 		} else {
-			actessmap[curFile.Actress] = datamodels.NewActres(curFile.Actress, curFile.Png, curFile.Size)
+			actressMap[curFile.Actress] = datamodels.NewActress(curFile.Actress, curFile.Png, curFile.Size)
 		}
-		curSupplier, okS := suppliermap[curFile.Supplier]
+		curSupplier, okS := supplierMap[curFile.Supplier]
 		if okS {
 			curSupplier.Plus()
-			suppliermap[curFile.Supplier] = curSupplier
+			supplierMap[curFile.Supplier] = curSupplier
 		} else {
-			suppliermap[curFile.Supplier] = datamodels.NewSupplier(curFile.Supplier)
+			supplierMap[curFile.Supplier] = datamodels.NewSupplier(curFile.Supplier)
 		}
 
 	}
-	return filemap, actessmap, suppliermap, size
+	return fileMap, actressMap, supplierMap, size
 }
 
 // 合并文件数组

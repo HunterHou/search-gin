@@ -27,7 +27,6 @@ func (fs SearchService) SortMovieForce() {
 	datasource.SortMovieForce()
 }
 
-
 func (fs SearchService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
 
 	result := utils.NewPage()
@@ -246,25 +245,25 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	dirpath := path + utils.PathSeparator + dirname
 	os.MkdirAll(dirpath, os.ModePerm)
 	filename := dirname + "." + utils.GetSuffux(srcFile.Path)
-	finalpath := dirpath + utils.PathSeparator + filename
-	jpgpath := utils.GetPng(finalpath, "jpg")
-	pngpath := utils.GetPng(finalpath, "png")
-	nfopath := utils.GetPng(finalpath, "nfo")
-	jpgOut, createErr := os.Create(jpgpath)
+	finalPath := dirpath + utils.PathSeparator + filename
+	jpgPath := utils.GetPng(finalPath, "jpg")
+	pngPath := utils.GetPng(finalPath, "png")
+	nfoPath := utils.GetPng(finalPath, "nfo")
+	jpgOut, createErr := os.Create(jpgPath)
 	if createErr != nil {
 		//TODO 创建失败  标题 特殊字符处理 改为 演员+番号
 		dirname = "[" + toFile.Actress + "][" + toFile.Code + "]"
 		dirpath = path + utils.PathSeparator + dirname
 		os.MkdirAll(dirpath, os.ModePerm)
 		filename = dirname + "." + utils.GetSuffux(srcFile.Path)
-		finalpath = dirpath + utils.PathSeparator + filename
-		jpgpath = utils.GetPng(finalpath, "jpg")
-		jpgOut, createErr = os.Create(jpgpath)
+		finalPath = dirpath + utils.PathSeparator + filename
+		jpgPath = utils.GetPng(finalPath, "jpg")
+		jpgOut, createErr = os.Create(jpgPath)
 		if createErr != nil {
 			result.Fail()
 			fmt.Println("createErr:", createErr)
-			os.Rename(finalpath, srcFile.Path)
-			result.Message = "文件创建失败：" + jpgpath
+			os.Rename(finalPath, srcFile.Path)
+			result.Message = "文件创建失败：" + jpgPath
 			return result
 		}
 	}
@@ -277,7 +276,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	if downErr != nil {
 		result.Fail()
 		fmt.Println("downErr:", downErr)
-		os.Rename(finalpath, srcFile.Path)
+		os.Rename(finalPath, srcFile.Path)
 		result.Message = "文件下载失败：" + toFile.Jpg
 		return result
 	}
@@ -285,27 +284,27 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	if readErr != nil {
 		result.Fail()
 		fmt.Println("readErr:", readErr)
-		os.Rename(finalpath, srcFile.Path)
+		os.Rename(finalPath, srcFile.Path)
 		result.Message = "请求读取response失败"
 		return result
 	}
 	jpgOut.Write(body)
 	jpgOut.Close()
 	if toFile.Png == "" {
-		pngErr := utils.ImageToPng(jpgpath)
+		pngErr := utils.ImageToPng(jpgPath)
 		if pngErr != nil {
 			result.Fail()
 			fmt.Println("pngErr:", pngErr)
-			os.Rename(finalpath, srcFile.Path)
+			os.Rename(finalPath, srcFile.Path)
 			result.Message = "png生成失败"
 			// return result
 		}
 	} else {
-		pngOut, createErr := os.Create(pngpath)
+		pngOut, createErr := os.Create(pngPath)
 		if createErr != nil {
 			result.Fail()
 			fmt.Println("downErr:", downErr)
-			os.Rename(finalpath, srcFile.Path)
+			os.Rename(finalPath, srcFile.Path)
 			result.Message = "png文件下载失败：" + toFile.Png
 			return result
 		}
@@ -313,7 +312,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 		if downErr != nil {
 			result.Fail()
 			fmt.Println("downErr:", downErr)
-			os.Rename(finalpath, srcFile.Path)
+			os.Rename(finalPath, srcFile.Path)
 			result.Message = "文件下载失败：" + toFile.Jpg
 			return result
 		}
@@ -321,7 +320,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 		if readErr != nil {
 			result.Fail()
 			fmt.Println("readErr:", readErr)
-			os.Rename(finalpath, srcFile.Path)
+			os.Rename(finalPath, srcFile.Path)
 			result.Message = "请求读取response失败"
 			return result
 		}
@@ -329,10 +328,10 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 		pngOut.Close()
 	}
 
-	os.Rename(srcFile.Path, finalpath)
-	toFile.Jpg = jpgpath
-	toFile.Nfo = nfopath
-	toFile.Png = pngpath
+	os.Rename(srcFile.Path, finalPath)
+	toFile.Jpg = jpgPath
+	toFile.Nfo = nfoPath
+	toFile.Png = pngPath
 	fs.MakeNfo(toFile)
 	result.Success()
 	result.Message = "【" + dirname + "】" + result.Message
@@ -344,7 +343,7 @@ func (fs SearchService) DownJpgMakePng(finalpath string, url string) utils.Resul
 	jpgpath := utils.GetPng(finalpath, "jpg")
 	jpgOut, createErr := os.Create(jpgpath)
 	if createErr != nil {
-
+		fmt.Println("createErr:", createErr)
 	}
 	if !strings.Contains(url, cons.OSSetting.BaseUrl) {
 		url = cons.OSSetting.BaseUrl + url
@@ -368,7 +367,7 @@ func (fs SearchService) DownJpgMakePng(finalpath string, url string) utils.Resul
 	jpgOut.Close()
 	pngErr := utils.ImageToPng(jpgpath)
 	if pngErr != nil {
-
+		fmt.Println("pngErr:", pngErr)
 	}
 	result.Success()
 	return result
@@ -687,7 +686,7 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 		res.FailByMsg("文件不存在")
 		return res
 	}
-	if movie.Jpg != "" && strings.HasPrefix(movie.Jpg,"http") {
+	if movie.Jpg != "" && strings.HasPrefix(movie.Jpg, "http") {
 		res = fs.DownJpgMakePng(movieLib.Path, movie.Jpg)
 		if !res.IsSuccess() {
 			return res

@@ -14,7 +14,7 @@ type Actress struct {
 	Images []string
 }
 
-func NewActres(name string, url string, size int64) Actress {
+func NewActress(name string, url string, size int64) Actress {
 	return Actress{
 		Name:    name,
 		Url:     url,
