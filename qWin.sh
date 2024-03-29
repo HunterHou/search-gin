@@ -39,8 +39,8 @@ cd ..
 if [ $levelKey -ge 2 ]; then
     echo '移动完成，打包APP'
     cd gosrc
-    # go build -o ../qapp/appQuaser.exe -ldflags "-H=windowsgui" -tags=prod
-    go build -o ../qapp/appQuaser.exe  -tags=prod
+    go build -o ../qapp/appQuaser.exe -ldflags "-H=windowsgui" -tags=prod
+    # go build -o ../qapp/appQuaser.exe  -tags=prod
     echo 移动配置文件 '*.*(1)'
     echo 'cp setting.json ../qapp/setting.json(1)'
     cp setting.json '../qapp/setting.json(1)'
