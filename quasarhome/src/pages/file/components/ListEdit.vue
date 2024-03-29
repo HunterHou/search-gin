@@ -136,7 +136,7 @@
                   </div>
                   <div>
                     {{
-                      `耗时：${(new Date(v.FinishTime).getTime() -
+                      `耗时：${(new Date(v.FinishTime || new Date()).getTime() -
                         new Date(v.CreateTime).getTime()) /
                         1000
                         }`
