@@ -30,7 +30,6 @@ func PostMovies(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-
 // 脸谱搜索入口
 func PostActess(c *gin.Context) {
 

@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"searchGin/datamodels"
 	"searchGin/service"
-	"searchGin/utils"
 	"testing"
 )
 
