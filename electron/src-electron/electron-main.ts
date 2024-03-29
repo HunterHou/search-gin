@@ -1,55 +1,46 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, nativeImage, shell } from 'electron';
 import path from 'path';
+import { access } from 'fs';
 import os from 'os';
+import { createMainWindow } from './windows/index';
+import { createTray } from './windows/tray';
 
-// needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
-let mainWindow: BrowserWindow | undefined;
-
-function createWindow() {
-  /**
-   * Initial window options
-   */
-  mainWindow = new BrowserWindow({
-    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1000,
-    height: 600,
-    useContentSize: true,
-    webPreferences: {
-      contextIsolation: true,
-      // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
-    },
-  });
-
-  mainWindow.loadURL(process.env.APP_URL);
-
-  if (process.env.DEBUGGING) {
-    // if on DEV or Production with debug enabled
-    mainWindow.webContents.openDevTools();
+export let mainWindow: BrowserWindow;
+export const iconMain = nativeImage.createFromPath(
+  path.resolve(__dirname, 'icons/icon.png')
+);
+app.disableHardwareAcceleration()
+// 启动第三方工具
+const appUri = path.resolve(__dirname, 'icons/exec/appQuaser.exe');
+access(appUri, (err) => {
+  if (err) {
+    console.log(err);
   } else {
-    // we're on production; no access to devtools pls
-    mainWindow.webContents.on('devtools-opened', () => {
-      mainWindow?.webContents.closeDevTools();
-    });
+    shell.openPath(appUri);
   }
-
-  mainWindow.on('closed', () => {
-    mainWindow = undefined;
+});
+export const init = () => {
+  mainWindow = createMainWindow(mainWindow);
+};
+// 启动
+app.whenReady().then(() => {
+  init();
+  createTray(mainWindow);
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      init();
+    }
   });
-}
+});
 
-app.whenReady().then(createWindow);
-
+// 所有窗口都关闭
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
-    app.quit();
+    // app.quit()
+    console.log('window-all-closed');
   }
 });
 
-app.on('activate', () => {
-  if (mainWindow === undefined) {
-    createWindow();
-  }
-});
+import './windows/func';
