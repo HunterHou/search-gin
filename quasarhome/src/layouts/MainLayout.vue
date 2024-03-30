@@ -8,12 +8,14 @@
             文件搜索<q-btn dense flat icon="refresh" @click="refreshThis">
             </q-btn>
           </q-toolbar-title>
+
           <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
             color: currentPath === link.link ? 'red' : '',
             scale: 1.2,
           }" />
           <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-space />
+          <q-btn @click="$q.dark.set(!$q.dark.mode)" dense flat color="red">{{ $q.dark.mode ? '自然' : '暗黑' }}</q-btn>
           <q-btn color="green" flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense
             icon="menu">
             <span v-if="systemProperty.drawerRight">{{

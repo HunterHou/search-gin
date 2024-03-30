@@ -1,6 +1,6 @@
 <template>
   <div class="q-mg-md top" style="margin-bottom: 40px">
-    <q-page-sticky style="z-index: 9;" position="bottom-left" :offset="[6, isMobile ? 180 : 160]">
+    <!-- <q-page-sticky style="z-index: 9;" position="bottom-left" :offset="[6, isMobile ? 180 : 160]">
       <q-btn round class="page-sticky" color="amber" text-color="black" icon="keyboard_arrow_left"
         v-if="view.queryParam.Page > 1" @click="nextPage(-1)"></q-btn>
     </q-page-sticky>
@@ -8,12 +8,12 @@
     <q-page-sticky style="z-index: 9;" position="bottom-right" :offset="[10, isMobile ? 180 : 160]">
       <q-btn round class="page-sticky" color="secondary" text-color="black" icon="keyboard_arrow_right"
         @click="nextPage(1)"></q-btn>
-    </q-page-sticky>
+    </q-page-sticky> -->
 
 
     <div class="row justify-center q-gutter-sm" ref="top">
       <q-btn :loading="refreshIndexLoading" :outline="isMobile" color="red" @click="refreshIndex">
-        扫描【~】
+        索~
         <template v-slot:loading> 执行中</template>
       </q-btn>
 
@@ -125,7 +125,7 @@
       " />
       </div>
     </q-page-sticky>
-    <q-page padding>
+    <q-page>
       <div class="row justify-center q-mt-sm mainlist">
         <q-card class="q-ma-sm " v-bind:class="{ 'example-item': !isMobile, 'mobile-item': isMobile }"
           v-for="item in view.resultData.Data" :key="item.Id">
