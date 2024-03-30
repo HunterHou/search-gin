@@ -1,6 +1,6 @@
 <template>
   <div class="topRef"> </div>
-  <q-layout view="lHh Lpr lFf" class="shadow-2 rounded-borders" v-if="props.mode == 'drawer'">
+  <q-layout view="lHh Lpr lFf" class="shadow-2 rounded-borders" v-if="props.mode == 'drawer' || isMobile">
     <q-header elevated>
       <q-card class="q-dialog-plugin" style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
         <div style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
@@ -121,7 +121,7 @@
   </q-layout>
 
 
-  <q-layout view="hhh Lpr Lfr" class="shadow-2 rounded-borders" v-if="props.mode !== 'drawer'">
+  <q-layout view="hhh Lpr Lfr" class="shadow-2 rounded-borders" v-if="props.mode !== 'drawer' && !isMobile">
     <q-header reveal class="bg-black">
       <q-toolbar>
         <q-toolbar-title>
@@ -266,7 +266,7 @@
 <script setup>
 import vue3VideoPlay from 'vue3-video-play';
 import 'vue3-video-play/dist/style.css'; // 引入css
-// import { useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { computed, reactive, ref, watch, defineEmits } from 'vue';
 import { useSystemProperty } from '../stores/System';
 import { getFileStream } from './utils/images';
@@ -275,9 +275,15 @@ import { SearchAPI, DeleteFile, RefreshAPI } from './api/searchAPI';
 import { GetSettingInfo } from './api/settingAPI';
 import { useRouter } from 'vue-router';
 
+const $q = useQuasar();
+
 const systemProperty = useSystemProperty();
 const vue3VideoPlayRef = ref(null);
 const { replace } = useRouter()
+
+const isMobile = computed(() => {
+  return $q.platform.is.mobile;
+});
 
 const drawerRightW = ref(true);
 const drawerRightWidth = ref(500);
