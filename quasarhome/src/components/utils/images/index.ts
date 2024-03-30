@@ -28,3 +28,11 @@ export const getTempImage = (id: string) => {
 export const getActressImage = (actressUrl: string) => {
   return settingInfo.value.ImageHost + '/api/actressImgae/' + actressUrl;
 };
+
+export const GetFileByPathUseEncode = (path: string) => {
+  return (
+    settingInfo.value.ImageHost +
+    '/api/GetFileByPathUseEncode/' +
+    encodeURI(path)
+  );
+};

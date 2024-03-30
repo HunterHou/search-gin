@@ -1,6 +1,6 @@
 <template>
-  <q-dialog ref="dialogRef" class="card-q" @hide="dialogHide" @before-show="beforeShow">
-    <q-card class="card-q">
+  <q-dialog ref="dialogRef" @hide="dialogHide" @before-show="beforeShow">
+    <q-card :class="{ 'card-q': !isMobile, 'card-q-mobile': isMobile }">
       <q-tabs v-model="tab" class="bg-purple text-white" style="" align="justify" narrow-indicator>
         <q-tab name="filelist" label="批量操作" />
         <q-tab name="setting" label="设置" />
@@ -19,8 +19,8 @@
           </div>
           <div class="q-mr-sm row justify-left">
             <q-btn class=" q-mr-sm" color="amber" size="sm" glossy text-color="black" @click="selectAll">{{
-              view.selectAll
-              ? '不选' : '全选' }}</q-btn>
+    view.selectAll
+      ? '不选' : '全选' }}</q-btn>
             <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
               @update:model-value="fetchSearch()" />
             <q-btn class="q-mr-sm" size="sm" color="secondary" icon="refresh" @click="refreshIndex">刷新</q-btn>
@@ -52,7 +52,7 @@
               <div style="display: flex; flex-direction: column">
                 <q-item-label>
                   <span v-if="view.cutListIds.indexOf(item.Id) >= 0" style="color: red">剪切中：：</span>{{ item.Title }}【{{
-                    item.SizeStr }}】
+    item.SizeStr }}】
                 </q-item-label>
                 <div style="display: flex; flex-direction: row">
                   <q-checkbox size="sm" v-model="view.selector" :val="item.Id" color="red" />
@@ -61,9 +61,9 @@
                       <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
                         <q-item-section>
                           <q-item-label @click="
-                            item.MovieType = mt.value;
-                          commonExec(ResetMovieType(item.Id, mt.value));
-                          ">{{ mt.label }}
+    item.MovieType = mt.value;
+  commonExec(ResetMovieType(item.Id, mt.value));
+  ">{{ mt.label }}
                           </q-item-label>
                         </q-item-section>
                       </q-item>
@@ -79,8 +79,9 @@
                   <q-btn size="sm" class="q-mr-sm" color="green" @click="toMp4(item)">toMp4</q-btn>
                   <q-btn class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
                     v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
-                  <q-btn color="red" v-for="ta in item.Tags" :key="ta" @click="commonExec(CloseTag(item.Id, ta), true)">{{
-                    `- ${ta}` }}</q-btn>
+                  <q-btn color="red" v-for="ta in item.Tags" :key="ta"
+                    @click="commonExec(CloseTag(item.Id, ta), true)">{{
+    `- ${ta}` }}</q-btn>
                 </div>
                 <div v-if="item.showCut" style="
                     display: flex;
@@ -99,9 +100,9 @@
                   <q-input style="width: 40px" v-model:model-value="cutParam.eM"></q-input>
                   <q-input style="width: 40px" v-model:model-value="cutParam.eS"></q-input>
                   <q-btn size="sm" color="black" type="primary" @click="
-                    cutThis(item);
-                  item.showCut = false;
-                  " label="确认" />
+    cutThis(item);
+  item.showCut = false;
+  " label="确认" />
                   <q-btn size="sm" color="blue" @click="item.showCut = false" label="取消" />
                 </div>
               </div>
@@ -136,10 +137,10 @@
                   </div>
                   <div>
                     {{
-                      `耗时：${((v.FinishTime?new Date(v.FinishTime):new Date()).getTime() -
-                        new Date(v.CreateTime).getTime()) /
-                        1000
-                        }`
+    `耗时：${((v.FinishTime ? new Date(v.FinishTime) : new Date()).getTime() -
+      new Date(v.CreateTime).getTime()) /
+    1000
+    }`
                     }}
                   </div>
                 </q-item-section>
@@ -166,7 +167,7 @@
 <script setup>
 import { useQuasar } from 'quasar';
 import { useDialogPluginComponent } from 'quasar';
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, watch, computed } from 'vue';
 
 import { MovieTypeOptions } from '../../../components/utils';
 import { buttonEnum } from '../../../components/model/Setting';
@@ -187,6 +188,10 @@ import {
 import { PostSettingInfo } from 'src/components/api/settingAPI';
 
 const $q = useQuasar();
+
+const isMobile = computed(() => {
+  return $q.platform.is.mobile;
+});
 
 const tab = ref('filelist');
 let timeFunc;
@@ -413,6 +418,14 @@ defineExpose({
   height: 80vh;
   width: 70vw !important;
   max-width: 70vw !important;
+}
+
+.card-q-m {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  width: 100vw !important;
+  max-width: 100vw !important;
 }
 
 .tag-item {

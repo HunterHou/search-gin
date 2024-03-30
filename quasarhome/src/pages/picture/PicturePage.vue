@@ -10,37 +10,32 @@
         @click="nextPage(1)"></q-btn>
     </q-page-sticky>
     <div class="row justify-center q-gutter-sm">
-      <q-btn-toggle v-model="view.queryParam.SortField" @update:model-value="fetchSearch" toggle-color="primary" :options="[
-        { label: '时', value: 'MTime' },
-        { label: '容', value: 'Size' },
-        { label: '名', value: 'Code' },
-      ]" />
-      <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch" toggle-color="primary" :options="[
-        { label: '正', value: 'asc' },
-        { label: '倒', value: 'desc' },
-      ]" />
+      <q-btn-toggle v-model="view.queryParam.SortField" @update:model-value="fetchSearch" toggle-color="primary"
+        :options="[
+      { label: '时', value: 'MTime' },
+      { label: '容', value: 'Size' },
+      { label: '名', value: 'Code' },
+    ]" />
+      <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch" toggle-color="primary"
+        :options="[
+      { label: '正', value: 'asc' },
+      { label: '倒', value: 'desc' },
+    ]" />
       <q-input v-model="view.queryParam.Keyword" :dense="true" filled clearable @update:model-value="fetchSearch" />
       <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="purple"
         :ellipses="false" :max="view.resultData.TotalCnt || 0" :max-pages="6" boundary-numbers />
     </div>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap">
       <q-card class="q-ma-sm example-item" v-for="item in view.resultData.Data" :key="item.Id">
-        <q-img fit="fill" :src="getActressImage(item.Name)" class="item-img">
-          <div style="
-              padding: 0;
-              margin: 0;
-              background-color: rgba(0, 0, 0, 0);
-              display: flex;
-              flex-direction: row;
-              justify-content: space-between;
-              width: 100%;
-            ">
+        <q-img fit="fill" :src="getActressImage(item.Name)" class="item-img" @click="fileEditRef.open(item)">
+          <div style=" padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); display: flex; flex-direction: row;
+          justify-content: space-between; width: 100%; ">
             <div @click.stop="() => { }" style="
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                width: fit-content;
-              ">
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          width: fit-content;
+          ">
               <q-chip square color="red" text-color="white" style="margin-left: 0; padding: 0 4px">
                 <span>{{ item.SizeStr }}</span>
               </q-chip>

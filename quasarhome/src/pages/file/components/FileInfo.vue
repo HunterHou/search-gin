@@ -1,27 +1,20 @@
 <template>
-  <q-dialog ref="dialogRef" @escape-key="onDialogClose" @before-hide="onDialogClose" @hide="onDialogClose"
-    style="width: 80vw !important;" v-model:model-value="showDialog">
-    <q-card class="q-dialog-plugin q-pa-md" :style="{
-      color: 'white',
-      height: '100%',
-      width: '100%',
-      padding: '0 4px',
-      lineHeight: '32px',
-      maxWidth: '80vw !important'
-    }">
+  <q-dialog ref="dialogRef" :maximized="isMobile" fullWidth @escape-key="onDialogClose" @before-hide="onDialogClose"
+    @hide="onDialogClose" v-model:model-value="showDialog" style="width: 100vw !important;">
+    <q-card>
       <div
-        style="position: relative;margin-top: 0;display: flex;flex-direction: row;flex-wrap:nowrap;justify-content: space-between;overflow: hidden;">
+        style=" position: relative;margin-top: 0;display: flex;flex-direction: row;flex-wrap:nowrap;justify-content: space-between;overflow: hidden;">
         <div>
           <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'movie'" color="red" @click="showMovie"
-                 icon="ti-arrow-circle-right">播放</q-btn>
+            icon="ti-arrow-circle-right">播放</q-btn>
           <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'detail'" color="purple" @click="showDetail = 'detail'"
-                 icon="ti-arrow-circle-right">详情</q-btn>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'image'" color="deep-orange" @click="showDetail = 'image'"
-                 icon="ti-arrow-circle-right">图层</q-btn>
+            icon="ti-arrow-circle-right">详情</q-btn>
+          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'image'" color="deep-orange"
+            @click="showDetail = 'image'" icon="ti-arrow-circle-right">图层</q-btn>
           <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'web'" color="deep-orange" @click="showDetail = 'web'"
-                 icon="ti-world">JavBus</q-btn>
+            icon="ti-world">JavBus</q-btn>
         </div>
-        <div><q-btn class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen"
+        <div v-if="!isMobile"><q-btn class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen"
             @click="openPlay(view.item)">大屏</q-btn>
           <q-btn class="q-mr-sm" size="sm" ripple color="green-7" icon="ti-blackboard"
             @click="openDialog(view.item)">侧屏</q-btn>
@@ -29,13 +22,12 @@
             @click="commonExec(PlayMovie(view.item.Id))">播放</q-btn>
           <q-btn class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
             @click="commonExec(OpenFileFolder(view.item.Id))">文件夹</q-btn>
-          <q-btn class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
-            @click="commonExec(DownImageList(view.item.Id))">挂图</q-btn>
           <q-btn class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
             @click="confirmDelete(view.item)">删除</q-btn>
-          <q-btn class="q-mr-sm" size="sm" color="black" @click="moveThis(view.item)" icon="ti-control-shuffle">移动</q-btn>
-          <q-btn class="q-mr-sm" size="sm" ripple color="red" icon="ti-close" @click="onDialogClose">关闭</q-btn>
+          <q-btn class="q-mr-sm" size="sm" color="black" @click="moveThis(view.item)"
+            icon="ti-control-shuffle">移动</q-btn>
         </div>
+        <q-btn class="q-mr-sm" size="sm" ripple color="red" icon="ti-close" @click="onDialogClose"></q-btn>
       </div>
 
       <div style="margin-top: 0;height: 96%;overflow: auto;">
@@ -47,7 +39,7 @@
           <Playing ref="vue3VideoPlayRef" mode="drawer" />
         </div>
         <div v-if="showDetail == 'detail'">
-          <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)" style="min-width:600px ;max-height: 50vh">
+          <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)">
           </q-img>
           <q-field label="Code" stack-label>
             <template v-slot:control>
@@ -97,7 +89,7 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { useDialogPluginComponent } from 'quasar';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, computed } from 'vue';
 
 import { formatTitle } from '../../../components/utils';
 import { GetSettingInfo } from '../../../components/api/settingAPI';
@@ -112,6 +104,11 @@ import Playing from 'src/components/PlayingVideo.vue';
 
 const $q = useQuasar()
 const systemProperty = useSystemProperty();
+
+const isMobile = computed(() => {
+  return $q.platform.is.mobile;
+});
+
 
 const vue3VideoPlayRef = ref(null)
 const showDialog = ref(false)
@@ -223,7 +220,9 @@ const searchCode = (item) => {
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 
 const onDialogClose = () => {
-  vue3VideoPlayRef.value.stop()
+  if (vue3VideoPlayRef.value){
+    vue3VideoPlayRef.value.stop()
+  }
   showDetail.value = 'detail'
   showDialog.value = false
   onDialogHide()

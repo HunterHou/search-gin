@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/datasource"
@@ -175,11 +176,22 @@ func GetTempImageByPath(c *gin.Context) {
 	}
 }
 
+func GetFileByPathUseEncode(c *gin.Context) {
+	escapeUrl := c.Param("path")
+	path,_ := url.QueryUnescape(escapeUrl)
+	if utils.ExistsFiles(path) {
+		c.File(path)
+	} else {
+		return
+	}
+}
+
 // GetFile 获取文件流
 func GetFile(c *gin.Context) {
 	fileService := service.CreateFileService()
 	fileService.GetFile(c)
 }
+
 
 // GetPng 获取Png流
 func GetPng(c *gin.Context) {

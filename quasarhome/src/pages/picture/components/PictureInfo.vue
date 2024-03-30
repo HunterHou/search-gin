@@ -10,8 +10,8 @@
       maxWidth: '80vw !important'
     }">
       <div style="margin-top: 0;height: 96%;overflow: auto;">
-        <div v-for="item in view.prewiewImages" :key="item">{{ item }}</div>
-        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item" :src="getTempImage(item)"
+        <h3>{{ view.item.Name }}{{ view.item.SizeStr }}</h3>
+        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item" :src="GetFileByPathUseEncode(item)"
           style="width: 100%;height: auto;">
         </q-img>
       </div>
@@ -21,7 +21,7 @@
 <script setup>
 import { useDialogPluginComponent } from 'quasar';
 import { reactive, ref } from 'vue';
-import { getTempImage } from 'src/components/utils/images';
+import { GetFileByPathUseEncode } from 'src/components/utils/images';
 
 const showDialog = ref(false)
 
@@ -38,12 +38,10 @@ defineEmits([
 ]);
 
 const open = (data) => {
-  const item = data
-  console.log(data)
   view.prewiewImages = [];
-  view.item = { ...item };
   dialogRef.value.show();
-  view.prewiewImages = item.Images
+  view.item = data
+  view.prewiewImages = data.Images
 };
 
 
