@@ -121,6 +121,7 @@ module.exports = configure(function (/* ctx */) {
         'AppFullscreen',
         'QPageScroller',
         'QIntersection',
+        'QScrollArea',
       ],
     },
 

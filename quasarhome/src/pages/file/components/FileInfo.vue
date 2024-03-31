@@ -1,9 +1,17 @@
 <template>
-  <q-dialog ref="dialogRef" :maximized="isMobile" fullWidth @escape-key="onDialogClose" @before-hide="onDialogClose"
-    @hide="onDialogClose" v-model:model-value="showDialog" style="width: 100vw !important;">
+  <q-dialog ref="dialogRef" @escape-key="onDialogClose" @before-hide="onDialogClose" @hide="onDialogClose"
+    v-model:model-value="showDialog" :maximized="isMobile" full-width>
 
-    <q-layout view="lHh Lpr lFf" style="background-color: antiquewhite;" container class="shadow-2 rounded-borders">
-      <q-header elevated>
+    <q-card class=" text-white" style="max-width: 1400px!important;height: 96vh!important;">
+      <q-bar class="bg-primary">
+        <q-icon name="warning" />
+        <div>{{ view.item.Name }}</div>
+        <q-space />
+        <q-btn dense flat icon="close" @click="onDialogClose">
+          <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
+        </q-btn>
+      </q-bar>
+      <q-bar>
         <div
           style=" position: relative;margin-top: 0;display: flex;flex-direction: row;flex-wrap:nowrap;justify-content: space-between;overflow: hidden;">
           <div>
@@ -29,71 +37,61 @@
             <q-btn class="q-mr-sm" size="sm" color="black" @click="moveThis(view.item)"
               icon="ti-control-shuffle">移动</q-btn>
           </div>
-          <q-btn class="q-mr-sm" size="sm" ripple color="red" icon="ti-close" @click="onDialogClose"></q-btn>
         </div>
-      </q-header>
+      </q-bar>
 
-      <q-page-container>
-        <q-page>
-          <div v-if="showDetail == 'web'" style="overflow: auto;">
-            <iframe :frameborder="0" :allowfullscreen="true" width="100%" height="900px"
-              :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
-          </div>
-          <div v-if="showDetail == 'movie'">
-            <Playing ref="vue3VideoPlayRef" mode="drawer" @close="onDialogClose" />
-          </div>
-          <div v-if="showDetail == 'detail'">
-            <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)">
-            </q-img>
-            <q-field label="Code" stack-label>
-              <template v-slot:control>
-                <div class="self-center full-width no-outline cursor-pointer" style="color: blue" tabindex="0"
-                  @click="searchCode(view.item)">
-                  {{ view.item.Code }}
-                </div>
-              </template>
-            </q-field>
-            <q-field label="Actress" stack-label>
-              <template v-slot:control>
-                <div class="self-center full-width no-outline" tabindex="0">
-                  {{ view.item.Actress }}
-                </div>
-              </template>
-            </q-field>
-            <q-field label="Name" stack-label>
-              <template v-slot:control>
-                <div class="self-center full-width no-outline" tabindex="0">
-                  {{ formatTitle(view.item.Name) }}
-                </div>
-              </template>
-            </q-field>
-            <q-field label="Time" stack-label>
-              <template v-slot:control>
-                <div class="self-center full-width no-outline" tabindex="0">
-                  {{ formatTitle(view.item.MTime) }}
-                </div>
-              </template>
-            </q-field>
-            <q-field label="Path" stack-label>
-              <template v-slot:control>
-                <div class="self-center full-width no-outline" tabindex="0">
-                  {{ view.item.Path }}
-                </div>
-              </template>
-            </q-field>
-          </div>
-          <div v-if="showDetail == 'image'">
-            <q-img fit="fit" v-for="item in view.prewiewImages" :key="item.Id" :src="getTempImage(item.Id)"
-              style="width: 100%;height: auto;"></q-img>
-          </div>
-          <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
-            <q-btn fab icon="keyboard_arrow_up" color="accent" />
-          </q-page-scroller>
-        </q-page>
-      </q-page-container>
-    </q-layout>
-
-
+      <div v-if="showDetail == 'web'" style="overflow: auto;">
+        <iframe :frameborder="0" :allowfullscreen="true" width="100%" height="900px"
+          :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
+      </div>
+      <div v-if="showDetail == 'movie'">
+        <Playing ref="vue3VideoPlayRef" :mode="isMobile ? 'drawer' : 'window'" @close="onDialogClose" />
+      </div>
+      <div v-if="showDetail == 'detail'">
+        <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)" style="max-height: 60vh;">
+        </q-img>
+        <q-field label="Code" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline cursor-pointer" style="color: blue" tabindex="0"
+              @click="searchCode(view.item)">
+              {{ view.item.Code }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Actress" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ view.item.Actress }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Name" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ formatTitle(view.item.Name) }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Time" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ formatTitle(view.item.MTime) }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Path" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ view.item.Path }}
+            </div>
+          </template>
+        </q-field>
+      </div>
+      <div v-if="showDetail == 'image'">
+        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item.Id" :src="getTempImage(item.Id)"
+          style="width: 100%;height: auto;"></q-img>
+      </div>
+    </q-card>
   </q-dialog>
 </template>
 <script setup>
@@ -105,7 +103,7 @@ import { formatTitle } from '../../../components/utils';
 import { GetSettingInfo } from '../../../components/api/settingAPI';
 import {
   QueryDirImageBase64, OpenFileFolder,
-  DownImageList, FileRename, DeleteFile,
+  FileRename, DeleteFile,
   PlayMovie
 } from '../../../components/api/searchAPI';
 import { getJpg, getTempImage } from 'src/components/utils/images';

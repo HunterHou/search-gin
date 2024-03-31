@@ -1,27 +1,27 @@
 <template>
-  <div class="topRef"> </div>
-  <q-layout view="lHh Lpr lFf" class="shadow-2 rounded-borders" v-if="props.mode == 'drawer' || isMobile">
-    <q-header elevated>
-      <q-card class="q-dialog-plugin" style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
+  <q-layout view="lHh Lpr lFf" container style="height: 120vh" class="shadow-2 rounded-borders"
+    v-if="props.mode !== 'page' || isMobile">
+    <q-header>
+      <q-card style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
         <div style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
           <span class="q-mr-sm"
             style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden">{{
-    view.playing.Title }}</span>
+      view.playing.Title }}</span>
 
         </div>
         <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
-          style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC"
-          @ended="playNext(1)" />
+          style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC" @ended="playNext(1)"
+          @timeupdate="timeupdate" @volumeupdate="volumeupdate" />
         <q-card-actions align="left">
 
           <q-btn flat style="color: #59d89d" :label="view.playing.Actress?.substring(0, 8)" @click="
-    view.queryParam.Keyword = view.playing.Actress;
-  fetchSearch();
-  " />
+      view.queryParam.Keyword = view.playing.Actress;
+    fetchSearch();
+    " />
           <q-btn flat style="color: goldenrod" :label="view.playing.Code?.substring(0, 8)" @click="
-    view.queryParam.Keyword = view.playing.Code;
-  fetchSearch();
-  " />
+      view.queryParam.Keyword = view.playing.Code;
+    fetchSearch();
+    " />
           <q-input v-model="view.queryParam.Keyword" :dense="true" clearable @update:model-value="fetchSearch">
             <template v-slot:prepend>
               <q-icon name="ti-list" class="cursor-pointer">
@@ -47,9 +47,9 @@
           <q-btn color="red" label="关闭" @click="closeThis" />
           <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch()" toggle-color="primary"
             :options="[
-    { label: '正', value: 'asc' },
-    { label: '倒', value: 'desc' }
-  ]" />
+      { label: '正', value: 'asc' },
+      { label: '倒', value: 'desc' }
+    ]" />
           <q-btn v-if="!view.playlist" color="primary" label="上一个" @click="playNext(-1)" />
           <q-btn v-if="!view.playlist" color="primary" label="下一个" @click="playNext(1)" />
           <q-btn color="orange" label="更多" @click="view.showMore = !view.showMore; fetchGetSettingInfo()" />
@@ -120,18 +120,20 @@
     </q-page-container>
   </q-layout>
 
-
-  <q-layout view="hhh Lpr Lfr" class="shadow-2 rounded-borders" v-if="props.mode !== 'drawer' && !isMobile">
+  <q-layout view="hhh Lpr Lfr" container style="height: 100vh" class="shadow-2 rounded-borders"
+    v-if="props.mode === 'page' && !isMobile">
     <q-header reveal class="bg-black">
       <q-toolbar>
         <q-toolbar-title>
-
           <div class="row justify-between"
             style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
             <span class="q-mr-sm"
               style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden">{{
-    view.playing.Title }}</span><q-btn color="red" label="关闭" @click="closeThis" />
-
+      view.playing.Title }}</span>
+            <!-- <q-btn color="red" label="关闭" @click="closeThis" /> -->
+            <q-btn dense flat icon="close" @click="closeThis">
+              <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
+            </q-btn>
           </div>
 
         </q-toolbar-title>
@@ -140,7 +142,7 @@
     </q-header>
     <q-drawer side="right" v-model="drawerRightW" bordered :width="drawerRightWidth" :breakpoint="500"
       class="bg-grey-3">
-      <q-slider size="sm" v-model="drawerRightWidth" :min="1" :max="740" />
+      <q-slider size="sm" v-model="drawerRightWidth" :min="380" :max="740" />
       <q-scroll-area class="fit">
         <div style="overflow: auto; background-color: rgba(0, 0, 0, 0.4)">
           <div class="row justify-center">
@@ -194,22 +196,22 @@
     </q-drawer>
 
     <q-page-container>
-      <q-page class="q-pa-sm">
+      <q-page>
         <q-card class="q-dialog-plugin" style="width:100%;max-height: 95vh;background-color: rgba(0, 0, 0, 0.1)">
           <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
             style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC"
-            @ended="playNext(1)" />
+            @ended="playNext(1)" @timeupdate="timeupdate" @volumeupdate="volumeupdate" />
           <q-card-actions align="left">
 
             <div>
               <q-btn flat style="color: #59d89d" :label="view.playing.Actress?.substring(0, 8)" @click="
-    view.queryParam.Keyword = view.playing.Actress;
-  fetchSearch();
-  " />
+      view.queryParam.Keyword = view.playing.Actress;
+    fetchSearch();
+    " />
               <q-btn flat style="color: goldenrod" :label="view.playing.Code?.substring(0, 8)" @click="
-    view.queryParam.Keyword = view.playing.Code;
-  fetchSearch();
-  " />
+      view.queryParam.Keyword = view.playing.Code;
+    fetchSearch();
+    " />
               <q-input v-model="view.queryParam.Keyword" :dense="true" clearable @update:model-value="fetchSearch">
                 <template v-slot:prepend>
                   <q-icon name="ti-list" class="cursor-pointer">
@@ -237,9 +239,9 @@
             <div>
               <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch()"
                 toggle-color="primary" :options="[
-    { label: '正', value: 'asc' },
-    { label: '倒', value: 'desc' }
-  ]" />
+      { label: '正', value: 'asc' },
+      { label: '倒', value: 'desc' }
+    ]" />
               <q-btn v-if="!view.playlist" color="primary" label="上一个" @click="playNext(-1)" />
               <q-btn v-if="!view.playlist" color="primary" label="下一个" @click="playNext(1)" />
               <q-btn color="orange" label="更多" @click="view.showMore = !view.showMore; fetchGetSettingInfo()" />
@@ -274,6 +276,7 @@ import { getPng } from './utils/images';
 import { SearchAPI, DeleteFile, RefreshAPI } from './api/searchAPI';
 import { GetSettingInfo } from './api/settingAPI';
 import { useRouter } from 'vue-router';
+import { onKeyStroke } from '@vueuse/core';
 
 const $q = useQuasar();
 
@@ -286,12 +289,13 @@ const isMobile = computed(() => {
 });
 
 const drawerRightW = ref(true);
-const drawerRightWidth = ref(500);
+const drawerRightWidth = ref(380);
 const view = reactive({
   playList: [],
   queryParam: { SortType: 'desc' },
   showMore: false,
   settingInfo: {},
+  currentTime: 1,
   playing: {}
 });
 
@@ -301,6 +305,15 @@ const props = defineProps({
     default: 'drawer'
   }
 })
+
+onKeyStroke(['ArrowLeft'], () => {
+  videoForward(-10)
+});
+
+onKeyStroke(['ArrowRight'], () => {
+  videoForward(60)
+});
+
 
 const emits = defineEmits(['close'])
 
@@ -328,6 +341,7 @@ watch(drawerRight, (v) => {
 
 const open = (v) => {
   view.playing = v
+  optionsPC.currentTime = 1;
   optionsPC.src = getFileStream(v.Id);
   optionsPC.webFullScreen = true;
   const top = document.querySelector('.topRef')
@@ -357,6 +371,26 @@ const stop = () => {
 const hideThis = () => {
   systemProperty.drawerRight = false;
 };
+
+const timeupdate = (e) => {
+  view.currentTime = e.target.currentTime;
+}
+
+const volumeupdate = (e) => {
+  systemProperty.videoOptions.volume = e.target.volume;
+}
+const videoForward = (fastForwardTime) => {
+  if (vue3VideoPlayRef.value) {
+    optionsPC.currentTime = view.currentTime + fastForwardTime
+    const temp = optionsPC.src
+    optionsPC.src = ''
+    setTimeout(() => {
+      optionsPC.src = temp
+    }, 1);
+  }
+
+};
+
 const closeThis = () => {
   stop()
   if (props.mode == 'drawer') {
@@ -409,7 +443,7 @@ const playNext = (step) => {
 const optionsPC = reactive({
   width: '100%', //播放器高度
   height: 'auto', //播放器高度
-  color: '#409eff', //主题色
+  color: '#ffffff', //主题色
   title: view.playing?.Title, //视频名称
   src: getFileStream(view.playing.Id), //视频源
   muted: false, //静音
