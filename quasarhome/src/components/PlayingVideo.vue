@@ -378,6 +378,7 @@ const timeupdate = (e) => {
 
 const volumeupdate = (e) => {
   systemProperty.videoOptions.volume = e.target.volume;
+  optionsPC.volume = e.target.volume;
 }
 const videoForward = (fastForwardTime) => {
   if (vue3VideoPlayRef.value) {
