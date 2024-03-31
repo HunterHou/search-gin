@@ -19,15 +19,15 @@
 
       <q-btn-toggle v-if="!isMobile" size="md" v-model="view.queryParam.SortField" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="[
-      { label: '时', value: 'MTime' },
-      { label: '容', value: 'Size' },
-      { label: '名', value: 'Code' }
-    ]" />
+        { label: '时', value: 'MTime' },
+        { label: '容', value: 'Size' },
+        { label: '名', value: 'Code' }
+      ]" />
       <q-btn-toggle v-if="!isMobile" v-model="view.queryParam.SortType" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="[
-      { label: '正', value: 'asc' },
-      { label: '倒', value: 'desc' }
-    ]" />
+        { label: '正', value: 'asc' },
+        { label: '倒', value: 'desc' }
+      ]" />
       <q-btn-toggle v-if="!isMobile" v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="MovieTypeSelects" />
 
@@ -96,22 +96,22 @@
       <q-btn color="primary" flat size="sm" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
         v-model="view.fullscreen" @click="clickFullscreen" />
       <q-btn class="q-mr-sm" flat size="sm" color="primary" icon="apps" @click="
-      listEditRef.open({
-        queryParam: view.queryParam,
-        settingInfo: view.settingInfo,
-        cb: listEditCallback
-      })
-      " />
+        listEditRef.open({
+          queryParam: view.queryParam,
+          settingInfo: view.settingInfo,
+          cb: listEditCallback
+        })
+        " />
       <q-toggle v-model="view.queryParam.OnlyRepeat" v-if="!isMobile" flat @update:model-value="fetchSearch"
         label="重" />
     </div>
     <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.4)">
       <div class="q-pa-sm flex flex-center">
         <q-select color="lime-11 q-mr-md" bg-color="green" dense @update:model-value="(no) => {
-      view.queryParam.PageSize = Number(no);
-      fetchSearch();
-    }
-      " filled v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
+        view.queryParam.PageSize = Number(no);
+        fetchSearch();
+      }
+        " filled v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
         </q-select>
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="deep-orange"
           :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="isMobile ? 5 : 10" boundary-numbers
@@ -119,10 +119,10 @@
         <q-input v-model="view.queryParam.Page" :dense="true" type="search"
           style="background-color: aliceblue; width: 60px; text-align: center" @focus="focusEvent($event)"
           @update:model-value="(no) => {
-      view.queryParam.Page = Number(no);
-      fetchSearch();
-    }
-      " />
+        view.queryParam.Page = Number(no);
+        fetchSearch();
+      }
+        " />
       </div>
     </q-page-sticky>
     <q-page>
@@ -163,9 +163,9 @@
                   background-color: rgba(188, 24, 24, 0.6);
                 ">
                 <span @click="
-      view.queryParam.Keyword = tag;
-    fetchSearch();
-    ">{{ tag?.substring(0, 4) }}</span>
+        view.queryParam.Keyword = tag;
+      fetchSearch();
+      ">{{ tag?.substring(0, 4) }}</span>
               </q-chip>
             </div>
             <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:2rem;color: antiquewhite;"
@@ -182,8 +182,8 @@
           </div>
           <q-img fit="fit" easier draggable :class="{ 'img-self': !isMobile, 'img-self-moblie': isMobile }"
             :src="getPng(item.Id)" @click="() => {
-      fileInfoRef.open({ item, cb: refreshIndex });
-    }">
+        fileInfoRef.open({ item, cb: refreshIndex });
+      }">
             <template v-slot:loading>
               <div class="text-subtitle1 text-white">
                 Loading...
@@ -461,10 +461,10 @@ const currentPageChange = async (e) => {
   }
 };
 
-const nextPage = (n) => {
-  view.queryParam.Page = view.queryParam.Page + n
-  currentPageChange()
-}
+// const nextPage = (n) => {
+//   view.queryParam.Page = view.queryParam.Page + n
+//   currentPageChange()
+// }
 
 const fetchSearch = async (newBlank) => {
   saveParam(newBlank)
