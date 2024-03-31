@@ -30,7 +30,7 @@
         </q-toolbar>
       </q-header>
 
-      <q-drawer v-model="drawerLeft" :width="200" :breakpoint="700" bordered class="bg-grey-3">
+      <q-drawer v-model="drawerLeft" :width="200" :breakpoint="700" bordered>
         <q-scroll-area class="fit">
           <q-list>
             <q-item-label header> 你的搜索工具 </q-item-label>

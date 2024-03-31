@@ -105,19 +105,19 @@
       <q-toggle v-model="view.queryParam.OnlyRepeat" v-if="!isMobile" flat @update:model-value="fetchSearch"
         label="重" />
     </div>
-    <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.4)">
+    <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.6)">
       <div class="q-pa-sm flex flex-center">
-        <q-select color="lime-11 q-mr-md" bg-color="green" dense @update:model-value="(no) => {
+        <q-select color="lime-11 q-mr-md" bg-color="black" dense @update:model-value="(no) => {
         view.queryParam.PageSize = Number(no);
         fetchSearch();
       }
-        " filled v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
+        " filled dark v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
         </q-select>
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="deep-orange"
           :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="isMobile ? 5 : 10" boundary-numbers
           direction-links></q-pagination>
         <q-input v-model="view.queryParam.Page" :dense="true" type="search"
-          style="background-color: aliceblue; width: 60px; text-align: center" @focus="focusEvent($event)"
+          style="background-color: aliceblue; width: 40px; text-align: center" @focus="focusEvent($event)"
           @update:model-value="(no) => {
         view.queryParam.Page = Number(no);
         fetchSearch();
@@ -139,7 +139,7 @@
               <q-chip square text-color="white" style="
                   margin-left: 0px;
                   padding: 0 4px;
-                  background-color: rgba(236, 15, 15, 0.872);
+                  background-color: rgba(236, 15, 15, 0.8);
                 ">
                 <q-popup-proxy context-menu>
                   <div class="tag-popup">
@@ -168,7 +168,7 @@
       ">{{ tag?.substring(0, 4) }}</span>
               </q-chip>
             </div>
-            <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:2rem;color: antiquewhite;"
+            <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:1rem;color: antiquewhite;"
               :label="item.MovieType">
               <q-list style="background-color: rgba(0, 0, 0, 0.7)">
                 <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
@@ -190,8 +190,8 @@
               </div>
             </template>
           </q-img>
-          <div class="absolute-bottom float-btn" :style="{ height: isMobile ? '6rem' : '10rem' }">
-            <div>
+          <div class="absolute-bottom float-btn" :style="{ height: isMobile ? '6rem' : '8.5rem' }">
+            <div style="background-color: rgba(0, 0, 0, 0.2);">
               <div style="display: flex; flex-direction: row">
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="primary"
                   icon="ti-control-eject" @click="playBySystem(item)" title="播放" v-if="showButton('播放') && !isMobile" />
@@ -218,7 +218,7 @@
               </div>
             </div>
 
-            <div :style="{ height: '6rem', overflow: 'hidden' }">
+            <div :style="{ height: '4rem', overflow: 'hidden' }">
               <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
                 target="_blank" @click="goActress(item.Actress)">{{ item.Actress?.substring(0, 6) }}</a>
               <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
@@ -595,14 +595,14 @@ onMounted(async () => {
 .example-item {
   padding: 2px;
   width: 220px;
-  height: 400px;
+  height: 376px;
   overflow: hidden;
 }
 
 .mobile-item {
   padding: 2px;
   width: 45%;
-  height: 280px;
+  height: 320px;
   overflow: hidden;
 }
 
@@ -611,17 +611,12 @@ onMounted(async () => {
 }
 
 .img-self-moblie {
-  min-height: 180px;
+  min-height: 160px;
 }
 
 .float-btn {
-  background-color: rgba(250, 250, 250, 0.4);
   margin: 0;
-  padding: 0;
-}
-
-.float-text {
-  height: 10rem;
+  padding: 4px;
 }
 
 .movieTypeSelectItem {
@@ -630,19 +625,15 @@ onMounted(async () => {
   margin: 0;
 
   :hover {
-    color: rgba(0, 0, 0, 0.895);
+    color: rgba(0, 0, 0, 0.8);
     font-size: large;
   }
 
 }
 
-.text-subtitles {
-  height: 6rem;
-  padding: 4px;
-}
 
 .q-card__section--vert {
-  padding: 2px;
+  padding: 4px;
 }
 
 .tag-popup {

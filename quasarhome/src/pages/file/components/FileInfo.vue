@@ -3,9 +3,9 @@
     v-model:model-value="showDialog" :maximized="isMobile" full-width>
 
     <q-card class=" text-white" style="max-width: 1400px!important;height: 96vh!important;">
-      <q-bar class="bg-primary">
-        <q-icon name="warning" />
-        <div>{{ view.item.Name }}</div>
+      <q-bar class="bg-black">
+        <q-icon name="info" />
+        <div style="height: 1.5rem;overflow: hidden;">{{ view.item.Name }}</div>
         <q-space />
         <q-btn dense flat icon="close" @click="onDialogClose">
           <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
