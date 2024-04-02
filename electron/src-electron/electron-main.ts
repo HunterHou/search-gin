@@ -1,6 +1,6 @@
 import {app, BrowserWindow, nativeImage, shell} from 'electron';
 import path from 'path';
-import {accessSync, copyFileSync, mkdirSync, existsSync} from 'fs';
+import { copyFileSync, mkdirSync, existsSync} from 'fs';
 import os from 'os';
 import {createMainWindow} from './windows/index';
 import {createTray} from './windows/tray';
