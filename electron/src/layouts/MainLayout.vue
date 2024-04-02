@@ -14,6 +14,7 @@
           }" />
           <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-space />
+          <q-btn @click="$q.dark.set(!$q.dark.mode)" dense flat color="red">{{ $q.dark.mode ? '自然' : '暗黑' }}</q-btn>
           <q-btn color="green" flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense
             icon="menu">
             <span v-if="systemProperty.drawerRight">{{
@@ -39,8 +40,7 @@
           </q-list>
         </q-scroll-area>
       </q-drawer>
-      <q-drawer side="right" :width="isWideScreen ? 750 : 420" v-model="systemProperty.drawerRight" bordered
-        class="bg-grey-3">
+      <q-drawer side="right" :width="withDrawer" v-model="systemProperty.drawerRight" bordered class="bg-grey-3">
         <Playing ref="vue3VideoPlayRef" mode="drawer" />
       </q-drawer>
       <q-page-container>
@@ -67,6 +67,10 @@ const shutdown = ref(null);
 
 const isWideScreen = computed(() => {
   return $q.screen.width > 1000;
+});
+
+const withDrawer = computed(() => {
+  return $q.platform.is.mobile ? $q.screen.width : $q.screen.width / 2;
 });
 
 const playing = computed(() => {

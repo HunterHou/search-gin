@@ -6,6 +6,6 @@ export const QueryActressList = async (data: unknown) => {
 };
 
 export const PostPicture = async (data: unknown) => {
-  const res = await axios.post('/api/actressList', { path: data });
+  const res = await api.post('/api/actressList', { path: data });
   return res;
 };

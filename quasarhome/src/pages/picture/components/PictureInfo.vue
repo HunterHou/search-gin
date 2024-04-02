@@ -38,10 +38,12 @@ defineEmits([
 ]);
 
 const open = (data) => {
+  const item = data
+  console.log(data)
   view.prewiewImages = [];
+  view.item = { ...item };
   dialogRef.value.show();
-  view.item = data
-  view.prewiewImages = data.Images
+  view.prewiewImages = item.Images
 };
 
 

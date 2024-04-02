@@ -65,7 +65,7 @@ export function createMainWindow(mainWindow: BrowserWindow) {
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1280,
-    height: 960,
+    height: 1080,
     // transparent: true, //禁止resize
     darkTheme: true,
     maximizable: true,

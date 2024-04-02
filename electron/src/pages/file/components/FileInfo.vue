@@ -1,95 +1,95 @@
 <template>
   <q-dialog ref="dialogRef" @escape-key="onDialogClose" @before-hide="onDialogClose" @hide="onDialogClose"
-    style="width: 80vw !important;" v-model:model-value="showDialog">
-    <q-card class="q-dialog-plugin q-pa-md" :style="{
-      color: 'white',
-      height: '100%',
-      width: '100%',
-      padding: '0 4px',
-      lineHeight: '32px',
-      maxWidth: '80vw !important'
-    }">
-      <div
-        style="position: relative;margin-top: 0;display: flex;flex-direction: row;flex-wrap:nowrap;justify-content: space-between;overflow: hidden;">
-        <div>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'movie'" color="red" @click="showMovie"
-                 icon="ti-arrow-circle-right">播放</q-btn>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'detail'" color="purple" @click="showDetail = 'detail'"
-                 icon="ti-arrow-circle-right">详情</q-btn>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'image'" color="deep-orange" @click="showDetail = 'image'"
-                 icon="ti-arrow-circle-right">图层</q-btn>
-          <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'web'" color="deep-orange" @click="showDetail = 'web'"
-                 icon="ti-world">JavBus</q-btn>
-        </div>
-        <div><q-btn class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen"
-            @click="openPlay(view.item)">大屏</q-btn>
-          <q-btn class="q-mr-sm" size="sm" ripple color="green-7" icon="ti-blackboard"
-            @click="openDialog(view.item)">侧屏</q-btn>
-          <q-btn class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
-            @click="commonExec(PlayMovie(view.item.Id))">播放</q-btn>
-          <q-btn class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
-            @click="commonExec(OpenFileFolder(view.item.Id))">文件夹</q-btn>
-          <q-btn class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
-            @click="commonExec(DownImageList(view.item.Id))">挂图</q-btn>
-          <q-btn class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
-            @click="confirmDelete(view.item)">删除</q-btn>
-          <q-btn class="q-mr-sm" size="sm" color="black" @click="moveThis(view.item)" icon="ti-control-shuffle">移动</q-btn>
-          <q-btn class="q-mr-sm" size="sm" ripple color="red" icon="ti-close" @click="onDialogClose">关闭</q-btn>
-        </div>
-      </div>
+    v-model:model-value="showDialog" :maximized="isMobile" full-width>
 
-      <div style="margin-top: 0;height: 96%;overflow: auto;">
-        <div v-if="showDetail == 'web'" style="overflow: auto;">
-          <iframe :frameborder="0" :allowfullscreen="true" width="100%" height="900px"
-            :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
+    <q-card class=" text-white" style="max-width: 1400px!important;height: 96vh!important;">
+      <q-bar class="bg-black">
+        <q-icon name="info" />
+        <div style="height: 1.5rem;overflow: hidden;">{{ view.item.Name }}</div>
+        <q-space />
+        <q-btn dense flat icon="close" @click="onDialogClose">
+          <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
+        </q-btn>
+      </q-bar>
+      <q-bar>
+        <div
+          style=" position: relative;margin-top: 0;display: flex;flex-direction: row;flex-wrap:nowrap;justify-content: space-between;overflow: hidden;">
+          <div>
+            <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'movie'" color="red" @click="showMovie"
+              icon="ti-arrow-circle-right">播放</q-btn>
+            <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'detail'" color="purple"
+              @click="showDetail = 'detail'" icon="ti-arrow-circle-right">详情</q-btn>
+            <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'image'" color="deep-orange"
+              @click="showDetail = 'image'" icon="ti-arrow-circle-right">图层</q-btn>
+            <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'web'" color="deep-orange" @click="showDetail = 'web'"
+              icon="ti-world">JavBus</q-btn>
+          </div>
+          <div v-if="!isMobile"><q-btn class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen"
+              @click="openPlay(view.item)">大屏</q-btn>
+            <q-btn class="q-mr-sm" size="sm" ripple color="green-7" icon="ti-blackboard"
+              @click="openDialog(view.item)">侧屏</q-btn>
+            <q-btn class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
+              @click="commonExec(PlayMovie(view.item.Id))">播放</q-btn>
+            <q-btn class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
+              @click="commonExec(OpenFileFolder(view.item.Id))">文件夹</q-btn>
+            <q-btn class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
+              @click="confirmDelete(view.item)">删除</q-btn>
+            <q-btn class="q-mr-sm" size="sm" color="black" @click="moveThis(view.item)"
+              icon="ti-control-shuffle">移动</q-btn>
+          </div>
         </div>
-        <div v-if="showDetail == 'movie'">
-          <Playing ref="vue3VideoPlayRef" mode="drawer" />
-        </div>
-        <div v-if="showDetail == 'detail'">
-          <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)" style="min-width:600px ;max-height: 50vh">
-          </q-img>
-          <q-field label="Code" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline cursor-pointer" style="color: blue" tabindex="0"
-                @click="searchCode(view.item)">
-                {{ view.item.Code }}
-              </div>
-            </template>
-          </q-field>
-          <q-field label="Actress" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="0">
-                {{ view.item.Actress }}
-              </div>
-            </template>
-          </q-field>
-          <q-field label="Name" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="0">
-                {{ formatTitle(view.item.Name) }}
-              </div>
-            </template>
-          </q-field>
-          <q-field label="Time" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="0">
-                {{ formatTitle(view.item.MTime) }}
-              </div>
-            </template>
-          </q-field>
-          <q-field label="Path" stack-label>
-            <template v-slot:control>
-              <div class="self-center full-width no-outline" tabindex="0">
-                {{ view.item.Path }}
-              </div>
-            </template>
-          </q-field>
-        </div>
-        <div v-if="showDetail == 'image'">
-          <q-img fit="fit" v-for="item in view.prewiewImages" :key="item.Id" :src="getTempImage(item.Id)"
-            style="width: 100%;height: auto;"></q-img>
-        </div>
+      </q-bar>
+
+      <div v-if="showDetail == 'web'" style="overflow: auto;">
+        <iframe :frameborder="0" :allowfullscreen="true" width="100%" height="900px"
+          :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
+      </div>
+      <div v-if="showDetail == 'movie'">
+        <Playing ref="vue3VideoPlayRef" :mode="isMobile ? 'drawer' : 'window'" @close="onDialogClose" />
+      </div>
+      <div v-if="showDetail == 'detail'">
+        <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)" style="max-height: 60vh;">
+        </q-img>
+        <q-field label="Code" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline cursor-pointer" style="color: blue" tabindex="0"
+              @click="searchCode(view.item)">
+              {{ view.item.Code }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Actress" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ view.item.Actress }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Name" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ formatTitle(view.item.Name) }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Time" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ formatTitle(view.item.MTime) }}
+            </div>
+          </template>
+        </q-field>
+        <q-field label="Path" stack-label>
+          <template v-slot:control>
+            <div class="self-center full-width no-outline" tabindex="0">
+              {{ view.item.Path }}
+            </div>
+          </template>
+        </q-field>
+      </div>
+      <div v-if="showDetail == 'image'">
+        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item.Id" :src="getTempImage(item.Id)"
+          style="width: 100%;height: auto;"></q-img>
       </div>
     </q-card>
   </q-dialog>
@@ -97,13 +97,13 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { useDialogPluginComponent } from 'quasar';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, computed } from 'vue';
 
 import { formatTitle } from '../../../components/utils';
 import { GetSettingInfo } from '../../../components/api/settingAPI';
 import {
   QueryDirImageBase64, OpenFileFolder,
-  DownImageList, FileRename, DeleteFile,
+  FileRename, DeleteFile,
   PlayMovie
 } from '../../../components/api/searchAPI';
 import { getJpg, getTempImage } from 'src/components/utils/images';
@@ -112,6 +112,11 @@ import Playing from 'src/components/PlayingVideo.vue';
 
 const $q = useQuasar()
 const systemProperty = useSystemProperty();
+
+const isMobile = computed(() => {
+  return $q.platform.is.mobile;
+});
+
 
 const vue3VideoPlayRef = ref(null)
 const showDialog = ref(false)
@@ -223,7 +228,9 @@ const searchCode = (item) => {
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 
 const onDialogClose = () => {
-  vue3VideoPlayRef.value.stop()
+  if (vue3VideoPlayRef.value) {
+    vue3VideoPlayRef.value.stop()
+  }
   showDetail.value = 'detail'
   showDialog.value = false
   onDialogHide()
