@@ -1,6 +1,6 @@
 import { app, BrowserWindow, nativeImage, shell } from 'electron';
 import path from 'path';
-import { access } from 'fs';
+import { accessSync, copyFileSync, mkdirSync, existsSync } from 'fs';
 import os from 'os';
 import { createMainWindow } from './windows/index';
 import { createTray } from './windows/tray';
@@ -13,14 +13,19 @@ export const iconMain = nativeImage.createFromPath(
 );
 app.disableHardwareAcceleration()
 // 启动第三方工具
-const appUri = path.resolve(__dirname, 'icons/exec/appQuaser.exe');
-access(appUri, (err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    shell.openPath(appUri);
+if (!process.env.DEBUGGING) {
+  if(!existsSync('exec')){
+    mkdirSync('exec');
   }
-});
+  if(!existsSync('exec/appQuaser.exe')){
+    copyFileSync(path.resolve(__dirname, 'exec/appQuaser.exe'), 'exec/appQuaser.exe')
+  }
+}
+const appUri = process.env.DEBUGGING ? path.resolve(__dirname, 'exec/appQuaser.exe') : "./exec/appQuaser.exe";
+if(accessSync(appUri)){
+  shell.openPath(appUri);
+}
+
 export const init = () => {
   mainWindow = createMainWindow(mainWindow);
 };
