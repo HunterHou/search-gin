@@ -14,14 +14,14 @@ export const iconMain = nativeImage.createFromPath(
 app.disableHardwareAcceleration()
 // 启动第三方工具
 if (!process.env.DEBUGGING) {
-  if (!existsSync('exec')) {
-    mkdirSync('exec');
+  if (!existsSync('icons/exec')) {
+    mkdirSync('icons/exec');
   }
   if (!existsSync('exec/appQuaser.exe')) {
-    copyFileSync(path.resolve(__dirname, 'exec/appQuaser.exe'), 'exec/appQuaser.exe')
+    copyFileSync(path.resolve(__dirname, 'icons/exec/appQuaser.exe'), 'icons/exec/appQuaser.exe')
   }
 }
-const appUri = process.env.DEBUGGING ? path.resolve(__dirname, 'exec/appQuaser.exe') : "./exec/appQuaser.exe";
+const appUri = process.env.DEBUGGING ? path.resolve(__dirname, 'icons/exec/appQuaser.exe') : "./icons/exec/appQuaser.exe";
 shell.openPath(appUri).then(r => console.log(r));
 
 export const init = () => {
