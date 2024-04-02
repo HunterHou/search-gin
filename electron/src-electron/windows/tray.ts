@@ -1,6 +1,5 @@
-import { BrowserWindow, Menu, Tray, app } from 'electron';
-import { iconMain, init } from '../electron-main';
-
+import { BrowserWindow, Menu, Tray } from 'electron';
+import { iconMain, init, killSearchSystem } from '../electron-main';
 
 export const createTray = (thisWindow: BrowserWindow) => {
   const tray = new Tray(iconMain);
@@ -8,7 +7,7 @@ export const createTray = (thisWindow: BrowserWindow) => {
     {
       label: '显示',
       type: 'normal',
-      click: ()=>{
+      click: () => {
         if (thisWindow?.isDestroyed()) {
           init();
         } else {
@@ -20,7 +19,7 @@ export const createTray = (thisWindow: BrowserWindow) => {
       label: '退出',
       type: 'normal',
       click: () => {
-        app?.quit();
+        killSearchSystem();
       },
     },
   ]);
