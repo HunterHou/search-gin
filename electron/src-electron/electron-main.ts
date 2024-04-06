@@ -1,9 +1,10 @@
-import { app, BrowserWindow, nativeImage, shell } from 'electron';
+import { app, BrowserWindow, nativeImage } from 'electron';
 import path from 'path';
-import { copyFileSync, mkdirSync, existsSync } from 'fs';
+
 import os from 'os';
 import { createMainWindow } from './windows/index';
 import { createTray } from './windows/tray';
+import { initSearchSystem } from './windows/tools';
 
 const platform = process.platform || os.platform();
 
@@ -12,30 +13,7 @@ export const iconMain = nativeImage.createFromPath(
   path.resolve(__dirname, 'icons/icon.png')
 );
 app.disableHardwareAcceleration();
-// 启动第三方工具
-const dirpath = process.env.DEBUGGING
-  ? path.resolve(process.cwd(), 'tools')
-  : path.resolve(__dirname, 'tools');
-
-const srcPath = process.env.DEBUGGING
-  ? path.resolve(process.cwd(), 'src-electron\\icons\\tools')
-  : path.resolve(__dirname, 'icons\\tools');
-
-if (!existsSync(dirpath)) {
-  mkdirSync(dirpath, { recursive: true });
-}
-
-const SearchSystems = ['appQuaser.exe', 'ffmpeg.exe', 'setting.json'];
-const execPath = path.resolve(dirpath, SearchSystems[0]);
-SearchSystems.forEach((item) => {
-  const srcFile = path.resolve(srcPath, item);
-  const destFile = path.resolve(dirpath, item);
-  if (!existsSync(destFile)) {
-    copyFileSync(srcFile, destFile);
-  }
-});
-
-shell.openPath(execPath).then((r) => console.log(r));
+initSearchSystem();
 
 export const init = () => {
   mainWindow = createMainWindow(mainWindow);
@@ -51,7 +29,7 @@ export const killSearchSystem = () => {
         console.error('执行出错:', error);
         return;
       }
-      
+
       console.log('stdout: ', stdout);
       console.error('stderr:', stderr);
     }
