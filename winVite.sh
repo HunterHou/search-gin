@@ -40,7 +40,7 @@ cd gosrc
 if [ $levelKey -ge 2 ]; then
     echo '移动完成，打包APP'
     go build -o ../viteApp/appVite.exe -ldflags "-H=windowsgui" -tags=prod
-    
+
     echo 移动配置文件 '*.*(1)'
     echo 'cp setting.json ../viteApp/setting.json(1)'
     cp setting.json '../viteApp/setting.json(1)'
@@ -52,8 +52,11 @@ if [ $levelKey -ge 2 ]; then
 fi
 if [ $levelKey -ge 3 ]; then
     echo 移动源到 Election代码目录
-    echo 'cp -R viteApp election/src'
-    cp -R viteApp election/src
-#TODO Electron 打包系统
+    echo 'cp -R qapp election/src-electron/icons'
+    cp -R qapp election/src-electron/icons
+    cd electron
+    yarn topc
+    echo 'Electron Package OVER'
+#TODO
 fi
 echo 'SUCCESS,OVER !!!'
