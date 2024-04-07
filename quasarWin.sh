@@ -46,13 +46,14 @@ if [ $levelKey -ge 2 ]; then
     cp setting.json '../qapp/setting.json(1)'
     echo 'cp ffmpeg.exe ../lsqapp/ffmpeg.exe'
     cp ffmpeg.exe '../qapp/ffmpeg.exe'
+    cd ..
     echo 'APP打包完成！！！'
 fi
 
 if [ $levelKey -ge 3 ]; then
     echo 移动源到 Election代码目录
-    echo 'cp -R qapp election/src-electron/icons'
-    cp -R qapp election/src-electron/icons
+    echo 'cp -R qapp electron/src-electron/icons'
+    cp -R qapp electron/src-electron/icons
     cd electron
     yarn topc
     echo 'Electron Package OVER'
