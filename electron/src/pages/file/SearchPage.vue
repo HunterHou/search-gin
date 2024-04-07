@@ -126,110 +126,110 @@
       </div>
     </q-page-sticky>
     <q-page>
-      <div class="row justify-center q-mt-sm mainlist">
-        <q-card class="q-ma-sm " v-bind:class="{ 'example-item': !isMobile, 'mobile-item': isMobile }"
-          v-for="item in view.resultData.Data" :key="item.Id">
-          <div class="float-head absolute-top">
-            <div style="
+        <div class="row justify-center q-mt-sm mainlist">
+          <q-card class="q-ma-sm " v-bind:class="{ 'example-item': !isMobile, 'mobile-item': isMobile }"
+            v-for="item in view.resultData.Data" :key="item.Id">
+            <div class="float-head absolute-top">
+              <div style="
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
                 width: fit-content;
               ">
-              <q-chip square text-color="white" style="
+                <q-chip square text-color="white" style="
                   margin-left: 0px;
                   padding: 0 4px;
                   background-color: rgba(236, 15, 15, 0.8);
                 ">
-                <q-popup-proxy context-menu>
-                  <div class="tag-popup">
-                    <div>
-                      <q-btn size="sm" icon='ti-minus' square text-color="white" color="green" class="tag-item"
-                        v-for="tag in item.Tags" :key="tag" :label="tag"
-                        @click="commonExec(CloseTag(item.Id, tag), true)" />
+                  <q-popup-proxy context-menu>
+                    <div class="tag-popup">
+                      <div>
+                        <q-btn size="sm" icon='ti-minus' square text-color="white" color="green" class="tag-item"
+                          v-for="tag in item.Tags" :key="tag" :label="tag"
+                          @click="commonExec(CloseTag(item.Id, tag), true)" />
+                      </div>
+                      <div>
+                        <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
+                          v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
+                          @click="commonExec(AddTag(item.Id, tag), true)" />
+                      </div>
                     </div>
-                    <div>
-                      <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
-                        v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
-                        @click="commonExec(AddTag(item.Id, tag), true)" />
-                    </div>
-                  </div>
-                </q-popup-proxy>
-                <span>种草</span>
-              </q-chip>
-              <q-chip square text-color="white" v-for="tag in item.Tags" :key="tag" style="
+                  </q-popup-proxy>
+                  <span>种草</span>
+                </q-chip>
+                <q-chip square text-color="white" v-for="tag in item.Tags" :key="tag" style="
                   margin-left: 0px;
                   padding: 0 4px;
                   background-color: rgba(188, 24, 24, 0.6);
                 ">
-                <span @click="
+                  <span @click="
       view.queryParam.Keyword = tag;
     fetchSearch();
     ">{{ tag?.substring(0, 4) }}</span>
-              </q-chip>
+                </q-chip>
+              </div>
+              <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:1rem;color: antiquewhite;"
+                :label="item.MovieType">
+                <q-list style="background-color: rgba(0, 0, 0, 0.7)">
+                  <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
+                    <q-item-section>
+                      <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
             </div>
-            <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:1rem;color: antiquewhite;"
-              :label="item.MovieType">
-              <q-list style="background-color: rgba(0, 0, 0, 0.7)">
-                <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
-                  <q-item-section>
-                    <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </div>
-          <q-img fit="fit" easier draggable :class="{ 'img-self': !isMobile, 'img-self-moblie': isMobile }"
-            :src="getPng(item.Id)" @click="() => {
+            <q-img fit="fit" easier draggable :class="{ 'img-self': !isMobile, 'img-self-moblie': isMobile }"
+              :src="getPng(item.Id)" @click="() => {
       fileInfoRef.open({ item, cb: refreshIndex });
     }">
-            <template v-slot:loading>
-              <div class="text-subtitle1 text-white">
-                Loading...
+              <template v-slot:loading>
+                <div class="text-subtitle1 text-white">
+                  Loading...
+                </div>
+              </template>
+            </q-img>
+            <div class="absolute-bottom float-btn">
+              <div>
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="primary"
+                  icon="ti-control-eject" @click="playBySystem(item)" title="播放" v-if="showButton('播放') && !isMobile" />
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="red" icon="ti-fullscreen"
+                  title="单页播放" @click="openPlay(item)" />
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="orange" icon="ti-arrow-right"
+                  @click="openRightDrawer(item)" title="小播放" />
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="orange" icon="ti-blackboard"
+                  @click="fileInfoRef.open({ item, playing: true })" title="小播放" />
               </div>
-            </template>
-          </q-img>
-          <div class="absolute-bottom float-btn">
-            <div>
-              <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="primary" icon="ti-control-eject"
-                @click="playBySystem(item)" title="播放" v-if="showButton('播放') && !isMobile" />
-              <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="red" icon="ti-fullscreen"
-                title="单页播放" @click="openPlay(item)" />
-              <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="orange" icon="ti-arrow-right"
-                @click="openRightDrawer(item)" title="小播放" />
-              <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="orange" icon="ti-blackboard"
-                @click="fileInfoRef.open({ item, playing: true })" title="小播放" />
+              <div style="display: flex; flex-direction: row">
+                <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice"
+                  @click="fileEditRef.open(item, refreshIndex)" v-if="showButton('编辑')" title="编辑" />
+                <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new" @click="openFolder(item)"
+                  v-if="showButton('文件夹') && !isMobile" title="文件夹" />
+                <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="ti-search" title="网搜"
+                  @click="searchCode(item)" />
+                <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
+                  @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" title="刮图" />
+                <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
+                  @click="confirmDelete(item)" v-if="showButton('删除')" title="删除" />
+                <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-location-arrow"
+                  v-if="showButton('移动')" title="移动" />
+              </div>
+              <div :style="{ height: '4rem', overflow: 'hidden' }">
+                <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
+                  target="_blank" @click="goActress(item.Actress)">{{ item.Actress?.substring(0, 6) }}</a>
+                <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
+                  @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
+                <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
+                  @click="copyText(item.Title)">{{ item.SizeStr }}</a>
+                <span>{{ formatTitle(item.Title) }}</span>
+              </div>
             </div>
-            <div style="display: flex; flex-direction: row">
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice"
-                @click="fileEditRef.open(item, refreshIndex)" v-if="showButton('编辑')" title="编辑" />
-              <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new" @click="openFolder(item)"
-                v-if="showButton('文件夹') && !isMobile" title="文件夹" />
-              <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="ti-search" title="网搜"
-                @click="searchCode(item)" />
-              <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
-                @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" title="刮图" />
-              <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
-                @click="confirmDelete(item)" v-if="showButton('删除')" title="删除" />
-              <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-location-arrow"
-                v-if="showButton('移动')" title="移动" />
-            </div>
-            <div :style="{ height: '4rem', overflow: 'hidden' }">
-              <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                target="_blank" @click="goActress(item.Actress)">{{ item.Actress?.substring(0, 6) }}</a>
-              <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
-              <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                @click="copyText(item.Title)">{{ item.SizeStr }}</a>
-              <span>{{ formatTitle(item.Title) }}</span>
-            </div>
-          </div>
-        </q-card>
-      </div>
-      <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 100]">
-        <q-btn fab icon="keyboard_arrow_up" color="accent" />
-      </q-page-scroller>
+          </q-card>
+        </div>
+        <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 100]">
+          <q-btn fab icon="keyboard_arrow_up" color="accent" />
+        </q-page-scroller>
     </q-page>
   </div>
   <FileEdit ref="fileEditRef" />
@@ -417,7 +417,11 @@ const copyText = async (str) => {
 };
 
 const goActress = (Actress) => {
-  const { Page,
+  if($q.platform.is.electron){
+    view.queryParam.Keyword = Actress
+    fetchSearch()
+  } else {
+    const { Page,
     PageSize,
     MovieType,
     SortField,
@@ -434,6 +438,8 @@ const goActress = (Actress) => {
     }
   })
   push(routeData.href)
+  }
+  
 
 }
 

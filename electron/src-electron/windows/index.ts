@@ -27,12 +27,13 @@ interface SonWindowParam extends BrowserWindowConstructorOptions {
 export function createSonWindow(params: SonWindowParam) {
   const indow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1280,
+    width: 1680,
     height: 900,
     x: xw,
     y: yw,
     backgroundColor: 'rgba(250,250,250,1)',
     useContentSize: true,
+    titleBarStyle: 'hidden',
     webPreferences: {
       contextIsolation: true,
       webSecurity: false,
@@ -67,17 +68,17 @@ export function createMainWindow(mainWindow: BrowserWindow) {
     width: 1280,
     height: 1080,
     // transparent: true, //禁止resize
-    darkTheme: true,
+    // darkTheme: true,
     maximizable: true,
     minimizable: true,
     resizable: true,
-    simpleFullscreen: true,
-    skipTaskbar: true,
-    titleBarOverlay: false,
-    zoomToPageWidth: true,
-    titleBarStyle: 'customButtonsOnHover',
-    backgroundMaterial: 'mica',
-    vibrancy: 'sidebar',
+    // simpleFullscreen: true,
+    // skipTaskbar: true,
+    // titleBarOverlay: false,
+    // zoomToPageWidth: true,
+    titleBarStyle: 'hidden',
+    // backgroundMaterial: 'mica',
+    // vibrancy: 'sidebar',
     x: xw,
     y: yw,
     title: '搜索',
@@ -96,7 +97,7 @@ export function createMainWindow(mainWindow: BrowserWindow) {
   mainWindow.loadURL(url);
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
   } else {
     // we're on production; no access to devtools pls
     mainWindow.webContents.on('devtools-opened', () => {

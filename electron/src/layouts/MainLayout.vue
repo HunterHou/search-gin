@@ -5,26 +5,29 @@
         <q-toolbar>
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
           <q-toolbar-title style="-webkit-app-region: drag">
-            文件搜索<q-btn dense flat icon="refresh" @click="refreshThis">
-            </q-btn>
+            文件搜索
           </q-toolbar-title>
           <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
             color: currentPath === link.link ? 'red' : '',
             scale: 1.2,
           }" />
-          <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-space />
-          <q-btn @click="$q.dark.set(!$q.dark.mode)" dense flat color="red">{{ $q.dark.mode ? '自然' : '暗黑' }}</q-btn>
+          <q-btn dense flat icon="refresh" @click="refreshThis">
+          </q-btn>
+          <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
+          <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
+          <q-btn @click="$q.dark.set(!$q.dark.mode)" dense :icon="$q.dark.mode ? 'ti-layout-grid2-alt' : 'ti-view-grid'"
+            flat :color="$q.dark.mode ? 'white' : 'white'"></q-btn>
+
           <q-btn color="green" flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense
             icon="menu">
             <span v-if="systemProperty.drawerRight">{{
-              `${(systemProperty &&
-                systemProperty.Playing?.Code?.substring(0, 8)) ||
-                systemProperty.Playing?.Title?.substring(0, 8)
-                }`
-            }}</span>
+            `${(systemProperty &&
+              systemProperty.Playing?.Code?.substring(0, 8)) ||
+            systemProperty.Playing?.Title?.substring(0, 8)
+            }`
+          }}</span>
           </q-btn>
-          <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
 
         </q-toolbar>
       </q-header>
@@ -34,9 +37,9 @@
           <q-list>
             <q-item-label header> 你的搜索工具 </q-item-label>
             <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :style="{
-              color: currentPath === link.link ? 'red' : '',
-              scale: 1.2,
-            }" />
+            color: currentPath === link.link ? 'red' : '',
+            scale: 1.2,
+          }" />
           </q-list>
         </q-scroll-area>
       </q-drawer>
