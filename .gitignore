@@ -25,3 +25,4 @@ __debug_bin.exe
 viteApp/appVite.exe
 node_modules
 **/.DS_Store/**
+./**/.DS_Store
