@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch ,reactive} from 'vue';
 import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from 'stores/System';
 import { useQuasar } from 'quasar';

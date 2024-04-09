@@ -76,7 +76,7 @@ export function createMainWindow(mainWindow: BrowserWindow) {
     // skipTaskbar: true,
     // titleBarOverlay: false,
     // zoomToPageWidth: true,
-    titleBarStyle: 'hidden',
+    titleBarStyle: 'default',
     // backgroundMaterial: 'mica',
     // vibrancy: 'sidebar',
     x: xw,
@@ -97,7 +97,7 @@ export function createMainWindow(mainWindow: BrowserWindow) {
   mainWindow.loadURL(url);
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   } else {
     // we're on production; no access to devtools pls
     mainWindow.webContents.on('devtools-opened', () => {
