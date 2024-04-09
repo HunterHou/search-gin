@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf" container style="height: 120vh" class="shadow-2 rounded-borders"
+  <q-layout view="lHh Lpr lFf" container style="position: fixed;height: 100vh;" class="shadow-2 rounded-borders"
     v-if="props.mode !== 'page' || isMobile">
     <q-header>
       <q-card style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
