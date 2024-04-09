@@ -1,45 +1,18 @@
 <template>
   <q-dialog ref="dialogRef" @escape-key="onDialogClose" @before-hide="onDialogClose" @hide="onDialogClose"
     v-model:model-value="showDialog" :maximized="isMobile" full-width>
-
-    <q-card class=" text-white" style="max-width: 1400px!important;height: 96vh!important;">
-      <q-bar class="bg-black">
-        <q-icon name="info" />
-        <div style="height: 1.5rem;overflow: hidden;">{{ view.item.Name }}</div>
-        <q-space />
-        <q-btn dense flat icon="close" @click="onDialogClose">
-          <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
-        </q-btn>
-      </q-bar>
-      <q-bar>
-        <div
-          style=" position: relative;margin-top: 0;display: flex;flex-direction: row;flex-wrap:nowrap;justify-content: space-between;overflow: hidden;">
-          <div>
-            <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'movie'" color="red" @click="showMovie"
-              icon="ti-arrow-circle-right">播放</q-btn>
-            <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'detail'" color="purple"
-              @click="showDetail = 'detail'" icon="ti-arrow-circle-right">详情</q-btn>
-            <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'image'" color="deep-orange"
-              @click="showDetail = 'image'" icon="ti-arrow-circle-right">图层</q-btn>
-            <q-btn class="q-mr-sm" size="sm" v-if="showDetail !== 'web'" color="deep-orange" @click="showDetail = 'web'"
-              icon="ti-world">JavBus</q-btn>
-          </div>
-          <div v-if="!isMobile"><q-btn class="q-mr-sm" size="sm" ripple color="green" icon="ti-fullscreen"
-              @click="openPlay(view.item)">大屏</q-btn>
-            <q-btn class="q-mr-sm" size="sm" ripple color="green-7" icon="ti-blackboard"
-              @click="openDialog(view.item)">侧屏</q-btn>
-            <q-btn class="q-mr-sm" size="sm" color="primary" icon="ti-control-eject"
-              @click="commonExec(PlayMovie(view.item.Id))">播放</q-btn>
-            <q-btn class="q-mr-sm" size="sm" color="primary" icon="open_in_new"
-              @click="commonExec(OpenFileFolder(view.item.Id))">文件夹</q-btn>
-            <q-btn class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
-              @click="confirmDelete(view.item)">删除</q-btn>
-            <q-btn class="q-mr-sm" size="sm" color="black" @click="moveThis(view.item)"
-              icon="ti-control-shuffle">移动</q-btn>
-          </div>
-        </div>
-      </q-bar>
-
+    <q-bar class="bg-white row  justify-center" style="overflow: hidden;">
+      <q-btn-toggle ripple size="sm" color="primary" v-model="showDetail" toggle-color="orange"
+        @update:model-value="showDetailClick" :options="ClickButtons" />
+      <q-space />
+      <div style="max-width: 50vw;height: 1.5rem;overflow: hidden;">
+        {{ view.item.Name }}
+      </div>
+      <q-btn dense flat icon="close" @click="onDialogClose">
+        <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
+      </q-btn>
+    </q-bar>
+    <q-card style="max-width: 1400px!important;height: 96vh!important;">
       <div v-if="showDetail == 'web'" style="overflow: auto;">
         <iframe :frameborder="0" :allowfullscreen="true" width="100%" height="900px"
           :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
@@ -102,42 +75,34 @@ import { onMounted, reactive, ref, computed } from 'vue';
 import { formatTitle } from '../../../components/utils';
 import { GetSettingInfo } from '../../../components/api/settingAPI';
 import {
-  QueryDirImageBase64, OpenFileFolder,
-  FileRename, DeleteFile,
-  PlayMovie
+  QueryDirImageBase64
 } from '../../../components/api/searchAPI';
 import { getJpg, getTempImage } from 'src/components/utils/images';
-import { useSystemProperty } from '../../../stores/System';
 import Playing from 'src/components/PlayingVideo.vue';
 
 const $q = useQuasar()
-const systemProperty = useSystemProperty();
 
 const isMobile = computed(() => {
   return $q.platform.is.mobile;
 });
 
+const ClickButtons = [
+  { label: '播放', value: 'movie' },
+  { label: '详情', value: 'detail' },
+  { label: '图层', value: 'image' },
+  { label: 'JavBus', value: 'web' }
+]
 
 const vue3VideoPlayRef = ref(null)
 const showDialog = ref(false)
 const showDetail = ref('detail')
+const view = reactive({
+  item: {},
+  settingInfo: {},
+  callback: null,
+  prewiewImages: [],
+});
 
-const commonExec = async (exec) => {
-  const { Code, Message } = (await exec) || {};
-  if (Code != 200) {
-    $q.notify({ message: `${Message}` });
-  }
-}
-
-const openPlay = (item) => {
-  const url = `#/playing/${item.Id}`
-  if ($q.platform.is.electron) {
-    window.electron.createWindow({ router: url })
-  } else {
-    window.open(url)
-  }
-
-}
 
 const showMovie = () => {
   showDetail.value = 'movie';
@@ -146,46 +111,13 @@ const showMovie = () => {
   }, 100);
 }
 
-const moveThis = async (item) => {
-  const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
-  if (res.Code == 200) {
-    $q.notify({ type: 'negative', message: res.Message });
-  } else {
-    $q.notify({ type: 'negative', message: res.Message });
-  }
-};
 
 
-const confirmDelete = (item) => {
-  $q.dialog({
-    title: item.Name,
-    message: '确定删除吗?',
-    cancel: true,
-    persistent: true
-  })
-    .onOk(() => {
-      commonExec(DeleteFile(item.Id), true);
-    })
-    .onCancel(() => {
-      console.log('>>>> Cancel');
-    })
-    .onDismiss(() => {
-      // console.log('I am triggered on both OK and Cancel')
-    });
-};
 
-const openDialog = (item) => {
-  view.currentData = item;
-  systemProperty.Playing = item;
-  systemProperty.drawerRight = true;
-};
 
-const view = reactive({
-  item: {},
-  settingInfo: {},
-  callback: null,
-  prewiewImages: [],
-});
+const showDetailClick = (val) => {
+  console.log(val)
+}
 
 defineEmits([
   // REQUIRED; 需要明确指出

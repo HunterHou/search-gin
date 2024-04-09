@@ -1,8 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf" container style="height: 120vh" class="shadow-2 rounded-borders"
     v-if="props.mode !== 'page' || isMobile">
-    <q-header>
-      <q-card style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
+    <q-header style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
+      <q-card >
         <div style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
           <span class="q-mr-sm"
             style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden">{{
@@ -120,7 +120,7 @@
     </q-page-container>
   </q-layout>
 
-  <q-layout view="hhh Lpr Lfr" container style="height: 100vh" class="shadow-2 rounded-borders"
+  <q-layout view="hhh Lpr Lfr"  style="width: 100%" class="shadow-2 rounded-borders"
     v-if="props.mode === 'page' && !isMobile">
     <q-header reveal class="bg-black">
       <q-toolbar>
@@ -195,8 +195,8 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-page-container>
-      <q-page>
+    <q-page-container style="width: fit-content">
+      <q-page >
         <q-card class="q-dialog-plugin" style="width:100%;max-height: 95vh;background-color: rgba(0, 0, 0, 0.1)">
           <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
             style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC"

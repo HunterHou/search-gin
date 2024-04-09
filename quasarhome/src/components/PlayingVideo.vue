@@ -1,24 +1,33 @@
 <template>
-  <q-layout view="lHh Lpr lFf" container style="position: fixed;height: 100vh;" class="shadow-2 rounded-borders"
+  <q-layout view="lHh Lpr lFf" container style="height: 120vh" class="shadow-2 rounded-borders"
     v-if="props.mode !== 'page' || isMobile">
-    <q-header>
-      <q-card style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
-        <div style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
-          <span class="q-mr-sm"
-            style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden">{{
-      view.playing.Title }}</span>
+    <q-header style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
 
-        </div>
+      <q-toolbar>
+        <q-toolbar-title>
+          <div class="row justify-between"
+            style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
+            <span class="q-mr-sm"
+              style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden;max-width:80vw;">{{
+      view.playing.Title }}</span>
+            <!-- <q-btn color="red" label="关闭" @click="closeThis" /> -->
+            <q-btn dense flat icon="close" @click="closeThis">
+              <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
+            </q-btn>
+          </div>
+        </q-toolbar-title>
+      </q-toolbar>
+
+      <q-card>
         <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
           style="object-fit: contain;width: 100%;height:auto;max-height: 99vh;" v-bind="optionsPC" @ended="playNext(1)"
           @timeupdate="timeupdate" @volumeupdate="volumeupdate" />
-        <q-card-actions align="left">
-
-          <q-btn flat style="color: #59d89d" :label="view.playing.Actress?.substring(0, 8)" @click="
+        <div style="display: flex;flex-direction: row;">
+          <q-btn size="sm" flat style="color: #59d89d" :label="view.playing.Actress?.substring(0, 8)" @click="
       view.queryParam.Keyword = view.playing.Actress;
     fetchSearch();
     " />
-          <q-btn flat style="color: goldenrod" :label="view.playing.Code?.substring(0, 8)" @click="
+          <q-btn size="sm" flat style="color: goldenrod" :label="view.playing.Code?.substring(0, 8)" @click="
       view.queryParam.Keyword = view.playing.Code;
     fetchSearch();
     " />
@@ -44,22 +53,24 @@
               </q-icon>
             </template>
           </q-input>
-          <q-btn color="red" label="关闭" @click="closeThis" />
+          <q-btn color="red" size="sm" label="关闭" @click="closeThis" />
+        </div>
+        <div style="display: flex;flex-direction: row;justify-content: flex-start;">
           <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch()" toggle-color="primary"
-            :options="[
+            textColor="primary" :options="[
       { label: '正', value: 'asc' },
       { label: '倒', value: 'desc' }
     ]" />
-          <q-btn v-if="!view.playlist" color="primary" label="上一个" @click="playNext(-1)" />
-          <q-btn v-if="!view.playlist" color="primary" label="下一个" @click="playNext(1)" />
-          <q-btn color="orange" label="更多" @click="view.showMore = !view.showMore; fetchGetSettingInfo()" />
+          <q-btn v-if="!view.playlist" size="sm" color="primary" label="上一个" @click="playNext(-1)" />
+          <q-btn v-if="!view.playlist" size="sm" color="primary" label="下一个" @click="playNext(1)" />
+          <q-btn color="orange" size="sm" label="更多" @click="view.showMore = !view.showMore; fetchGetSettingInfo()" />
           <span v-if="view.showMore">
             <q-chip square color="red" text-color="white" v-for="tag in view.settingInfo.Tags" :key="tag"
               style="margin-left: 0px; padding: 0 4px">
               <span @click="view.queryParam.Keyword = tag; fetchSearch()">{{ tag }}</span>
             </q-chip>
           </span>
-        </q-card-actions>
+        </div>
       </q-card>
     </q-header>
 
@@ -120,7 +131,7 @@
     </q-page-container>
   </q-layout>
 
-  <q-layout view="hhh Lpr Lfr" container style="height: 100vh" class="shadow-2 rounded-borders"
+  <q-layout view="hhh Lpr Lfr" style="width: 100%" class="shadow-2 rounded-borders"
     v-if="props.mode === 'page' && !isMobile">
     <q-header reveal class="bg-black">
       <q-toolbar>
@@ -195,7 +206,7 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container style="width: fit-content">
       <q-page>
         <q-card class="q-dialog-plugin" style="width:100%;max-height: 95vh;background-color: rgba(0, 0, 0, 0.1)">
           <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
