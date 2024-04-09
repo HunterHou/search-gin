@@ -117,14 +117,6 @@ const showMovie = () => {
   }, 100);
 }
 
-
-
-
-
-const showDetailClick = (val) => {
-  console.log(val)
-}
-
 defineEmits([
   // REQUIRED; 需要明确指出
   // 组件通过 useDialogPluginComponent() 暴露哪些事件
