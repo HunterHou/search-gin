@@ -93,8 +93,7 @@
         </template>
       </q-input>
 
-      <q-btn color="primary" flat size="sm" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
-        v-model="view.fullscreen" @click="clickFullscreen" />
+      
       <q-btn class="q-mr-sm" flat size="sm" color="primary" icon="apps" @click="
         listEditRef.open({
           queryParam: view.queryParam,
@@ -339,17 +338,6 @@ const view = reactive({
   resultData: {},
   fullscreen: false
 });
-
-const clickFullscreen = () => {
-  if (!view.fullscreen) {
-    $q.fullscreen.request()
-  } else {
-    $q.fullscreen.exit()
-  }
-  view.fullscreen = !view.fullscreen
-  console.log(view.fullscreen)
-
-}
 
 const searchCode = (item) => {
   const url = `${view.settingInfo.BaseUrl}${item.Code}`

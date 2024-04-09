@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-layout view="hHh Lpr lff"  style="height: 100vh" class="shadow-2 rounded-borders">
+    <q-layout view="hHr Lpr lff"  style="height: 100vh" class="shadow-2 rounded-borders">
       <q-header reveal class="bg-black">
         <q-toolbar>
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
@@ -25,10 +25,12 @@
           <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-btn dense flat size="lg" icon="refresh" @click="refreshThis"></q-btn>
           <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
-          <q-btn @click="$q.dark.set(!$q.dark.mode)" dense icon="ti-exchange-vertical"
-            flat :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
+          <q-btn @click="$q.dark.set(!$q.dark.mode)" dense icon="ti-exchange-vertical" flat
+            :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
           <q-btn v-if="isDesktop" dense flat icon="ti-minus" @click="confirmShutDown" />
-          <q-btn v-if="isDesktop" dense flat icon="ti-close" @click="closeWindow" />
+          <q-btn flat dense size="lg" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+            v-model="view.fullscreen" @click="clickFullscreen" />
+          <q-btn v-if="isDesktop" dense flat size="lg" icon="ti-close" @click="closeWindow" />
 
         </q-toolbar>
       </q-header>
@@ -68,6 +70,9 @@ const systemProperty = useSystemProperty();
 const $q = useQuasar();
 
 const shutdown = ref(null);
+const view = reactive({
+  fullscreen: false,
+});
 
 
 
@@ -76,7 +81,7 @@ const isWideScreen = computed(() => {
 });
 
 const isDesktop = computed(() => {
-  return $q.platform.is.electron === 'electron';
+  return $q.platform.is.electron;
 });
 
 const withDrawer = computed(() => {
@@ -90,6 +95,16 @@ const playing = computed(() => {
 const closeWindow = () => {
   window.close();
 };
+
+const clickFullscreen = () => {
+  if (!view.fullscreen) {
+    $q.fullscreen.request()
+  } else {
+    $q.fullscreen.exit()
+  }
+  view.fullscreen = !view.fullscreen
+  console.log(view.fullscreen)
+}
 
 const shutdownLeftSecond = computed(() => {
   let left = systemProperty.shutdownLeftSecond;
