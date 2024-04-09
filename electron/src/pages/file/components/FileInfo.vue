@@ -1,17 +1,23 @@
 <template>
   <q-dialog ref="dialogRef" @escape-key="onDialogClose" @before-hide="onDialogClose" @hide="onDialogClose"
     v-model:model-value="showDialog" :maximized="isMobile" full-width>
-    <q-bar class="bg-white row  justify-center" style="overflow: hidden;">
-      <q-btn-toggle ripple size="sm" color="primary" v-model="showDetail" toggle-color="orange"
-        @update:model-value="showDetailClick" :options="ClickButtons" />
+
+    <q-toolbar class="bg-black text-white shadow-2 rounded-borders">
+      <q-toolbar-title shrink>
+        <div style="max-width: 50vw;height: 1.5rem;overflow: hidden;">
+          {{ view.item.Name }}
+        </div>
+      </q-toolbar-title>
       <q-space />
-      <div style="max-width: 50vw;height: 1.5rem;overflow: hidden;">
-        {{ view.item.Name }}
-      </div>
+      <q-tabs v-model="showDetail" shrink>
+        <q-tab v-for="item in ClickButtons" :key="item.value" :name="item.value" :label="item.label"
+          @click="showDetail = item.value" />
+      </q-tabs>
+      <q-space />
       <q-btn dense flat icon="close" @click="onDialogClose">
         <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
       </q-btn>
-    </q-bar>
+    </q-toolbar>
     <q-card style="max-width: 1400px!important;height: 96vh!important;">
       <div v-if="showDetail == 'web'" style="overflow: auto;">
         <iframe :frameborder="0" :allowfullscreen="true" width="100%" height="900px"

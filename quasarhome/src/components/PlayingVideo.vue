@@ -1,22 +1,14 @@
 <template>
   <q-layout view="lHh Lpr lFf" container style="height: 120vh" class="shadow-2 rounded-borders"
     v-if="props.mode !== 'page' || isMobile">
-    <q-header style="width:100%;background-color: rgba(0, 0, 0, 0.1)">
-
-      <q-toolbar>
-        <q-toolbar-title>
-          <div class="row justify-between"
-            style="background-color: rgba(0, 0, 0, 0.8);white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
-            <span class="q-mr-sm"
-              style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden;max-width:80vw;">{{
-      view.playing.Title }}</span>
-            <!-- <q-btn color="red" label="关闭" @click="closeThis" /> -->
-            <q-btn dense flat icon="close" @click="closeThis">
-              <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
-            </q-btn>
-          </div>
-        </q-toolbar-title>
-      </q-toolbar>
+    <q-header style="width:100%;">
+      <q-bar class="row  justify-between bg-black" style="overflow: hidden;" v-if="props.mode === 'drawer'">
+        {{ view.playing.Title }}
+        <q-space />
+        <q-btn dense flat icon="close" @click="closeThis">
+          <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
+        </q-btn>
+      </q-bar>
 
       <q-card>
         <vue3VideoPlay v-show="view.playing?.Id" ref="vue3VideoPlayRef" id="vue3VideoPlayRef"
@@ -53,7 +45,6 @@
               </q-icon>
             </template>
           </q-input>
-          <q-btn color="red" size="sm" label="关闭" @click="closeThis" />
         </div>
         <div style="display: flex;flex-direction: row;justify-content: flex-start;">
           <q-btn-toggle v-model="view.queryParam.SortType" @update:model-value="fetchSearch()" toggle-color="primary"
@@ -141,7 +132,6 @@
             <span class="q-mr-sm"
               style="-webkit-app-region: drag;color: rgb(213, 90, 90);font-weight: 550; font-size: medium;overflow: hidden">{{
       view.playing.Title }}</span>
-            <!-- <q-btn color="red" label="关闭" @click="closeThis" /> -->
             <q-btn dense flat icon="close" @click="closeThis">
               <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
             </q-btn>
