@@ -27,7 +27,7 @@
           <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
           <q-btn @click="$q.dark.set(!$q.dark.mode)" dense icon="ti-exchange-vertical" flat
             :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
-          <q-btn v-if="isDesktop" dense flat icon="ti-minus" @click="confirmShutDown" />
+          <q-btn v-if="isDesktop" dense flat icon="ti-minus" @click="minusScreen" />
           <q-btn flat dense size="lg" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
             v-model="view.fullscreen" @click="clickFullscreen" />
           <q-btn v-if="isDesktop" dense flat size="lg" icon="ti-close" @click="closeWindow" />
@@ -80,7 +80,7 @@ const isWideScreen = computed(() => {
 });
 
 const isDesktop = computed(() => {
-  return $q.platform.is.electron === 'electron';
+  return $q.platform.is.electron;
 });
 
 const withDrawer = computed(() => {
@@ -95,11 +95,20 @@ const closeWindow = () => {
   window.close();
 };
 
+const minusScreen = () => {
+  window.electron.hideMainWindow()
+};
+
 const clickFullscreen = () => {
-  if (!view.fullscreen) {
-    $q.fullscreen.request()
+  if (isDesktop.value) {
+    window.electron.maxMainWindow()
   } else {
-    $q.fullscreen.exit()
+    if (!view.fullscreen) {
+      $q.fullscreen.request()
+    } else {
+      $q.fullscreen.exit()
+    }
+
   }
   view.fullscreen = !view.fullscreen
   console.log(view.fullscreen)

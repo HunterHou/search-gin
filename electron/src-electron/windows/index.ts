@@ -13,7 +13,7 @@ let yw = 20;
 const moveWindow = () => {
   xw += 50;
   yw += 40;
-  if (yw >200) {
+  if (yw > 200) {
     yw = 20;
     xw += 50;
   }
@@ -58,7 +58,7 @@ export function createSonWindow(params: SonWindowParam) {
   }
   indow.setMenu(null);
   indow.webContents.on('context-menu', onContextMenu);
-  moveWindow()
+  moveWindow();
   return indow;
 }
 // 创建主窗口
@@ -67,18 +67,17 @@ export function createMainWindow(mainWindow: BrowserWindow) {
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1280,
     height: 1080,
-    // transparent: true, //禁止resize
+    transparent: true, //禁止resize
     // darkTheme: true,
     maximizable: true,
     minimizable: true,
     resizable: true,
-    // simpleFullscreen: true,
-    // skipTaskbar: true,
-    // titleBarOverlay: false,
-    // zoomToPageWidth: true,
-    titleBarStyle: 'default',
-    // backgroundMaterial: 'mica',
-    // vibrancy: 'sidebar',
+    simpleFullscreen: true,
+    titleBarOverlay: false,
+    zoomToPageWidth: true,
+    titleBarStyle: 'hidden',
+    backgroundMaterial: 'mica',
+    vibrancy: 'sidebar',
     x: xw,
     y: yw,
     title: '搜索',
@@ -106,8 +105,8 @@ export function createMainWindow(mainWindow: BrowserWindow) {
   }
   mainWindow.setMenu(null);
   mainWindow.webContents.on('context-menu', onContextMenu);
-  moveWindow()
-  return mainWindow
+  moveWindow();
+  return mainWindow;
 }
 
 const onContextMenu = (_e: Event, params: ContextMenuParams) => {
@@ -120,17 +119,20 @@ const onContextMenu = (_e: Event, params: ContextMenuParams) => {
   if (canPaste) {
     clipboard.readText();
   } else if (mediaType === 'image') {
-    clipboard.writeText(srcURL);
-    new Notification({
-      title: '已复制',
-      body: srcURL,
-    }).show();
+    if (srcURL.trim().length) {
+      clipboard.writeText(srcURL);
+      new Notification({
+        title: '已复制',
+        body: srcURL,
+      }).show();
+    }
   } else {
-    clipboard.writeText(selectionText);
-    new Notification({
-      title: '已复制',
-      body: selectionText,
-    }).show();
+    if (selectionText.trim().length) {
+      clipboard.writeText(selectionText);
+      new Notification({
+        title: '已复制',
+        body: selectionText,
+      }).show();
+    }
   }
 };
-

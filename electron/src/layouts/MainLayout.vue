@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-layout view="hHr Lpr lff"  style="height: 100vh" class="shadow-2 rounded-borders">
+    <q-layout view="hHh Lpr lff" style="height: 100vh" class="shadow-2 rounded-borders">
       <q-header reveal class="bg-black">
         <q-toolbar>
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
@@ -27,7 +27,7 @@
           <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
           <q-btn @click="$q.dark.set(!$q.dark.mode)" dense icon="ti-exchange-vertical" flat
             :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
-          <q-btn v-if="isDesktop" dense flat icon="ti-minus" @click="confirmShutDown" />
+          <q-btn v-if="isDesktop" dense flat icon="ti-minus" @click="minusScreen" />
           <q-btn flat dense size="lg" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
             v-model="view.fullscreen" @click="clickFullscreen" />
           <q-btn v-if="isDesktop" dense flat size="lg" icon="ti-close" @click="closeWindow" />
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch ,reactive} from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from 'stores/System';
 import { useQuasar } from 'quasar';
@@ -73,7 +73,6 @@ const shutdown = ref(null);
 const view = reactive({
   fullscreen: false,
 });
-
 
 
 const isWideScreen = computed(() => {
@@ -96,11 +95,20 @@ const closeWindow = () => {
   window.close();
 };
 
+const minusScreen = () => {
+  window.electron.hideMainWindow()
+};
+
 const clickFullscreen = () => {
-  if (!view.fullscreen) {
-    $q.fullscreen.request()
+  if (isDesktop.value) {
+    window.electron.maxMainWindow()
   } else {
-    $q.fullscreen.exit()
+    if (!view.fullscreen) {
+      $q.fullscreen.request()
+    } else {
+      $q.fullscreen.exit()
+    }
+
   }
   view.fullscreen = !view.fullscreen
   console.log(view.fullscreen)
