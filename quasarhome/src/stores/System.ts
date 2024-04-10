@@ -43,11 +43,10 @@ export const useSystemProperty = defineStore({
         'fullScreen',
       ],
     },
-    History: [],
+    History: [] as FileQuery[],
     Playing: new FileModel(),
     PlayMode: 800,
     drawerRight: false,
-    Favorite: [] as FileQuery[],
     FileSearchParam: {
       Page: 1,
       PageSize: 10,
@@ -78,9 +77,6 @@ export const useSystemProperty = defineStore({
   getters: {
     getHistory(this) {
       return this.History;
-    },
-    getFavorite(this) {
-      return this.Favorite;
     },
     getSettingInfo(this) {
       return this.SettingInfo;
@@ -127,11 +123,12 @@ export const useSystemProperty = defineStore({
       if (param.Keyword) {
         this.addSuggestions(param.Keyword);
       }
+      this.addHistory(param)
     },
-    addFavorite(param: FileQuery) {
+    addHistory(param: FileQuery) {
       let has = false;
-      for (let i = 0; i < this.Favorite.length; i++) {
-        const item = this.Favorite[i] as FileQuery;
+      for (let i = 0; i < this.History.length; i++) {
+        const item = this.History[i] as FileQuery;
         if (
           item.Page == param.Page &&
           item.PageSize == param.PageSize &&
@@ -145,10 +142,10 @@ export const useSystemProperty = defineStore({
         }
       }
       if (!has) {
-        // this.Favorite.unshift({ ...param });
+        this.History.unshift(param);
       }
-      if (this.Favorite.length > 50) {
-        this.Favorite.splice(0, 49);
+      if (this.History.length > 50) {
+        this.History.splice(0, 49);
       }
     },
     setSettingInfo(settingInfo: SettingInfo) {
