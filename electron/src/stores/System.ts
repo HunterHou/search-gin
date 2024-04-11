@@ -150,14 +150,12 @@ export const useSystemProperty = defineStore({
         this.History.splice(existIdx, 1);
       }
       this.History.unshift(param);
-      if (param.Keyword) {
-        Object.defineProperty(this.HistoryMap, param.Keyword, {
-          value: param, // 属性值
-          writable: true, // 是否可修改
-          enumerable: true, // 是否可枚举
-          configurable: true, // 是否可配置
-        });
-      }
+      Object.defineProperty(this.HistoryMap, param.Keyword || '全部', {
+        value: param, // 属性值
+        writable: true, // 是否可修改
+        enumerable: true, // 是否可枚举
+        configurable: true, // 是否可配置
+      });
       if (this.History.length > 50) {
         this.History.splice(0, 49);
         const key = param.Keyword;
