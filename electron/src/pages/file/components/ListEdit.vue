@@ -166,42 +166,45 @@
           </q-list>
         </q-tab-panel>
         <q-tab-panel name="history">
-          <div v-for="his in browserHistory" :key="his">
-            <q-btn flat outline noCaps align="left" style="width: 100%;" ripple size="sm" color="primary"
-              @click="goHistory(his)">
-              <div class="row justify-center  q-gutter-sm">
-                <span>{{ his.MovieType }}</span>
-                <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
-                <span>{{ ` ${getLabelByValue(his.SortField, FieldEnum)}/${getLabelByValue(his.SortType, DescEnum)}`
-                  }}</span>
-                <span>
-                  {{ his.Keyword ? `搜：${his.Keyword} ` : ' ' }}
-                </span>
-                <span>
-                  {{ date.formatDate(his.MTime, 'YYYY-MM-DD HH:mm:ss') }}
-                </span>
-              </div>
-            </q-btn>
+          <div class="row justify-between">
+            <div v-for="his, idx in browserHistoryMap" :key="his">
+              <q-btn v-if="idx && idx != 'null'" flat align="left" ripple size="sm" color="primary"
+                @click="goHistory(his)">
+                <div class="row justify-center  q-gutter-sm">
+                  <span> {{ idx }}</span>
+                  <span>{{ his.MovieType }}</span>
+                  <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
+                  <span>{{ getLabelByValue(his.SortField, FieldEnum) }}
+                    /{{ getLabelByValue(his.SortType, DescEnum) }}
+                  </span>
+                  <span>
+                    {{ his.Keyword ? `搜：${his.Keyword} ` : ' ' }}
+                  </span>
+                  <span>
+                    {{ date.formatDate(his.MTime, 'YYYY-MM-DD HH:mm:ss') }}
+                  </span>
+                </div>
+              </q-btn>
+            </div>
+            <div v-for="his in browserHistory" :key="his">
+              <q-btn flat outline noCaps align="left" style="width: 100%;" ripple size="sm" color="primary"
+                @click="goHistory(his)">
+                <div class="row justify-center  q-gutter-sm">
+                  <span>{{ his.MovieType }}</span>
+                  <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
+                  <span>{{ ` ${getLabelByValue(his.SortField, FieldEnum)}/${getLabelByValue(his.SortType, DescEnum)}`
+                    }}</span>
+                  <span>
+                    {{ his.Keyword ? `搜：${his.Keyword} ` : ' ' }}
+                  </span>
+                  <span>
+                    {{ date.formatDate(his.MTime, 'YYYY-MM-DD HH:mm:ss') }}
+                  </span>
+                </div>
+              </q-btn>
+            </div>
           </div>
-          <div v-for="his, idx in browserHistoryMap" :key="his">
-            <q-btn v-if="idx && idx != 'null'" flat align="left" ripple size="sm" color="primary"
-              @click="goHistory(his)">
-              <div class="row justify-center  q-gutter-sm">
-                <span> {{ idx }}</span>
-                <span>{{ his.MovieType }}</span>
-                <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
-                <span>{{ getLabelByValue(his.SortField, FieldEnum) }}
-                  /{{ getLabelByValue(his.SortType, DescEnum)}}
-                </span>
-                <span>
-                  {{ his.Keyword ? `搜：${his.Keyword} ` : ' ' }}
-                </span>
-                <span>
-                  {{ date.formatDate(his.MTime, 'YYYY-MM-DD HH:mm:ss') }}
-                </span>
-              </div>
-            </q-btn>
-          </div>
+
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
