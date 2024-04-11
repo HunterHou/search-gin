@@ -24,11 +24,7 @@
           <q-space />
           <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-btn dense flat size="lg" icon="refresh" @click="refreshThis"></q-btn>
-          <q-btn dense flat size="md" icon="ti-star" @click="
-            listEditRef.open({
-              tabName: 'history'
-            })
-            " />
+          <q-btn dense flat size="md" icon="ti-star" @click="openHistory" />
           <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
           <q-btn @click="$q.dark.set(!$q.dark.mode)" dense icon="ti-exchange-vertical" flat
             :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
@@ -71,6 +67,7 @@ import { useQuasar } from 'quasar';
 import EssentialLink from 'components/EssentialLink.vue';
 import ListEdit from 'pages/file/components/ListEdit.vue';
 import ShutdownComponent from 'components/ShutdownComponent.vue';
+import { onKeyStroke } from '@vueuse/core';
 
 import { useRoute } from 'vue-router';
 
@@ -83,6 +80,16 @@ const $q = useQuasar();
 const shutdown = ref(null);
 const view = reactive({
   fullscreen: false,
+});
+
+const openHistory = () => {
+  listEditRef.value.open({
+    tabName: 'history'
+  })
+}
+
+onKeyStroke(['ctrl', 'y'], () => {
+  openHistory()
 });
 
 
