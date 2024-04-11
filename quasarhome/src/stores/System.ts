@@ -10,7 +10,7 @@ export const useSystemProperty = defineStore({
     strategies: [
       {
         // 自定义key
-        key: "systemProperty",
+        key: 'systemProperty',
         // 自定义存储方式，默认sessionStorage
         storage: localStorage,
         // 指定要持久化的数据，默认所有 state 都会进行缓存，可以通过 paths 指定要持久化的字段，其他的则不会进行持久化。
@@ -19,8 +19,8 @@ export const useSystemProperty = defineStore({
   },
   state: () => ({
     isFullscreen: false,
-    shutdownLeftSecond:null,
-    shutdownTimer:null,
+    shutdownLeftSecond: null,
+    shutdownTimer: null,
     Logo: {
       title: 'M系统',
       logo: '',
@@ -44,6 +44,7 @@ export const useSystemProperty = defineStore({
       ],
     },
     History: [] as FileQuery[],
+    HistoryMap: {} as object,
     Playing: new FileModel(),
     PlayMode: 800,
     drawerRight: false,
@@ -77,6 +78,9 @@ export const useSystemProperty = defineStore({
   getters: {
     getHistory(this) {
       return this.History;
+    },
+    getHistoryMap(this) {
+      return this.HistoryMap;
     },
     getSettingInfo(this) {
       return this.SettingInfo;
@@ -123,10 +127,10 @@ export const useSystemProperty = defineStore({
       if (param.Keyword) {
         this.addSuggestions(param.Keyword);
       }
-      this.addHistory(param)
+      this.addHistory(param);
     },
     addHistory(param: FileQuery) {
-      let has = false;
+      let existIdx = -1;
       for (let i = 0; i < this.History.length; i++) {
         const item = this.History[i] as FileQuery;
         if (
@@ -137,15 +141,21 @@ export const useSystemProperty = defineStore({
           item.SortType == param.SortType &&
           item.MovieType == param.MovieType
         ) {
-          has = true;
+          existIdx = i;
           break;
         }
       }
-      if (!has) {
-        this.History.unshift(param);
+      param.MTime = new Date();
+      if (existIdx>=0) {
+        this.History.splice(existIdx, 1);
+      }  
+      this.History.unshift(param);
+      if (param.Keyword) {
+        this.HistoryMap[param.Keyword] = param;
       }
       if (this.History.length > 50) {
         this.History.splice(0, 49);
+        this.HistoryMap[param.Keyword] = undefined;
       }
     },
     setSettingInfo(settingInfo: SettingInfo) {

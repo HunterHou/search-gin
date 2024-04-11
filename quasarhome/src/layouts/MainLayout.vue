@@ -24,6 +24,11 @@
           <q-space />
           <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-btn dense flat size="lg" icon="refresh" @click="refreshThis"></q-btn>
+          <q-btn dense flat size="md" icon="ti-star" @click="
+            listEditRef.open({
+              tabName: 'history'
+            })
+            " />
           <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
           <q-btn @click="$q.dark.set(!$q.dark.mode)" dense icon="ti-exchange-vertical" flat
             :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
@@ -54,6 +59,7 @@
       </q-page-container>
     </q-layout>
     <ShutdownComponent ref="shutdown" />
+    <ListEdit ref="listEditRef" />
   </div>
 </template>
 
@@ -63,9 +69,14 @@ import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from 'stores/System';
 import { useQuasar } from 'quasar';
 import EssentialLink from 'components/EssentialLink.vue';
+import ListEdit from 'pages/file/components/ListEdit.vue';
 import ShutdownComponent from 'components/ShutdownComponent.vue';
 
 import { useRoute } from 'vue-router';
+
+
+const listEditRef = ref(null);
+
 const systemProperty = useSystemProperty();
 const $q = useQuasar();
 

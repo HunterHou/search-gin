@@ -94,7 +94,7 @@
       </q-input>
 
       
-      <q-btn class="q-mr-sm" flat size="sm" color="primary" icon="apps" @click="
+      <q-btn class="q-mr-sm" flat size="sm" color="primary" icon="ti-settings" @click="
         listEditRef.open({
           queryParam: view.queryParam,
           settingInfo: view.settingInfo,
