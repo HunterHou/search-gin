@@ -1,11 +1,11 @@
 <template>
   <div class="q-mg-md top" style="margin-bottom: 40px">
-    <q-page-sticky style="z-index: 9;" position="bottom-left" :offset="[6, 60]">
+    <q-page-sticky style="z-index: 9;" position="bottom-left" :offset="[6, isMobile ? 180 : 160]">
       <q-btn round class="page-sticky" color="amber" text-color="black" icon="keyboard_arrow_left"
         v-if="view.queryParam.Page > 1" @click="nextPage(-1)"></q-btn>
     </q-page-sticky>
 
-    <q-page-sticky style="z-index: 9;" position="bottom-right" :offset="[10, 60]">
+    <q-page-sticky style="z-index: 9;" position="bottom-right" :offset="[10, isMobile ? 180 : 160]">
       <q-btn round class="page-sticky" color="secondary" text-color="black" icon="keyboard_arrow_right"
         @click="nextPage(1)"></q-btn>
     </q-page-sticky>
@@ -19,15 +19,15 @@
 
       <q-btn-toggle v-if="!isMobile" size="md" v-model="view.queryParam.SortField" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="[
-      { label: '时', value: 'MTime' },
-      { label: '容', value: 'Size' },
-      { label: '名', value: 'Code' }
-    ]" />
+        { label: '时', value: 'MTime' },
+        { label: '容', value: 'Size' },
+        { label: '名', value: 'Code' }
+      ]" />
       <q-btn-toggle v-if="!isMobile" v-model="view.queryParam.SortType" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="[
-      { label: '正', value: 'asc' },
-      { label: '倒', value: 'desc' }
-    ]" />
+        { label: '正', value: 'asc' },
+        { label: '倒', value: 'desc' }
+      ]" />
       <q-btn-toggle v-if="!isMobile" v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="MovieTypeSelects" />
 
@@ -93,25 +93,24 @@
         </template>
       </q-input>
 
-      <q-btn color="primary" flat size="sm" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
-        v-model="view.fullscreen" @click="clickFullscreen" />
-      <q-btn class="q-mr-sm" flat size="sm" color="primary" icon="apps" @click="
-      listEditRef.open({
-        queryParam: view.queryParam,
-        settingInfo: view.settingInfo,
-        cb: listEditCallback
-      })
-      " />
+      
+      <q-btn class="q-mr-sm" flat size="sm" color="primary" icon="ti-settings" @click="
+        listEditRef.open({
+          queryParam: view.queryParam,
+          settingInfo: view.settingInfo,
+          cb: listEditCallback
+        })
+        " />
       <q-toggle v-model="view.queryParam.OnlyRepeat" v-if="!isMobile" flat @update:model-value="fetchSearch"
         label="重" />
     </div>
     <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.6)">
       <div class="q-pa-sm flex flex-center">
         <q-select color="lime-11 q-mr-md" bg-color="black" dense @update:model-value="(no) => {
-      view.queryParam.PageSize = Number(no);
-      fetchSearch();
-    }
-      " filled dark v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
+        view.queryParam.PageSize = Number(no);
+        fetchSearch();
+      }
+        " filled dark v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
         </q-select>
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="deep-orange"
           :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="isMobile ? 5 : 10" boundary-numbers
@@ -119,79 +118,80 @@
         <q-input v-model="view.queryParam.Page" :dense="true" type="search"
           style="background-color: aliceblue; width: 40px; text-align: center" @focus="focusEvent($event)"
           @update:model-value="(no) => {
-      view.queryParam.Page = Number(no);
-      fetchSearch();
-    }
-      " />
+        view.queryParam.Page = Number(no);
+        fetchSearch();
+      }
+        " />
       </div>
     </q-page-sticky>
     <q-page>
-        <div class="row justify-center q-mt-sm mainlist">
-          <q-card class="q-ma-sm " v-bind:class="{ 'example-item': !isMobile, 'mobile-item': isMobile }"
-            v-for="item in view.resultData.Data" :key="item.Id">
-            <div class="float-head absolute-top">
-              <div style="
+      <div class="row justify-center q-mt-sm mainlist">
+        <q-card class="q-ma-sm " v-bind:class="{ 'example-item': !isMobile, 'mobile-item': isMobile }"
+          v-for="item in view.resultData.Data" :key="item.Id">
+          <div class="float-head absolute-top">
+            <div style="
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
                 width: fit-content;
               ">
-                <q-chip square text-color="white" style="
+              <q-chip square text-color="white" style="
                   margin-left: 0px;
                   padding: 0 4px;
                   background-color: rgba(236, 15, 15, 0.8);
                 ">
-                  <q-popup-proxy context-menu>
-                    <div class="tag-popup">
-                      <div>
-                        <q-btn size="sm" icon='ti-minus' square text-color="white" color="green" class="tag-item"
-                          v-for="tag in item.Tags" :key="tag" :label="tag"
-                          @click="commonExec(CloseTag(item.Id, tag), true)" />
-                      </div>
-                      <div>
-                        <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
-                          v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
-                          @click="commonExec(AddTag(item.Id, tag), true)" />
-                      </div>
+                <q-popup-proxy context-menu>
+                  <div class="tag-popup">
+                    <div>
+                      <q-btn size="sm" icon='ti-minus' square text-color="white" color="green" class="tag-item"
+                        v-for="tag in item.Tags" :key="tag" :label="tag"
+                        @click="commonExec(CloseTag(item.Id, tag), true)" />
                     </div>
-                  </q-popup-proxy>
-                  <span>种草</span>
-                </q-chip>
-                <q-chip square text-color="white" v-for="tag in item.Tags" :key="tag" style="
+                    <div>
+                      <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
+                        v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
+                        @click="commonExec(AddTag(item.Id, tag), true)" />
+                    </div>
+                  </div>
+                </q-popup-proxy>
+                <span>种草</span>
+              </q-chip>
+              <q-chip square text-color="white" v-for="tag in item.Tags" :key="tag" style="
                   margin-left: 0px;
                   padding: 0 4px;
                   background-color: rgba(188, 24, 24, 0.6);
                 ">
-                  <span @click="
-      view.queryParam.Keyword = tag;
-    fetchSearch();
-    ">{{ tag?.substring(0, 4) }}</span>
-                </q-chip>
-              </div>
-              <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:1rem;color: antiquewhite;"
-                :label="item.MovieType">
-                <q-list style="background-color: rgba(0, 0, 0, 0.7)">
-                  <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
-                    <q-item-section>
-                      <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
+                <span @click="
+        view.queryParam.Keyword = tag;
+      fetchSearch();
+      ">{{ tag?.substring(0, 4) }}</span>
+              </q-chip>
             </div>
-            <q-img fit="fit" easier draggable :class="{ 'img-self': !isMobile, 'img-self-moblie': isMobile }"
-              :src="getPng(item.Id)" @click="() => {
-      fileInfoRef.open({ item, cb: refreshIndex });
-    }">
-              <template v-slot:loading>
-                <div class="text-subtitle1 text-white">
-                  Loading...
-                </div>
-              </template>
-            </q-img>
-            <div class="absolute-bottom float-btn">
-              <div>
+            <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:1rem;color: antiquewhite;"
+              :label="item.MovieType">
+              <q-list style="background-color: rgba(0, 0, 0, 0.7)">
+                <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
+                  <q-item-section>
+                    <q-item-label @click="setMovieType(item.Id, mt.value)">{{ mt.label }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </div>
+          <q-img fit="fit" easier draggable :class="{ 'img-self': !isMobile, 'img-self-moblie': isMobile }"
+            :src="getPng(item.Id)" @click="() => {
+        fileInfoRef.open({ item, cb: refreshIndex });
+      }">
+            <template v-slot:loading>
+              <div class="text-subtitle1 text-white">
+                Loading...
+              </div>
+            </template>
+          </q-img>
+          <div class="absolute-bottom float-btn" :style="{ height: isMobile ? '6rem' : '8.5rem' }">
+            <div style="background-color: rgba(0, 0, 0, 0.2);">
+              <div style="display: flex; flex-direction: row">
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="primary"
                   icon="ti-control-eject" @click="playBySystem(item)" title="播放" v-if="showButton('播放') && !isMobile" />
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="red" icon="ti-fullscreen"
@@ -215,21 +215,23 @@
                 <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-location-arrow"
                   v-if="showButton('移动')" title="移动" />
               </div>
-              <div :style="{ height: '4rem', overflow: 'hidden' }">
-                <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                  target="_blank" @click="goActress(item.Actress)">{{ item.Actress?.substring(0, 6) }}</a>
-                <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                  @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
-                <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                  @click="copyText(item.Title)">{{ item.SizeStr }}</a>
-                <span>{{ formatTitle(item.Title) }}</span>
-              </div>
             </div>
-          </q-card>
-        </div>
-        <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 100]">
-          <q-btn fab icon="keyboard_arrow_up" color="accent" />
-        </q-page-scroller>
+
+            <div :style="{ height: '4rem', overflow: 'hidden' }">
+              <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
+                target="_blank" @click="goActress(item.Actress)">{{ item.Actress?.substring(0, 6) }}</a>
+              <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
+                @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
+              <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
+                @click="copyText(item.Title)">{{ item.SizeStr }}</a>
+              <span>{{ formatTitle(item.Title) }}</span>
+            </div>
+          </div>
+        </q-card>
+      </div>
+      <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 100]">
+        <q-btn fab icon="keyboard_arrow_up" color="accent" />
+      </q-page-scroller>
     </q-page>
   </div>
   <FileEdit ref="fileEditRef" />
@@ -254,7 +256,7 @@ import {
   SearchAPI
 } from '../../components/api/searchAPI';
 import { GetSettingInfo } from '../../components/api/settingAPI';
-import { formatCode, formatTitle, MovieTypeOptions, MovieTypeSelects } from '../../components/utils';
+import { formatCode, formatTitle, MovieTypeOptions, MovieTypeSelects, FieldEnum, DescEnum, getLabelByValue } from '../../components/utils';
 import { getPng } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
 import FileEdit from './components/FileEdit.vue';
@@ -279,6 +281,10 @@ const $q = useQuasar();
 
 const listButtons = computed(() => {
   return view.settingInfo.Buttons;
+});
+
+const isMobile = computed(() => {
+  return $q.platform.is.mobile;
 });
 
 const playBySystem = (item) => {
@@ -323,6 +329,7 @@ const view = reactive({
     Keyword: '',
     MovieType: '',
     OnlyRepeat: false,
+    fullscreen: false,
     Page: 1,
     PageSize: 20,
     SortField: 'MTime',
@@ -331,17 +338,6 @@ const view = reactive({
   resultData: {},
   fullscreen: false
 });
-
-const clickFullscreen = () => {
-  if (!view.fullscreen) {
-    $q.fullscreen.request()
-  } else {
-    $q.fullscreen.exit()
-  }
-  view.fullscreen = !view.fullscreen
-  console.log(view.fullscreen)
-
-}
 
 const searchCode = (item) => {
   const url = `${view.settingInfo.BaseUrl}${item.Code}`
@@ -417,11 +413,7 @@ const copyText = async (str) => {
 };
 
 const goActress = (Actress) => {
-  if($q.platform.is.electron){
-    view.queryParam.Keyword = Actress
-    fetchSearch()
-  } else {
-    const { Page,
+  const { Page,
     PageSize,
     MovieType,
     SortField,
@@ -437,9 +429,7 @@ const goActress = (Actress) => {
       Keyword: Actress
     }
   })
-  push(routeData.href)
-  }
-  
+  window.open(routeData.href, '_blank')
 
 }
 
@@ -593,7 +583,14 @@ onMounted(async () => {
 .example-item {
   padding: 2px;
   width: 220px;
-  height: 400px;
+  height: 376px;
+  overflow: hidden;
+}
+
+.mobile-item {
+  padding: 2px;
+  width: 45%;
+  height: 320px;
   overflow: hidden;
 }
 
@@ -601,15 +598,13 @@ onMounted(async () => {
   min-height: 280px;
 }
 
-.float-btn {
-  background-color: rgba(250, 250, 250, 0.4);
-  height: 130px;
-  margin: 0;
-  padding: 0;
+.img-self-moblie {
+  min-height: 160px;
 }
 
-.float-text {
-  height: 10rem;
+.float-btn {
+  margin: 0;
+  padding: 4px;
 }
 
 .movieTypeSelectItem {
@@ -618,19 +613,15 @@ onMounted(async () => {
   margin: 0;
 
   :hover {
-    color: rgba(0, 0, 0, 0.895);
+    color: rgba(0, 0, 0, 0.8);
     font-size: large;
   }
 
 }
 
-.text-subtitles {
-  height: 6rem;
-  padding: 4px;
-}
 
 .q-card__section--vert {
-  padding: 2px;
+  padding: 4px;
 }
 
 .tag-popup {

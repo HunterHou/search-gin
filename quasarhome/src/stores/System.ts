@@ -146,16 +146,25 @@ export const useSystemProperty = defineStore({
         }
       }
       param.MTime = new Date();
-      if (existIdx>=0) {
+      if (existIdx >= 0) {
         this.History.splice(existIdx, 1);
-      }  
+      }
       this.History.unshift(param);
       if (param.Keyword) {
-        this.HistoryMap[param.Keyword] = param;
+        Object.defineProperty(this.HistoryMap, param.Keyword, {
+          value: param, // 属性值
+          writable: true, // 是否可修改
+          enumerable: true, // 是否可枚举
+          configurable: true, // 是否可配置
+        });
       }
       if (this.History.length > 50) {
         this.History.splice(0, 49);
-        this.HistoryMap[param.Keyword] = undefined;
+        const key = param.Keyword;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [key]: removedProperty, ...objRest } = this.HistoryMap;
+        console.log(objRest); // { name: '十六个人博客' }
+        this.HistoryMap = objRest;
       }
     },
     setSettingInfo(settingInfo: SettingInfo) {
