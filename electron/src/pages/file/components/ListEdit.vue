@@ -2,26 +2,30 @@
   <q-dialog ref="dialogRef" @hide="dialogHide" @before-show="beforeShow">
     <q-card :class="{ 'card-q': !isMobile, 'card-q-mobile': isMobile }">
       <q-tabs alert ripple v-model="tab" style="background-color: rgba(0, 0, 0, 0.2);" align="justify" narrow-indicator>
-        <q-tab name="filelist" label="批量操作" />
-        <q-tab name="setting" label="设置" />
-        <q-tab name="tasking" label="任务执行" />
+        <q-tab name="filelist" label="批量操作"/>
+        <q-tab name="setting" label="设置"/>
+        <q-tab name="tasking" label="任务执行"/>
+        <q-tab name="history" label="最近浏览"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated style="height: 100%; overflow: auto">
         <q-tab-panel name="filelist">
           <div class="q-mr-sm q-mb-sm  row justify-left">
             <q-btn-toggle outline v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()"
-              toggle-color="primary" :options="MovieTypeSelects" />
+                          toggle-color="primary" :options="MovieTypeSelects"/>
             <q-btn class="q-ml-sm " v-if="view.queryParam.Page != 1" size="sm" color="primary"
-              @click="nextPage(-1)">上</q-btn>
+                   @click="nextPage(-1)">上
+            </q-btn>
             <q-btn class="q-ml-sm" size="sm" color="primary" @click="nextPage(1)">下</q-btn>
 
           </div>
           <div class="q-mr-sm row justify-left">
             <q-btn class=" q-mr-sm" color="amber" outline size="sm" glossy text-color="black" @click="selectAll">{{
-    view.selectAll
-      ? '不选' : '全选' }}</q-btn>
+                view.selectAll
+                  ? '不选' : '全选'
+              }}
+            </q-btn>
             <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
-              @update:model-value="fetchSearch()" />
+                     @update:model-value="fetchSearch()"/>
             <q-btn class="q-mr-sm" size="sm" color="blue-6" icon="refresh" @click="refreshIndex">刷新</q-btn>
             <q-btn-dropdown class="q-mr-sm" size="sm" label="设置" type="primary" color="teal" icon="ti-settings">
               <q-list>
@@ -36,7 +40,7 @@
             <q-btn-dropdown class="q-mr-sm" size="sm" label="标签" type="primary" color="teal" icon="ti-plus">
               <div style="width: 300px;">
                 <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
-                  v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag" @click="addTagBySelector(tag)" />
+                       v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag" @click="addTagBySelector(tag)"/>
               </div>
             </q-btn-dropdown>
             <q-btn outline class="q-mr-sm" size="sm" color="red" icon="delete" @click="deleteBySelector">删除</q-btn>
@@ -50,11 +54,14 @@
               ">
               <div style="display: flex; flex-direction: column">
                 <q-item-label>
-                  <span v-if="view.cutListIds.indexOf(item.Id) >= 0" style="color: red">剪切中：：</span>{{ item.Title }}【{{
-    item.SizeStr }}】
+                  <span v-if="view.cutListIds.indexOf(item.Id) >= 0" style="color: red">剪切中：：</span>{{
+                    item.Title
+                  }}【{{
+                    item.SizeStr
+                  }}】
                 </q-item-label>
                 <div style="display: flex; flex-direction: row" v-ripple>
-                  <q-checkbox size="sm" v-model="view.selector" :val="item.Id" color="red" />
+                  <q-checkbox size="sm" v-model="view.selector" :val="item.Id" color="red"/>
                   <q-btn-dropdown class="q-mr-sm" size="sm" :label="item.MovieType" type="primary" color="blue-6">
                     <q-list>
                       <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
@@ -69,17 +76,19 @@
                     </q-list>
                   </q-btn-dropdown>
                   <q-btn outline size="sm" class="q-mr-sm" color="amber" glossy text-color="black" icon="delete"
-                    @click="confirmDelete(item)" />
-                  <q-btn outline size="sm" class="q-mr-sm" @click="moveThis(item)" icon="near_me" />
+                         @click="confirmDelete(item)"/>
+                  <q-btn outline size="sm" class="q-mr-sm" @click="moveThis(item)" icon="near_me"/>
                   <q-btn outline class="q-mr-sm" size="sm" icon="open_in_new"
-                    @click="commonExec(OpenFileFolder(item.Id))" />
+                         @click="commonExec(OpenFileFolder(item.Id))"/>
                   <q-btn outline size="sm" class="q-mr-sm" icon="ti-pencil-alt2" @click="item.showCut = true"></q-btn>
                   <q-btn outline size="sm" class="q-mr-sm" color="green" @click="toMp4(item)">toMp4</q-btn>
                   <q-btn outline class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-                    v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
+                         v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))"/>
                   <q-btn color="red" v-for="ta in item.Tags" :key="ta"
-                    @click="commonExec(CloseTag(item.Id, ta), true)">{{
-    `- ${ta}` }}</q-btn>
+                         @click="commonExec(CloseTag(item.Id, ta), true)">{{
+                      `- ${ta}`
+                    }}
+                  </q-btn>
                 </div>
                 <div v-if="item.showCut" style="
                     display: flex;
@@ -100,8 +109,8 @@
                   <q-btn size="sm" color="black" type="primary" @click="
     cutThis(item);
   item.showCut = false;
-  " label="确认" />
-                  <q-btn size="sm" color="blue" @click="item.showCut = false" label="取消" />
+  " label="确认"/>
+                  <q-btn size="sm" color="blue" @click="item.showCut = false" label="取消"/>
                 </div>
               </div>
             </div>
@@ -110,11 +119,11 @@
         <q-tab-panel name="setting">
           <q-field color="purple-12" label="Buttons（最佳5）" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <q-checkbox v-model="view.settingInfo.Buttons" v-for="item in buttonEnum" :key="item" :val="item"
-                :label="item" color="teal" @update:model-value="updateButtons" />
+                          :label="item" color="teal" @update:model-value="updateButtons"/>
             </template>
           </q-field>
         </q-tab-panel>
@@ -135,10 +144,10 @@
                   </div>
                   <div>
                     {{
-    `耗时：${((v.FinishTime ? new Date(v.FinishTime) : new Date()).getTime() -
-      new Date(v.CreateTime).getTime()) /
-    1000
-    }`
+                      `耗时：${((v.FinishTime ? new Date(v.FinishTime) : new Date()).getTime() -
+                        new Date(v.CreateTime).getTime()) /
+                      1000
+                      }`
                     }}
                   </div>
                 </q-item-section>
@@ -157,19 +166,27 @@
             </q-expansion-item>
           </q-list>
         </q-tab-panel>
+        <q-tab-panel name="history">
+          <a v-for="his in browserHistory" :key="his" @click="gotoHistory(his)">
+            {{ his.Keyword ? `搜：${his.Keyword}` : '' }}
+            {{ his.MovieType ? ` ${getLabelByValue(his.MovieType, MovieTypeSelects)}` : '' }}
+            {{ his.SortField ? ` ${getLabelByValue(his.SortField, DescEnum)}` : '' }}
+            {{ his.SortType ? ` ${getLabelByValue(his.SortType, FieldEnum)}` : '' }}
+            {{ ` 第${his.Page}页，分${his.PageSize}页` }}</a>
+        </q-tab-panel>
       </q-tab-panels>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar';
-import { useDialogPluginComponent } from 'quasar';
-import { reactive, ref, watch, computed } from 'vue';
+import {useQuasar} from 'quasar';
+import {useDialogPluginComponent} from 'quasar';
+import {reactive, ref, watch, computed} from 'vue';
 
-import { MovieTypeOptions } from '../../../components/utils';
-import { buttonEnum } from '../../../components/model/Setting';
-import { MovieTypeSelects } from '../../../components/utils';
+import {DescEnum, FieldEnum, getLabelByValue, MovieTypeOptions} from '../../../components/utils';
+import {buttonEnum} from '../../../components/model/Setting';
+import {MovieTypeSelects} from '../../../components/utils';
 import {
   ResetMovieType,
   SearchAPI,
@@ -183,9 +200,15 @@ import {
   CloseTag,
   AddTag
 } from '../../../components/api/searchAPI';
-import { PostSettingInfo } from 'src/components/api/settingAPI';
+import {PostSettingInfo} from 'src/components/api/settingAPI';
+import {useSystemProperty} from "stores/System";
 
 const $q = useQuasar();
+
+const systemProperty = useSystemProperty();
+const browserHistory = computed(() => {
+  return systemProperty.getHistory
+})
 
 const isMobile = computed(() => {
   return $q.platform.is.mobile;
@@ -205,7 +228,6 @@ watch(
     }
   }
 );
-
 
 
 const fetchTasking = async () => {
@@ -307,17 +329,17 @@ const fetchSearch = async () => {
 };
 
 const commonExec = async (exec) => {
-  const { Code, Message } = await exec;
+  const {Code, Message} = await exec;
   console.log(Code, Message);
   if (Code != 200) {
-    $q.notify({ message: `${Message}` });
+    $q.notify({message: `${Message}`});
   } else {
-    $q.notify({ message: `${Message}` });
+    $q.notify({message: `${Message}`});
   }
 };
 
 const open = (data) => {
-  const { queryParam, settingInfo, cb } = data;
+  const {queryParam, settingInfo, cb} = data;
   view.queryParam = queryParam;
   view.queryParam.PageSize = 10
   view.settingInfo = settingInfo;
@@ -328,7 +350,8 @@ const open = (data) => {
 
 const dialogHide = async () => {
   if (view.callback) {
-    view.callback({ settingInfo: view.settingInfo });;
+    view.callback({settingInfo: view.settingInfo});
+    ;
   }
   onDialogCancel();
   onDialogOK();
@@ -362,7 +385,7 @@ const confirmDelete = (item) => {
 };
 
 const moveThis = async (item) => {
-  const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
+  const res = await FileRename({...item, NoRefresh: true, MoveOut: true});
   console.log(res);
   if (res.Code == 200) {
     for (let i = 0; i < view.resultData.Data.length; i++) {
@@ -370,13 +393,13 @@ const moveThis = async (item) => {
         view.resultData.Data.splice(i, 1);
       }
     }
-    $q.notify({ type: 'negative', message: res.Message });
+    $q.notify({type: 'negative', message: res.Message});
   } else {
-    $q.notify({ type: 'negative', message: res.Message });
+    $q.notify({type: 'negative', message: res.Message});
   }
 };
 
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+const {dialogRef, onDialogHide, onDialogOK, onDialogCancel} =
   useDialogPluginComponent();
 // dialogRef      - 用在 QDialog 上的 Vue ref 模板引用
 // onDialogHide   - 处理 QDialog 上 @hide 事件的函数
@@ -396,7 +419,7 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 const updateButtons = () => {
   if (view.callback) {
     PostSettingInfo(view.settingInfo)
-    view.callback({ settingInfo: view.settingInfo });
+    view.callback({settingInfo: view.settingInfo});
   }
 };
 
