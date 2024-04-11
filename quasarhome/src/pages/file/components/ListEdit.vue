@@ -5,6 +5,7 @@
         <q-tab name="filelist" label="批量操作" />
         <q-tab name="setting" label="设置" />
         <q-tab name="tasking" label="任务执行" />
+        <q-tab name="history" label="最近浏览" />
       </q-tabs>
       <q-tab-panels v-model="tab" animated style="height: 100%; overflow: auto">
         <q-tab-panel name="filelist">
@@ -157,6 +158,9 @@
             </q-expansion-item>
           </q-list>
         </q-tab-panel>
+        <q-tab-panel name="history">
+          <a v-for="his in browserHistory" :key="his" @click="gotoHistory(his)">{{his.Keyword}}</a>
+        </q-tab-panel>
       </q-tab-panels>
     </q-card>
   </q-dialog>
@@ -184,8 +188,14 @@ import {
   AddTag
 } from '../../../components/api/searchAPI';
 import { PostSettingInfo } from 'src/components/api/settingAPI';
+import {useSystemProperty} from "stores/System";
 
 const $q = useQuasar();
+
+const systemProperty = useSystemProperty();
+const browserHistory = computed(() => {
+  return systemProperty.getHistory
+})
 
 const isMobile = computed(() => {
   return $q.platform.is.mobile;
