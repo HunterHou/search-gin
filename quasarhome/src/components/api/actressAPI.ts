@@ -1,11 +1,11 @@
-import { axios } from '../../boot/axios';
+import {commonAxios} from '../../boot/axios';
 
 export const QueryActressList = async (data: unknown) => {
-  const res = await axios.post('/api/actressList', data);
+  const res = await commonAxios().post('/api/actressList', data);
   return res;
 };
 
 export const PostPicture = async (data: unknown) => {
-  const res = await axios.post('/api/actressList', { path: data });
+  const res = await commonAxios().post('/api/actressList', {path: data});
   return res;
 };

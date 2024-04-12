@@ -10,8 +10,8 @@
       maxWidth: '80vw !important'
     }">
       <div style="margin-top: 0;height: 96%;overflow: auto;">
-        <h3>{{ view.item.Name }}{{ view.item.SizeStr }}</h3>
-        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item" :src="GetFileByPathUseEncode(item)"
+        <div v-for="item in view.prewiewImages" :key="item">{{ item }}</div>
+        <q-img fit="fit" v-for="item in view.prewiewImages" :key="item" :src="getTempImage(item)"
           style="width: 100%;height: auto;">
         </q-img>
       </div>
@@ -21,7 +21,7 @@
 <script setup>
 import { useDialogPluginComponent } from 'quasar';
 import { reactive, ref } from 'vue';
-import { GetFileByPathUseEncode } from 'src/components/utils/images';
+import { getTempImage } from 'src/components/utils/images';
 
 const showDialog = ref(false)
 

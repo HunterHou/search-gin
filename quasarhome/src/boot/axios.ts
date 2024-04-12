@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
+import { isElectron } from 'boot/platform';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -28,4 +29,8 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { api, axios };
+const commonAxios = () => {
+  return isElectron ? axios : api;
+};
+
+export { api, axios, commonAxios };

@@ -24,9 +24,9 @@
           <q-space />
           <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-btn dense flat size="lg" icon="refresh" @click="refreshThis"></q-btn>
-          <q-btn dense flat size="md" icon="ti-star" @click="openHistory" />
-          <q-btn dense flat icon="ti-timer" @click="confirmShutDown" />
-          <q-btn @click="$q.dark.set(!$q.dark.mode)" dense icon="ti-exchange-vertical" flat
+          <q-btn dense flat size="md" icon="ti-settings" @click="openHistory" />
+          <q-btn dense flat icon="ti-na" @click="confirmShutDown" />
+          <q-btn @click="changeTheme" dense icon="ti-reload" flat
             :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
           <q-btn v-if="isDesktop" dense flat icon="ti-minus" @click="minusScreen" />
           <q-btn flat dense size="lg" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -68,30 +68,26 @@ import EssentialLink from 'components/EssentialLink.vue';
 import ListEdit from 'pages/file/components/ListEdit.vue';
 import ShutdownComponent from 'components/ShutdownComponent.vue';
 import { onKeyStroke } from '@vueuse/core';
+// import { isElectron } from 'boot/platform';
 
 import { useRoute } from 'vue-router';
 
 
 const listEditRef = ref(null);
+const vue3VideoPlayRef = ref(null);
 
 const systemProperty = useSystemProperty();
 const $q = useQuasar();
 
 const shutdown = ref(null);
+const drawerLeft = ref(false);
 const view = reactive({
   fullscreen: false,
 });
 
-const openHistory = () => {
-  listEditRef.value.open({
-    tabName: 'history'
-  })
-}
-
 onKeyStroke(['ctrl', 'y'], () => {
   openHistory()
 });
-
 
 const isWideScreen = computed(() => {
   return $q.screen.width > 1000;
@@ -109,12 +105,26 @@ const playing = computed(() => {
   return systemProperty.Playing || {};
 });
 
+const currentPath = computed(() => {
+  return useRoute().path;
+});
+
+const openHistory = () => {
+  listEditRef.value.open({
+    tabName: 'history'
+  })
+}
+
 const closeWindow = () => {
   window.close();
 };
 
 const minusScreen = () => {
   window.electron.hideMainWindow()
+};
+
+const changeTheme = () => {
+  systemProperty.isDark = !systemProperty.isDark;
 };
 
 const clickFullscreen = () => {
@@ -129,7 +139,6 @@ const clickFullscreen = () => {
 
   }
   view.fullscreen = !view.fullscreen
-  console.log(view.fullscreen)
 }
 
 const shutdownLeftSecond = computed(() => {
@@ -137,13 +146,12 @@ const shutdownLeftSecond = computed(() => {
   if (!left) {
     return null;
   }
-
   return (
     `${Math.floor(systemProperty.shutdownLeftSecond / 3600)} 时 ${Math.floor((systemProperty.shutdownLeftSecond / 60) % 60)} 分 ${Math.floor(systemProperty.shutdownLeftSecond % 60)} 秒`
   );
 });
 
-const vue3VideoPlayRef = ref(null);
+
 
 watch(playing, (v) => {
   if (v && v.Id) {
@@ -153,11 +161,15 @@ watch(playing, (v) => {
   }
 });
 
-const drawerLeft = ref(false);
+$q.dark.set(systemProperty.isDark)
+watch(
+  () => systemProperty.isDark,
+  (v) => {
+    $q.dark.set(v);
+  }
+);
 
-const currentPath = computed(() => {
-  return useRoute().path;
-});
+
 
 const refreshThis = () => {
   window.location.reload();

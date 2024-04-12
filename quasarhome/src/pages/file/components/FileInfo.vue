@@ -117,7 +117,6 @@ const showMovie = () => {
   }, 100);
 }
 
-
 defineEmits([
   // REQUIRED; 需要明确指出
   // 组件通过 useDialogPluginComponent() 暴露哪些事件
