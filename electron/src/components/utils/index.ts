@@ -1,3 +1,4 @@
+
 export const formatMovieType = (title: string) => {
   if (title.indexOf('{{') >= 0) {
     title = title.split('{{')[1];
@@ -46,28 +47,28 @@ export const formatTitle = (title: string | undefined) => {
 
 
 export const MovieTypeOptions = [
-  { label: '骑兵', value: '骑兵' },
-  { label: '步兵', value: '步兵' },
-  { label: '国产', value: '国产' },
-  { label: '洋马', value: '斯巴达' },
-  { label: '漫动', value: '漫动' },
+  {label: '骑兵', value: '骑兵'},
+  {label: '步兵', value: '步兵'},
+  {label: '国产', value: '国产'},
+  {label: '洋马', value: '斯巴达'},
+  {label: '漫动', value: '漫动'},
 ];
 
 export const MovieTypeSelects = [
-  { label: '全部', value: '' },
+  {label: '全部', value: ''},
   ...MovieTypeOptions,
-  { label: '无', value: '无' },
+  {label: '无', value: '无'},
 ];
 
 export const DescEnum = [
-  { label: '正', value: 'asc' },
-  { label: '倒', value: 'desc' },
+  {label: '正', value: 'asc'},
+  {label: '倒', value: 'desc'},
 ];
 
 export const FieldEnum = [
-  { label: '时', value: 'MTime' },
-  { label: '容', value: 'Size' },
-  { label: '名', value: 'Code' },
+  {label: '时', value: 'MTime'},
+  {label: '容', value: 'Size'},
+  {label: '名', value: 'Code'},
 ];
 
 class EEnum {

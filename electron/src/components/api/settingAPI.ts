@@ -1,22 +1,22 @@
-import { api } from '../../boot/axios';
+import { commonAxios } from '../../boot/axios';
 import { SettingInfo } from '../model/Setting';
 
 export const GetSettingInfo = async () => {
-  const res = await api.get('/api/buttoms');
+  const res = await commonAxios.get('/commonAxios/buttoms');
   return res;
 };
 
 export const PostSettingInfo = async (data: SettingInfo) => {
-  const res = await api.post('/api/setting', data);
+  const res = await commonAxios.post('/commonAxios/setting', data);
   return res && res.data;
 };
 
 export const GetIpAddr = async () => {
-  const res = await api.get('/api/GetIpAddr');
+  const res = await commonAxios.get('/commonAxios/GetIpAddr');
   return res && res.data;
 };
 
 export const GetShutDown = async () => {
-  const res = await api.get('/api/shutDown');
+  const res = await commonAxios.get('/commonAxios/shutDown');
   return res as unknown;
 };
