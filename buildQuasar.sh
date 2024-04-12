@@ -5,12 +5,12 @@ levelValue=''
 if [ ! "$levelKey" ]; then
     levelKey=2
     levelValue='vueGo'
-elif [ $levelKey -eq 0 ]; then
+elif [ $levelKey == 0 ]; then
     levelKey=0
     levelValue='none'
-elif [ $levelKey -eq 1 ]; then
+elif [ $levelKey == 1 ]; then
     levelValue='vue'
-elif [ $levelKey -eq 2 ]; then
+elif [ $levelKey == 2 ]; then
     levelValue='vueGo'
 fi
 printf '执行级别：levelKey[{%s}]--levelValue[{%s}] \n' $levelKey $levelValue
@@ -22,10 +22,10 @@ rm -rf dist
 # mkdir -p dist
 echo 'cd ..'
 cd ..
-echo 'cd quasarhome'
-cd quasarhome
-if [ $levelKey -ge 1 ]; then
 
+if [ $levelKey == 1 ] || [  $levelKey == 2 ] || [ $levelKey == 3 ]; then
+    echo 'cd electron_quasar'
+    cd electron_quasar
     echo 开始打包前端文件
     echo 'yarn build'
     yarn build
@@ -36,7 +36,7 @@ if [ $levelKey -ge 1 ]; then
     cp -R dist/spa ../qapp/dist
 fi
 cd ..
-if [ $levelKey -ge 2 ]; then
+if [ $levelKey == 2 ]; then
     echo '移动完成，打包APP'
     cd gosrc
     go build -o ../qapp/appQuaser.exe -ldflags "-H=windowsgui" -tags=prod
@@ -50,11 +50,13 @@ if [ $levelKey -ge 2 ]; then
     echo 'APP打包完成！！！'
 fi
 
-if [ $levelKey -ge 3 ]; then
+if [  $levelKey == 1 ] || [ $levelKey == 3 ]; then
+
     echo 移动源到 Election代码目录
-    echo 'cp -R qapp electron/src-electron/icons'
-    cp -R qapp electron/src-electron/icons
-    cd electron
+    echo 'cp -R qapp electron_quasar/src-electron/icons'
+    cp -R qapp electron_quasar/src-electron/icons
+    echo 'cd electron_quasar'
+    cd electron_quasar
     yarn topc
     echo 'Electron Package OVER'
 #TODO
