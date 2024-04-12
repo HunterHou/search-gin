@@ -151,7 +151,14 @@ const fetchSetting = async () => {
 };
 
 const searchCode = (item) => {
-  const url = `${view.settingInfo.BaseUrl}/${item.Code}`
+  let itemCode = item.Code
+  if (itemCode.indexOf('-C') > 0) {
+    itemCode = itemCode.substring(0, itemCode.indexOf('-C'))
+  }
+  if (itemCode.indexOf('-') == 0) {
+    itemCode = itemCode.substring(1)
+  }
+  const url = `${view.settingInfo.BaseUrl}/${itemCode}`
   console.log(url)
   if ($q.platform.is.electron) {
     window.electron.createWindow({ router: url, width: 1280, height: 1000, titleBarStyle: '', })
