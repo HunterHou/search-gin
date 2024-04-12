@@ -1,7 +1,12 @@
-import {useQuasar} from 'quasar';
+import { useQuasar } from 'quasar';
+import { computed } from 'vue';
 
-const $q = useQuasar();
+export const isElectron = computed(() => {
+  const $q = useQuasar();
+  return $q.platform.is.electron;
+});
 
-
-export const isElectron =$q.platform.is.electron;
-export const isMobile =$q.platform.is.mobile;
+export const isMobile = computed(() => {
+  const $q = useQuasar();
+  return $q.platform.is.mobile;
+});
