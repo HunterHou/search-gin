@@ -29,6 +29,6 @@ export default boot(({app}) => {
   //       so you can easily perform requests against your app's API
 });
 
-const commonAxios = isElectron() ? api : axios;
+const commonAxios = isElectron ? api : axios;
 
 export {api, axios, commonAxios};
