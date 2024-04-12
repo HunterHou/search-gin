@@ -19,6 +19,8 @@ export const useSystemProperty = defineStore({
   },
   state: () => ({
     isFullscreen: false,
+    isDark: false,
+    goActressNewWidow: false,
     shutdownLeftSecond: null,
     shutdownTimer: null,
     Logo: {

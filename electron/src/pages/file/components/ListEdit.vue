@@ -125,6 +125,29 @@
                 :label="item" color="teal" @update:model-value="updateButtons" />
             </template>
           </q-field>
+          <q-field color="purple-12" label="主题" stack-label>
+            <template v-slot:prepend>
+              <q-icon name="event" />
+            </template>
+            <template v-slot:control>
+              <q-radio v-model="systemProperty.isDark" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
+                :val="true" label="暗黑" />
+              <q-radio v-model="systemProperty.isDark" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
+                :val="false" label="自然" />
+            </template>
+          </q-field>
+          <q-field color="purple-12" label="主题" stack-label>
+            <template v-slot:prepend>
+              <q-icon name="event" />
+            </template>
+            <template v-slot:control>
+              <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
+                :val="true" label="新窗口" />
+              <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
+                :val="false" label="本地" />
+            </template>
+          </q-field>
+          
         </q-tab-panel>
 
         <q-tab-panel name="tasking">
