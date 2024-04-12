@@ -11,7 +11,7 @@
       <q-space />
       <q-tabs v-model="showDetail" shrink>
         <q-tab v-for="item in ClickButtons" :key="item.value" :name="item.value" :label="item.label"
-          @click="showDetail = item.value" />
+          @click="tabClick(item.value)" />
       </q-tabs>
       <q-space />
       <q-btn dense flat icon="close" @click="onDialogClose">
@@ -115,6 +115,12 @@ const showMovie = () => {
   setTimeout(() => {
     vue3VideoPlayRef.value.open(view.item)
   }, 100);
+}
+const tabClick = (value) => {
+  showDetail.value = value;
+  if (value == 'movie') {
+    showMovie()
+  }
 }
 
 defineEmits([

@@ -1,4 +1,25 @@
 <template>
+  <q-page-sticky v-if="view.videoUrl" style="z-index: 9;" position="bottom-right" :offset="videoOffset">
+    <q-bar class="row  justify-between bg-black" :style="{ width: videoWidth + 'px' }">
+      <q-btn dense flat icon="ti-arrow-top-left" color="white" v-touch-pan.prevent.mouse="zoomFab">
+        <q-tooltip class="bg-white text-primary">缩放</q-tooltip>
+      </q-btn>
+      <q-space />
+      <span style="color:aliceblue;width:80%;height:1.5rem;overflow-y: hidden;" v-touch-pan.prevent.mouse="moveFab"
+        :disable="draggingFab"><q-btn flat icon="ti-move" color="white">
+          <q-tooltip class="bg-white text-primary">拖动</q-tooltip>
+        </q-btn>{{ view.currentData.Name }}</span>
+      <q-space />
+      <q-btn dense flat icon="close" color="white" @click="() => { view.videoUrl = null }">
+        <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
+      </q-btn>
+    </q-bar>
+    <video autoplay controls playsinline id="vue3VideoPlayRef" :src="view.videoUrl" width="200"
+      style="position: fixed;height:auto;z-index:  9;" :style="{ width: videoWidth + 'px' }"></video>
+
+  </q-page-sticky>
+
+
   <div class="q-mg-md top" style="margin-bottom: 40px">
     <q-page-sticky style="z-index: 9;" position="bottom-left" :offset="[6, isMobile ? 180 : 160]">
       <q-btn round class="page-sticky" color="amber" text-color="black" icon="keyboard_arrow_left"
@@ -19,15 +40,15 @@
 
       <q-btn-toggle v-if="!isMobile" size="md" v-model="view.queryParam.SortField" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="[
-      { label: '时', value: 'MTime' },
-      { label: '容', value: 'Size' },
-      { label: '名', value: 'Code' }
-    ]" />
+    { label: '时', value: 'MTime' },
+    { label: '容', value: 'Size' },
+    { label: '名', value: 'Code' }
+  ]" />
       <q-btn-toggle v-if="!isMobile" v-model="view.queryParam.SortType" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="[
-      { label: '正', value: 'asc' },
-      { label: '倒', value: 'desc' }
-    ]" />
+    { label: '正', value: 'asc' },
+    { label: '倒', value: 'desc' }
+  ]" />
       <q-btn-toggle v-if="!isMobile" v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()"
         toggle-color="primary" :options="MovieTypeSelects" />
 
@@ -95,37 +116,39 @@
 
 
       <q-btn class="q-mr-sm" flat size="sm" color="primary" icon="ti-settings" @click="
-      listEditRef.open({
-        queryParam: view.queryParam,
-        settingInfo: view.settingInfo,
-        cb: listEditCallback
-      })
-      " />
+    listEditRef.open({
+      queryParam: view.queryParam,
+      settingInfo: view.settingInfo,
+      cb: listEditCallback
+    })
+    " />
       <q-toggle v-model="view.queryParam.OnlyRepeat" v-if="!isMobile" flat @update:model-value="fetchSearch"
         label="重" />
     </div>
     <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.6)">
       <div class="q-pa-sm flex flex-center">
-        <q-select color="lime-11 q-mr-md" bg-color="black" dense @update:model-value="(no) => {
-      view.queryParam.PageSize = Number(no);
-      fetchSearch();
-    }
-      " filled dark v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
-        </q-select>
+
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="deep-orange"
           :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="isMobile ? 5 : 10" boundary-numbers
           direction-links></q-pagination>
         <q-input v-model="view.queryParam.Page" :dense="true" type="search"
           style="background-color: aliceblue; width: 40px; text-align: center" @focus="focusEvent($event)"
           @update:model-value="(no) => {
-      view.queryParam.Page = Number(no);
-      fetchSearch();
-    }
-      " />
+    view.queryParam.Page = Number(no);
+    fetchSearch();
+  }
+    " />
+        <q-select color="lime-11 q-mr-md" bg-color="black" dense @update:model-value="(no) => {
+    view.queryParam.PageSize = Number(no);
+    fetchSearch();
+  }
+    " filled dark v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
+        </q-select>
       </div>
     </q-page-sticky>
+
     <q-page>
-      <div class="row justify-center q-mt-sm mainlist">
+      <div class="row justify-start q-mt-sm mainlist">
         <q-card class="q-ma-sm " v-bind:class="{ 'example-item': !isMobile, 'mobile-item': isMobile }"
           v-for="item in view.resultData.Data" :key="item.Id">
           <div class="float-head absolute-top">
@@ -162,9 +185,9 @@
                   background-color: rgba(188, 24, 24, 0.6);
                 ">
                 <span @click="
-      view.queryParam.Keyword = tag;
-    fetchSearch();
-    ">{{ tag?.substring(0, 4) }}</span>
+    view.queryParam.Keyword = tag;
+  fetchSearch();
+  ">{{ tag?.substring(0, 4) }}</span>
               </q-chip>
             </div>
             <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:1rem;color: antiquewhite;"
@@ -181,8 +204,8 @@
           </div>
           <q-img fit="fit" easier draggable :class="{ 'img-self': !isMobile, 'img-self-moblie': isMobile }"
             :src="getPng(item.Id)" @click="() => {
-      fileInfoRef.open({ item, cb: refreshIndex });
-    }">
+    fileInfoRef.open({ item, cb: refreshIndex });
+  }">
             <template v-slot:loading>
               <div class="text-subtitle1 text-white">
                 Loading...
@@ -192,14 +215,16 @@
           <div class="absolute-bottom float-btn" :style="{ height: isMobile ? '6rem' : '8.5rem' }">
             <div style="background-color: rgba(0, 0, 0, 0.2);">
               <div style="display: flex; flex-direction: row">
-                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="primary"
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="primary"
                   icon="ti-control-eject" @click="playBySystem(item)" title="播放" v-if="showButton('播放') && !isMobile" />
-                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="red" icon="ti-fullscreen"
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="red" icon="ti-fullscreen"
                   title="单页播放" @click="openPlay(item)" />
-                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="orange" icon="ti-arrow-right"
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="orange" icon="ti-arrow-right"
                   @click="openRightDrawer(item)" title="小播放" />
-                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'md'" ripple color="orange" icon="ti-blackboard"
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="orange" icon="ti-blackboard"
                   @click="fileInfoRef.open({ item, playing: true })" title="小播放" />
+                <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="green-5" icon="ti-layers-alt"
+                  @click="picInPic(item)" title="画中画" />
               </div>
               <div style="display: flex; flex-direction: row">
                 <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice"
@@ -237,11 +262,14 @@
   <FileEdit ref="fileEditRef" />
   <FileInfo ref="fileInfoRef" />
   <ListEdit ref="listEditRef" />
+
+
 </template>
 
 <script setup>
 import { useQuasar } from 'quasar';
-import { isElectron, isMobile } from 'boot/platform';
+
+import { /* isElectron, */ isMobile } from 'boot/platform';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
@@ -258,7 +286,7 @@ import {
 } from '../../components/api/searchAPI';
 import { GetSettingInfo } from '../../components/api/settingAPI';
 import { formatCode, formatTitle, MovieTypeOptions, MovieTypeSelects, FieldEnum, DescEnum, getLabelByValue } from '../../components/utils';
-import { getPng } from '../../components/utils/images';
+import { getPng, getFileStream } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
 import FileEdit from './components/FileEdit.vue';
 import FileInfo from './components/FileInfo.vue';
@@ -266,9 +294,12 @@ import ListEdit from './components/ListEdit.vue';
 
 import { onKeyStroke, useClipboard } from '@vueuse/core';
 
+const $q = useQuasar();
 const fileEditRef = ref(null);
 const fileInfoRef = ref(null);
 const listEditRef = ref(null);
+
+
 const source = ref('Hello');
 const { copy } = useClipboard({ source });
 
@@ -277,13 +308,30 @@ const suggestions = computed(() => {
   return systemProperty.getSuggestions
 })
 
-
-const $q = useQuasar();
-
 const listButtons = computed(() => {
   return view.settingInfo.Buttons;
 });
 
+const videoOffset = ref([2, 550])
+const videoWidth = ref(600)
+const draggingFab = ref(false)
+const moveFab = (ev) => {
+  draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
+  videoOffset.value = [
+    videoOffset.value[0] - ev.delta.x,
+    videoOffset.value[1] - ev.delta.y
+  ]
+}
+
+const zoomFab = (ev) => {
+  draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
+  console.log(ev)
+  videoWidth.value = videoWidth.value - ev.delta.x
+  videoOffset.value = [
+    videoOffset.value[0],
+    videoOffset.value[1] - ev.delta.y
+  ]
+}
 
 const playBySystem = (item) => {
   if ($q.platform.is.electron) {
@@ -433,9 +481,17 @@ const goActress = (Actress) => {
     })
     window.open(routeData.href, '_blank')
   }
-
-
 }
+
+
+const picInPic = (item) => {
+  view.currentData = item;
+  const video = document.getElementById('vue3VideoPlayRef');
+  if (video) {
+    view.videoUrl = getFileStream(item.Id)
+  }
+}
+
 
 const openRightDrawer = (item) => {
   view.currentData = item;

@@ -355,7 +355,7 @@ const open = (v) => {
   setTimeout(() => {
     vue3VideoPlayRef.value.play();
   }, 100);
-  if (!view.queryParam.Keyword) {
+  if (!view.queryParam.Keyword && props.mode !== 'picInPic') {
     view.queryParam.Keyword = v.Actress;
     fetchSearch();
   }

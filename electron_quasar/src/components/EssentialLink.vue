@@ -5,10 +5,7 @@
     >
     </q-item-section> -->
     <q-item-section>
-      <q-item-label
-        ><q-icon v-if="icon" :name="icon" />{{ title }}</q-item-label
-      >
-      <!-- <q-item-label caption>{{ caption }}</q-item-label> -->
+      <q-item-label><q-btn flat dense v-if="icon" :icon="icon" />{{ title }}</q-item-label>
     </q-item-section>
   </q-item>
 </template>

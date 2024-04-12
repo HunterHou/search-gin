@@ -2,10 +2,10 @@
   <div>
     <q-layout view="hHh Lpr lff" style="height: 100vh" class="shadow-2 rounded-borders">
       <q-header reveal class="bg-black">
-        <q-toolbar>
+        <q-toolbar class="q-electron-drag">
           <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
           <q-toolbar-title style="-webkit-app-region: drag">
-            文件搜索
+            文件搜索{{isElectron}}
           </q-toolbar-title>
 
           <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
@@ -68,7 +68,7 @@ import EssentialLink from 'components/EssentialLink.vue';
 import ListEdit from 'pages/file/components/ListEdit.vue';
 import ShutdownComponent from 'components/ShutdownComponent.vue';
 import { onKeyStroke } from '@vueuse/core';
-// import { isElectron } from 'boot/platform';
+import { isElectron } from 'boot/platform';
 
 import { useRoute } from 'vue-router';
 
