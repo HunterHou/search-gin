@@ -83,10 +83,12 @@
                   <q-btn outline size="sm" class="q-mr-sm" color="green" @click="toMp4(item)">toMp4</q-btn>
                   <q-btn outline class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
                     v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
-                  <q-btn color="red" v-for="ta in item.Tags" :key="ta"
-                    @click="commonExec(CloseTag(item.Id, ta), true)">{{
-    `- ${ta}`
-  }}
+
+                </div>
+                <div style="color:red;" v-if="item.Tags">点击删除：
+                  <q-btn color="red" flat size="sm" v-for="ta in item.Tags" :key="ta"
+                    @click="commonExec(CloseTag(item.Id, ta), true)">
+                    {{ `${ta}` }}
                   </q-btn>
                 </div>
                 <div v-if="item.showCut" style="
@@ -125,7 +127,7 @@
                 :label="item" color="teal" @update:model-value="updateButtons" />
             </template>
           </q-field>
-          <q-field color="purple-12" label="主题" stack-label>
+          <q-field color="purple-12" label="主题切换" stack-label>
             <template v-slot:prepend>
               <q-icon name="event" />
             </template>
@@ -136,7 +138,7 @@
                 :val="false" label="自然" />
             </template>
           </q-field>
-          <q-field color="purple-12" label="主题" stack-label>
+          <q-field color="purple-12" label="图鉴点击" stack-label>
             <template v-slot:prepend>
               <q-icon name="event" />
             </template>
@@ -155,6 +157,7 @@
             <q-expansion-item v-for="v, in view.tasking" :key="v">
               <template v-slot:header>
                 <q-item-section :style="{ color: v.Status == '成功' ? 'green' : 'red' }">
+
                   <div>{{ v.Name }}</div>
                   <div v-if="v.Start">
                     {{ `开始时间：${v.Start} ` }}
@@ -167,11 +170,9 @@
                   </div>
                 </q-item-section>
                 <q-item-section side>
-                  <div class="row">
-                    <q-btn color="blue" class="q-mr-sm">{{ v.Type }}</q-btn>
-                    <q-btn v-if="v.Status !== '成功'" class="q-mr-sm" :color="v.Status == '成功' ? 'green' : 'black'">{{
-    v.Status }}
-                    </q-btn>
+                  <div>
+                    <q-btn class="q-mr-sm" :color="v.Status == '成功' ? 'green' : 'red'">{{ v.Type }}
+                      {{ v.Status == '执行失败' ? '失败' : v.Status }}</q-btn>
                   </div>
                 </q-item-section>
               </template>
@@ -191,8 +192,8 @@
               <q-btn ripple flat>搜索记录</q-btn>
               <q-btn v-for="his, idx in browserHistoryMap" :key="his" color="blue" flat outline noCaps align="left"
                 ripple size="sm" @click="goHistory(his)">
-                <div class="row justify-center  q-gutter-sm">
-                  <span> {{ idx }}</span>
+                <div class="row  q-gutter-sm justify-between">
+                  <span style="color:orange;"> {{ idx }}</span>
                   <span>{{ his.MovieType }}</span>
                   <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
                   <span>{{ getLabelByValue(his.SortField, FieldEnum) }}
@@ -205,14 +206,12 @@
               <q-btn ripple flat>浏览记录</q-btn>
               <q-btn v-for="his in browserHistory" :key="his" flat outline noCaps align="left" style="width: 100%;"
                 ripple size="sm" color="primary" @click="goHistory(his)">
-                <div class="row justify-center  q-gutter-sm">
+                <div class="row justify-evenly  q-gutter-sm">
                   <span>{{ his.MovieType }}</span>
                   <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
                   <span>{{ ` ${getLabelByValue(his.SortField, FieldEnum)}/${getLabelByValue(his.SortType, DescEnum)}`
                     }}</span>
-                  <span>
-                    {{ his.Keyword ? `搜：${his.Keyword} ` : ' ' }}
-                  </span>
+                  <span style="color:orange;"> {{ his.Keyword ? `搜：${his.Keyword} ` : ' ' }}</span>
                   <span>
                     {{ date.formatDate(his.MTime, 'YYYY-MM-DD HH:mm:ss') }}
                   </span>

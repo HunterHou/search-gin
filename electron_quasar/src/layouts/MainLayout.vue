@@ -12,15 +12,6 @@
             color: currentPath === link.link ? 'red' : '',
             scale: 1.2,
           }" />
-          <!-- <q-btn color="green" flat @click="systemProperty.drawerRight = !systemProperty.drawerRight" round dense
-            icon="menu">
-            <span v-if="systemProperty.drawerRight">{{
-            `${(systemProperty &&
-              systemProperty.Playing?.Code?.substring(0, 8)) ||
-            systemProperty.Playing?.Title?.substring(0, 8)
-            }`
-          }}</span> 
-          </q-btn>-->
           <q-space />
           <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
           <q-btn dense flat size="lg" icon="refresh" @click="refreshThis"></q-btn>
@@ -199,7 +190,7 @@ const essentialLinks = [
     link: '/picture',
   },
   {
-    title: '设置',
+    title: '配置',
     caption: 'chat.quasar.dev',
     icon: 'settings',
     link: '/setting',

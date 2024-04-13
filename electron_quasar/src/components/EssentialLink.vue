@@ -1,12 +1,6 @@
 <template>
-  <q-item clickable tag="a" target="_self" :to="link">
-    <!-- <q-item-section
-      avatar
-    >
-    </q-item-section> -->
-    <q-item-section>
-      <q-item-label><q-btn flat dense v-if="icon" :icon="icon" />{{ title }}</q-item-label>
-    </q-item-section>
+  <q-item clickable tag="a" target="_self" :to="link" style="padding: 0;">
+    <q-btn style="margin:1px  8px" flat dense v-if="icon" :icon="icon">{{ title }}</q-btn>
   </q-item>
 </template>
 

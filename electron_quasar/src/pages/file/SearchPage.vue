@@ -1,6 +1,7 @@
 <template>
-  <q-page-sticky v-if="view.videoUrl" style="z-index: 9;" position="bottom-right" :offset="videoOffset">
-    <q-bar class="row  justify-between bg-black" :style="{ width: videoWidth + 'px' }">
+  <q-page-sticky v-if="view.videoUrl" style="z-index: 9;max-width: 100vw;" position="bottom-right"
+    :offset="videoOffset">
+    <q-bar class="row  justify-between bg-black" :style="{ width: videoWidth + 'px', maxWidth: '100vw' }">
       <q-btn dense flat icon="ti-arrow-top-left" color="white" v-touch-pan.prevent.mouse="zoomFab">
         <q-tooltip class="bg-white text-primary">缩放</q-tooltip>
       </q-btn>
@@ -15,7 +16,7 @@
       </q-btn>
     </q-bar>
     <video autoplay controls playsinline id="vue3VideoPlayRef" :src="view.videoUrl" width="200"
-      style="position: fixed;height:auto;z-index:  9;" :style="{ width: videoWidth + 'px' }"></video>
+      style="position: fixed;height:auto;z-index:  9;" :style="{ width: videoWidth + 'px', maxWidth: '100%' }"></video>
 
   </q-page-sticky>
 
@@ -125,25 +126,26 @@
       <q-toggle v-model="view.queryParam.OnlyRepeat" v-if="!isMobile" flat @update:model-value="fetchSearch"
         label="重" />
     </div>
-    <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.6)">
+    <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.3)">
       <div class="q-pa-sm flex flex-center">
 
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="deep-orange"
           :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="isMobile ? 5 : 10" boundary-numbers
           direction-links></q-pagination>
-        <q-input v-model="view.queryParam.Page" :dense="true" type="search"
-          style="background-color: aliceblue; width: 40px; text-align: center" @focus="focusEvent($event)"
-          @update:model-value="(no) => {
+        <div class="row q-gutter-sm">
+          <q-input v-model="view.queryParam.Page" :dense="true" type="search" style="width: 40px; text-align: center;"
+            bgColor="orange" @focus="focusEvent($event)" @update:model-value="(no) => {
     view.queryParam.Page = Number(no);
     fetchSearch();
   }
     " />
-        <q-select color="lime-11 q-mr-md" bg-color="black" dense @update:model-value="(no) => {
+          <q-select color="lime-11 q-mr-md" bg-color="black" dense @update:model-value="(no) => {
     view.queryParam.PageSize = Number(no);
     fetchSearch();
   }
     " filled dark v-model="view.queryParam.PageSize" :options="[10, 20, 30, 50, 200]">
-        </q-select>
+          </q-select>
+        </div>
       </div>
     </q-page-sticky>
 
@@ -212,7 +214,7 @@
               </div>
             </template>
           </q-img>
-          <div class="absolute-bottom float-btn" :style="{ height: isMobile ? '6rem' : '8.5rem' }">
+          <div class="absolute-bottom float-btn" :style="{ height: isMobile ? '8rem' : '8rem' }">
             <div style="background-color: rgba(0, 0, 0, 0.2);">
               <div style="display: flex; flex-direction: row">
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="primary"
@@ -312,24 +314,27 @@ const listButtons = computed(() => {
   return view.settingInfo.Buttons;
 });
 
-const videoOffset = ref([2, 550])
-const videoWidth = ref(600)
+const videoOffset = computed(() => {
+  return systemProperty.pictureInPictureVideoOffset;
+});
+const videoWidth = computed(() => {
+  return systemProperty.pictureInPictureVideoWidth;
+});
 const draggingFab = ref(false)
 const moveFab = (ev) => {
   draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
-  videoOffset.value = [
-    videoOffset.value[0] - ev.delta.x,
-    videoOffset.value[1] - ev.delta.y
+  systemProperty.pictureInPictureVideoOffset = [
+    systemProperty.pictureInPictureVideoOffset[0] - ev.delta.x,
+    systemProperty.pictureInPictureVideoOffset[1] - ev.delta.y
   ]
 }
 
 const zoomFab = (ev) => {
   draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
-  console.log(ev)
-  videoWidth.value = videoWidth.value - ev.delta.x
-  videoOffset.value = [
-    videoOffset.value[0],
-    videoOffset.value[1] - ev.delta.y
+  systemProperty.pictureInPictureVideoWidth = systemProperty.pictureInPictureVideoWidth - ev.delta.x
+  systemProperty.pictureInPictureVideoOffset = [
+    systemProperty.pictureInPictureVideoOffset[0],
+    systemProperty.pictureInPictureVideoOffset[1] - ev.delta.y
   ]
 }
 

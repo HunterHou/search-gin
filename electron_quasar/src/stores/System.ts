@@ -4,6 +4,7 @@ import { SettingInfo } from 'components/model/Setting';
 
 export const useSystemProperty = defineStore({
   id: 'system',
+   // eslint-disabl
   persist: {
     enabled: true,
     // 自定义持久化参数
@@ -18,6 +19,8 @@ export const useSystemProperty = defineStore({
     ],
   },
   state: () => ({
+    pictureInPictureVideoOffset: [2, 550],
+    pictureInPictureVideoWidth: 600,
     isFullscreen: false,
     isDark: false,
     goActressNewWidow: false,
