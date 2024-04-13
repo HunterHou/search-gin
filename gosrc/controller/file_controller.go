@@ -239,7 +239,7 @@ func GetTransferToMp4(c *gin.Context) {
 	}
 	exists := false
 	for _, taskModel := range cons.TransferTask {
-		if taskModel.Path == model.Path {
+		if taskModel.Path == model.Path && !taskModel.Status == "执行失败"  {
 			exists = true
 			break
 		}

@@ -141,41 +141,38 @@
               <q-icon name="event" />
             </template>
             <template v-slot:control>
-              <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
-                :val="true" label="新窗口" />
-              <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
-                :val="false" label="本地" />
+              <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye" :val="true" label="新窗口" />
+              <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye" :val="false" label="本地" />
             </template>
           </q-field>
-          
+
         </q-tab-panel>
 
         <q-tab-panel name="tasking">
           <q-list bordered separator>
-            <q-expansion-item v-for="(v, k) in view.tasking" :key="k">
+            <q-expansion-item v-for="v, in view.tasking" :key="v">
               <template v-slot:header>
-                <q-item-section avatar>
-                  <q-btn color="blue" class="q-mr-sm">{{ v.Type }}</q-btn>
-                  {{ ` 格式：${v.To} ` }}
-                </q-item-section>
-                <q-item-section>
+                <q-item-section :style="{ color: v.Status == '成功' ? 'green' : 'red' }">
                   <div>{{ v.Name }}</div>
-                  <div>
+                  <div v-if="v.Start">
                     {{ `开始时间：${v.Start} ` }}
                     {{ ` 结束时间：${v.End} ` }}
                   </div>
-                  <div>
-                    {{
-    `耗时：${((v.FinishTime ? new Date(v.FinishTime) : new Date()).getTime() -
-      new Date(v.CreateTime).getTime()) /
-    1000
-    }`
-  }}
+                  <div class="row justify-between">
+                    <div style="color: blue;">耗时：{{ showTimeUse(v.FinishTime, v.CreateTime)
+                      }}</div>
+                    开始时间：{{ new Date(v.CreateTime).toLocaleString() }}
                   </div>
                 </q-item-section>
                 <q-item-section side>
-                  <q-btn class="q-mr-sm" :color="v.Status == '成功' ? 'green' : 'black'">{{ v.Status }}
-                  </q-btn>
+                  <div class="row">
+                    <q-btn color="blue" class="q-mr-sm">{{ v.Type }}</q-btn>
+                    <q-btn v-if="v.Status !== '成功'" class="q-mr-sm" :color="v.Status == '成功' ? 'green' : 'black'">{{
+    v.Status }}
+                    </q-btn>
+                  </div>
                 </q-item-section>
               </template>
               <q-card>
@@ -265,6 +262,15 @@ const goHistory = (item) => {
   window.location.reload()
 }
 
+const showTimeUse = (end, start) => {
+  return `${((new Date(end).getFullYear() > 1000 ? new Date(end) : new
+    Date()).getTime() -
+    new Date(start).getTime()) /
+    1000
+    }`
+}
+
+
 const systemProperty = useSystemProperty();
 const browserHistory = computed(() => {
   return systemProperty.getHistory
@@ -296,7 +302,13 @@ watch(
 
 const fetchTasking = async () => {
   const res = await TransferTasksInfo();
-  view.tasking = res.Data;
+  const listTasks = []
+  Object.keys(res.Data).forEach((key) => {
+    const v = res.Data[key]
+    v.Log = v.Log.replace(/\n/g, '<br>');
+    listTasks.unshift(v)
+  });
+  view.tasking = listTasks;
 };
 const view = reactive({
   selectAll: false,
