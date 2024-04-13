@@ -23,7 +23,7 @@ rm -rf dist
 echo 'cd ..'
 cd ..
 
-if [ $levelKey == 1 ] || [  $levelKey == 2 ] || [ $levelKey == 3 ]; then
+if [ $levelKey == 1 ] || [  $levelKey == 2 ] || [ $levelKey == 3 ] || [ $levelKey == 4 ]; then
     echo 'cd electron_quasar'
     cd electron_quasar
     echo 开始打包前端文件
@@ -36,7 +36,7 @@ if [ $levelKey == 1 ] || [  $levelKey == 2 ] || [ $levelKey == 3 ]; then
     cp -R dist/spa ../qapp/dist
 fi
 cd ..
-if [ $levelKey == 2 ]; then
+if [ $levelKey == 2 ] || [ $levelKey == 4 ]; then
     echo '移动完成，打包APP'
     cd gosrc
     go build -o ../qapp/appQuaser.exe -ldflags "-H=windowsgui" -tags=prod
@@ -50,7 +50,7 @@ if [ $levelKey == 2 ]; then
     echo 'APP打包完成！！！'
 fi
 
-if [  $levelKey == 1 ] || [ $levelKey == 3 ]; then
+if [  $levelKey == 1 ] || [ $levelKey == 3 ] || [ $levelKey == 4 ]; then
 
     echo 移动源到 Election代码目录
     echo 'cp -R qapp electron_quasar/src-electron/icons'
