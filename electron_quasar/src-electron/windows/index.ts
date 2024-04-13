@@ -1,6 +1,6 @@
 import {
   BrowserWindow,
-  Notification,
+  // Notification,
   clipboard,
   BrowserWindowConstructorOptions,
   ContextMenuParams,
@@ -121,18 +121,18 @@ const onContextMenu = (_e: Event, params: ContextMenuParams) => {
   } else if (mediaType === 'image') {
     if (srcURL.trim().length) {
       clipboard.writeText(srcURL);
-      new Notification({
-        title: '已复制',
-        body: srcURL,
-      }).show();
+      // new Notification({
+      //   title: '已复制',
+      //   body: srcURL,
+      // }).show();
     }
   } else {
     if (selectionText.trim().length) {
       clipboard.writeText(selectionText);
-      new Notification({
-        title: '已复制',
-        body: selectionText,
-      }).show();
+      // new Notification({
+      //   title: '已复制',
+      //   body: selectionText,
+      // }).show();
     }
   }
 };
