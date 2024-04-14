@@ -336,9 +336,10 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	result.Success()
 	result.Message = "【" + dirname + "】" + result.Message
 	return result
+
 }
 
-func (fs SearchService) DownJpgMakePng(finalPath string, url string) utils.Result {
+func (fs SearchService) DownJpgMakePng(finalPath string, url string, makePng bool) utils.Result {
 	result := utils.Result{}
 	jpgPath := utils.GetPng(finalPath, "jpg")
 	jpgOut, createErr := os.Create(jpgPath)
@@ -365,10 +366,43 @@ func (fs SearchService) DownJpgMakePng(finalPath string, url string) utils.Resul
 	}
 	jpgOut.Write(body)
 	jpgOut.Close()
-	pngErr := utils.ImageToPng(jpgPath)
-	if pngErr != nil {
-		fmt.Println("pngErr:", pngErr)
+	if makePng {
+		pngErr := utils.ImageToPng(jpgPath)
+		if pngErr != nil {
+			fmt.Println("pngErr:", pngErr)
+		}
 	}
+	result.Success()
+	return result
+}
+
+func (fs SearchService) DownJpgAsPng(finalPath string, url string) utils.Result {
+	result := utils.Result{}
+	pngPath := utils.GetPng(finalPath, "png")
+	pngOut, createErr := os.Create(pngPath)
+	if createErr != nil {
+		fmt.Println("createErr:", createErr)
+	}
+	if !strings.Contains(url, "http") {
+		url = cons.OSSetting.BaseUrl + url
+	}
+	fmt.Println(url)
+	resp, downErr := httpGet(url)
+	if downErr != nil {
+		result.Fail()
+		fmt.Println("downErr:", downErr)
+		result.Message = "文件下载失败：" + url
+		return result
+	}
+	body, readErr := ioutil.ReadAll(resp.Body)
+	if readErr != nil {
+		result.Fail()
+		fmt.Println("readErr:", readErr)
+		result.Message = "请求读取response失败"
+		return result
+	}
+	pngOut.Write(body)
+	pngOut.Close()
 	result.Success()
 	return result
 }
@@ -379,14 +413,6 @@ func (fs SearchService) DownImage(toFile datamodels.Movie) utils.Result {
 	}
 	var wg sync.WaitGroup
 	wg.Add(len(toFile.ImageList))
-
-	//主图下载
-	// wg.Add(1)
-	//jpgUrl := toFile.JpgUrl
-	//if !strings.HasPrefix(jpgUrl, "http") {
-	//	jpgUrl = cons.OSSetting.BaseUrl + strings.Replace(jpgUrl, "/", "", 1)
-	//}
-	//go downImageItem(jpgUrl, toFile.DirPath, toFile.Actress, "", &wg)
 	for i := 0; i < len(toFile.ImageList); i++ {
 		go downImageItem(toFile.ImageList[i], toFile.DirPath, toFile.Code, fmt.Sprintf("%d", i), &wg)
 	}
@@ -688,12 +714,27 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 		res.FailByMsg("文件不存在")
 		return res
 	}
-	if movie.Jpg != "" && strings.HasPrefix(movie.Jpg, "http") {
-		res = fs.DownJpgMakePng(movieLib.Path, movie.Jpg)
+
+	if movie.Png != "" && strings.HasPrefix(movie.Png, "http") {
+		res = fs.DownJpgAsPng(movieLib.Path, movie.Png)
 		if !res.IsSuccess() {
 			return res
 		}
+		if movie.Jpg != "" && strings.HasPrefix(movie.Jpg, "http") {
+			res = fs.DownJpgMakePng(movieLib.Path, movie.Jpg, false)
+			if !res.IsSuccess() {
+				return res
+			}
+		}
+	} else {
+		if movie.Jpg != "" && strings.HasPrefix(movie.Jpg, "http") {
+			res = fs.DownJpgMakePng(movieLib.Path, movie.Jpg, true)
+			if !res.IsSuccess() {
+				return res
+			}
+		}
 	}
+
 	newPath := cleanPath(movieLib.DirPath)
 	newDir := newPath
 	if movie.MoveOut {

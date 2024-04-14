@@ -1,8 +1,8 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card class="q-dialog-plugin q-pa-md" style="max-width: 1200px;width:60vw" >
+    <q-card class="q-dialog-plugin q-pa-md" style="max-width: 1200px;width:60vw">
       <q-form class="q-gutter-md">
-        <q-btn-toggle v-model="view.item.MovieType" :options="MovieTypeOptions"  toggle-color="primary" />
+        <q-btn-toggle v-model="view.item.MovieType" :options="MovieTypeOptions" toggle-color="primary" />
         <q-input label="编码" autogrow v-model="view.item.Code" :dense="false" />
         <q-input label="图鉴" autogrow v-model="view.item.Actress" :dense="false" />
         <q-input label="名称" autogrow v-model="view.item.Title" :dense="false" />
@@ -29,7 +29,7 @@ import { reactive } from 'vue';
 import {
   formatTitle,
   formatCode,
-  MovieTypeOptions,
+  MovieTypeOptions
 } from '../../../components/utils';
 import { FileRename } from '../../../components/api/searchAPI';
 import { FileModel } from 'src/components/model/File';
@@ -38,13 +38,13 @@ const $q = useQuasar();
 
 const view = reactive({
   item: null,
-  callback: null,
+  callback: null
 });
 
 defineEmits([
   // REQUIRED; 需要明确指出
   // 组件通过 useDialogPluginComponent() 暴露哪些事件
-  ...useDialogPluginComponent.emits,
+  ...useDialogPluginComponent.emits
 ]);
 
 const open = (item, cb) => {
@@ -100,7 +100,7 @@ const editItemSubmit = async (MoveOut) => {
     MoveOut,
     Jpg,
     Png,
-    NoRefresh: true,
+    NoRefresh: true
   };
   const res = await FileRename(param);
   if (res.Code == 200) {
@@ -130,6 +130,6 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 // ...会自动关闭对话框
 // }
 defineExpose({
-  open,
+  open
 });
 </script>
