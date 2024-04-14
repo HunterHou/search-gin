@@ -11,7 +11,7 @@
         <q-tab-panel name="filelist">
           <div class="q-mr-sm q-mb-sm  row justify-left">
             <q-btn-toggle outline v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()"
-              toggle-color="primary" :options="MovieTypeSelects" />
+                          toggle-color="primary" :options="MovieTypeSelects" />
             <q-btn class="q-ml-sm " v-if="view.queryParam.Page != 1" size="sm" color="primary" @click="nextPage(-1)">上
             </q-btn>
             <q-btn class="q-ml-sm" size="sm" color="primary" @click="nextPage(1)">下</q-btn>
@@ -19,12 +19,12 @@
           </div>
           <div class="q-mr-sm row justify-left">
             <q-btn class=" q-mr-sm" color="amber" outline size="sm" glossy text-color="black" @click="selectAll">{{
-    view.selectAll
-      ? '不选' : '全选'
-  }}
+                view.selectAll
+                  ? '不选' : '全选'
+              }}
             </q-btn>
             <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
-              @update:model-value="fetchSearch()" />
+                     @update:model-value="fetchSearch()" />
             <q-btn class="q-mr-sm" size="sm" color="blue-6" icon="refresh" @click="refreshIndex">刷新</q-btn>
             <q-btn-dropdown class="q-mr-sm" size="sm" label="设置" type="primary" color="teal" icon="ti-settings">
               <q-list>
@@ -39,10 +39,11 @@
             <q-btn-dropdown class="q-mr-sm" size="sm" label="标签" type="primary" color="teal" icon="ti-plus">
               <div style="width: 300px;">
                 <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
-                  v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag" @click="addTagBySelector(tag)" />
+                       v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag" @click="addTagBySelector(tag)" />
               </div>
             </q-btn-dropdown>
             <q-btn outline class="q-mr-sm" size="sm" color="red" icon="delete" @click="deleteBySelector">删除</q-btn>
+            <q-btn outline class="q-mr-sm" size="sm" color="red" icon="cpoy" @click="copyAllCodes">复制番号</q-btn>
           </div>
           <div class="q-gutter-sm q-mt-sm">
             <div v-for="item in view.resultData.Data" :key="item.Id" style="
@@ -54,10 +55,10 @@
               <div style="display: flex; flex-direction: column">
                 <q-item-label>
                   <span v-if="view.cutListIds.indexOf(item.Id) >= 0" style="color: red">剪切中：：</span>{{
-    item.Title
-  }}【{{
-      item.SizeStr
-    }}】
+                    item.Title
+                  }}【{{
+                    item.SizeStr
+                  }}】
                 </q-item-label>
                 <div style="display: flex; flex-direction: row" v-ripple>
                   <q-checkbox size="sm" v-model="view.selector" :val="item.Id" color="red" />
@@ -75,19 +76,19 @@
                     </q-list>
                   </q-btn-dropdown>
                   <q-btn outline size="sm" class="q-mr-sm" color="amber" glossy text-color="black" icon="delete"
-                    @click="confirmDelete(item)" />
+                         @click="confirmDelete(item)" />
                   <q-btn outline size="sm" class="q-mr-sm" @click="moveThis(item)" icon="near_me" />
                   <q-btn outline class="q-mr-sm" size="sm" icon="open_in_new"
-                    @click="commonExec(OpenFileFolder(item.Id))" />
+                         @click="commonExec(OpenFileFolder(item.Id))" />
                   <q-btn outline size="sm" class="q-mr-sm" icon="ti-pencil-alt2" @click="item.showCut = true"></q-btn>
                   <q-btn outline size="sm" class="q-mr-sm" color="green" @click="toMp4(item)">toMp4</q-btn>
                   <q-btn outline class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-                    v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
+                         v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
 
                 </div>
                 <div style="color:red;" v-if="item.Tags">点击删除：
                   <q-btn color="red" flat size="sm" v-for="ta in item.Tags" :key="ta"
-                    @click="commonExec(CloseTag(item.Id, ta), true)">
+                         @click="commonExec(CloseTag(item.Id, ta), true)">
                     {{ `${ta}` }}
                   </q-btn>
                 </div>
@@ -124,7 +125,7 @@
             </template>
             <template v-slot:control>
               <q-checkbox v-model="view.settingInfo.Buttons" v-for="item in buttonEnum" :key="item" :val="item"
-                :label="item" color="teal" @update:model-value="updateButtons" />
+                          :label="item" color="teal" @update:model-value="updateButtons" />
             </template>
           </q-field>
           <q-field color="purple-12" label="主题切换" stack-label>
@@ -133,9 +134,9 @@
             </template>
             <template v-slot:control>
               <q-radio v-model="systemProperty.isDark" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
-                :val="true" label="暗黑" />
+                       :val="true" label="暗黑" />
               <q-radio v-model="systemProperty.isDark" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
-                :val="false" label="自然" />
+                       :val="false" label="自然" />
             </template>
           </q-field>
           <q-field color="purple-12" label="图鉴点击" stack-label>
@@ -144,9 +145,9 @@
             </template>
             <template v-slot:control>
               <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt"
-                unchecked-icon="panorama_fish_eye" :val="true" label="新窗口" />
+                       unchecked-icon="panorama_fish_eye" :val="true" label="新窗口" />
               <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt"
-                unchecked-icon="panorama_fish_eye" :val="false" label="本地" />
+                       unchecked-icon="panorama_fish_eye" :val="false" label="本地" />
             </template>
           </q-field>
 
@@ -154,7 +155,7 @@
 
         <q-tab-panel name="tasking">
           <q-list bordered separator>
-            <q-expansion-item v-for="v, in view.tasking" :key="v">
+            <q-expansion-item v-for="v in view.tasking" :key="v">
               <template v-slot:header>
                 <q-item-section :style="{ color: v.Status == '成功' ? 'green' : 'red' }">
 
@@ -165,14 +166,16 @@
                   </div>
                   <div class="row justify-between">
                     <div style="color: blue;">耗时：{{ showTimeUse(v.FinishTime, v.CreateTime)
-                      }}</div>
+                      }}
+                    </div>
                     开始时间：{{ new Date(v.CreateTime).toLocaleString() }}
                   </div>
                 </q-item-section>
                 <q-item-section side>
                   <div>
                     <q-btn class="q-mr-sm" :color="v.Status == '成功' ? 'green' : 'red'">{{ v.Type }}
-                      {{ v.Status == '执行失败' ? '失败' : v.Status }}</q-btn>
+                      {{ v.Status == '执行失败' ? '失败' : v.Status }}
+                    </q-btn>
                   </div>
                 </q-item-section>
               </template>
@@ -190,8 +193,8 @@
           <div style="margin-top: 0;display: flex;flex-direction: row;justify-content: space-between;">
             <div style="width: 50%;display: flex;flex-direction: column;overflow: auto">
               <q-btn ripple flat>搜索记录</q-btn>
-              <q-btn v-for="his, idx in browserHistoryMap" :key="his" color="blue" flat outline noCaps align="left"
-                ripple size="sm" @click="goHistory(his)">
+              <q-btn v-for="(his, idx) in browserHistoryMap" :key="his" color="blue" flat outline noCaps align="left"
+                     ripple size="sm" @click="goHistory(his)">
                 <div class="row  q-gutter-sm justify-between">
                   <span style="color:orange;"> {{ idx }}</span>
                   <span>{{ his.MovieType }}</span>
@@ -205,7 +208,7 @@
             <div style="width: 50%;display: flex;flex-direction: column;overflow: auto">
               <q-btn ripple flat>浏览记录</q-btn>
               <q-btn v-for="his in browserHistory" :key="his" flat outline noCaps align="left" style="width: 100%;"
-                ripple size="sm" color="primary" @click="goHistory(his)">
+                     ripple size="sm" color="primary" @click="goHistory(his)">
                 <div class="row justify-evenly  q-gutter-sm">
                   <span>{{ his.MovieType }}</span>
                   <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
@@ -250,34 +253,35 @@ import {
 import { PostSettingInfo } from 'src/components/api/settingAPI';
 import { useSystemProperty } from 'stores/System';
 import { useRouter } from 'vue-router';
+import { useClipboard } from '@vueuse/core';
 
-const { resolve } = useRouter()
+const { resolve } = useRouter();
 
 const $q = useQuasar();
 
 const goHistory = (item) => {
-  const url = resolve({ path: '/search', query: { ...item } }).href
-  window.location.href = url
-  window.location.reload()
-}
+  const url = resolve({ path: '/search', query: { ...item } }).href;
+  window.location.href = url;
+  window.location.reload();
+};
 
 const showTimeUse = (end, start) => {
   return `${((new Date(end).getFullYear() > 1000 ? new Date(end) : new
     Date()).getTime() -
     new Date(start).getTime()) /
-    1000
-    }`
-}
+  1000
+  }`;
+};
 
 
 const systemProperty = useSystemProperty();
 const browserHistory = computed(() => {
-  return systemProperty.getHistory
-})
+  return systemProperty.getHistory;
+});
 
 const browserHistoryMap = computed(() => {
-  return systemProperty.getHistoryMap
-})
+  return systemProperty.getHistoryMap;
+});
 
 const isMobile = computed(() => {
   return $q.platform.is.mobile;
@@ -301,11 +305,11 @@ watch(
 
 const fetchTasking = async () => {
   const res = await TransferTasksInfo();
-  const listTasks = []
+  const listTasks = [];
   Object.keys(res.Data).forEach((key) => {
-    const v = res.Data[key]
+    const v = res.Data[key];
     v.Log = v.Log.replace(/\n/g, '<br>');
-    listTasks.unshift(v)
+    listTasks.unshift(v);
   });
   view.tasking = listTasks;
 };
@@ -368,24 +372,40 @@ const setTypeBySelector = (value) => {
   if (view.selector && view.selector.length > 0) {
     view.selector.forEach(item => {
       commonExec(ResetMovieType(item, value));
-    })
+    });
   }
-}
+};
 const deleteBySelector = () => {
   if (view.selector && view.selector.length > 0) {
     view.selector.forEach(item => {
-      commonExec(DeleteFile(item))
-    })
+      commonExec(DeleteFile(item));
+    });
   }
-}
+};
+
+const source = ref('Hello');
+const { copy } = useClipboard({ source });
+
+const copyAllCodes = async () => {
+
+  if (view.resultData.Data && view.resultData.Data.length > 0) {
+    const str = view.resultData.Data.map(item => {
+        return item.Code;
+      }
+    ).join(' ');
+    await copy(str);
+    $q.notify({ message: `${str}` });
+  }
+};
+
 
 const addTagBySelector = (value) => {
   if (view.selector && view.selector.length > 0) {
     view.selector.forEach(item => {
       commonExec(AddTag(item, value));
-    })
+    });
   }
-}
+};
 
 
 const refreshIndex = async () => {
@@ -394,9 +414,9 @@ const refreshIndex = async () => {
 };
 
 const nextPage = (n) => {
-  view.queryParam.Page = view.queryParam.Page + n
-  fetchSearch()
-}
+  view.queryParam.Page = view.queryParam.Page + n;
+  fetchSearch();
+};
 
 const fetchSearch = async () => {
   const data = await SearchAPI(view.queryParam);
@@ -416,11 +436,11 @@ const commonExec = async (exec) => {
 const open = (data) => {
   const { queryParam, settingInfo, cb, tabName } = data;
   if (tabName) {
-    tab.value = tabName
+    tab.value = tabName;
   }
   if (queryParam) {
     view.queryParam = queryParam;
-    view.queryParam.PageSize = 10
+    view.queryParam.PageSize = 10;
   } else {
     view.queryParam = systemProperty.getSearchParam;
   }
@@ -442,7 +462,7 @@ const dialogHide = async () => {
   onDialogCancel();
   onDialogOK();
   onDialogHide();
-  console.log('dialogHide')
+  console.log('dialogHide');
 };
 
 const confirmDelete = (item) => {
@@ -504,7 +524,7 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 
 const updateButtons = () => {
   if (view.callback) {
-    PostSettingInfo(view.settingInfo)
+    PostSettingInfo(view.settingInfo);
     view.callback({ settingInfo: view.settingInfo });
   }
 };

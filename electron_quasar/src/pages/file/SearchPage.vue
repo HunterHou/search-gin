@@ -1,13 +1,13 @@
 <template>
   <q-page-sticky v-if="view.videoUrl" style="z-index: 9;max-width: 100vw;" position="bottom-right"
-    :offset="videoOffset">
+                 :offset="videoOffset">
     <q-bar class="row  justify-between bg-black" :style="{ width: videoWidth + 'px', maxWidth: '100vw' }">
       <q-btn dense flat icon="ti-arrow-top-left" color="white" v-touch-pan.prevent.mouse="zoomFab">
         <q-tooltip class="bg-white text-primary">缩放</q-tooltip>
       </q-btn>
       <q-space />
       <span style="color:aliceblue;width:80%;height:1.5rem;overflow-y: hidden;" v-touch-pan.prevent.mouse="moveFab"
-        :disable="draggingFab"><q-btn flat icon="ti-move" color="white">
+            :disable="draggingFab"><q-btn flat icon="ti-move" color="white">
           <q-tooltip class="bg-white text-primary">拖动</q-tooltip>
         </q-btn>{{ view.currentData.Name }}</span>
       <q-space />
@@ -16,7 +16,8 @@
       </q-btn>
     </q-bar>
     <video autoplay controls playsinline id="vue3VideoPlayRef" :src="view.videoUrl" width="200"
-      style="position: fixed;height:auto;z-index:  9;" :style="{ width: videoWidth + 'px', maxWidth: '100%' }"></video>
+           style="position: fixed;height:auto;z-index:  9;"
+           :style="{ width: videoWidth + 'px', maxWidth: '100%' }"></video>
 
   </q-page-sticky>
 
@@ -24,12 +25,12 @@
   <div class="q-mg-md top" style="margin-bottom: 40px">
     <q-page-sticky style="z-index: 9;" position="bottom-left" :offset="[6, isMobile ? 180 : 160]">
       <q-btn round class="page-sticky" color="amber" text-color="black" icon="keyboard_arrow_left"
-        v-if="view.queryParam.Page > 1" @click="nextPage(-1)"></q-btn>
+             v-if="view.queryParam.Page > 1" @click="nextPage(-1)"></q-btn>
     </q-page-sticky>
 
     <q-page-sticky style="z-index: 9;" position="bottom-right" :offset="[10, isMobile ? 180 : 160]">
       <q-btn round class="page-sticky" color="secondary" text-color="black" icon="keyboard_arrow_right"
-        @click="nextPage(1)"></q-btn>
+             @click="nextPage(1)"></q-btn>
     </q-page-sticky>
 
 
@@ -40,25 +41,25 @@
       </q-btn>
 
       <q-btn-toggle v-if="!isMobile" size="md" v-model="view.queryParam.SortField" @update:model-value="fetchSearch()"
-        toggle-color="primary" :options="[
+                    toggle-color="primary" :options="[
     { label: '时', value: 'MTime' },
     { label: '容', value: 'Size' },
     { label: '名', value: 'Code' }
   ]" />
       <q-btn-toggle v-if="!isMobile" v-model="view.queryParam.SortType" @update:model-value="fetchSearch()"
-        toggle-color="primary" :options="[
+                    toggle-color="primary" :options="[
     { label: '正', value: 'asc' },
     { label: '倒', value: 'desc' }
   ]" />
       <q-btn-toggle v-if="!isMobile" v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()"
-        toggle-color="primary" :options="MovieTypeSelects" />
+                    toggle-color="primary" :options="MovieTypeSelects" />
 
 
       <q-btn-dropdown v-if="isMobile" outline color="primary"
-        :label="getLabelByValue(view.queryParam.SortField, FieldEnum)">
+                      :label="getLabelByValue(view.queryParam.SortField, FieldEnum)">
         <q-list>
           <q-item v-for="item in FieldEnum" :key="item.label" clickable v-close-popup
-            @click="view.queryParam.SortField = item.value; fetchSearch()">
+                  @click="view.queryParam.SortField = item.value; fetchSearch()">
             <q-item-section>
               <q-item-label>{{ item.label }}</q-item-label>
             </q-item-section>
@@ -67,10 +68,10 @@
       </q-btn-dropdown>
 
       <q-btn-dropdown v-if="isMobile" outline color="primary"
-        :label="getLabelByValue(view.queryParam.SortType, DescEnum)">
+                      :label="getLabelByValue(view.queryParam.SortType, DescEnum)">
         <q-list>
           <q-item v-for="item in DescEnum" :key="item.label" clickable v-close-popup
-            @click="view.queryParam.SortType = item.value; fetchSearch()">
+                  @click="view.queryParam.SortType = item.value; fetchSearch()">
             <q-item-section>
               <q-item-label>{{ item.label }}</q-item-label>
             </q-item-section>
@@ -80,10 +81,10 @@
 
 
       <q-btn-dropdown v-if="isMobile" outline color="primary"
-        :label="getLabelByValue(view.queryParam.MovieType, MovieTypeSelects)">
+                      :label="getLabelByValue(view.queryParam.MovieType, MovieTypeSelects)">
         <q-list>
           <q-item v-for="item in MovieTypeSelects" :key="item.label" clickable v-close-popup
-            @click="view.queryParam.MovieType = item.value; fetchSearch()">
+                  @click="view.queryParam.MovieType = item.value; fetchSearch()">
             <q-item-section>
               <q-item-label>{{ item.label }}</q-item-label>
             </q-item-section>
@@ -92,14 +93,14 @@
       </q-btn-dropdown>
 
       <q-input id="searchBtn" label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
-        @update:model-value="fetchSearch()">
+               @update:model-value="fetchSearch()">
         <template v-slot:prepend>
           <q-icon name="ti-list" class="cursor-pointer">
             <q-popup-proxy>
               <div style="width: 200px;max-height: 50vh;">
                 <q-list>
                   <q-item clickable v-ripple v-for="word in suggestions" :key="word"
-                    @click="view.queryParam.Keyword = word; fetchSearch()">
+                          @click="view.queryParam.Keyword = word; fetchSearch()">
                     <q-item-section>
                       <q-item-label>{{ word }}</q-item-label>
                     </q-item-section>
@@ -124,17 +125,18 @@
     })
     " />
       <q-toggle v-model="view.queryParam.OnlyRepeat" v-if="!isMobile" flat @update:model-value="fetchSearch"
-        label="重" />
+                label="重" />
     </div>
     <q-page-sticky position="bottom" style="z-index: 9; background-color: rgba(0, 0, 0, 0.3)">
       <div class="q-pa-sm flex flex-center">
 
         <q-pagination v-model="view.queryParam.Page" @update:model-value="currentPageChange" color="deep-orange"
-          :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="isMobile ? 5 : 10" boundary-numbers
-          direction-links></q-pagination>
+                      :ellipses="true" :max="view.resultData.TotalPage || 0" :max-pages="isMobile ? 5 : 10"
+                      boundary-numbers
+                      direction-links></q-pagination>
         <div class="row q-gutter-sm">
           <q-input v-model="view.queryParam.Page" :dense="true" type="search" style="width: 40px; text-align: center;"
-            bgColor="orange" @focus="focusEvent($event)" @update:model-value="(no) => {
+                   bgColor="orange" @focus="focusEvent($event)" @update:model-value="(no) => {
     view.queryParam.Page = Number(no);
     fetchSearch();
   }
@@ -152,7 +154,7 @@
     <q-page>
       <div class="row justify-start q-mt-sm mainlist">
         <q-card class="q-ma-sm " v-bind:class="{ 'example-item': !isMobile, 'mobile-item': isMobile }"
-          v-for="item in view.resultData.Data" :key="item.Id">
+                v-for="item in view.resultData.Data" :key="item.Id">
           <div class="float-head absolute-top">
             <div style="
                 display: flex;
@@ -169,13 +171,13 @@
                   <div class="tag-popup">
                     <div>
                       <q-btn size="sm" icon='ti-minus' square text-color="white" color="green" class="tag-item"
-                        v-for="tag in item.Tags" :key="tag" :label="tag"
-                        @click="commonExec(CloseTag(item.Id, tag), true)" />
+                             v-for="tag in item.Tags" :key="tag" :label="tag"
+                             @click="commonExec(CloseTag(item.Id, tag), true)" />
                     </div>
                     <div>
                       <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
-                        v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
-                        @click="commonExec(AddTag(item.Id, tag), true)" />
+                             v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag"
+                             @click="commonExec(AddTag(item.Id, tag), true)" />
                     </div>
                   </div>
                 </q-popup-proxy>
@@ -193,7 +195,7 @@
               </q-chip>
             </div>
             <q-btn-dropdown style="background-color: rgba(0, 0, 0, 0.8);width: 85px;height:1rem;color: antiquewhite;"
-              :label="item.MovieType">
+                            :label="item.MovieType">
               <q-list style="background-color: rgba(0, 0, 0, 0.7)">
                 <q-item v-for="mt in MovieTypeOptions" :key="mt.value" v-close-popup class="movieTypeSelectItem">
                   <q-item-section>
@@ -205,7 +207,7 @@
             </q-btn-dropdown>
           </div>
           <q-img fit="fit" easier draggable :class="{ 'img-self': !isMobile, 'img-self-moblie': isMobile }"
-            :src="getPng(item.Id)" @click="() => {
+                 :src="getPng(item.Id)" @click="() => {
     fileInfoRef.open({ item, cb: refreshIndex });
   }">
             <template v-slot:loading>
@@ -218,39 +220,40 @@
             <div style="background-color: rgba(0, 0, 0, 0.4);">
               <div style="display: flex; flex-direction: row">
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="primary"
-                  icon="ti-control-eject" @click="playBySystem(item)" title="播放" v-if="showButton('播放') && !isMobile" />
+                       icon="ti-control-eject" @click="playBySystem(item)" title="播放"
+                       v-if="showButton('播放') && !isMobile" />
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="red" icon="ti-fullscreen"
-                  title="单页播放" @click="openPlay(item)" />
+                       title="单页播放" @click="openPlay(item)" />
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="orange" icon="ti-arrow-right"
-                  @click="openRightDrawer(item)" title="小播放" />
+                       @click="openRightDrawer(item)" title="小播放" />
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="orange" icon="ti-blackboard"
-                  @click="fileInfoRef.open({ item, playing: true })" title="小播放" />
+                       @click="fileInfoRef.open({ item, playing: true })" title="小播放" />
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="green-5" icon="ti-layers-alt"
-                  @click="picInPic(item)" title="画中画" />
+                       @click="picInPic(item)" title="画中画" />
               </div>
               <div style="display: flex; flex-direction: row">
                 <q-btn round class="q-mr-sm" size="10px" color="red" icon="ti-slice"
-                  @click="fileEditRef.open(item, refreshIndex)" v-if="showButton('编辑')" title="编辑" />
+                       @click="fileEditRef.open(item, refreshIndex)" v-if="showButton('编辑')" title="编辑" />
                 <q-btn round class="q-mr-sm" size="10px" color="primary" icon="open_in_new" @click="openFolder(item)"
-                  v-if="showButton('文件夹') && !isMobile" title="文件夹" />
+                       v-if="showButton('文件夹') && !isMobile" title="文件夹" />
                 <q-btn round class="q-mr-sm" size="10px" color="brown-5" icon="ti-search" title="网搜"
-                  @click="searchCode(item)" />
+                       @click="searchCode(item)" />
                 <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
-                  @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" title="刮图" />
+                       @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" title="刮图" />
                 <q-btn round class="q-mr-sm" size="sm" color="amber" glossy text-color="black" icon="ti-trash"
-                  @click="confirmDelete(item)" v-if="showButton('删除')" title="删除" />
+                       @click="confirmDelete(item)" v-if="showButton('删除')" title="删除" />
                 <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-location-arrow"
-                  v-if="showButton('移动')" title="移动" />
+                       v-if="showButton('移动')" title="移动" />
               </div>
             </div>
 
             <div :style="{ height: '4rem', overflow: 'hidden' }">
               <a style="color: #9e089e;background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                target="_blank" @click="goActress(item.Actress)">{{ item.Actress?.substring(0, 6) }}</a>
+                 target="_blank" @click="goActress(item.Actress)">{{ item.Actress?.substring(0, 6) }}</a>
               <a style="color: rgb(239, 30, 30);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
+                 @click="copyText(item.Code)">{{ formatCode(item.Code) }}</a>
               <a style="color: rgb(22, 26, 227);background-color: rgba(0, 0, 0, 0.1);" class="mr10 cursor-pointer"
-                @click="copyText(item.Title)">{{ item.SizeStr }}</a>
+                 @click="copyText(item.Title)">{{ item.SizeStr }}</a>
               <span>{{ formatTitle(item.Title) }}</span>
             </div>
           </div>
@@ -287,7 +290,15 @@ import {
   SearchAPI
 } from '../../components/api/searchAPI';
 import { GetSettingInfo } from '../../components/api/settingAPI';
-import { formatCode, formatTitle, MovieTypeOptions, MovieTypeSelects, FieldEnum, DescEnum, getLabelByValue } from '../../components/utils';
+import {
+  formatCode,
+  formatTitle,
+  MovieTypeOptions,
+  MovieTypeSelects,
+  FieldEnum,
+  DescEnum,
+  getLabelByValue
+} from '../../components/utils';
 import { getPng, getFileStream } from '../../components/utils/images';
 import { useSystemProperty } from '../../stores/System';
 import FileEdit from './components/FileEdit.vue';
@@ -307,8 +318,8 @@ const { copy } = useClipboard({ source });
 
 const systemProperty = useSystemProperty();
 const suggestions = computed(() => {
-  return systemProperty.getSuggestions
-})
+  return systemProperty.getSuggestions;
+});
 
 const listButtons = computed(() => {
   return view.settingInfo.Buttons;
@@ -320,33 +331,33 @@ const videoOffset = computed(() => {
 const videoWidth = computed(() => {
   return systemProperty.pictureInPictureVideoWidth;
 });
-const draggingFab = ref(false)
+const draggingFab = ref(false);
 const moveFab = (ev) => {
-  draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
+  draggingFab.value = ev.isFirst !== true && ev.isFinal !== true;
   systemProperty.pictureInPictureVideoOffset = [
     systemProperty.pictureInPictureVideoOffset[0] - ev.delta.x,
     systemProperty.pictureInPictureVideoOffset[1] - ev.delta.y
-  ]
-}
+  ];
+};
 
 const zoomFab = (ev) => {
-  draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
-  systemProperty.pictureInPictureVideoWidth = systemProperty.pictureInPictureVideoWidth - ev.delta.x
+  draggingFab.value = ev.isFirst !== true && ev.isFinal !== true;
+  systemProperty.pictureInPictureVideoWidth = systemProperty.pictureInPictureVideoWidth - ev.delta.x;
   systemProperty.pictureInPictureVideoOffset = [
     systemProperty.pictureInPictureVideoOffset[0],
     systemProperty.pictureInPictureVideoOffset[1] - ev.delta.y
-  ]
-}
+  ];
+};
 
 const playBySystem = (item) => {
   if ($q.platform.is.electron) {
-    const { Path } = item
-    window.electron.openBySystem({ Path })
+    const { Path } = item;
+    window.electron.openBySystem({ Path });
   } else {
-    commonExec(PlayMovie(item.Id))
+    commonExec(PlayMovie(item.Id));
   }
 
-}
+};
 
 const listEditCallback = (data) => {
   const { settingInfo } = data;
@@ -364,14 +375,14 @@ const showButton = (name) => {
 };
 
 const openPlay = (item) => {
-  const url = `#/playing/${item.Id}`
+  const url = `#/playing/${item.Id}`;
   if ($q.platform.is.electron) {
-    window.electron.createWindow({ router: url })
+    window.electron.createWindow({ router: url });
   } else {
-    window.open(url)
+    window.open(url);
   }
 
-}
+};
 
 const view = reactive({
   currentData: {},
@@ -391,19 +402,19 @@ const view = reactive({
 });
 
 const searchCode = (item) => {
-  let itemCode = item.Code
+  let itemCode = item.Code;
   if (itemCode.indexOf('-C') > 0) {
-    itemCode = itemCode.substring(0, itemCode.indexOf('-C'))
+    itemCode = itemCode.substring(0, itemCode.indexOf('-C'));
   }
   if (itemCode.indexOf('-') == 0) {
-    itemCode = itemCode.substring(1)
+    itemCode = itemCode.substring(1);
   }
-  const url = `${view.settingInfo.BaseUrl}${itemCode}`
-  console.log(url)
+  const url = `${view.settingInfo.BaseUrl}${itemCode}`;
+  console.log(url);
   if ($q.platform.is.electron) {
-    window.electron.createWindow({ router: url, width: 1280, height: 1000, titleBarStyle: '', })
+    window.electron.createWindow({ router: url, width: 1280, height: 1000, titleBarStyle: '' });
   } else {
-    window.open(url)
+    window.open(url);
   }
 };
 
@@ -414,12 +425,12 @@ const focusEvent = (e) => {
 
 const openFolder = (item) => {
   if ($q.platform.is.electron) {
-    window.electron.showInFolder(item.Path)
+    window.electron.showInFolder(item.Path);
   } else {
-    commonExec(OpenFileFolder(item.Id))
+    commonExec(OpenFileFolder(item.Id));
   }
 
-}
+};
 
 const confirmDelete = (item) => {
   $q.dialog({
@@ -472,14 +483,16 @@ const copyText = async (str) => {
 
 const goActress = (Actress) => {
   if (!systemProperty.goActressNewWidow) {
-    view.queryParam.Keyword = Actress
+    view.queryParam.Keyword = Actress;
     fetchSearch();
   } else {
-    const { Page,
+    const {
+      Page,
       PageSize,
       MovieType,
       SortField,
-      SortType } = view.queryParam
+      SortType
+    } = view.queryParam;
     const routeData = resolve({
       path: '/search',
       query: {
@@ -490,19 +503,19 @@ const goActress = (Actress) => {
         SortType,
         Keyword: Actress
       }
-    })
-    window.open(routeData.href, '_blank')
+    });
+    window.open(routeData.href, '_blank');
   }
-}
+};
 
 
 const picInPic = (item) => {
   view.currentData = item;
   const video = document.getElementById('vue3VideoPlayRef');
   if (video) {
-    view.videoUrl = getFileStream(item.Id)
+    view.videoUrl = getFileStream(item.Id);
   }
-}
+};
 
 
 const openRightDrawer = (item) => {
@@ -514,26 +527,26 @@ const openRightDrawer = (item) => {
 const currentPageChange = async (e) => {
   console.log('view.queryParam.Page', e);
   await fetchSearch();
-  const top = document.querySelector('.scroll')
-  console.log(top)
+  const top = document.querySelector('.scroll');
+  console.log(top);
   if (top) {
-    top.scrollTo(0, 0)
+    top.scrollTo(0, 0);
   }
 };
 
 const nextPage = (n) => {
-  view.queryParam.Page = view.queryParam.Page + n
-  currentPageChange()
-}
+  view.queryParam.Page = view.queryParam.Page + n;
+  currentPageChange();
+};
 
 const fetchSearch = async (newBlank) => {
-  saveParam(newBlank)
-  const { Keyword } = view.queryParam
+  saveParam(newBlank);
+  const { Keyword } = view.queryParam;
   const data = await SearchAPI(view.queryParam);
   console.log(data);
   view.resultData = { ...data };
-  const { ResultSize, ResultCnt } = data
-  document.title = `搜索 ${Keyword || ''} : ${ResultSize} {${ResultCnt}}`
+  const { ResultSize, ResultCnt } = data;
+  document.title = `搜索 ${Keyword || ''} : ${ResultSize} {${ResultCnt}}`;
 };
 
 const moveThis = async (item) => {
@@ -571,12 +584,14 @@ const saveParam = () => {
   systemProperty.syncSearchParam(view.queryParam);
   localStorage.setItem('queryParam', JSON.stringify(view.queryParam));
 
-  const { Page,
+  const {
+    Page,
     PageSize,
     MovieType,
     SortField,
     SortType,
-    Keyword } = view.queryParam
+    Keyword
+  } = view.queryParam;
 
   push({
     path: '/search',
@@ -588,17 +603,16 @@ const saveParam = () => {
       SortType,
       Keyword
     }
-  })
+  });
 
 
-
-}
+};
 
 const thisRoute = useRoute();
 const { push, resolve } = useRouter();
 
 onMounted(async () => {
-  document.title = '搜索'
+  document.title = '搜索';
   const {
     Page,
     PageSize,
