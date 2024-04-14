@@ -44,7 +44,7 @@ if [ $levelKey == 2 ] || [ $levelKey == 4 ]; then
     echo 移动配置文件 '*.*(1)'
     echo 'cp setting.json ../qapp/setting.json(1)'
     cp setting.json '../qapp/setting.json(1)'
-    echo 'cp ffmpeg.exe ../lsqapp/ffmpeg.exe'
+    echo 'cp ffmpeg.exe ../qapp/ffmpeg.exe'
     cp ffmpeg.exe '../qapp/ffmpeg.exe'
     cd ..
     echo 'APP打包完成！！！'
