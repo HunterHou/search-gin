@@ -3,9 +3,8 @@
         {
             "type": "go",
             "name": "Go configuration",
-            "goExecPath": "D://code//search-gin/gosrc/main",
+            "goExecPath": "D://code//search-gin/goBuild.go",
             "buildParams": [],
         },
-        
     ]
 }
