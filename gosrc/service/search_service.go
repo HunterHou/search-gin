@@ -467,7 +467,7 @@ var httpClient = &http.Client{}
 func httpGet(url string) (*http.Response, error) {
 
 	request, _ := http.NewRequest("GET", url, nil)
-	request.Header.Add("User-Agent", "Mozilla/6.0")
+	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36")
 	client := httpClient
 	resp, err := client.Do(request)
 	return resp, err
