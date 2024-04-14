@@ -462,11 +462,13 @@ func (fs SearchService) MakeNfo(toFile datamodels.Movie) {
 	nfo.WriteString(nfoStr)
 }
 
+var httpClient = &http.Client{}
+
 func httpGet(url string) (*http.Response, error) {
 
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Add("User-Agent", "Mozilla/6.0")
-	client := &http.Client{}
+	client := httpClient
 	resp, err := client.Do(request)
 	return resp, err
 

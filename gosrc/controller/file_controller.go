@@ -178,7 +178,7 @@ func GetTempImageByPath(c *gin.Context) {
 
 func GetFileByPathUseEncode(c *gin.Context) {
 	escapeUrl := c.Param("path")
-	path,_ := url.QueryUnescape(escapeUrl)
+	path, _ := url.QueryUnescape(escapeUrl)
 	if utils.ExistsFiles(path) {
 		c.File(path)
 	} else {
@@ -191,7 +191,6 @@ func GetFile(c *gin.Context) {
 	fileService := service.CreateFileService()
 	fileService.GetFile(c)
 }
-
 
 // GetPng 获取Png流
 func GetPng(c *gin.Context) {
@@ -239,7 +238,7 @@ func GetTransferToMp4(c *gin.Context) {
 	}
 	exists := false
 	for _, taskModel := range cons.TransferTask {
-		if taskModel.Path == model.Path && !taskModel.Status == "执行失败"  {
+		if taskModel.Path == model.Path && taskModel.Status != "执行失败" {
 			exists = true
 			break
 		}
