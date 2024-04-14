@@ -215,7 +215,7 @@
             </template>
           </q-img>
           <div class="absolute-bottom float-btn" :style="{ height: isMobile ? '8rem' : '8rem' }">
-            <div style="background-color: rgba(0, 0, 0, 0.2);">
+            <div style="background-color: rgba(0, 0, 0, 0.4);">
               <div style="display: flex; flex-direction: row">
                 <q-btn round class="q-mr-sm" :size="isMobile ? 'sm' : 'sm'" ripple color="primary"
                   icon="ti-control-eject" @click="playBySystem(item)" title="播放" v-if="showButton('播放') && !isMobile" />
@@ -229,11 +229,11 @@
                   @click="picInPic(item)" title="画中画" />
               </div>
               <div style="display: flex; flex-direction: row">
-                <q-btn round class="q-mr-sm" size="sm" color="primary" icon="ti-slice"
+                <q-btn round class="q-mr-sm" size="10px" color="red" icon="ti-slice"
                   @click="fileEditRef.open(item, refreshIndex)" v-if="showButton('编辑')" title="编辑" />
-                <q-btn round class="q-mr-sm" size="sm" color="primary" icon="open_in_new" @click="openFolder(item)"
+                <q-btn round class="q-mr-sm" size="10px" color="primary" icon="open_in_new" @click="openFolder(item)"
                   v-if="showButton('文件夹') && !isMobile" title="文件夹" />
-                <q-btn round class="q-mr-sm" size="sm" color="brown-5" icon="ti-search" title="网搜"
+                <q-btn round class="q-mr-sm" size="10px" color="brown-5" icon="ti-search" title="网搜"
                   @click="searchCode(item)" />
                 <q-btn round class="q-mr-sm" size="sm" color="secondary" icon="ti-import"
                   @click="commonExec(DownImageList(item.Id))" v-if="showButton('刮图')" title="刮图" />
@@ -655,7 +655,7 @@ onMounted(async () => {
 .example-item {
   padding: 2px;
   width: 220px;
-  height: 376px;
+  height: 390px;
   overflow: hidden;
 }
 
@@ -667,7 +667,8 @@ onMounted(async () => {
 }
 
 .img-self {
-  min-height: 280px;
+  min-height: 100px;
+  max-height: 340px;
 }
 
 .img-self-moblie {

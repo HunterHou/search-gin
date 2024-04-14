@@ -1,25 +1,20 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card class="q-dialog-plugin q-pa-md" :style="{
-      width: '600px',
-      backgroundImage: `linear-gradient(to left, rgba(255,255,255,0.1), rgba(255,255,255,0.1))`,
-    }">
+    <q-card class="q-dialog-plugin q-pa-md" style="max-width: 1200px;width:60vw" >
       <q-form class="q-gutter-md">
-        <q-option-group v-model="view.item.MovieType" :options="MovieTypeOptions" color="primary" inline />
+        <q-btn-toggle v-model="view.item.MovieType" :options="MovieTypeOptions"  toggle-color="primary" />
         <q-input label="编码" autogrow v-model="view.item.Code" :dense="false" />
         <q-input label="图鉴" autogrow v-model="view.item.Actress" :dense="false" />
         <q-input label="名称" autogrow v-model="view.item.Title" :dense="false" />
-        <q-input label="图片地址" autogrow v-model="view.item.Jpg" :dense="false" />
+        <q-input label="JPG地址" autogrow v-model="view.item.Jpg" :dense="false" />
+        <q-input label="PNG地址" autogrow v-model="view.item.Png" :dense="false" />
       </q-form>
-
-      <!-- <q-input label="名称"  standout v-model="view.item.Name" :dense="true" /> -->
-      <!-- 按钮示例 -->
-      <q-card-actions align="right">
+      <q-card-actions align="left">
         <q-btn color="primary" label="移动" @click="editMoveout" />
         <q-btn color="primary" label="命名" @click="() => {
-            editItemSubmit(false);
-          }
-          " />
+    editItemSubmit(false);
+  }
+    " />
         <q-btn color="primary" label="关闭" @click="onDialogCancel" />
       </q-card-actions>
     </q-card>
@@ -39,10 +34,6 @@ import {
 import { FileRename } from '../../../components/api/searchAPI';
 import { FileModel } from 'src/components/model/File';
 
-// const props = defineProps({
-//     // ...自定义 props
-// })
-
 const $q = useQuasar();
 
 const view = reactive({
@@ -59,6 +50,7 @@ defineEmits([
 const open = (item, cb) => {
   view.item = new FileModel().fromObject(item);
   view.item.Jpg = null;
+  view.item.Png = null;
   view.item.Code = formatCode(item.Code);
   view.item.Title = formatTitle(item.Title);
   view.callback = cb;
@@ -70,7 +62,7 @@ const editMoveout = async () => {
 };
 
 const editItemSubmit = async (MoveOut) => {
-  const { Id, Title, Code, Actress, FileType, MovieType,Jpg } = view.item;
+  const { Id, Title, Code, Actress, FileType, MovieType, Jpg, Png } = view.item;
   let code = Code.trim();
   if (code && code.indexOf('-') < 0) {
     code = '-' + code;
@@ -107,6 +99,7 @@ const editItemSubmit = async (MoveOut) => {
     Actress,
     MoveOut,
     Jpg,
+    Png,
     NoRefresh: true,
   };
   const res = await FileRename(param);
