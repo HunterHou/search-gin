@@ -1,6 +1,6 @@
 class FileModel {
   Id = '';
-  Tags: string[] | undefined;
+  Tags: [] = [];
   MovieType = '';
   FileType = '';
   Jpg = '';

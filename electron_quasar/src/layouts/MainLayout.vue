@@ -1,53 +1,51 @@
 <template>
-  <div>
-    <q-layout view="hHh Lpr lff" style="height: 100vh" class="shadow-2 rounded-borders">
-      <q-header reveal class="bg-black">
-        <q-toolbar class="q-electron-drag">
-          <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
-          <q-toolbar-title style="-webkit-app-region: drag">
-            文件搜索
-          </q-toolbar-title>
 
-          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
-            color: currentPath === link.link ? 'red' : '',
-            scale: 1.2,
-          }" />
-          <q-space />
-          <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
-          <q-btn dense flat size="lg" icon="refresh" @click="refreshThis"></q-btn>
-          <q-btn dense flat size="md" icon="ti-settings" @click="openHistory" />
-          <q-btn dense flat icon="ti-na" @click="confirmShutDown" />
-          <q-btn @click="changeTheme" dense icon="ti-reload" flat
-            :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
-          <q-btn v-if="isDesktop" dense flat icon="ti-minus" @click="minusScreen" />
-          <q-btn flat dense size="lg" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
-            v-model="view.fullscreen" @click="clickFullscreen" />
-          <q-btn v-if="isDesktop" dense flat size="lg" icon="ti-close" @click="closeWindow" />
+  <q-layout view="hHh Lpr lff" container style="height: 100vh" class="shadow-2 rounded-borders">
+    <q-header reveal class="bg-black" style="height:6vh">
+      <q-toolbar class="q-electron-drag">
+        <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
+        <q-toolbar-title style="-webkit-app-region: drag">
+          文件搜索
+        </q-toolbar-title>
 
-        </q-toolbar>
-      </q-header>
+        <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
+          color: currentPath === link.link ? 'red' : '',
+          scale: 1.2,
+        }" />
+        <q-space />
+        <q-btn dense flat color="red" v-if="shutdownLeftSecond">关机倒计时：{{ shutdownLeftSecond }}</q-btn>
+        <q-btn dense flat size="lg" icon="refresh" @click="refreshThis"></q-btn>
+        <q-btn dense flat size="md" icon="ti-settings" @click="openHistory" />
+        <q-btn dense flat icon="ti-na" @click="confirmShutDown" />
+        <q-btn @click="changeTheme" dense icon="ti-reload" flat :color="$q.dark.mode ? 'white' : 'grey'"></q-btn>
+        <q-btn v-if="isDesktop" dense flat icon="ti-minus" @click="minusScreen" />
+        <q-btn flat dense size="lg" :icon="view.fullscreen ? 'fullscreen_exit' : 'fullscreen'" v-model="view.fullscreen"
+          @click="clickFullscreen" />
+        <q-btn v-if="isDesktop" dense flat size="lg" icon="ti-close" @click="closeWindow" />
 
-      <q-drawer v-model="drawerLeft" :width="200" :breakpoint="700" bordered>
-        <q-scroll-area class="fit">
-          <q-list>
-            <q-item-label header> 你的搜索工具 </q-item-label>
-            <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :style="{
-            color: currentPath === link.link ? 'red' : '',
-            scale: 1.2,
-          }" />
-          </q-list>
-        </q-scroll-area>
-      </q-drawer>
-      <q-drawer side="right" :width="withDrawer" v-model="systemProperty.drawerRight" bordered class="bg-grey-3">
-        <Playing ref="vue3VideoPlayRef" mode="drawer" />
-      </q-drawer>
-      <q-page-container>
-        <router-view />
-      </q-page-container>
-    </q-layout>
-    <ShutdownComponent ref="shutdown" />
-    <ListEdit ref="listEditRef" />
-  </div>
+      </q-toolbar>
+    </q-header>
+
+    <q-drawer v-model="drawerLeft" :width="200" :breakpoint="700" bordered>
+      <q-scroll-area class="fit">
+        <q-list>
+          <q-item-label header> 你的搜索工具 </q-item-label>
+          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :style="{
+          color: currentPath === link.link ? 'red' : '',
+          scale: 1.2,
+        }" />
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
+    <q-drawer side="right" :width="withDrawer" v-model="systemProperty.drawerRight" bordered class="bg-grey-3">
+      <Playing ref="vue3VideoPlayRef" mode="drawer" />
+    </q-drawer>
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+  </q-layout>
+  <ShutdownComponent ref="shutdown" />
+  <ListEdit ref="listEditRef" />
 </template>
 
 <script setup>
@@ -59,7 +57,6 @@ import EssentialLink from 'components/EssentialLink.vue';
 import ListEdit from 'pages/file/components/ListEdit.vue';
 import ShutdownComponent from 'components/ShutdownComponent.vue';
 import { onKeyStroke } from '@vueuse/core';
-// import { isElectron } from 'boot/platform';
 
 import { useRoute } from 'vue-router';
 
