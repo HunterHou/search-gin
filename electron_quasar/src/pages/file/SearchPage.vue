@@ -6,7 +6,7 @@
     class="shadow-2 rounded-borders"
   >
     <q-header :style="themeStyle">
-      <q-toolbar inset class="row q-gutter-sm">
+      <q-toolbar class="q-gutter-sm">
         <q-btn
           :loading="view.renameCount > 0"
           v-if="view.renameCount > 0"
