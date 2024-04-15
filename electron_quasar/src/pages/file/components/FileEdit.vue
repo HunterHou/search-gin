@@ -137,8 +137,6 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 // ...会自动关闭对话框
 // }
 defineExpose({
-  open,
-  plusOne,
-  subOne
+  open
 });
 </script>

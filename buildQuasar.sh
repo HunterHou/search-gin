@@ -50,8 +50,7 @@ if [ $levelKey == 2 ] || [ $levelKey == 4 ]; then
     echo 'APP打包完成！！！'
 fi
 
-if [  $levelKey == 1 ] || [ $levelKey == 3 ] || [ $levelKey == 4 ]; then
-
+if  [ $levelKey == 3 ] || [ $levelKey == 4 ]; then
     echo 移动源到 Election代码目录
     echo 'cp -R qapp electron_quasar/src-electron/icons'
     cp -R qapp electron_quasar/src-electron/icons
