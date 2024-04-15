@@ -344,7 +344,7 @@ func (fs SearchService) DownJpgMakePng(finalPath string, url string, makePng boo
 	jpgPath := utils.GetPng(finalPath, "jpg")
 	jpgOut, createErr := os.Create(jpgPath)
 	if createErr != nil {
-		fmt.Println("createErr:", createErr)
+		fmt.Fprintf(cons.LogWriter, "createErr:%v", createErr)
 	}
 	if !strings.Contains(url, "https") {
 		url = cons.OSSetting.BaseUrl + url
@@ -353,14 +353,14 @@ func (fs SearchService) DownJpgMakePng(finalPath string, url string, makePng boo
 	resp, downErr := httpGet(url)
 	if downErr != nil {
 		result.Fail()
-		fmt.Println("downErr:", downErr)
+		fmt.Fprintf(cons.LogWriter, "downErr:%v", downErr)
 		result.Message = "文件下载失败：" + url
 		return result
 	}
 	body, readErr := ioutil.ReadAll(resp.Body)
 	if readErr != nil {
 		result.Fail()
-		fmt.Println("readErr:", readErr)
+		fmt.Fprintf(cons.LogWriter, "readErr:%v", readErr)
 		result.Message = "请求读取response失败"
 		return result
 	}
@@ -369,7 +369,7 @@ func (fs SearchService) DownJpgMakePng(finalPath string, url string, makePng boo
 	if makePng {
 		pngErr := utils.ImageToPng(jpgPath)
 		if pngErr != nil {
-			fmt.Println("pngErr:", pngErr)
+			fmt.Fprintf(cons.LogWriter, "pngErr:%v", pngErr)
 		}
 	}
 	result.Success()
@@ -381,7 +381,7 @@ func (fs SearchService) DownJpgAsPng(finalPath string, url string) utils.Result 
 	pngPath := utils.GetPng(finalPath, "png")
 	pngOut, createErr := os.Create(pngPath)
 	if createErr != nil {
-		fmt.Println("createErr:", createErr)
+		fmt.Fprintf(cons.LogWriter, "createErr:%v", createErr)
 	}
 	if !strings.Contains(url, "https") {
 		url = cons.OSSetting.BaseUrl + url
@@ -390,14 +390,14 @@ func (fs SearchService) DownJpgAsPng(finalPath string, url string) utils.Result 
 	resp, downErr := httpGet(url)
 	if downErr != nil {
 		result.Fail()
-		fmt.Println("downErr:", downErr)
+		fmt.Fprintf(cons.LogWriter, "downErr:%v", downErr)
 		result.Message = "文件下载失败：" + url
 		return result
 	}
 	body, readErr := ioutil.ReadAll(resp.Body)
 	if readErr != nil {
 		result.Fail()
-		fmt.Println("readErr:", readErr)
+		fmt.Fprintf(cons.LogWriter, "readErr:%v", readErr)
 		result.Message = "请求读取response失败"
 		return result
 	}
