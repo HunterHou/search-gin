@@ -262,8 +262,7 @@
       </q-page-scroller>
     </q-page>
   </div>
-  <FileEdit ref="fileEditRef" 
-    @plus-one="view.renameCount = view.renameCount + 1"
+  <FileEdit ref="fileEditRef" @plus-one="view.renameCount = view.renameCount + 1"
     @sub-one="view.renameCount = view.renameCount - 1" />
   <FileInfo ref="fileInfoRef" />
   <ListEdit ref="listEditRef" />
