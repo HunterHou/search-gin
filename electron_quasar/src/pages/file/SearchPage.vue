@@ -286,6 +286,7 @@ import {
   PlayMovie,
   RefreshAPI,
   ResetMovieType,
+  SyncFileInfo,
   SearchAPI
 } from '../../components/api/searchAPI';
 import { GetSettingInfo } from '../../components/api/settingAPI';
