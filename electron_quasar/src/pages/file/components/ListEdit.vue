@@ -11,7 +11,7 @@
         <q-tab-panel name="filelist">
           <div class="q-mr-sm q-mb-sm  row justify-left">
             <q-btn-toggle outline v-model="view.queryParam.MovieType" @update:model-value="fetchSearch()"
-                          toggle-color="primary" :options="MovieTypeSelects" />
+              toggle-color="primary" :options="MovieTypeSelects" />
             <q-btn class="q-ml-sm " v-if="view.queryParam.Page != 1" size="sm" color="primary" @click="nextPage(-1)">上
             </q-btn>
             <q-btn class="q-ml-sm" size="sm" color="primary" @click="nextPage(1)">下</q-btn>
@@ -19,12 +19,12 @@
           </div>
           <div class="q-mr-sm row justify-left">
             <q-btn class=" q-mr-sm" color="amber" outline size="sm" glossy text-color="black" @click="selectAll">{{
-                view.selectAll
-                  ? '不选' : '全选'
-              }}
+    view.selectAll
+      ? '不选' : '全选'
+  }}
             </q-btn>
             <q-input label="..." v-model="view.queryParam.Keyword" :dense="true" filled clearable
-                     @update:model-value="fetchSearch()" />
+              @update:model-value="fetchSearch()" />
             <q-btn class="q-mr-sm" size="sm" color="blue-6" icon="refresh" @click="refreshIndex">刷新</q-btn>
             <q-btn-dropdown class="q-mr-sm" size="sm" label="设置" type="primary" color="teal" icon="ti-settings">
               <q-list>
@@ -39,7 +39,7 @@
             <q-btn-dropdown class="q-mr-sm" size="sm" label="标签" type="primary" color="teal" icon="ti-plus">
               <div style="width: 300px;">
                 <q-btn size="sm" icon='ti-plus' square text-color="white" color="red" class="tag-item"
-                       v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag" @click="addTagBySelector(tag)" />
+                  v-for="tag in  view.settingInfo.Tags" :key="tag" :label="tag" @click="addTagBySelector(tag)" />
               </div>
             </q-btn-dropdown>
             <q-btn outline class="q-mr-sm" size="sm" color="red" icon="delete" @click="deleteBySelector">删除</q-btn>
@@ -55,10 +55,10 @@
               <div style="display: flex; flex-direction: column">
                 <q-item-label>
                   <span v-if="view.cutListIds.indexOf(item.Id) >= 0" style="color: red">剪切中：：</span>{{
-                    item.Title
-                  }}【{{
-                    item.SizeStr
-                  }}】
+    item.Title
+  }}【{{
+      item.SizeStr
+    }}】
                 </q-item-label>
                 <div style="display: flex; flex-direction: row" v-ripple>
                   <q-checkbox size="sm" v-model="view.selector" :val="item.Id" color="red" />
@@ -76,19 +76,19 @@
                     </q-list>
                   </q-btn-dropdown>
                   <q-btn outline size="sm" class="q-mr-sm" color="amber" glossy text-color="black" icon="delete"
-                         @click="confirmDelete(item)" />
+                    @click="confirmDelete(item)" />
                   <q-btn outline size="sm" class="q-mr-sm" @click="moveThis(item)" icon="near_me" />
                   <q-btn outline class="q-mr-sm" size="sm" icon="open_in_new"
-                         @click="commonExec(OpenFileFolder(item.Id))" />
+                    @click="commonExec(OpenFileFolder(item.Id))" />
                   <q-btn outline size="sm" class="q-mr-sm" icon="ti-pencil-alt2" @click="item.showCut = true"></q-btn>
                   <q-btn outline size="sm" class="q-mr-sm" color="green" @click="toMp4(item)">toMp4</q-btn>
                   <q-btn outline class="q-mr-sm" size="sm" color="brown-5" icon="wifi_protected_setup"
-                         v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
+                    v-if="!item.MovieType || item.MovieType == '无'" @click="commonExec(SyncFileInfo(item.Id))" />
 
                 </div>
                 <div style="color:red;" v-if="item.Tags">点击删除：
                   <q-btn color="red" flat size="sm" v-for="ta in item.Tags" :key="ta"
-                         @click="commonExec(CloseTag(item.Id, ta), true)">
+                    @click="commonExec(CloseTag(item.Id, ta), true)">
                     {{ `${ta}` }}
                   </q-btn>
                 </div>
@@ -125,7 +125,7 @@
             </template>
             <template v-slot:control>
               <q-checkbox v-model="view.settingInfo.Buttons" v-for="item in buttonEnum" :key="item" :val="item"
-                          :label="item" color="teal" @update:model-value="updateButtons" />
+                :label="item" color="teal" @update:model-value="updateButtons" />
             </template>
           </q-field>
           <q-field color="purple-12" label="主题切换" stack-label>
@@ -134,9 +134,9 @@
             </template>
             <template v-slot:control>
               <q-radio v-model="systemProperty.isDark" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
-                       :val="true" label="暗黑" />
+                :val="true" label="暗黑" />
               <q-radio v-model="systemProperty.isDark" checked-icon="task_alt" unchecked-icon="panorama_fish_eye"
-                       :val="false" label="自然" />
+                :val="false" label="自然" />
             </template>
           </q-field>
           <q-field color="purple-12" label="图鉴点击" stack-label>
@@ -145,9 +145,9 @@
             </template>
             <template v-slot:control>
               <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt"
-                       unchecked-icon="panorama_fish_eye" :val="true" label="新窗口" />
+                unchecked-icon="panorama_fish_eye" :val="true" label="新窗口" />
               <q-radio v-model="systemProperty.goActressNewWidow" checked-icon="task_alt"
-                       unchecked-icon="panorama_fish_eye" :val="false" label="本地" />
+                unchecked-icon="panorama_fish_eye" :val="false" label="本地" />
             </template>
           </q-field>
 
@@ -190,11 +190,12 @@
           </q-list>
         </q-tab-panel>
         <q-tab-panel name="history">
-          <div style="margin-top: 0;display: flex;flex-direction: row;justify-content: space-between;">
+          <div
+            style="margin-top: 0;display: flex;flex-direction: row;justify-content: space-between;height: 100%;overflow: auto;">
             <div style="width: 50%;display: flex;flex-direction: column;overflow: auto">
-              <q-btn ripple flat>搜索记录</q-btn>
+              <span ripple flat>搜索记录 <q-btn ripple flat color="red" @click="systemProperty.HistoryMap = []">清空</q-btn></span>
               <q-btn v-for="(his, idx) in browserHistoryMap" :key="his" color="blue" flat outline noCaps align="left"
-                     ripple size="sm" @click="goHistory(his)">
+                ripple size="sm" @click="goHistory(his)">
                 <div class="row  q-gutter-sm justify-between">
                   <span style="color:orange;"> {{ idx }}</span>
                   <span>{{ his.MovieType }}</span>
@@ -206,9 +207,9 @@
               </q-btn>
             </div>
             <div style="width: 50%;display: flex;flex-direction: column;overflow: auto">
-              <q-btn ripple flat>浏览记录</q-btn>
+              <span ripple flat>浏览记录 <q-btn ripple flat color="red" @click="systemProperty.History = []" >清空</q-btn></span>
               <q-btn v-for="his in browserHistory" :key="his" flat outline noCaps align="left" style="width: 100%;"
-                     ripple size="sm" color="primary" @click="goHistory(his)">
+                ripple size="sm" color="primary" @click="goHistory(his)">
                 <div class="row justify-evenly  q-gutter-sm">
                   <span>{{ his.MovieType }}</span>
                   <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
@@ -269,8 +270,8 @@ const showTimeUse = (end, start) => {
   return `${((new Date(end).getFullYear() > 1000 ? new Date(end) : new
     Date()).getTime() -
     new Date(start).getTime()) /
-  1000
-  }`;
+    1000
+    }`;
 };
 
 
@@ -390,8 +391,8 @@ const copyAllCodes = async () => {
 
   if (view.resultData.Data && view.resultData.Data.length > 0) {
     const str = view.resultData.Data.map(item => {
-        return item.Code;
-      }
+      return item.Code;
+    }
     ).join(' ');
     await copy(str);
     $q.notify({ message: `${str}` });

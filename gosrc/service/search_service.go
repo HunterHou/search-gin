@@ -346,7 +346,7 @@ func (fs SearchService) DownJpgMakePng(finalPath string, url string, makePng boo
 	if createErr != nil {
 		fmt.Println("createErr:", createErr)
 	}
-	if !strings.Contains(url, cons.OSSetting.BaseUrl) {
+	if !strings.Contains(url, "https") {
 		url = cons.OSSetting.BaseUrl + url
 	}
 	fmt.Println(url)
@@ -383,7 +383,7 @@ func (fs SearchService) DownJpgAsPng(finalPath string, url string) utils.Result 
 	if createErr != nil {
 		fmt.Println("createErr:", createErr)
 	}
-	if !strings.Contains(url, "http") {
+	if !strings.Contains(url, "https") {
 		url = cons.OSSetting.BaseUrl + url
 	}
 	fmt.Println(url)
