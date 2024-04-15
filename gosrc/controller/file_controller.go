@@ -47,10 +47,10 @@ func GetInfo(c *gin.Context) {
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
 	err := c.ShouldBindJSON(&currentFile)
-	fmt.Fprintf(cons.LogWriter, "PostRename :searchCnt[%v]", currentFile)
+	fmt.Fprintf(cons.LogWriter, "PostRename :searchCnt[%v] \n", currentFile)
 	if err != nil {
 		fmt.Println(err)
-		fmt.Fprintf(cons.LogWriter, "PostRename err:[%v]", err)
+		fmt.Fprintf(cons.LogWriter, "PostRename err:[%v] \n", err)
 	}
 	fileService := service.CreateSearchService()
 	res := fileService.Rename(currentFile)
@@ -61,7 +61,7 @@ func PostRename(c *gin.Context) {
 func GetAddTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
-	fmt.Fprintf(cons.LogWriter, "GetAddTag [%v] [%v]", idInt, tag)
+	fmt.Fprintf(cons.LogWriter, "GetAddTag [%v] [%v]  \n", idInt, tag)
 	fileService := service.CreateSearchService()
 	res := fileService.AddTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
