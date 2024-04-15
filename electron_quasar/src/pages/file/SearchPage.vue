@@ -559,8 +559,6 @@ import { isMobile } from 'boot/platform';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  AddTag,
-  CloseTag,
   DeleteFile,
   DownImageList,
   FileRename,
