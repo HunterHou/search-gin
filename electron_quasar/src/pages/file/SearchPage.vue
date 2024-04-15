@@ -242,6 +242,9 @@
                   @click="confirmDelete(item)" v-if="showButton('删除')" title="删除" />
                 <q-btn round class="q-mr-sm" size="sm" color="black" @click="moveThis(item)" icon="ti-location-arrow"
                   v-if="showButton('移动')" title="移动" />
+                <q-btn round class="q-mr-sm" size="sm" color="black" @click="SyncFileInfo(item)" icon="ti-location-arrow"
+                  v-if="showButton('移动')" title="移动" />
+                  
               </div>
             </div>
 

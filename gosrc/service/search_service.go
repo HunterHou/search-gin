@@ -226,8 +226,8 @@ func (fs SearchService) ClearTag(id string, tag string) utils.Result {
 func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movie) utils.Result {
 	result := utils.Result{}
 	root := srcFile.DirPath
-	fmt.Fprintf(cons.LogWriter, "MoveCut： srcFile [%v]", srcFile)
-	fmt.Fprintf(cons.LogWriter, "MoveCut： toFile [%v]", toFile)
+	fmt.Fprintf(cons.LogWriter, "MoveCut： srcFile [%v] \n", srcFile)
+	fmt.Fprintf(cons.LogWriter, "MoveCut： toFile [%v] \n", toFile)
 	if toFile.Actress == "" && toFile.Code == "" {
 		result.Message = "信息不全"
 		return result
