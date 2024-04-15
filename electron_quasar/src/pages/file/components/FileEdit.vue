@@ -41,9 +41,12 @@ const view = reactive({
   callback: null
 });
 
-defineEmits([
+const emits=defineEmits([
   // REQUIRED; 需要明确指出
   // 组件通过 useDialogPluginComponent() 暴露哪些事件
+  'plus-one',
+  'sub-one',
+  'update:modelValue',
   ...useDialogPluginComponent.emits
 ]);
 
@@ -103,15 +106,19 @@ const editItemSubmit = async (MoveOut) => {
     NoRefresh: true
   };
   const res = await FileRename(param);
+  emits('plus-one')
+  onDialogOK();
   if (res.Code == 200) {
-    onDialogOK();
     if (view.callback) {
+      emits('sub-one')
       view.callback();
     }
   } else {
+    emits('sub-one')
     $q.notify({ type: 'negative', message: res.Message });
   }
 };
+
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent();
@@ -130,6 +137,8 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 // ...会自动关闭对话框
 // }
 defineExpose({
-  open
+  open,
+  plusOne,
+  subOne
 });
 </script>
