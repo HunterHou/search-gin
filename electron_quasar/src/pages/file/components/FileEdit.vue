@@ -105,9 +105,9 @@ const editItemSubmit = async (MoveOut) => {
     Png,
     NoRefresh: true
   };
-  const res = await FileRename(param);
   emits('plus-one')
   onDialogOK();
+  const res = await FileRename(param);
   if (res.Code == 200) {
     if (view.callback) {
       emits('sub-one')
