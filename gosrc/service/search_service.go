@@ -510,7 +510,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 	newFile := datamodels.Movie{}
 	code := srcFile.Code
 	if code == "" {
-		fmt.Fprintf(cons.LogWriter, "RequestBusToFile srcFile [%v]", srcFile)
+		fmt.Fprintf(cons.LogWriter, "RequestBusToFile srcFile [%v] \n", srcFile)
 		result.Fail()
 		result.Message = "Code：" + code + " srcFile:" + srcFile.Name
 		return result, newFile
@@ -529,7 +529,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 		fmt.Println("err", err)
 		result.Fail()
 		result.Message = "请求失败：" + resp.Status + " url:" + url
-		fmt.Fprintf(cons.LogWriter, "请求失败： url [%v]", url)
+		fmt.Fprintf(cons.LogWriter, "请求失败： url [%v] \n", url)
 		return result, newFile
 	}
 	defer resp.Body.Close()
@@ -545,7 +545,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 			fmt.Println("status error:", resp.StatusCode, resp.Status)
 			result.Fail()
 			result.Message = "请求失败：" + resp.Status + " url:" + url
-			fmt.Fprintf(cons.LogWriter, "请求失败： url [%v]", url)
+			fmt.Fprintf(cons.LogWriter, "请求失败： url [%v] \n", url)
 			return result, newFile
 		}
 
@@ -557,6 +557,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 		fmt.Println("err:", err)
 	}
 	bigImage := doc.Find(".bigImage img")
+	fmt.Fprintf(cons.LogWriter, "NewDocument  [%v] \n", doc)
 
 	newFile.Id = srcFile.Id
 	newFile.Title = bigImage.AttrOr("title", "")
