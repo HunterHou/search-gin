@@ -60,7 +60,7 @@ func ImageToPng(src string) error {
 	}
 	height := config.Height
 	width := config.Width
-	left := int(float64(0.53) * float64(width))
+	left := int(0.53 * float64(width))
 	switch fm {
 	case "jpeg":
 		rgbImg := srcImage.(*image.YCbCr)

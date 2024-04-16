@@ -222,19 +222,19 @@ func GetSizeStr(fSize int64) string {
 	if fileSize <= 1024 {
 		result = fmt.Sprintf("%.f", fileSize)
 	} else if fileSize <= 1024*1024 {
-		size := float64(fileSize / 1024)
+		size := fileSize / 1024
 		result = fmt.Sprintf("%.f", size) + " k"
 	} else if fileSize <= 1024*1024*1024 {
-		size := float64(fileSize / (1024 * 1024))
+		size := fileSize / (1024 * 1024)
 		result = fmt.Sprintf("%.2f", size) + " M"
 	} else if fileSize <= 1024*1024*1024*1024 {
-		size := float64(fileSize / (1024 * 1024 * 1024))
+		size := fileSize / (1024 * 1024 * 1024)
 		result = fmt.Sprintf("%.2f", size) + " G"
 	} else if fileSize <= 1024*1024*1024*1024*1024 {
-		size := float64(fileSize / (1024 * 1024 * 1024 * 1024))
+		size := fileSize / (1024 * 1024 * 1024 * 1024)
 		result = fmt.Sprintf("%.2f", size) + " T"
 	} else {
-		size := float64(fileSize / (1024 * 1024 * 1024 * 1024))
+		size := fileSize / (1024 * 1024 * 1024 * 1024)
 		result = fmt.Sprintf("%.2f", size) + " T"
 	}
 	return result

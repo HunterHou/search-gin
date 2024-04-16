@@ -336,7 +336,7 @@ func (fileService *FileService) goWalk(baseDir string, types []string, wg *sync.
 	ti := time.Since(start)
 	thisTime := cons.MenuSize{
 		Name: baseDir,
-		Cnt:  int64(ti.Milliseconds()),
+		Cnt:  ti.Milliseconds(),
 		Size: int64(len(files)),
 	}
 	scanTime <- thisTime
@@ -354,11 +354,12 @@ func (fileService *FileService) Walk(baseDir string, types []string, deep bool) 
 				childResult := fileService.Walk(pathAbs, types, deep)
 				result = ExpandsMovie(result, childResult)
 			} else {
+				info, _ := path.Info()
 				name := path.Name()
 				suffix := utils.GetSuffux(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType, "")
+					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, "")
 					result = append(result, file)
 				}
 
@@ -395,11 +396,12 @@ func (fileService *FileService) WalkInnter(currentDir string, types []string, to
 				currentSize += innerSize
 			} else {
 				name := path.Name()
-				currentSize += path.Size()
+				info, _ := path.Info()
+				currentSize += info.Size()
 				suffix := utils.GetSuffux(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.NewFile(currentDir, pathAbs, name, suffix, path.Size(), path.ModTime(), movieType, basePath)
+					file := datamodels.NewFile(currentDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, basePath)
 					result = append(result, file)
 				}
 
@@ -418,7 +420,7 @@ func (fileService *FileService) WalkInnter(currentDir string, types []string, to
 	totalSize += currentSize
 	if currentSize <= 20000000 && utils.IndexOf(cons.OSSetting.Dirs, currentDir) < 0 {
 
-		cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(currentDir, int64(currentSize), true))
+		cons.SmallDir = append(cons.SmallDir, cons.NewMenuSizeFold(currentDir, currentSize, true))
 	}
 	return result, currentSize
 }

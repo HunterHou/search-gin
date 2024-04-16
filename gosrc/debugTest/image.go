@@ -28,7 +28,7 @@ func TestImage(test *testing.T) {
 	}
 	height := config.Height
 	width := config.Width
-	left := int(float64(0.53) * float64(width))
+	left := int(0.53 * float64(width))
 	rgbImg := srcImage.(*image.YCbCr)
 	subImg := rgbImg.SubImage(image.Rect(left, 0, width, height)).(*image.YCbCr)
 	png.Encode(fout, subImg)
