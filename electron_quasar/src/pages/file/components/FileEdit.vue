@@ -11,12 +11,11 @@
       </q-form>
       <q-card-actions align="left">
         <q-btn color="primary" label="移动" @click="editMoveout" />
-        <q-btn color="primary" label="命名" @click="() => {
-    editItemSubmit(false);
-  }
-    " />
+        <q-btn color="primary" label="命名" @click="editItemSubmit(false)" />
+        <q-btn color="primary" label="预览" @click="makePreview" />
         <q-btn color="primary" label="关闭" @click="onDialogCancel" />
       </q-card-actions>
+      <q-img v-if="view.previewUrl" :src="view.previewUrl" style=""></q-img>
     </q-card>
   </q-dialog>
 </template>
@@ -33,11 +32,16 @@ import {
 } from '../../../components/utils';
 import { FileRename } from '../../../components/api/searchAPI';
 import { FileModel } from 'src/components/model/File';
+import { useSystemProperty } from 'stores/System';
+
+
+const systemProperty = useSystemProperty();
 
 const $q = useQuasar();
 
 const view = reactive({
   item: null,
+  previewUrl: null,
   callback: null
 });
 
@@ -49,6 +53,10 @@ const emits=defineEmits([
   'update:modelValue',
   ...useDialogPluginComponent.emits
 ]);
+
+const makePreview = ()=>{
+  view.previewUrl = systemProperty.ImageUrl + view.item.Id + '.jpg';
+}
 
 const open = (item, cb) => {
   view.item = new FileModel().fromObject(item);
