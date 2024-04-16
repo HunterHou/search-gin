@@ -6,6 +6,7 @@ type Setting struct {
 	SelfPath   string
 	BaseUrl    string
 	OMUrl      string
+	ImageUrl   string
 	Remark     string
 	SystemHtml string
 
@@ -18,7 +19,7 @@ type Setting struct {
 	VideoTypes     []string
 	Types          []string
 	Buttons        []string
-	MovieTypes        []string
+	MovieTypes     []string
 	ControllerHost string
 	ImageHost      string
 	StreamHost     string

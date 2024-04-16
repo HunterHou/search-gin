@@ -126,6 +126,7 @@ var OSSetting = datamodels.Setting{
 	ImageHost:      "127.0.0.1:17002",
 	StreamHost:     "127.0.0.1:17003",
 	BaseUrl:        "https://www.busjav.blog/",
+	ImageUrl:       "",
 	OMUrl:          "https://www.busjav.blog/",
 	Remark:         "",
 	SystemHtml:     "",
@@ -141,7 +142,7 @@ var OSSetting = datamodels.Setting{
 	VideoTypes: []string{AVI, MKV, WMV, MP4},
 	Types:      []string{AVI, MKV, WMV, MP4, GIF, PNG, JPG, TXT, XLSX},
 	Buttons:    []string{"刮图", "删除", "移动"},
-	MovieTypes:    []string{"骑兵", "步兵", "国产", "漫动"},
+	MovieTypes: []string{"骑兵", "步兵", "国产", "漫动"},
 }
 
 // PNG Base Dictory
@@ -164,9 +165,9 @@ var TempImage = make(map[string]datamodels.Movie)
 
 var IndexHtml = "./dist/index.html"
 var StaticFs = map[string]string{
-	"/css": "./dist/css",
-	"/js":  "./dist/js",
-	"/assets":  "./dist/assets",
+	"/css":    "./dist/css",
+	"/js":     "./dist/js",
+	"/assets": "./dist/assets",
 }
 
 var TransferTask = map[time.Time]datamodels.TransferTaskModel{}
