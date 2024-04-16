@@ -5,15 +5,18 @@
         <div class="text-h6">关机设置</div>
         <q-card-section class="q-pt-none">
           <div class="q-gutter-sm">
-            <q-radio v-model="view.shutdownType" val="clear" label="清除"/>
-            <q-radio v-model="view.shutdownType" val="now" label="立即"/>
-            <q-radio v-model="view.shutdownType" val="target" label="定时"/>
+            <q-radio v-model="view.shutdownType" val="clear" label="清除" />
+            <q-radio v-model="view.shutdownType" val="now" label="立即" />
+            <q-radio v-model="view.shutdownType" val="target" label="定时" />
           </div>
-          <div v-if="view.shutdownType === 'target'" style="
+          <div
+            v-if="view.shutdownType === 'target'"
+            style="
               display: flex;
               flex-direction: row;
               justify-content: space-between;
-            ">
+            "
+          >
             <q-input class="timeSelect" v-model="view.shutdownHH"></q-input>
             <q-input class="timeSelect" v-model="view.shutdownMM"></q-input>
             <q-input class="timeSelect" v-model="view.shutdownSS"></q-input>
@@ -22,15 +25,17 @@
       </div>
       <q-card-actions align="right">
         <q-btn v-close-popup flat color="primary">取消</q-btn>
-        <q-btn v-close-popup flat color="primary" @click="submitBtn">确定</q-btn>
+        <q-btn v-close-popup flat color="primary" @click="submitBtn"
+          >确定</q-btn
+        >
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 <script setup>
-import {reactive, ref} from 'vue';
-import {GetShutDown} from '../components/api/settingAPI';
-import {useSystemProperty} from '../stores/System';
+import { reactive, ref } from 'vue';
+import { GetShutDown } from '../components/api/settingAPI';
+import { useSystemProperty } from '../stores/System';
 
 const card = ref(false);
 
@@ -41,7 +46,7 @@ const view = reactive({
   shutdownMM: 0,
   shutdownSS: 0,
   shutdownType: 'now',
-  shutdownTime: new Date()
+  shutdownTime: new Date(),
 });
 
 const open = () => {
@@ -71,6 +76,8 @@ const submitBtn = () => {
         console.log('GetShutDown timeout');
       }
     }, 1000);
+  } else if (view.shutdownType === 'clear') {
+    systemProperty.shutdownLeftSecond = null;
   }
 };
 
