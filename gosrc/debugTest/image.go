@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-// TestScan2 ..
+// TestImage TestScan2 ..
 func TestImage(test *testing.T) {
 	src := "d:\\5.jpg"
 	des := "d:\\111.png"

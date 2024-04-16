@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// TestScan ..
+// TestMain TestScan ..
 func TestMain(t *testing.T) {
 
 	var baseDir = "d:\\emby"

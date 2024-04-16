@@ -112,7 +112,7 @@ func GetMovieType(fileName string) string {
 
 }
 
-// 获取文件名
+// GetTitle 获取文件名
 func GetTitle(filename string) string {
 	result := ""
 	if filename == "" {
@@ -124,7 +124,7 @@ func GetTitle(filename string) string {
 
 }
 
-// 根据 文件名称  分析番号 [] 中包含 '-'符号...
+// GetActress 根据 文件名称  分析番号 [] 中包含 '-'符号...
 func GetActress(fileName string) string {
 	code := ""
 	rights := strings.Split(fileName, "[")
@@ -147,7 +147,7 @@ func GetActress(fileName string) string {
 }
 
 func GetTags(fileName string, movieType string) []string {
-	res := []string{}
+	var res []string
 	if movieType != "" {
 		res = append(res, movieType)
 	}
@@ -188,7 +188,7 @@ func GetTagStr(fileName string) string {
 	return ""
 }
 
-// 根据 文件名称  分析番号 [] 中包含 '-'符号...
+// GetCode 根据 文件名称  分析番号 [] 中包含 '-'符号...
 func GetCode(fileName string) string {
 	code := ""
 	rights := strings.Split(fileName, "[")
@@ -240,7 +240,7 @@ func GetSizeStr(fSize int64) string {
 	return result
 }
 
-// 驼峰式写法转为下划线写法
+// Camel2Case 驼峰式写法转为下划线写法
 func Camel2Case(name string) string {
 	buffer := NewBuffer()
 	for i, r := range name {
@@ -263,7 +263,7 @@ func Camel2Case(name string) string {
 //	return strings.Replace(name, " ", "", -1)
 //}
 
-// 内嵌bytes.Buffer，支持连写
+// Buffer 内嵌bytes.Buffer，支持连写
 type Buffer struct {
 	*bytes.Buffer
 }

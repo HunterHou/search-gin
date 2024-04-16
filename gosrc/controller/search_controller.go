@@ -12,12 +12,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 文件搜索入口
+// PostSearch 文件搜索入口
 func PostSearch(c *gin.Context) {
 	PostMovies(c)
 }
 
-// 文件搜索 map
+// PostMovies 文件搜索 map
 func PostMovies(c *gin.Context) {
 	searchParam := datamodels.SearchParam{}
 	err := c.Bind(&searchParam)
@@ -36,7 +36,7 @@ func PostMovies(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// 脸谱搜索入口
+// PostActess 脸谱搜索入口
 func PostActess(c *gin.Context) {
 
 	param := datamodels.SearchParam{}

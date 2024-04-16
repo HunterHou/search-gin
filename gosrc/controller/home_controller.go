@@ -22,7 +22,7 @@ func GetTypeSize(c *gin.Context) {
 		SearchService.ScanAll()
 		SearchService.SortAct(datasource.ActressList, "desc")
 	}
-	res := []cons.MenuSize{}
+	var res []cons.MenuSize
 	cons.TypeMenu.Range(func(_, value interface{}) bool {
 		res = append(res, value.(cons.MenuSize))
 		return true
@@ -51,7 +51,7 @@ func GetTypeSize(c *gin.Context) {
 }
 
 func GetTagSize(c *gin.Context) {
-	res := []cons.MenuSize{}
+	var res []cons.MenuSize
 	// for _, v := range cons.TagMenu {
 	// 	res = append(res, v)
 	// }

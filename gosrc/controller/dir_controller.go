@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 本地打开文件夹
+// GetOpenFolder 本地打开文件夹
 func GetOpenFolder(c *gin.Context) {
 	id := c.Param("id")
 	SearchService := service.CreateSearchService()
@@ -24,7 +24,7 @@ func GetOpenFolder(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// 通过路径打开文件夹
+// PostOpenFolderByPath 通过路径打开文件夹
 func PostOpenFolderByPath(c *gin.Context) {
 
 	forms := make(map[string]string)
@@ -39,7 +39,7 @@ func PostOpenFolderByPath(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// 通过路径删除文件夹
+// PostDeleteFolerByPath 通过路径删除文件夹
 func PostDeleteFolerByPath(c *gin.Context) {
 
 	fileService := service.CreateFileService()

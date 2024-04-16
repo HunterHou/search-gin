@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// TestScan4 ..
+// TestReadFile TestScan4 ..
 func TestReadFile(test *testing.T) {
 	Dictionary := service.ReadDictionaryFromTxt("D:\\code\\search-iris\\src\\dirList.ini")
 	for index, name := range Dictionary.LibMap {

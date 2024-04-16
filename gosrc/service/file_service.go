@@ -3,7 +3,6 @@ package service
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
@@ -76,19 +75,19 @@ func (fileService FileService) GetFile(c *gin.Context) {
 
 }
 
-// 心跳与定时
-func (f *FileService) HeartBeat() {
+// HeartBeat 心跳与定时
+func (fileService *FileService) HeartBeat() {
 	//time.After(1 * time.Second)
 	// 启动扫描系统
-	var fileService = CreateSearchService()
-	fileService.ScanAll()
+	var SearchService = CreateSearchService()
+	SearchService.ScanAll()
 	// 启动转换执行任务
-	f.TaskExecuting()
-	time.AfterFunc(180*time.Second, f.HeartBeat)
+	fileService.TaskExecuting()
+	time.AfterFunc(180*time.Second, fileService.HeartBeat)
 }
 
 // 无图流设置
-func (f *FileService) writeNoPic(c *gin.Context) {
+func (fileService *FileService) writeNoPic(c *gin.Context) {
 	if noPic == nil {
 		response, err := http.Get("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.bianminchewu.com%2Fimgs%2F18%2F0804%2F1533370482927057.png&refer=http%3A%2F%2Fwww.bianminchewu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666008344&t=9da005a04a6c6209595f46dd05477c0f")
 		if err != nil || response.StatusCode != http.StatusOK {
@@ -108,7 +107,7 @@ func (f *FileService) writeNoPic(c *gin.Context) {
 }
 
 // 删除指定文件夹下的 指定文件名的文件
-func (f *FileService) DeleteOne(dirName string, fileName string) {
+func (fileService *FileService) DeleteOne(dirName string, fileName string) {
 	if len(fileName) == 0 {
 		return
 	}
@@ -128,19 +127,19 @@ func (f *FileService) DeleteOne(dirName string, fileName string) {
 	// 删除父文件夹
 	filesThen, _ := os.ReadDir(dirName)
 	if len(filesThen) == 0 {
-		f.UpDirClear(dirName)
+		fileService.UpDirClear(dirName)
 	}
 
 }
 
-// 删除递归文件夹
-func (f *FileService) DownDeleteDir(dirname string) {
+// DownDeleteDir 删除递归文件夹
+func (fileService *FileService) DownDeleteDir(dirname string) {
 	files2, _ := os.ReadDir(dirname)
 	if len(files2) > 0 {
 		for _, ff := range files2 {
 			path := dirname + utils.PathSeparator + ff.Name()
 			if ff.IsDir() {
-				f.DownDeleteDir(path)
+				fileService.DownDeleteDir(path)
 			} else {
 				err := os.Remove(path)
 				if err != nil {
@@ -149,12 +148,12 @@ func (f *FileService) DownDeleteDir(dirname string) {
 			}
 		}
 	}
-	f.UpDirClear(dirname)
+	fileService.UpDirClear(dirname)
 
 }
 
-// 递归向上处理空文件夹
-func (f *FileService) UpDirClear(dirname string) {
+// UpDirClear 递归向上处理空文件夹
+func (fileService *FileService) UpDirClear(dirname string) {
 	files2, _ := os.ReadDir(dirname)
 	if len(files2) == 0 {
 		err := os.Remove(dirname)
@@ -162,7 +161,7 @@ func (f *FileService) UpDirClear(dirname string) {
 			fmt.Println(err)
 		}
 		newPath := dirname[0:strings.LastIndex(dirname, utils.PathSeparator)]
-		f.UpDirClear(newPath)
+		fileService.UpDirClear(newPath)
 	} else {
 		return
 
@@ -186,9 +185,9 @@ func GetIpAddr() string {
 }
 
 // 根据datasource map 更新datasource
-func (f *FileService) fileMapUpdateFileListFromDatasource(dirPath string, targetFiles []datamodels.Movie) {
+func (fileService *FileService) fileMapUpdateFileListFromDatasource(dirPath string, targetFiles []datamodels.Movie) {
 	// 声明新文件列表
-	newList := []datamodels.Movie{}
+	var newList []datamodels.Movie
 	// 删除数据源map中指定文件夹的文件
 	for _, v := range datasource.FileLib {
 		if v.DirPath == dirPath {
@@ -213,8 +212,8 @@ func (f *FileService) fileMapUpdateFileListFromDatasource(dirPath string, target
 }
 
 // 制作DataSource数据
-func (f *FileService) makeDatasourceMap(files []datamodels.Movie) {
-	fileMap, actressMap, _, fileSize := f.ArrayToMap(files)
+func (fileService *FileService) makeDatasourceMap(files []datamodels.Movie) {
+	fileMap, actressMap, _, fileSize := fileService.ArrayToMap(files)
 	var newActress []datamodels.Actress
 	for _, item := range actressMap {
 		if item.Cnt > 1 {
@@ -229,8 +228,8 @@ func (f *FileService) makeDatasourceMap(files []datamodels.Movie) {
 	datasource.FileSize = fileSize
 }
 
-// 总文件 转不同数据模型
-func (f *FileService) ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[string]datamodels.Actress, map[string]datamodels.Supplier, int64) {
+// ArrayToMap 总文件 转不同数据模型
+func (fileService *FileService) ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[string]datamodels.Actress, map[string]datamodels.Supplier, int64) {
 	fileMap := make(map[string]datamodels.Movie)
 	fileMapCount := make(map[string]int)
 	actressMap := make(map[string]datamodels.Actress)
@@ -280,7 +279,7 @@ func (f *FileService) ArrayToMap(files []datamodels.Movie) (map[string]datamodel
 	return fileMap, actressMap, supplierMap, size
 }
 
-// 合并文件数组
+// ExpandsMovie 合并文件数组
 func ExpandsMovie(originArr []datamodels.Movie, insertArr []datamodels.Movie) []datamodels.Movie {
 	if len(insertArr) == 0 {
 		return originArr
@@ -292,8 +291,8 @@ func ExpandsMovie(originArr []datamodels.Movie, insertArr []datamodels.Movie) []
 	return originArr
 }
 
-// 并发扫描多文件夹 并返回所有文件
-func (f *FileService) Walks(baseDir []string, types []string) []datamodels.Movie {
+// Walks 并发扫描多文件夹 并返回所有文件
+func (fileService *FileService) Walks(baseDir []string, types []string) []datamodels.Movie {
 
 	var wg sync.WaitGroup
 	var dataMovie = make(chan []datamodels.Movie, 20000)
@@ -301,7 +300,7 @@ func (f *FileService) Walks(baseDir []string, types []string) []datamodels.Movie
 	var result []datamodels.Movie
 	wg.Add(len(baseDir))
 	for i := 0; i < len(baseDir); i++ {
-		go f.goWalk(baseDir[i], types, &wg, dataMovie, scanTime)
+		go fileService.goWalk(baseDir[i], types, &wg, dataMovie, scanTime)
 	}
 	wg.Wait()
 	close(dataMovie)
@@ -329,10 +328,10 @@ func (f *FileService) Walks(baseDir []string, types []string) []datamodels.Movie
 }
 
 // 协程方法 扫描单个文件夹并送入管道
-func (f *FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
+func (fileService *FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
-	files, _ := f.WalkInnter(baseDir, types, 0, true, baseDir)
+	files, _ := fileService.WalkInnter(baseDir, types, 0, true, baseDir)
 	datas <- files
 	ti := time.Since(start)
 	thisTime := cons.MenuSize{
@@ -345,14 +344,14 @@ func (f *FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup,
 }
 
 // Walk 遍历目录 获取文件库
-func (f *FileService) Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
+func (fileService *FileService) Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
 	var result []datamodels.Movie
 	files, _ := os.ReadDir(baseDir)
 	if len(files) > 0 {
 		for _, path := range files {
 			pathAbs := filepath.Join(baseDir, path.Name())
 			if path.IsDir() && deep {
-				childResult := f.Walk(pathAbs, types, deep)
+				childResult := fileService.Walk(pathAbs, types, deep)
 				result = ExpandsMovie(result, childResult)
 			} else {
 				name := path.Name()
@@ -375,14 +374,14 @@ func (f *FileService) Walk(baseDir string, types []string, deep bool) []datamode
 	return result
 }
 
-//文件夹搜索
+// WalkInnter 文件夹搜索
 /**
 baseDir 文件夹路径
 types 扫描类型
 totalSize 总数
 queryChild 是否递归
 */
-func (f *FileService) WalkInnter(currentDir string, types []string, totalSize int64, queryChild bool, basePath string) ([]datamodels.Movie, int64) {
+func (fileService *FileService) WalkInnter(currentDir string, types []string, totalSize int64, queryChild bool, basePath string) ([]datamodels.Movie, int64) {
 	var result []datamodels.Movie
 	currentSize := int64(0)
 	files, _ := os.ReadDir(currentDir)
@@ -391,7 +390,7 @@ func (f *FileService) WalkInnter(currentDir string, types []string, totalSize in
 
 			pathAbs := filepath.Join(currentDir, path.Name())
 			if path.IsDir() && queryChild {
-				childResult, innerSize := f.WalkInnter(pathAbs, types, currentSize, queryChild, basePath)
+				childResult, innerSize := fileService.WalkInnter(pathAbs, types, currentSize, queryChild, basePath)
 				result = ExpandsMovie(result, childResult)
 				currentSize += innerSize
 			} else {
@@ -424,7 +423,7 @@ func (f *FileService) WalkInnter(currentDir string, types []string, totalSize in
 	return result, currentSize
 }
 
-func (f *FileService) TaskExecuting() {
+func (fileService *FileService) TaskExecuting() {
 	//time.After(1 * time.Second)
 	var todos []datamodels.TransferTaskModel
 	var todosCuts []datamodels.TransferTaskModel
@@ -449,21 +448,21 @@ func (f *FileService) TaskExecuting() {
 
 	}
 	if len(executing) == 0 && len(todos) > 0 {
-		go f.TransferFormatter(todos[0])
+		go fileService.TransferFormatter(todos[0])
 	}
 	if len(executingCuts) == 0 && len(todosCuts) > 0 {
-		go f.CutFormatter(todosCuts[0])
+		go fileService.CutFormatter(todosCuts[0])
 	}
-	time.AfterFunc(2*time.Second, f.TaskExecuting)
+	time.AfterFunc(2*time.Second, fileService.TaskExecuting)
 }
 
-func (f *FileService) TransferFormatter(model datamodels.TransferTaskModel) utils.Result {
+func (fileService *FileService) TransferFormatter(model datamodels.TransferTaskModel) utils.Result {
 	from := model.Path
 	suffix := utils.GetSuffux(model.Path)
 	dest := strings.ReplaceAll(model.Path, "."+suffix, "."+model.To)
 	thisNow := model.CreateTime
 	args := []string{"-i", from, "-vcodec", "copy", dest}
-	res := f.ffmepgExec(args, thisNow)
+	res := fileService.ffmepgExec(args, thisNow)
 	if res.IsSuccess() {
 		err := os.Remove(model.Path)
 		if err != nil {
@@ -473,7 +472,7 @@ func (f *FileService) TransferFormatter(model datamodels.TransferTaskModel) util
 	return res
 }
 
-func (f *FileService) CutFormatter(model datamodels.TransferTaskModel) utils.Result {
+func (fileService *FileService) CutFormatter(model datamodels.TransferTaskModel) utils.Result {
 	from := model.Path
 	suffix := utils.GetSuffux(model.Path)
 	toSuffix := "mkv"
@@ -489,7 +488,7 @@ func (f *FileService) CutFormatter(model datamodels.TransferTaskModel) utils.Res
 		dest = strings.ReplaceAll(dest, "\\", "\\\\")
 	}
 	args := []string{"-i", from, "-ss", model.Start, "-t", model.End, "-c", "copy", dest}
-	res := f.ffmepgExec(args, thisNow)
+	res := fileService.ffmepgExec(args, thisNow)
 	if res.IsSuccess() {
 		err := os.Remove(model.Path)
 		if err != nil {
@@ -500,7 +499,7 @@ func (f *FileService) CutFormatter(model datamodels.TransferTaskModel) utils.Res
 
 }
 
-func (f *FileService) ffmepgExec(args []string, thisNow time.Time) utils.Result {
+func (fileService *FileService) ffmepgExec(args []string, thisNow time.Time) utils.Result {
 	task := cons.TransferTask[thisNow]
 	task.SetStatus("执行中")
 	task.CreateTime = time.Now()

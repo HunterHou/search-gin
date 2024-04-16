@@ -9,7 +9,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// TestScan3 ..
+// TestInfoHtml TestScan3 ..
 func TestInfoHtml(test *testing.T) {
 	url := "https://www.cdnbus.in/ATID-389"
 	request, _ := http.NewRequest("GET", url, nil)

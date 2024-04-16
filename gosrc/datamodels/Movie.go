@@ -42,7 +42,7 @@ type Movie struct {
 	JpgUrl   string `json:"JpgUrl,omitempty" xorm:"Text"`
 }
 
-// 文件修改模型
+// MovieEdit 文件修改模型
 type MovieEdit struct {
 	Movie
 	MoveOut   bool

@@ -20,7 +20,7 @@ func XItem(lib []string, items []string) []string {
 	return res
 }
 
-// 判断集合是否包含
+// HasItem 判断集合是否包含
 func HasItem(lib []string, item string) bool {
 	if lib == nil {
 		return false

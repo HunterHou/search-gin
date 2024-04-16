@@ -847,14 +847,14 @@ func (fs SearchService) SortAct(lib []datamodels.Actress, sortType string) {
 
 }
 
-// 全局扫描
+// ScanAll 全局扫描
 func (fs SearchService) ScanAll() {
 	//统计初始化
 	cons.TypeMenu = sync.Map{}
 	cons.TagMenu = sync.Map{}
 	cons.SmallDir = []cons.MenuSize{}
 	//初始化查询条件
-	dirList := []string{}
+	var dirList []string
 	setting := cons.OSSetting
 	dirList = append(dirList, setting.Dirs...)
 	cons.QueryTypes = []string{}
@@ -864,7 +864,7 @@ func (fs SearchService) ScanAll() {
 	fs.ScanDisk(dirList, cons.QueryTypes)
 }
 
-// 扫描指定文佳佳
+// ScanTarget 扫描指定文佳佳
 func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 	//统计初始化
 	service := CreateFileService()
@@ -1029,7 +1029,7 @@ func GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.M
 		return files, 0
 	}
 
-	data := []datamodels.Movie{}
+	var data []datamodels.Movie
 	var volume int64
 	for i := start; i < end; i++ {
 		curFile := files[i]
