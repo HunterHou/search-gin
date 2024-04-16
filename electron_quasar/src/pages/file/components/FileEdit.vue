@@ -45,10 +45,10 @@
       <q-card-actions align="center">
         <q-btn color="primary" label="移动" @click="editMoveout" />
         <q-btn color="primary" label="命名" @click="editItemSubmit(false)" />
-        <q-btn color="primary" label="预览" @click="makePreview" />
+        <q-btn color="primary" label="预览" @click="view.preview == true" />
         <q-btn color="primary" label="关闭" @click="onDialogCancel" />
       </q-card-actions>
-      <q-img v-if="view.previewUrl" :src="view.previewUrl" style=""></q-img>
+      <q-img v-if="view.preview" :src="view.previewUrl" style=""></q-img>
     </q-card>
   </q-dialog>
 </template>
@@ -74,6 +74,7 @@ const $q = useQuasar();
 const view = reactive({
   item: null,
   previewUrl: null,
+  preview: false,
   callback: null,
 });
 
