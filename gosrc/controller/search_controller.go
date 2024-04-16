@@ -20,8 +20,14 @@ func PostSearch(c *gin.Context) {
 // 文件搜索 map
 func PostMovies(c *gin.Context) {
 	searchParam := datamodels.SearchParam{}
-	c.Bind(&searchParam)
-	fmt.Fprintf(cons.LogWriter, "PostMovies： [%v]", searchParam)
+	err := c.Bind(&searchParam)
+	if err != nil {
+		return
+	}
+	_, err = fmt.Fprintf(cons.LogWriter, "PostMovies： [%v]", searchParam)
+	if err != nil {
+		return
+	}
 	fileService := service.CreateSearchService()
 	result := fileService.SearchDataSource(searchParam)
 	result.PageSize = searchParam.PageSize
@@ -34,16 +40,19 @@ func PostMovies(c *gin.Context) {
 func PostActess(c *gin.Context) {
 
 	param := datamodels.SearchParam{}
-	c.Bind(&param)
-	service := service.CreateSearchService()
-	if len(datasource.FileList) == 0 {
-		service.ScanAll()
-		service.SortAct(datasource.ActressList, param.SortType)
+	err := c.Bind(&param)
+	if err != nil {
+		return
 	}
-	service.SortAct(datasource.ActressList, param.SortType)
+	SearchService := service.CreateSearchService()
+	if len(datasource.FileList) == 0 {
+		SearchService.ScanAll()
+		SearchService.SortAct(datasource.ActressList, param.SortType)
+	}
+	SearchService.SortAct(datasource.ActressList, param.SortType)
 	totalCnt := len(datasource.ActressList)
-	list, searchCnt := service.SearchActressByKeyWord(datasource.ActressList, param.Keyword)
-	list = service.GetActressPage(list, param.Page, param.PageSize)
+	list, searchCnt := SearchService.SearchActressByKeyWord(datasource.ActressList, param.Keyword)
+	list = SearchService.GetActressPage(list, param.Page, param.PageSize)
 	result := utils.NewPage()
 	result.CurCnt = len(list)
 	result.TotalCnt = totalCnt

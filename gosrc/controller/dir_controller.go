@@ -15,7 +15,10 @@ func GetOpenFolder(c *gin.Context) {
 	id := c.Param("id")
 	SearchService := service.CreateSearchService()
 	file := SearchService.FindOne(id)
-	fmt.Fprint(gin.DefaultWriter, "open folder", file.DirPath)
+	_, err := fmt.Fprintln(gin.DefaultWriter, "open folder", file.DirPath)
+	if err != nil {
+		return
+	}
 	utils.ExecCmdExplorer(file.DirPath)
 	res := utils.NewSuccessByMsg("打开成功")
 	c.JSON(http.StatusOK, res)
@@ -25,7 +28,10 @@ func GetOpenFolder(c *gin.Context) {
 func PostOpenFolderByPath(c *gin.Context) {
 
 	forms := make(map[string]string)
-	c.ShouldBindJSON(&forms)
+	err := c.ShouldBindJSON(&forms)
+	if err != nil {
+		return
+	}
 	dirpath := forms["dirpath"]
 	dirpath = strings.ReplaceAll(dirpath, utils.PathSeparator+utils.PathSeparator, utils.PathSeparator)
 	utils.ExecCmdExplorer(dirpath)
@@ -38,7 +44,10 @@ func PostDeleteFolerByPath(c *gin.Context) {
 
 	fileService := service.CreateFileService()
 	forms := make(map[string]string)
-	c.ShouldBindJSON(&forms)
+	err := c.ShouldBindJSON(&forms)
+	if err != nil {
+		return
+	}
 	dirpath := forms["dirpath"]
 	dirpath = strings.ReplaceAll(dirpath, utils.PathSeparator+utils.PathSeparator, utils.PathSeparator)
 	fileService.DownDeleteDir(dirpath)

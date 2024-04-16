@@ -26,6 +26,9 @@ func InterfaceFields(setting interface{}) []string {
 
 func FieldsMapToStruck(setting interface{}, valueMap map[string]interface{}) error {
 	jsn, _ := json.Marshal(valueMap)
-	json.Unmarshal(jsn, setting)
+	err := json.Unmarshal(jsn, setting)
+	if err != nil {
+		return err
+	}
 	return nil
 }

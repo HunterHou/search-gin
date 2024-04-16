@@ -21,13 +21,19 @@ func BuildRouter() *gin.Engine {
 	router.Use(gin.Recovery())
 	router.Use(gin.LoggerWithWriter(cons.LogWriter))
 	if utils.ExistsFiles(cons.IndexHtml) {
-		fmt.Fprintf(cons.LogWriter, "static exists:%s", cons.IndexHtml)
+		_, err := fmt.Fprintf(cons.LogWriter, "static exists:%s", cons.IndexHtml)
+		if err != nil {
+			return nil
+		}
 		router.LoadHTMLFiles(cons.IndexHtml)
 		for k, v := range cons.StaticFs {
 			router.StaticFS(k, http.Dir(v))
 		}
 	} else {
-		fmt.Fprintf(cons.LogWriter, "static not exists:%s", cons.IndexHtml)
+		_, err := fmt.Fprintf(cons.LogWriter, "static not exists:%s", cons.IndexHtml)
+		if err != nil {
+			return nil
+		}
 	}
 
 	router.NoRoute(controller.Index)

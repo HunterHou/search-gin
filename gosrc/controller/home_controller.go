@@ -17,10 +17,10 @@ func Index(c *gin.Context) {
 }
 
 func GetTypeSize(c *gin.Context) {
-	service := service.CreateSearchService()
+	SearchService := service.CreateSearchService()
 	if len(datasource.FileList) == 0 {
-		service.ScanAll()
-		service.SortAct(datasource.ActressList, "desc")
+		SearchService.ScanAll()
+		SearchService.SortAct(datasource.ActressList, "desc")
 	}
 	res := []cons.MenuSize{}
 	cons.TypeMenu.Range(func(_, value interface{}) bool {

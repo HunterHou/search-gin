@@ -17,7 +17,10 @@ func GetSettingInfo(c *gin.Context) {
 }
 func PostSetting(c *gin.Context) {
 	setInfo := datamodels.Setting{}
-	c.ShouldBindJSON(&setInfo)
+	err := c.ShouldBindJSON(&setInfo)
+	if err != nil {
+		return
+	}
 	setInfo.SelfPath = cons.OSSetting.SelfPath
 	cons.OSSetting = setInfo
 	service.FlushDictionary(cons.OSSetting.SelfPath)
@@ -37,7 +40,10 @@ func GetShutdown(c *gin.Context) {
 	res := utils.NewSuccess()
 	err := exec.Command("cmd", "/C", "shutdown -s -t 0").Run()
 	if err != nil {
-		fmt.Fprint(gin.DefaultWriter, "shutdown", err)
+		_, err := fmt.Fprintln(gin.DefaultWriter, "shutdown", err)
+		if err != nil {
+			return
+		}
 	}
 	c.JSON(http.StatusOK, res)
 }

@@ -14,7 +14,12 @@ func ImageToString(path string) string {
 		return ""
 	}
 	file, _ := os.Open(path)
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+
+		}
+	}(file)
 	sourceBuffer := make([]byte, 50000000)
 	n, _ := file.Read(sourceBuffer)
 	return base64.StdEncoding.EncodeToString(sourceBuffer[:n])
@@ -24,14 +29,29 @@ func ImageToPng(src string) error {
 	des := GetPng(src, "png")
 	fin, _ := os.Open(src)
 	fin2, _ := os.Open(src)
-	defer fin.Close()
-	defer fin2.Close()
+	defer func(fin *os.File) {
+		err := fin.Close()
+		if err != nil {
+
+		}
+	}(fin)
+	defer func(fin2 *os.File) {
+		err := fin2.Close()
+		if err != nil {
+
+		}
+	}(fin2)
 	fout, createErr := os.Create(des)
 	if createErr != nil {
 		fmt.Println("err:", createErr)
 		return createErr
 	}
-	defer fout.Close()
+	defer func(fout *os.File) {
+		err := fout.Close()
+		if err != nil {
+
+		}
+	}(fout)
 	config, _, _ := image.DecodeConfig(fin2)
 	srcImage, fm, err := image.Decode(fin)
 	if err != nil {
@@ -45,7 +65,10 @@ func ImageToPng(src string) error {
 	case "jpeg":
 		rgbImg := srcImage.(*image.YCbCr)
 		subImg := rgbImg.SubImage(image.Rect(left, 0, width, height)).(*image.YCbCr)
-		png.Encode(fout, subImg)
+		err := png.Encode(fout, subImg)
+		if err != nil {
+			return err
+		}
 	case "png":
 		switch srcImage.(type) {
 		case *image.NRGBA:

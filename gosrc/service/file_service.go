@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -94,7 +95,12 @@ func (f *FileService) writeNoPic(c *gin.Context) {
 			c.Status(http.StatusServiceUnavailable)
 			return
 		}
-		defer response.Body.Close()
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			if err != nil {
+
+			}
+		}(response.Body)
 		noPic, _ = ioutil.ReadAll(response.Body)
 		contentType = response.Header.Get("Content-Type")
 	}
@@ -112,7 +118,10 @@ func (f *FileService) DeleteOne(dirName string, fileName string) {
 			path := dirName + utils.PathSeparator + f.Name()
 			err := os.Remove(path)
 			if err != nil {
-				fmt.Fprint(gin.DefaultWriter, "delete:", err)
+				_, err := fmt.Fprintln(gin.DefaultWriter, "delete:", err)
+				if err != nil {
+					return
+				}
 			}
 		}
 	}
@@ -133,7 +142,10 @@ func (f *FileService) DownDeleteDir(dirname string) {
 			if ff.IsDir() {
 				f.DownDeleteDir(path)
 			} else {
-				os.Remove(path)
+				err := os.Remove(path)
+				if err != nil {
+					return
+				}
 			}
 		}
 	}
@@ -161,7 +173,10 @@ func (f *FileService) UpDirClear(dirname string) {
 func GetIpAddr() string {
 	conn, err := net.Dial("udp", "8.8.8.8:53")
 	if err != nil {
-		fmt.Fprint(gin.DefaultWriter, "GetIpAddr:", err)
+		_, err := fmt.Fprintln(gin.DefaultWriter, "GetIpAddr:%v \n", err)
+		if err != nil {
+			return ""
+		}
 		return "127.0.0.1"
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
@@ -490,9 +505,9 @@ func (f *FileService) ffmepgExec(args []string, thisNow time.Time) utils.Result 
 			task.SetLog(string(out))
 			task.FinishTime = time.Now()
 			cons.TransferTask[thisNow] = task
-			fmt.Fprint(gin.DefaultWriter, "out:", string(out))
-			fmt.Fprint(gin.DefaultWriter, "cmdErr:", cmdErr)
-			fmt.Fprint(gin.DefaultWriter, "args:", args)
+			fmt.Fprintln(gin.DefaultWriter, "out:", string(out))
+			fmt.Fprintln(gin.DefaultWriter, "cmdErr:", cmdErr)
+			fmt.Fprintln(gin.DefaultWriter, "args:", args)
 			res := utils.NewFailByMsg("转换失败")
 			res.Data = cmdErr
 			return res
