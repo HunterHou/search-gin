@@ -169,10 +169,7 @@ func (fileService *FileService) UpDirClear(dirname string) {
 func GetIpAddr() string {
 	conn, err := net.Dial("udp", "8.8.8.8:53")
 	if err != nil {
-		_, err := fmt.Fprintf(gin.DefaultWriter, "GetIpAddr:%v \n\n", err)
-		if err != nil {
-			return ""
-		}
+		cons.Logger("GetIpAddr:%v \n\n", err)
 		return "127.0.0.1"
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)

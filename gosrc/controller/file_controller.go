@@ -46,17 +46,8 @@ func GetInfo(c *gin.Context) {
 // PostRename 改名
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
-	err := c.ShouldBindJSON(&currentFile)
-	_, err = fmt.Fprintf(cons.LogWriter, "PostRename :searchCnt[%v] \n\n", currentFile)
-	if err != nil {
-		return
-	}
-	if err != nil {
-		_, err := fmt.Fprintf(cons.LogWriter, "PostRename err:[%v] \n", err)
-		if err != nil {
-			return
-		}
-	}
+	c.ShouldBindJSON(&currentFile)
+	cons.Logger("PostRename :searchCnt[%v] \n\n", currentFile)
 	fileService := service.CreateSearchService()
 	res := fileService.Rename(currentFile)
 	c.JSON(http.StatusOK, res)
@@ -66,10 +57,7 @@ func PostRename(c *gin.Context) {
 func GetAddTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
-	_, err := fmt.Fprintf(cons.LogWriter, "GetAddTag [%v] [%v]  \n", idInt, tag)
-	if err != nil {
-		return
-	}
+	cons.Logger("GetAddTag [%v] [%v]  \n", idInt, tag)
 	fileService := service.CreateSearchService()
 	res := fileService.AddTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
@@ -115,27 +103,19 @@ func PostSync(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
 	err := c.ShouldBindJSON(&currentFile)
 	if err != nil {
-		_, err := fmt.Fprintf(cons.LogWriter, "PostSync err [%v] ", err)
-		if err != nil {
-			return
-		}
+		cons.Logger("PostSync err [%v] ", err)
 	}
 
 	searchService := service.CreateSearchService()
 	curFile := searchService.FindOne(currentFile.Id)
-	_, err = fmt.Fprintf(cons.LogWriter, "PostSync curFile [%v] \n ", curFile)
-	if err != nil {
-		return
-	}
+	cons.Logger("PostSync curFile [%v] \n ", curFile)
+
 	result, newFile := searchService.RequestBusToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return
 	}
-	_, err = fmt.Fprintf(cons.LogWriter, "PostSync newFile [%v] \n", newFile)
-	if err != nil {
-		return
-	}
+	cons.Logger("PostSync newFile [%v] \n", newFile)
 	result = searchService.MoveCut(curFile, newFile)
 	c.JSON(http.StatusOK, result)
 }
@@ -242,10 +222,8 @@ func GetTransferToMp4(c *gin.Context) {
 	id := c.Param("id")
 	to := c.Param("to")
 	fileService := service.CreateSearchService()
-	_, err := fmt.Fprintf(cons.LogWriter, "GetTransferToMp4 newFile [%v][%v] ", id, to)
-	if err != nil {
-		return
-	}
+	cons.Logger("GetTransferToMp4 newFile [%v][%v] ", id, to)
+
 	model := fileService.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
@@ -279,10 +257,8 @@ func GetCutMovie(c *gin.Context) {
 	start := c.Param("start")
 	end := c.Param("end")
 	fileService := service.CreateSearchService()
-	_, err := fmt.Fprintf(cons.LogWriter, "GetTransferToMp4 newFile [%v][%v][%v] ", id, start, end)
-	if err != nil {
-		return
-	}
+	cons.Logger("GetTransferToMp4 newFile [%v][%v][%v] ", id, start, end)
+
 	model := fileService.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
