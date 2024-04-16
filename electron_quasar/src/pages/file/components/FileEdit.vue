@@ -1,15 +1,47 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card class="q-dialog-plugin q-pa-md" style="max-width: 1200px;width:60vw">
+    <q-card
+      class="q-dialog-plugin q-pa-md"
+      style="max-width: 1200px; width: 60vw"
+    >
       <q-form class="q-gutter-md">
-        <q-btn-toggle v-model="view.item.MovieType" :options="MovieTypeOptions" toggle-color="primary" />
-        <q-input label="编码" autogrow v-model="view.item.Code" :dense="false" />
-        <q-input label="图鉴" autogrow v-model="view.item.Actress" :dense="false" />
-        <q-input label="名称" autogrow v-model="view.item.Title" :dense="false" />
-        <q-input label="JPG地址" autogrow v-model="view.item.Jpg" :dense="false" />
-        <q-input label="PNG地址" autogrow v-model="view.item.Png" :dense="false" />
+        <q-btn-toggle
+          v-model="view.item.MovieType"
+          :options="MovieTypeOptions"
+          toggle-color="primary"
+        />
+        <q-input
+          label="编码"
+          autogrow
+          v-model="view.item.Code"
+          :dense="false"
+        />
+        <q-input
+          label="图鉴"
+          autogrow
+          v-model="view.item.Actress"
+          :dense="false"
+        />
+        <q-input
+          label="名称"
+          autogrow
+          v-model="view.item.Title"
+          :dense="false"
+        />
+        <q-input
+          label="JPG地址"
+          autogrow
+          v-model="view.item.Jpg"
+          :dense="false"
+        />
+        <q-input
+          label="PNG地址"
+          autogrow
+          v-model="view.item.Png"
+          :dense="false"
+        />
       </q-form>
-      <q-card-actions align="left">
+      <q-card-actions align="center">
         <q-btn color="primary" label="移动" @click="editMoveout" />
         <q-btn color="primary" label="命名" @click="editItemSubmit(false)" />
         <q-btn color="primary" label="预览" @click="makePreview" />
@@ -28,12 +60,11 @@ import { reactive } from 'vue';
 import {
   formatTitle,
   formatCode,
-  MovieTypeOptions
+  MovieTypeOptions,
 } from '../../../components/utils';
 import { FileRename } from '../../../components/api/searchAPI';
 import { FileModel } from 'src/components/model/File';
 import { useSystemProperty } from 'stores/System';
-
 
 const systemProperty = useSystemProperty();
 
@@ -42,21 +73,24 @@ const $q = useQuasar();
 const view = reactive({
   item: null,
   previewUrl: null,
-  callback: null
+  callback: null,
 });
 
-const emits=defineEmits([
+const emits = defineEmits([
   // REQUIRED; 需要明确指出
   // 组件通过 useDialogPluginComponent() 暴露哪些事件
   'plus-one',
   'sub-one',
   'update:modelValue',
-  ...useDialogPluginComponent.emits
+  ...useDialogPluginComponent.emits,
 ]);
 
-const makePreview = ()=>{
-  view.previewUrl = systemProperty.ImageUrl + view.item.Id + '.jpg';
-}
+const makePreview = () => {
+  const uriCode = view.item.Code.toLowerCase().trim().replace('-', '00');
+  view.previewUrl =
+    systemProperty.SettingInfo.ImageUrl + `${uriCode}/${uriCode}pl.jpg`;
+  view.item.Jpg = view.previewUrl;
+};
 
 const open = (item, cb) => {
   view.item = new FileModel().fromObject(item);
@@ -64,6 +98,7 @@ const open = (item, cb) => {
   view.item.Png = null;
   view.item.Code = formatCode(item.Code);
   view.item.Title = formatTitle(item.Title);
+  view.previewUrl = null;
   view.callback = cb;
   dialogRef.value.show();
 };
@@ -111,22 +146,21 @@ const editItemSubmit = async (MoveOut) => {
     MoveOut,
     Jpg,
     Png,
-    NoRefresh: true
+    NoRefresh: true,
   };
-  emits('plus-one')
+  emits('plus-one');
   onDialogOK();
   const res = await FileRename(param);
   if (res.Code == 200) {
     if (view.callback) {
-      emits('sub-one')
+      emits('sub-one');
       view.callback();
     }
   } else {
-    emits('sub-one')
+    emits('sub-one');
     $q.notify({ type: 'negative', message: res.Message });
   }
 };
-
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent();
@@ -145,6 +179,6 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 // ...会自动关闭对话框
 // }
 defineExpose({
-  open
+  open,
 });
 </script>
