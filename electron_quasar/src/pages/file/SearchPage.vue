@@ -5,184 +5,186 @@
     style="height: 94vh"
     class="shadow-2 rounded-borders"
   >
-    <q-header :style="themeStyle">
-      <q-toolbar class="q-gutter-sm">
-        <q-btn-toggle
-          v-if="!isMobile"
-          size="md"
-          v-model="view.queryParam.SortField"
-          @update:model-value="fetchSearch()"
-          :options="FieldEnum"
-        />
-        <q-btn-toggle
-          v-if="!isMobile"
-          v-model="view.queryParam.SortType"
-          @update:model-value="fetchSearch()"
-          :options="DescEnum"
-        />
-        <q-btn-toggle
-          v-if="!isMobile"
-          v-model="view.queryParam.MovieType"
-          @update:model-value="fetchSearch()"
-          :options="MovieTypeSelects"
-        />
-        <q-btn-dropdown
-          v-if="isMobile"
-          outline
-          color="primary"
-          :label="getLabelByValue(view.queryParam.SortField, FieldEnum)"
-        >
-          <q-list>
-            <q-item
-              v-for="item in FieldEnum"
-              :key="item.label"
-              clickable
-              v-close-popup
-              @click="
-                view.queryParam.SortField = item.value;
-                fetchSearch();
-              "
-            >
-              <q-item-section>
-                <q-item-label>{{ item.label }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-        <q-btn-dropdown
-          v-if="isMobile"
-          outline
-          color="primary"
-          :label="getLabelByValue(view.queryParam.SortType, DescEnum)"
-        >
-          <q-list>
-            <q-item
-              v-for="item in DescEnum"
-              :key="item.label"
-              clickable
-              v-close-popup
-              @click="
-                view.queryParam.SortType = item.value;
-                fetchSearch();
-              "
-            >
-              <q-item-section>
-                <q-item-label>{{ item.label }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-        <q-btn-dropdown
-          v-if="isMobile"
-          outline
-          color="primary"
-          :label="getLabelByValue(view.queryParam.MovieType, MovieTypeSelects)"
-        >
-          <q-list>
-            <q-item
-              v-for="item in MovieTypeSelects"
-              :key="item.label"
-              clickable
-              v-close-popup
-              @click="
-                view.queryParam.MovieType = item.value;
-                fetchSearch();
-              "
-            >
-              <q-item-section>
-                <q-item-label>{{ item.label }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-        <q-input
-          id="searchBtn"
-          label="..."
-          v-model="view.queryParam.Keyword"
-          :dense="true"
-          filled
-          clearable
-          @update:model-value="fetchSearch()"
-        >
-          <template v-slot:prepend>
-            <q-icon name="ti-list" class="cursor-pointer">
-              <q-popup-proxy>
-                <div style="width: 200px; max-height: 50vh">
-                  <q-list>
-                    <q-item
-                      clickable
-                      v-ripple
-                      v-for="word in suggestions"
-                      :key="word"
-                      @click="
-                        view.queryParam.Keyword = word;
-                        fetchSearch();
-                      "
-                    >
-                      <q-item-section>
-                        <q-item-label>{{ word }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </div>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-          <template v-slot:append>
-            <q-icon
-              name="ti-search"
-              title="搜"
-              class="cursor-pointer"
-              @click="fetchSearch"
-            >
-            </q-icon>
-          </template>
-        </q-input>
-        <q-btn
-          class="q-mr-sm"
-          flat
-          size="sm"
-          color="primary"
-          icon="ti-settings"
-          @click="openListEditRef"
-        />
+    <q-header :style="themeStyle" elevated class="q-gutter-sm flex justify-center">
+      <q-btn
+        :loading="refreshIndexLoading"
+        color="red"
+        @click="refreshIndex"
+        title="索引"
+        size="md"
+        label="索~"
+      >
+        <template v-slot:loading>
+          <q-spinner-facebook size="xs"></q-spinner-facebook
+        ></template>
+      </q-btn>
+      <q-btn
+        :loading="view.renameCount > 0"
+        v-if="view.renameCount > 0"
+        class="q-mt-sm"
+        color="red"
+        size="md"
+        label="13333 "
+      >
+        <template v-slot:loading>
+          <q-spinner-facebook size="xs"></q-spinner-facebook>
+          {{ `r:${view.renameCount}` }}
+        </template>
+      </q-btn>
+      <q-btn-toggle
+        v-if="!isMobile"
+        size="md"
+        v-model="view.queryParam.SortField"
+        @update:model-value="fetchSearch()"
+        :options="FieldEnum"
+      />
+      <q-btn-toggle
+        v-if="!isMobile"
+        v-model="view.queryParam.SortType"
+        @update:model-value="fetchSearch()"
+        :options="DescEnum"
+      />
+      <q-btn-toggle
+        v-if="!isMobile"
+        v-model="view.queryParam.MovieType"
+        @update:model-value="fetchSearch()"
+        :options="MovieTypeSelects"
+      />
+      <q-btn-dropdown
+        v-if="isMobile"
+        outline
+        color="primary"
+        :label="getLabelByValue(view.queryParam.SortField, FieldEnum)"
+      >
+        <q-list>
+          <q-item
+            v-for="item in FieldEnum"
+            :key="item.label"
+            clickable
+            v-close-popup
+            @click="
+              view.queryParam.SortField = item.value;
+              fetchSearch();
+            "
+          >
+            <q-item-section>
+              <q-item-label>{{ item.label }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+      <q-btn-dropdown
+        v-if="isMobile"
+        outline
+        color="primary"
+        :label="getLabelByValue(view.queryParam.SortType, DescEnum)"
+      >
+        <q-list>
+          <q-item
+            v-for="item in DescEnum"
+            :key="item.label"
+            clickable
+            v-close-popup
+            @click="
+              view.queryParam.SortType = item.value;
+              fetchSearch();
+            "
+          >
+            <q-item-section>
+              <q-item-label>{{ item.label }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+      <q-btn-dropdown
+        v-if="isMobile"
+        outline
+        color="primary"
+        :label="getLabelByValue(view.queryParam.MovieType, MovieTypeSelects)"
+      >
+        <q-list>
+          <q-item
+            v-for="item in MovieTypeSelects"
+            :key="item.label"
+            clickable
+            v-close-popup
+            @click="
+              view.queryParam.MovieType = item.value;
+              fetchSearch();
+            "
+          >
+            <q-item-section>
+              <q-item-label>{{ item.label }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+      <q-input
+        dense
+        type="search"
+        style="max-width: 350px"
+        outlined
+        :debounce="1000"
+        id="searchBtn"
+        label="..."
+        v-model="view.queryParam.Keyword"
+        filled
+        clearable
+        @update:model-value="fetchSearch()"
+      >
+        <template v-slot:prepend>
+          <q-icon name="ti-list" class="cursor-pointer">
+            <q-popup-proxy>
+              <div style="width: 200px; max-height: 50vh">
+                <q-list>
+                  <q-item
+                    clickable
+                    v-ripple
+                    v-for="word in suggestions"
+                    :key="word"
+                    @click="
+                      view.queryParam.Keyword = word;
+                      fetchSearch();
+                    "
+                  >
+                    <q-item-section>
+                      <q-item-label>{{ word }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+        <template v-slot:append>
+          <q-icon
+            name="ti-search"
+            title="搜"
+            class="cursor-pointer"
+            @click="fetchSearch"
+          >
+          </q-icon>
+        </template>
+      </q-input>
+      <q-btn
+        class="q-mr-sm"
+        flat
+        size="sm"
+        color="primary"
+        icon="ti-settings"
+        @click="openListEditRef"
+      />
 
-        <q-btn
-          :loading="refreshIndexLoading"
-          color="red"
-          @click="refreshIndex"
-          title="索引"
-          size="md"
-          label="~"
-        >
-          <template v-slot:loading>
-            <q-spinner-facebook size="xs"></q-spinner-facebook
-          ></template>
-        </q-btn>
-        <q-toggle
-          v-model="view.queryParam.OnlyRepeat"
-          v-if="!isMobile"
-          flat
-          @update:model-value="fetchSearch"
-          label="重"
-        />
-        <q-btn
-          :loading="view.renameCount > 0"
-          v-if="view.renameCount > 0"
-          class="q-mt-sm"
-          color="red"
-          size="md"
-          label="13333 "
-        >
-          <template v-slot:loading>
-            <q-spinner-facebook size="xs"></q-spinner-facebook>
-            {{ `r:${view.renameCount}` }}
-          </template>
-        </q-btn>
-      </q-toolbar>
+      <q-toggle
+        v-model="view.queryParam.OnlyRepeat"
+        v-if="!isMobile"
+        flat
+        @update:model-value="fetchSearch"
+        label="重"
+      />
     </q-header>
     <q-footer elevated :style="themeStyle">
-      <div class="q-pa-sm flex flex-center">
+      <div class="flex flex-center">
         <q-pagination
           v-model="view.queryParam.Page"
           @update:model-value="currentPageChange"
@@ -195,16 +197,19 @@
         ></q-pagination>
         <div class="row q-gutter-sm flex flex-right">
           <q-input
+            color="q-mr-md"
             v-model="view.queryParam.Page"
             :dense="true"
+            size="sm"
             type="search"
-            style="width: 40px; text-align: center"
+            style="width: 60px; text-align: center"
             bgColor="orange"
             @focus="focusEvent($event)"
             @update:model-value="currentPageChange"
           />
           <q-select
-            color="lime-11 q-mr-md"
+            color="q-mr-md"
+            size="sm"
             dense
             @update:model-value="currentPageSizeChange"
             filled
@@ -218,9 +223,9 @@
     </q-footer>
     <q-page-container>
       <q-page padding>
-        <div class="row justify-start q-mt-sm mainlist">
+        <div class="row justify-start">
           <q-card
-            class="q-ma-sm"
+            style="margin: 4px"
             v-bind:class="{
               'example-item': !isMobile,
               'mobile-item': isMobile,
@@ -452,38 +457,36 @@
           <q-btn fab icon="keyboard_arrow_up" color="accent" />
         </q-page-scroller>
 
-        <div class="q-mg-md top" style="margin-bottom: 40px">
-          <q-page-sticky
-            style="z-index: 9"
-            position="bottom-left"
-            :offset="[6, isMobile ? 180 : 160]"
-          >
-            <q-btn
-              round
-              class="page-sticky"
-              color="amber"
-              text-color="black"
-              icon="keyboard_arrow_left"
-              v-if="view.queryParam.Page > 1"
-              @click="nextPage(-1)"
-            ></q-btn>
-          </q-page-sticky>
+        <q-page-sticky
+          style="z-index: 9"
+          position="bottom-left"
+          :offset="[6, isMobile ? 180 : 160]"
+        >
+          <q-btn
+            round
+            class="page-sticky"
+            color="amber"
+            text-color="black"
+            icon="keyboard_arrow_left"
+            v-if="view.queryParam.Page > 1"
+            @click="nextPage(-1)"
+          ></q-btn>
+        </q-page-sticky>
 
-          <q-page-sticky
-            style="z-index: 9"
-            position="bottom-right"
-            :offset="[10, isMobile ? 180 : 160]"
-          >
-            <q-btn
-              round
-              class="page-sticky"
-              color="secondary"
-              text-color="black"
-              icon="keyboard_arrow_right"
-              @click="nextPage(1)"
-            ></q-btn>
-          </q-page-sticky>
-        </div>
+        <q-page-sticky
+          style="z-index: 9"
+          position="bottom-right"
+          :offset="[10, isMobile ? 180 : 160]"
+        >
+          <q-btn
+            round
+            class="page-sticky"
+            color="secondary"
+            text-color="black"
+            icon="keyboard_arrow_right"
+            @click="nextPage(1)"
+          ></q-btn>
+        </q-page-sticky>
       </q-page>
     </q-page-container>
   </q-layout>
