@@ -11,7 +11,7 @@ import (
 )
 
 // TestMain TestScan ..
-func TestMain(t *testing.T) {
+func TestMain(m *testing.M) {
 
 	var baseDir = "d:\\emby"
 	//var videoTypes = []string{cons.AVI, cons.MKV, cons.WMV, cons.MP4}
