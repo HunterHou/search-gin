@@ -7,39 +7,6 @@
   >
     <q-header :style="themeStyle">
       <q-toolbar class="q-gutter-sm">
-        <q-btn
-          :loading="view.renameCount > 0"
-          v-if="view.renameCount > 0"
-          class="q-mt-sm"
-          color="orange"
-          size="md"
-          label="13333 "
-        >
-          <template v-slot:loading>
-            <q-spinner-facebook size="xs"></q-spinner-facebook>
-            {{ `r:${view.renameCount}` }}
-          </template>
-        </q-btn>
-        <q-btn
-          :loading="refreshIndexLoading"
-          color="green"
-          @click="refreshIndex"
-          title="刷新索引"
-          icon="ti-reload"
-          size="md"
-          dense
-        >
-          <template v-slot:loading>
-            <q-spinner-facebook size="xs"></q-spinner-facebook
-          ></template>
-        </q-btn>
-        <q-toggle
-          v-model="view.queryParam.OnlyRepeat"
-          v-if="!isMobile"
-          flat
-          @update:model-value="fetchSearch"
-          label="重"
-        />
         <q-btn-toggle
           v-if="!isMobile"
           size="md"
@@ -179,6 +146,39 @@
           icon="ti-settings"
           @click="openListEditRef"
         />
+
+        <q-btn
+          :loading="refreshIndexLoading"
+          color="red"
+          @click="refreshIndex"
+          title="索引"
+          size="md"
+          label="~"
+        >
+          <template v-slot:loading>
+            <q-spinner-facebook size="xs"></q-spinner-facebook
+          ></template>
+        </q-btn>
+        <q-toggle
+          v-model="view.queryParam.OnlyRepeat"
+          v-if="!isMobile"
+          flat
+          @update:model-value="fetchSearch"
+          label="重"
+        />
+        <q-btn
+          :loading="view.renameCount > 0"
+          v-if="view.renameCount > 0"
+          class="q-mt-sm"
+          color="red"
+          size="md"
+          label="13333 "
+        >
+          <template v-slot:loading>
+            <q-spinner-facebook size="xs"></q-spinner-facebook>
+            {{ `r:${view.renameCount}` }}
+          </template>
+        </q-btn>
       </q-toolbar>
     </q-header>
     <q-footer elevated :style="themeStyle">
