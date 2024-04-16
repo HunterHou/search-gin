@@ -48,11 +48,11 @@ func (p *Page) SetResultCnt(resultCnt int, pageNo int) {
 	}
 	for i := 0; i < totalPage; i++ {
 		if i < headNum || i > totalPage-headNum {
-			pageList = append(pageList, (i + 1))
+			pageList = append(pageList, i+1)
 			continue
 		}
 		if i < (middPage+middNum) && i > (middPage-middNum) {
-			pageList = append(pageList, (i + 1))
+			pageList = append(pageList, i+1)
 			continue
 		}
 

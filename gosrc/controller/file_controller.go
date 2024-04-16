@@ -47,7 +47,7 @@ func GetInfo(c *gin.Context) {
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
 	err := c.ShouldBindJSON(&currentFile)
-	_, err = fmt.Fprintln(cons.LogWriter, "PostRename :searchCnt[%v] \n", currentFile)
+	_, err = fmt.Fprintf(cons.LogWriter, "PostRename :searchCnt[%v] \n\n", currentFile)
 	if err != nil {
 		return
 	}
