@@ -36,10 +36,6 @@
               <q-icon name="event" />
             </template>
             <template v-slot:control>
-              <!-- <MutiInput
-                v-model="view.settingInfo.Buttons"
-                @onchange="(arr) => (view.settingInfo.Buttons = arr)"
-              /> -->
               <MutiSelector
                 v-bind:model-value="view.settingInfo.Buttons"
                 :options="buttonEnum"
@@ -105,6 +101,7 @@
           <q-input v-model="view.settingInfo.ImageHost" label="ImageHost" />
           <q-input v-model="view.settingInfo.StreamHost" label="StreamHost" />
           <q-input v-model="view.settingInfo.BaseUrl" label="BaseUrl" />
+          <q-input v-model="view.settingInfo.ImageUrl" label="ImageUrl" />
           <q-input v-model="view.settingInfo.OMUrl" label="OMUrl" />
 
           <q-field color="purple-12" label="DirsLib" stack-label>

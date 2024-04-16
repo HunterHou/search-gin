@@ -15,6 +15,7 @@ export class SettingInfo {
   SystemHtml: string | undefined;
   BaseUrl: string | undefined;
   OMUrl: string | undefined;
+  ImageUrl: string | undefined;
   ControllerHost: string | undefined;
   ImageHost: string | undefined;
   StreamHost: string | undefined;
