@@ -117,10 +117,7 @@ func (fileService *FileService) DeleteOne(dirName string, fileName string) {
 			path := dirName + utils.PathSeparator + f.Name()
 			err := os.Remove(path)
 			if err != nil {
-				_, err := fmt.Fprintln(gin.DefaultWriter, "delete:", err)
-				if err != nil {
-					return
-				}
+				cons.Logger("DeleteOne:[%v]", err)
 			}
 		}
 	}
