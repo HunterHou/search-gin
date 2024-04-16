@@ -211,7 +211,6 @@ func (fs SearchService) ClearTag(id string, tag string) utils.Result {
 	}
 	path := strings.ReplaceAll(movie.Path, originTagStr, newTagStr)
 	os.Rename(movie.Path, path)
-	fs.UpdateOne(id, path)
 	path = strings.ReplaceAll(movie.Jpg, originTagStr, newTagStr)
 	os.Rename(movie.Jpg, path)
 	path = strings.ReplaceAll(movie.Png, originTagStr, newTagStr)
@@ -689,9 +688,6 @@ func (fs SearchService) FindOne(Id string) datamodels.Movie {
 	}
 	curFile := datasource.FileLib[Id]
 	return curFile
-}
-
-func (fs SearchService) UpdateOne(Id string, path string) {
 }
 
 func cleanPath(name string) string {

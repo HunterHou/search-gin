@@ -13,8 +13,8 @@ import (
 // 本地打开文件夹
 func GetOpenFolder(c *gin.Context) {
 	id := c.Param("id")
-	service := service.CreateSearchService()
-	file := service.FindOne(id)
+	SearchService := service.CreateSearchService()
+	file := SearchService.FindOne(id)
 	fmt.Fprint(gin.DefaultWriter, "open folder", file.DirPath)
 	utils.ExecCmdExplorer(file.DirPath)
 	res := utils.NewSuccessByMsg("打开成功")
