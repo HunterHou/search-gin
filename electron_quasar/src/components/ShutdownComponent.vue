@@ -5,10 +5,11 @@
         <div class="text-h6">关机设置</div>
         <q-card-section class="q-pt-none">
           <div class="q-gutter-sm">
-            <q-radio v-model="view.shutdownType" val="now" label="立即" />
-            <q-radio v-model="view.shutdownType" val="target" label="定时" />
+            <q-radio v-model="view.shutdownType" val="clear" label="清除"/>
+            <q-radio v-model="view.shutdownType" val="now" label="立即"/>
+            <q-radio v-model="view.shutdownType" val="target" label="定时"/>
           </div>
-          <div v-if="view.shutdownType == 'target'" style="
+          <div v-if="view.shutdownType === 'target'" style="
               display: flex;
               flex-direction: row;
               justify-content: space-between;
@@ -27,9 +28,10 @@
   </q-dialog>
 </template>
 <script setup>
-import { reactive, ref } from 'vue';
-import { GetShutDown } from '../components/api/settingAPI';
-import { useSystemProperty } from '../stores/System';
+import {reactive, ref} from 'vue';
+import {GetShutDown} from '../components/api/settingAPI';
+import {useSystemProperty} from '../stores/System';
+
 const card = ref(false);
 
 const systemProperty = useSystemProperty();
@@ -52,16 +54,14 @@ const close = () => {
 
 const submitBtn = () => {
   clearTimeout(systemProperty.shutdownTimer);
-  console.log('view.shutdownType', view.shutdownType);
-  if (view.shutdownType == 'now') {
+  if (view.shutdownType === 'now') {
     console.log('GetShutDown now');
     GetShutDown();
-  } else {
+  } else if (view.shutdownType === 'target') {
     systemProperty.shutdownLeftSecond =
       (view.shutdownHH || 0) * 3600 +
       (view.shutdownMM || 0) * 60 +
       (view.shutdownSS || 0);
-    console.log('shutdownLeftSecond', systemProperty.shutdownLeftSecond);
     systemProperty.shutdownTimer = setInterval(() => {
       console.log(systemProperty.shutdownLeftSecond);
       systemProperty.shutdownLeftSecond = systemProperty.shutdownLeftSecond - 1;
