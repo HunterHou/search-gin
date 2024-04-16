@@ -365,7 +365,7 @@ func (fileService *FileService) Walk(baseDir string, types []string, deep bool) 
 	} else {
 		err := os.Remove(baseDir)
 		if err != nil {
-			return nil
+			cons.Logger("os.Remove(baseDir):[%v]", err)
 		}
 	}
 
@@ -409,7 +409,7 @@ func (fileService *FileService) WalkInnter(currentDir string, types []string, to
 		if er == nil && emptyFile.ModTime().Day() == (time.Now().Day()-1) {
 			err := os.Remove(currentDir)
 			if err != nil {
-				return nil, 0
+				cons.Logger("os.Remove(currentDir):[%v]", err)
 			}
 		}
 
