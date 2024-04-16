@@ -5,7 +5,7 @@
       <q-toolbar class="q-electron-drag">
         <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
         <q-toolbar-title style="-webkit-app-region: drag">
-          文件搜索
+          搜索
         </q-toolbar-title>
 
         <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" v-show="isWideScreen" :style="{
