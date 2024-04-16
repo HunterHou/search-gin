@@ -257,11 +257,11 @@ func Camel2Case(name string) string {
 }
 
 // 下划线写法转为驼峰写法
-func Case2Camel(name string) string {
-	name = strings.Replace(name, "_", " ", -1)
-	name = strings.Title(name)
-	return strings.Replace(name, " ", "", -1)
-}
+//func Case2Camel(name string) string {
+//	name = strings.Replace(name, "_", " ", -1)
+//	name = strings.Title(name)
+//	return strings.Replace(name, " ", "", -1)
+//}
 
 // 内嵌bytes.Buffer，支持连写
 type Buffer struct {

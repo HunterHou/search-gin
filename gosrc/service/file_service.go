@@ -101,7 +101,7 @@ func (f *FileService) writeNoPic(c *gin.Context) {
 
 			}
 		}(response.Body)
-		noPic, _ = ioutil.ReadAll(response.Body)
+		noPic, _ = io.ReadAll(response.Body)
 		contentType = response.Header.Get("Content-Type")
 	}
 	c.Data(http.StatusOK, contentType, noPic)
@@ -112,7 +112,7 @@ func (f *FileService) DeleteOne(dirName string, fileName string) {
 	if len(fileName) == 0 {
 		return
 	}
-	files, _ := ioutil.ReadDir(dirName)
+	files, _ := os.ReadDir(dirName)
 	for _, f := range files {
 		if strings.Contains(f.Name(), fileName) {
 			path := dirName + utils.PathSeparator + f.Name()
@@ -126,7 +126,7 @@ func (f *FileService) DeleteOne(dirName string, fileName string) {
 		}
 	}
 	// 删除父文件夹
-	filesThen, _ := ioutil.ReadDir(dirName)
+	filesThen, _ := os.ReadDir(dirName)
 	if len(filesThen) == 0 {
 		f.UpDirClear(dirName)
 	}
@@ -135,7 +135,7 @@ func (f *FileService) DeleteOne(dirName string, fileName string) {
 
 // 删除递归文件夹
 func (f *FileService) DownDeleteDir(dirname string) {
-	files2, _ := ioutil.ReadDir(dirname)
+	files2, _ := os.ReadDir(dirname)
 	if len(files2) > 0 {
 		for _, ff := range files2 {
 			path := dirname + utils.PathSeparator + ff.Name()
@@ -155,7 +155,7 @@ func (f *FileService) DownDeleteDir(dirname string) {
 
 // 递归向上处理空文件夹
 func (f *FileService) UpDirClear(dirname string) {
-	files2, _ := ioutil.ReadDir(dirname)
+	files2, _ := os.ReadDir(dirname)
 	if len(files2) == 0 {
 		err := os.Remove(dirname)
 		if err != nil {
@@ -347,7 +347,7 @@ func (f *FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup,
 // Walk 遍历目录 获取文件库
 func (f *FileService) Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
 	var result []datamodels.Movie
-	files, _ := ioutil.ReadDir(baseDir)
+	files, _ := os.ReadDir(baseDir)
 	if len(files) > 0 {
 		for _, path := range files {
 			pathAbs := filepath.Join(baseDir, path.Name())
@@ -366,7 +366,10 @@ func (f *FileService) Walk(baseDir string, types []string, deep bool) []datamode
 			}
 		}
 	} else {
-		os.Remove(baseDir)
+		err := os.Remove(baseDir)
+		if err != nil {
+			return nil
+		}
 	}
 
 	return result
@@ -382,7 +385,7 @@ queryChild 是否递归
 func (f *FileService) WalkInnter(currentDir string, types []string, totalSize int64, queryChild bool, basePath string) ([]datamodels.Movie, int64) {
 	var result []datamodels.Movie
 	currentSize := int64(0)
-	files, _ := ioutil.ReadDir(currentDir)
+	files, _ := os.ReadDir(currentDir)
 	if len(files) > 0 {
 		for _, path := range files {
 
@@ -406,7 +409,10 @@ func (f *FileService) WalkInnter(currentDir string, types []string, totalSize in
 	} else {
 		emptyFile, er := os.Stat(currentDir)
 		if er == nil && emptyFile.ModTime().Day() == (time.Now().Day()-1) {
-			os.Remove(currentDir)
+			err := os.Remove(currentDir)
+			if err != nil {
+				return nil, 0
+			}
 		}
 
 	}
@@ -459,7 +465,10 @@ func (f *FileService) TransferFormatter(model datamodels.TransferTaskModel) util
 	args := []string{"-i", from, "-vcodec", "copy", dest}
 	res := f.ffmepgExec(args, thisNow)
 	if res.IsSuccess() {
-		os.Remove(model.Path)
+		err := os.Remove(model.Path)
+		if err != nil {
+			return utils.Result{}
+		}
 	}
 	return res
 }
@@ -482,7 +491,10 @@ func (f *FileService) CutFormatter(model datamodels.TransferTaskModel) utils.Res
 	args := []string{"-i", from, "-ss", model.Start, "-t", model.End, "-c", "copy", dest}
 	res := f.ffmepgExec(args, thisNow)
 	if res.IsSuccess() {
-		os.Remove(model.Path)
+		err := os.Remove(model.Path)
+		if err != nil {
+			return utils.Result{}
+		}
 	}
 	return res
 

@@ -15,7 +15,6 @@ import (
 var PortNo = ":10081"
 var PortNo2 = ":10082"
 var PortNo3 = ":10083"
-var Port = "//" + PortNo
 var QueryTypes []string
 
 var CurSortField = ""
