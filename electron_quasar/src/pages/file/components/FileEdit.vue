@@ -15,6 +15,7 @@
           autogrow
           v-model="view.item.Code"
           :dense="false"
+          @change="makePreview"
         />
         <q-input
           label="图鉴"
