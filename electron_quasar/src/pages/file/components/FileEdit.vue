@@ -42,7 +42,7 @@
           v-model="view.item.Png"
           :dense="false"
         />
-        <div class="row justify-between" style="height: 80px;" v-if="view.previewUrl">
+        <div class="row justify-between" style="height: 80px;">
           <q-img width="100px" :src="view.previewUrl"></q-img>
         </div>
       </q-form>
