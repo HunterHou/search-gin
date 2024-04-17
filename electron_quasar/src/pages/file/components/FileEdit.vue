@@ -5,45 +5,63 @@
       style="max-width: 1200px; width: 60vw"
     >
       <q-form class="q-gutter-md">
-        <q-btn-toggle
-          v-model="view.item.MovieType"
-          :options="MovieTypeOptions"
-          toggle-color="primary"
-        />
-        <q-input
-          label="编码"
-          autogrow
-          v-model="view.item.Code"
-          :dense="false"
-          @change="makePreview"
-        />
-        <q-input
-          label="图鉴"
-          autogrow
-          v-model="view.item.Actress"
-          :dense="false"
-        />
-        <q-input
-          label="名称"
-          autogrow
-          v-model="view.item.Title"
-          :dense="false"
-        />
-        <q-input
-          class="col-8"
-          label="JPG地址"
-          autogrow
-          v-model="view.item.Jpg"
-          :dense="false"
-        />
-        <q-input
-          label="PNG地址"
-          autogrow
-          v-model="view.item.Png"
-          :dense="false"
-        />
-        <div class="row justify-between" style="height: 80px">
-          <q-img width="100px" :src="view.item.Jpg"></q-img>
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+          "
+        >
+          <div class="q-mr-md" style="width: 100%; padding: 10px">
+            <q-btn-toggle
+              v-model="view.item.MovieType"
+              :options="MovieTypeOptions"
+              toggle-color="primary"
+            />
+            <q-input
+              label="编码"
+              autogrow
+              v-model="view.item.Code"
+              :dense="false"
+              @change="makePreview"
+            />
+            <q-input
+              label="图鉴"
+              autogrow
+              v-model="view.item.Actress"
+              :dense="false"
+            />
+            <q-input
+              label="名称"
+              autogrow
+              v-model="view.item.Title"
+              :dense="false"
+            />
+            <q-input
+              class="col-8"
+              label="JPG地址"
+              autogrow
+              v-model="view.item.Jpg"
+              :dense="false"
+            />
+            <q-input
+              label="PNG地址"
+              autogrow
+              v-model="view.item.Png"
+              :dense="false"
+            />
+          </div>
+          <div
+            style="
+              width: 200px;
+              border: 1;
+              border-radius: 5px;
+              margin: 10px 20px;
+            "
+            v-if="view.item.Jpg"
+          >
+            <q-img width="200px" :src="view.item.Jpg"></q-img>
+          </div>
         </div>
       </q-form>
       <q-card-actions align="center">
