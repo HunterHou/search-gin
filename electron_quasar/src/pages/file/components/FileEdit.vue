@@ -42,8 +42,8 @@
           v-model="view.item.Png"
           :dense="false"
         />
-        <div class="row justify-between" style="height: 80px;">
-          <q-img width="100px" :src="view.previewUrl"></q-img>
+        <div class="row justify-between" style="height: 80px">
+          <q-img width="100px" :src="view.item.Jpg"></q-img>
         </div>
       </q-form>
       <q-card-actions align="center">
@@ -52,7 +52,6 @@
         <q-btn color="primary" label="预览" @click="view.preview == true" />
         <q-btn color="primary" label="关闭" @click="onDialogCancel" />
       </q-card-actions>
-      <q-img v-if="view.preview" :src="view.previewUrl" style=""></q-img>
     </q-card>
   </q-dialog>
 </template>
@@ -77,7 +76,6 @@ const $q = useQuasar();
 
 const view = reactive({
   item: null,
-  previewUrl: null,
   preview: false,
   callback: null,
 });
@@ -93,9 +91,8 @@ const emits = defineEmits([
 
 const makePreview = () => {
   const uriCode = view.item.Code.toLowerCase().trim().replace('-', '00');
-  view.previewUrl =
+  view.item.Jpg =
     systemProperty.SettingInfo.ImageUrl + `${uriCode}/${uriCode}pl.jpg`;
-  view.item.Jpg = view.previewUrl;
 };
 
 const open = (item, cb) => {
