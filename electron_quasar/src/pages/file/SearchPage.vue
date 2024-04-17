@@ -5,7 +5,11 @@
     style="height: 94vh"
     class="shadow-2 rounded-borders"
   >
-    <q-header :style="themeStyle" elevated class="q-gutter-sm flex justify-center">
+    <q-header
+      :style="themeStyle"
+      elevated
+      class="q-gutter-sm flex justify-center"
+    >
       <q-btn
         :loading="refreshIndexLoading"
         color="red"
@@ -766,6 +770,7 @@ const commonExec = async (exec, refresh) => {
 onKeyStroke(['`'], () => {
   refreshIndex();
 });
+
 onKeyStroke(['Enter'], () => {
   fetchSearch();
 });
@@ -794,6 +799,24 @@ const goActress = (Actress) => {
     });
     window.open(routeData.href, '_blank');
   }
+};
+
+onKeyStroke(['ArrowLeft'], () => {
+  videoForwardPicInPic(-10);
+});
+
+onKeyStroke(['ArrowRight'], () => {
+  videoForwardPicInPic(60);
+});
+
+const videoForwardPicInPic = () => {
+  const video = document.getElementById('vue3VideoPlayRef');
+  // 获取当前视频的播放时间
+  var currentTime = video.currentTime;
+  // 计算新的播放时间（当前时间加上 10 秒）
+  var newTime = currentTime + 10;
+  // 设置新的播放时间
+  video.currentTime = newTime;
 };
 
 const picInPic = (item) => {
