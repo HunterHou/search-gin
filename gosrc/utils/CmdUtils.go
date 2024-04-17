@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"fmt"
 	"os/exec"
 	"runtime"
+	"searchGin/cons"
 )
 
 func ExecCmdStart(path string) int {
@@ -22,10 +22,10 @@ func ExecCmd(path string, cmdType string) int {
 		}
 		cmdErr := cmd.Start()
 		if cmdErr != nil {
-			fmt.Println(cmdErr)
+			cons.Logger("%v", cmdErr)
 			return 0
 		}
-		fmt.Println("ExecCmdSuccess:" + cmdType + ":" + path)
+		cons.Logger("ExecCmdSuccess:" + cmdType + ":" + path)
 		return 1
 	}
 	return 0

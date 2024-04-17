@@ -17,7 +17,7 @@ type Page struct {
 	TotalSize  string
 	CurSize    string
 
-	IndexProgress bool
+	IndexProgress int
 }
 
 func NewPage() Page {
@@ -31,7 +31,7 @@ func NewPage() Page {
 	}
 }
 
-func (p *Page) SetProgress(progress bool) {
+func (p *Page) SetProgress(progress int) {
 	p.IndexProgress = progress
 }
 

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"searchGin/cons"
@@ -123,7 +122,7 @@ func PostSync(c *gin.Context) {
 // GetImageList 下拉相关图片
 func GetImageList(c *gin.Context) {
 	id := c.Param("id")
-	fmt.Println("id:" + id)
+	cons.Logger("id:" + id)
 	serviceFile := service.CreateSearchService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestBusToFile(curFile)
