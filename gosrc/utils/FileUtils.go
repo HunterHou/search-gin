@@ -3,7 +3,6 @@ package utils
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"path"
