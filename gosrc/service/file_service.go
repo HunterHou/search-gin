@@ -292,7 +292,9 @@ func (fileService *FileService) Walks(baseDir []string, types []string) []datamo
 	var dataMovie = make(chan []datamodels.Movie, 20000)
 	var scanTime = make(chan cons.MenuSize, 100)
 	var result []datamodels.Movie
-	wg.Add(len(baseDir))
+	dirSize := len(baseDir)
+	cons.IndexDone = dirSize
+	wg.Add(dirSize)
 	for i := 0; i < len(baseDir); i++ {
 		go fileService.goWalk(baseDir[i], types, &wg, dataMovie, scanTime)
 	}
@@ -334,6 +336,7 @@ func (fileService *FileService) goWalk(baseDir string, types []string, wg *sync.
 		Size: int64(len(files)),
 	}
 	scanTime <- thisTime
+	cons.IndexDone = cons.IndexDone - 1
 
 }
 
