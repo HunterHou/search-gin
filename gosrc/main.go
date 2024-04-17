@@ -9,7 +9,6 @@ import (
 	"searchGin/utils"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 )
 
