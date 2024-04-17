@@ -124,23 +124,23 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 		path := strings.ReplaceAll(movie.Path, originTagStr, newTagStr)
 		err := os.Rename(movie.Path, path)
 		if err != nil {
-			fmt.Println(err)
+			cons.Logger("", err)
 			return utils.NewFailByMsg(err.Error())
 		}
 		path = strings.ReplaceAll(movie.Jpg, originTagStr, newTagStr)
 		err = os.Rename(movie.Jpg, path)
 		if err != nil {
-			fmt.Println(err)
+			cons.Logger("", err)
 		}
 		path = strings.ReplaceAll(movie.Png, originTagStr, newTagStr)
 		err = os.Rename(movie.Png, path)
 		if err != nil {
-			fmt.Println(err)
+			cons.Logger("", err)
 		}
 		path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
 		err = os.Rename(movie.Nfo, path)
 		if err != nil {
-			fmt.Println(err)
+			cons.Logger("", err)
 		}
 		// 执行当前目录搜索
 		fs.ScanTarget(movie.DirPath, movie.BaseDir)
@@ -148,7 +148,7 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 	}
 
 	newMovieType := "《" + tag + "》"
-	fmt.Println(tag)
+	cons.Logger("", tag)
 	suffix := "." + utils.GetSuffux(movie.Path)
 	newSuffix := newMovieType + suffix
 	newName := strings.ReplaceAll(movie.Path, suffix, newSuffix)
@@ -158,7 +158,7 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 	}
 	err := os.Rename(movie.Path, newName)
 	if err != nil {
-		fmt.Println(err)
+		cons.Logger("", err)
 		return utils.NewFailByMsg(err.Error())
 	}
 	//png
@@ -270,11 +270,10 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	if !strings.Contains(url, cons.OSSetting.BaseUrl) {
 		url = cons.OSSetting.BaseUrl + url
 	}
-	fmt.Println(url)
 	resp, downErr := httpGet(url)
 	if downErr != nil {
 		result.Fail()
-		fmt.Println("downErr:", downErr)
+		cons.Logger("downErr: %v ", downErr)
 		os.Rename(finalPath, srcFile.Path)
 		result.Message = "文件下载失败：" + toFile.Jpg
 		return result
@@ -282,7 +281,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	body, readErr := ioutil.ReadAll(resp.Body)
 	if readErr != nil {
 		result.Fail()
-		fmt.Println("readErr:", readErr)
+		cons.Logger("readErr:", readErr)
 		os.Rename(finalPath, srcFile.Path)
 		result.Message = "请求读取response失败"
 		return result
@@ -293,7 +292,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 		pngErr := utils.ImageToPng(jpgPath)
 		if pngErr != nil {
 			result.Fail()
-			fmt.Println("pngErr:", pngErr)
+			cons.Logger("pngErr:", pngErr)
 			os.Rename(finalPath, srcFile.Path)
 			result.Message = "png生成失败"
 			// return result
@@ -302,7 +301,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 		pngOut, createErr := os.Create(pngPath)
 		if createErr != nil {
 			result.Fail()
-			fmt.Println("downErr:", downErr)
+			cons.Logger("downErr:", downErr)
 			os.Rename(finalPath, srcFile.Path)
 			result.Message = "png文件下载失败：" + toFile.Png
 			return result
@@ -310,7 +309,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 		resp, downErr := httpGet(url)
 		if downErr != nil {
 			result.Fail()
-			fmt.Println("downErr:", downErr)
+			cons.Logger("downErr:", downErr)
 			os.Rename(finalPath, srcFile.Path)
 			result.Message = "文件下载失败：" + toFile.Jpg
 			return result
@@ -318,7 +317,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 		body, readErr := ioutil.ReadAll(resp.Body)
 		if readErr != nil {
 			result.Fail()
-			fmt.Println("readErr:", readErr)
+			cons.Logger("readErr:", readErr)
 			os.Rename(finalPath, srcFile.Path)
 			result.Message = "请求读取response失败"
 			return result
@@ -348,7 +347,6 @@ func (fs SearchService) DownJpgMakePng(finalPath string, url string, makePng boo
 	if !strings.Contains(url, "https") {
 		url = cons.OSSetting.BaseUrl + url
 	}
-	fmt.Println(url)
 	resp, downErr := httpGet(url)
 	if downErr != nil {
 		result.Fail()
@@ -385,7 +383,6 @@ func (fs SearchService) DownJpgAsPng(finalPath string, url string) utils.Result 
 	if !strings.Contains(url, "https") {
 		url = cons.OSSetting.BaseUrl + url
 	}
-	fmt.Println(url)
 	resp, downErr := httpGet(url)
 	if downErr != nil {
 		result.Fail()
@@ -431,7 +428,7 @@ func downImageItem(url string, dirPath string, prefix string, suffix string, wg 
 	if !strings.HasPrefix(url, "http") {
 		url = cons.OSSetting.BaseUrl + url
 	}
-	fmt.Println("jpg url:", url)
+	cons.Logger("jpg url:", url)
 	jpgOut, createErr := os.Create(filepath)
 	if createErr != nil {
 		result.Message = "png生成失败"
@@ -441,14 +438,14 @@ func downImageItem(url string, dirPath string, prefix string, suffix string, wg 
 	resp, downErr := httpGet(url)
 	if downErr != nil {
 		result.Fail()
-		fmt.Println("downErr:", downErr)
+		cons.Logger("downErr:", downErr)
 		result.Message = "文件下载失败：" + url
 		return result
 	}
 	body, readErr := ioutil.ReadAll(resp.Body)
 	if readErr != nil {
 		result.Fail()
-		fmt.Println("readErr:", readErr)
+		cons.Logger("readErr:", readErr)
 		result.Message = "请求读取response失败"
 		return result
 	}
@@ -525,7 +522,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 
 	resp, err := httpGet(url)
 	if err != nil {
-		fmt.Println("err", err)
+		cons.Logger("err", err)
 		result.Fail()
 		result.Message = "请求失败：" + resp.Status + " url:" + url
 		cons.Logger("请求失败： url [%v] \n\n", url)
@@ -538,13 +535,12 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 		} else if strings.Contains(url, "-") {
 			url = strings.ReplaceAll(url, "-", "_")
 		}
-		fmt.Println(url)
 		resp, _ = httpGet(url)
 		if resp.StatusCode != 200 {
-			fmt.Println("status error:", resp.StatusCode, resp.Status)
+			cons.Logger("status error:", resp.StatusCode, resp.Status)
 			result.Fail()
 			result.Message = "请求失败：" + resp.Status + " url:" + url
-			fmt.Fprintln(cons.LogWriter, "请求失败： url [%v] \n", url)
+			cons.Logger("请求失败： url [%v] \n", url)
 			return result, newFile
 		}
 
@@ -553,7 +549,7 @@ func (fs SearchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Result
 	if err != nil {
 		result.Fail()
 		result.Message = "html解析失败"
-		fmt.Println("err:", err)
+		cons.Logger("err:", err)
 	}
 	bigImage := doc.Find(".bigImage img")
 	cons.Logger("NewDocument  [%v] \n\n", doc)
@@ -616,7 +612,7 @@ func (fs SearchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result
 	url := "https://g60y.com/cn/vl_searchbyid.php?keyword=" + srcFile.Code
 	resp, err := httpGet(url)
 	if err != nil {
-		fmt.Println("err", err)
+		cons.Logger("err", err)
 		result.Fail()
 		return result, newFile
 	}
@@ -629,7 +625,7 @@ func (fs SearchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result
 		}
 		resp, _ = httpGet(url)
 		if resp.StatusCode != 200 {
-			fmt.Println("status error:", resp.StatusCode, resp.Status)
+			cons.Logger("status error:", resp.StatusCode, resp.Status)
 			result.Fail()
 			result.Message = "请求失败：" + resp.Status + " url:" + url
 			return result, newFile
@@ -639,11 +635,10 @@ func (fs SearchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result
 	if err != nil {
 		result.Fail()
 		result.Message = "html解析失败"
-		fmt.Println("err:", err)
+		cons.Logger("err:", err)
 	}
 	targetUrl := ""
 	listVideo := doc.Find(" .videos .video")
-	fmt.Println(listVideo.Text())
 	listVideo.Each(func(i int, s *goquery.Selection) {
 		code := s.Find(".id").Text()
 		if strings.EqualFold(code, srcFile.Code) {
@@ -658,17 +653,17 @@ func (fs SearchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result
 	if targetUrl == "" {
 		result.Fail()
 		result.Message = "未找到"
-		fmt.Println("err:", err)
+		cons.Logger("err:", err)
 		return result, newFile
 	} else {
 		detailUrl := "https://g60y.com/cn/" + targetUrl
 		detailResp, err2 := httpGet(detailUrl)
 		if err2 != nil {
-			fmt.Println("err:", err2)
+			cons.Logger("err:", err2)
 		}
 		detailDoc, err2 = goquery.NewDocumentFromReader(detailResp.Body)
 		if err2 != nil {
-			fmt.Println("err:", err2)
+			cons.Logger("err:", err2)
 		}
 	}
 	imageDiv := detailDoc.Find("#video_jacket_img")
