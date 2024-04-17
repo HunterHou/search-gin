@@ -541,7 +541,6 @@
     <video
       autoplay
       controls
-      playsinline
       id="vue3VideoPlayRef"
       :src="view.videoUrl"
       width="200"
@@ -801,29 +800,13 @@ const goActress = (Actress) => {
   }
 };
 
-onKeyStroke(['ArrowLeft'], () => {
-  videoForwardPicInPic(-10);
-});
-
-onKeyStroke(['ArrowRight'], () => {
-  videoForwardPicInPic(60);
-});
-
-const videoForwardPicInPic = () => {
-  const video = document.getElementById('vue3VideoPlayRef');
-  // 获取当前视频的播放时间
-  var currentTime = video.currentTime;
-  // 计算新的播放时间（当前时间加上 10 秒）
-  var newTime = currentTime + 10;
-  // 设置新的播放时间
-  video.currentTime = newTime;
-};
 
 const picInPic = (item) => {
   view.currentData = item;
   const video = document.getElementById('vue3VideoPlayRef');
   if (video) {
     view.videoUrl = getFileStream(item.Id);
+    video.focus();
   }
 };
 
