@@ -76,7 +76,7 @@ func main() {
 		return fileRequest.ListenAndServe()
 	})
 	if err := g.Wait(); err != nil {
-		cons.Logger("", err)
+		utils.Info("", err)
 	}
 	url := "http://127.0.0.1" + cons.PortNo + "/"
 	go utils.ExecCmdStart(url)

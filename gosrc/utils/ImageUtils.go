@@ -2,12 +2,10 @@ package utils
 
 import (
 	"encoding/base64"
-	"fmt"
 	"image"
 	_ "image/jpeg"
 	"image/png"
 	"os"
-	"searchGin/cons"
 )
 
 func ImageToString(path string) string {
@@ -44,7 +42,7 @@ func ImageToPng(src string) error {
 	}(fin2)
 	fout, createErr := os.Create(des)
 	if createErr != nil {
-		cons.Logger("err:", createErr)
+		Info("err:", createErr)
 		return createErr
 	}
 	defer func(fout *os.File) {
@@ -56,7 +54,7 @@ func ImageToPng(src string) error {
 	config, _, _ := image.DecodeConfig(fin2)
 	srcImage, fm, err := image.Decode(fin)
 	if err != nil {
-		cons.Logger("err:", err)
+		Info("err:", err)
 		return err
 	}
 	height := config.Height

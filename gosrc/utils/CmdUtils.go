@@ -3,7 +3,6 @@ package utils
 import (
 	"os/exec"
 	"runtime"
-	"searchGin/cons"
 )
 
 func ExecCmdStart(path string) int {
@@ -22,10 +21,10 @@ func ExecCmd(path string, cmdType string) int {
 		}
 		cmdErr := cmd.Start()
 		if cmdErr != nil {
-			cons.Logger("%v", cmdErr)
+			Info("%v", cmdErr)
 			return 0
 		}
-		cons.Logger("ExecCmdSuccess:" + cmdType + ":" + path)
+		Info("ExecCmdSuccess:" + cmdType + ":" + path)
 		return 1
 	}
 	return 0

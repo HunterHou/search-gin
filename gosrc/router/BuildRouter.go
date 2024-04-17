@@ -18,16 +18,16 @@ func BuildRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.New(config))
 	router.Use(gin.Recovery())
-	router.Use(gin.LoggerWithWriter(cons.LogWriter))
+	router.Use(gin.LoggerWithWriter(utils.LogWriter))
 	if utils.ExistsFiles(cons.IndexHtml) {
-		cons.Logger("static exists:%s \n", cons.IndexHtml)
+		utils.Info("static exists:%s \n", cons.IndexHtml)
 		router.LoadHTMLFiles(cons.IndexHtml)
 		for k, v := range cons.StaticFs {
 			router.StaticFS(k, http.Dir(v))
-			cons.Logger("static exists:%s \n", k)
+			utils.Info("static exists:%s \n", k)
 		}
 	} else {
-		cons.Logger("static not exists:%s \n", cons.IndexHtml)
+		utils.Info("static not exists:%s \n", cons.IndexHtml)
 	}
 
 	router.NoRoute(controller.Index)

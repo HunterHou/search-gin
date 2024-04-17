@@ -1,4 +1,4 @@
-package cons
+package utils
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 var fLog, _ = os.OpenFile("gin.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0644)
 var LogWriter = io.MultiWriter(fLog, os.Stdout)
 
-func Logger(v ...interface{}) {
+func Info(v ...interface{}) {
 	_, err := fmt.Fprintln(gin.DefaultWriter, v)
 	if err != nil {
 		return

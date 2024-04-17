@@ -6,8 +6,8 @@ type TransferTaskModel struct {
 	Name       string
 	Path       string
 	Type       string
-	Start       string
-	End       string
+	Start      string
+	End        string
 	From       string
 	To         string
 	CreateTime time.Time
@@ -19,7 +19,7 @@ type TransferTaskModel struct {
 func NewTaskWithTime(path string, name string, from string, to string, now time.Time) TransferTaskModel {
 	res := TransferTaskModel{
 		Path:       path,
-		Type:"转码",
+		Type:       "转码",
 		Name:       name,
 		From:       from,
 		To:         to,
@@ -31,7 +31,7 @@ func NewTaskWithTime(path string, name string, from string, to string, now time.
 func NewTask(path string, name string, from string, to string) TransferTaskModel {
 	res := TransferTaskModel{
 		Path:       path,
-		Type:"转码",
+		Type:       "转码",
 		Name:       name,
 		From:       from,
 		To:         to,
@@ -40,13 +40,13 @@ func NewTask(path string, name string, from string, to string) TransferTaskModel
 	return res
 }
 
-func NewCutTask(path string, name string, start string, end string,to string) TransferTaskModel {
+func NewCutTask(path string, name string, start string, end string, to string) TransferTaskModel {
 	res := TransferTaskModel{
 		Path:       path,
-		Type:"分切",
+		Type:       "分切",
 		Name:       name,
-		Start:       start,
-		End:       end,
+		Start:      start,
+		End:        end,
 		To:         to,
 		CreateTime: time.Now(),
 	}

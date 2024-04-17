@@ -23,7 +23,7 @@ func PostMovies(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	cons.Logger("PostMovies： [%v]", searchParam)
+	utils.Info("PostMovies： [%v]", searchParam)
 	fileService := service.CreateSearchService()
 	result := fileService.SearchDataSource(searchParam)
 	result.PageSize = searchParam.PageSize

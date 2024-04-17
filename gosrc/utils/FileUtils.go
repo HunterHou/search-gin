@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"searchGin/cons"
 	"strconv"
 	"strings"
 	"unicode"
@@ -295,7 +294,7 @@ func (b *Buffer) Append(i interface{}) *Buffer {
 func (b *Buffer) append(s string) *Buffer {
 	defer func() {
 		if err := recover(); err != nil {
-			cons.Logger("*****内存不够了！******")
+			Info("*****内存不够了！******")
 		}
 	}()
 	b.WriteString(s)

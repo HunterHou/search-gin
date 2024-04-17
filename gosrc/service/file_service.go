@@ -117,7 +117,7 @@ func (fileService *FileService) DeleteOne(dirName string, fileName string) {
 			path := dirName + utils.PathSeparator + f.Name()
 			err := os.Remove(path)
 			if err != nil {
-				cons.Logger("DeleteOne:[%v]", err)
+				utils.Info("DeleteOne:[%v]", err)
 			}
 		}
 	}
@@ -155,7 +155,7 @@ func (fileService *FileService) UpDirClear(dirname string) {
 	if len(files2) == 0 {
 		err := os.Remove(dirname)
 		if err != nil {
-			cons.Logger("", err)
+			utils.Info("", err)
 		}
 		newPath := dirname[0:strings.LastIndex(dirname, utils.PathSeparator)]
 		fileService.UpDirClear(newPath)
@@ -169,7 +169,7 @@ func (fileService *FileService) UpDirClear(dirname string) {
 func GetIpAddr() string {
 	conn, err := net.Dial("udp", "8.8.8.8:53")
 	if err != nil {
-		cons.Logger("GetIpAddr:%v \n\n", err)
+		utils.Info("GetIpAddr:%v \n\n", err)
 		return "127.0.0.1"
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
@@ -365,7 +365,7 @@ func (fileService *FileService) Walk(baseDir string, types []string, deep bool) 
 	} else {
 		err := os.Remove(baseDir)
 		if err != nil {
-			cons.Logger("os.Remove(baseDir):[%v]", err)
+			utils.Info("os.Remove(baseDir):[%v]", err)
 		}
 	}
 
@@ -409,7 +409,7 @@ func (fileService *FileService) WalkInnter(currentDir string, types []string, to
 		if er == nil && emptyFile.ModTime().Day() == (time.Now().Day()-1) {
 			err := os.Remove(currentDir)
 			if err != nil {
-				cons.Logger("os.Remove(currentDir):[%v]", err)
+				utils.Info("os.Remove(currentDir):[%v]", err)
 			}
 		}
 
@@ -515,9 +515,9 @@ func (fileService *FileService) ffmepgExec(args []string, thisNow time.Time) uti
 			task.SetLog(string(out))
 			task.FinishTime = time.Now()
 			cons.TransferTask[thisNow] = task
-			cons.Logger("out:", string(out))
-			cons.Logger("cmdErr:", cmdErr)
-			cons.Logger("args:", args)
+			utils.Info("out:", string(out))
+			utils.Info("cmdErr:", cmdErr)
+			utils.Info("args:", args)
 			res := utils.NewFailByMsg("转换失败")
 			res.Data = cmdErr
 			return res
