@@ -30,6 +30,7 @@
           :dense="false"
         />
         <q-input
+          class="col-8"
           label="JPG地址"
           autogrow
           v-model="view.item.Jpg"
@@ -41,6 +42,9 @@
           v-model="view.item.Png"
           :dense="false"
         />
+        <div class="row justify-between" style="height: 80px;" v-if="view.previewUrl">
+          <q-img width="100px" :src="view.previewUrl"></q-img>
+        </div>
       </q-form>
       <q-card-actions align="center">
         <q-btn color="primary" label="移动" @click="editMoveout" />
