@@ -20,8 +20,8 @@
       >
         <template v-slot:loading>
           <q-spinner-facebook size="xs"></q-spinner-facebook
-        >{{ `S:${view.indexDone}` }}
-      </template>
+          >{{ `S:${view.indexDone}` }}
+        </template>
       </q-btn>
       <q-btn
         :loading="view.renameCount > 0"
@@ -603,7 +603,7 @@ const listEditRef = ref(null);
 
 const view = reactive({
   renameCount: 0,
-  indexDone:0,
+  indexDone: 0,
   currentData: {},
   settingInfo: {},
   queryParam: {
@@ -693,7 +693,7 @@ const openPlay = (item) => {
   if ($q.platform.is.electron) {
     window.electron.createWindow({ router: url });
   } else {
-    window.open(url);
+    window.open(url, '', 'width=1080,height=1000,titleBarStyle=');
   }
 };
 
@@ -715,7 +715,7 @@ const searchCode = (item) => {
       titleBarStyle: '',
     });
   } else {
-    window.open(url);
+    window.open(url, '', 'width=1080,height=800,titleBarStyle=');
   }
 };
 
@@ -803,7 +803,6 @@ const goActress = (Actress) => {
   }
 };
 
-
 const picInPic = (item) => {
   view.currentData = item;
   const video = document.getElementById('vue3VideoPlayRef');
@@ -882,11 +881,11 @@ const moveThis = async (item) => {
 const refreshIndexLoading = ref(false);
 const refreshIndex = async () => {
   refreshIndexLoading.value = true;
-  const timeInt = setInterval(async() => {
-    const res = await HeartBeatQuery()
-    view.indexDone = res
-    if(res<=0){
-      clearInterval(timeInt)
+  const timeInt = setInterval(async () => {
+    const res = await HeartBeatQuery();
+    view.indexDone = res;
+    if (res <= 0) {
+      clearInterval(timeInt);
     }
   }, 10);
   const { Code, Message } = await RefreshAPI('/api/refreshIndex');
