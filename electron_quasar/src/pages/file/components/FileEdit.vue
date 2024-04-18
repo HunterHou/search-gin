@@ -36,6 +36,7 @@
               autogrow
               v-model="view.item.Title"
               :dense="false"
+              @change="titleChange"
             />
             <q-input
               class="col-8"
@@ -111,6 +112,16 @@ const makePreview = () => {
   const uriCode = view.item.Code.toLowerCase().trim().replace('-', '00');
   view.item.Jpg =
     systemProperty.SettingInfo.ImageUrl + `${uriCode}/${uriCode}pl.jpg`;
+};
+
+const reg = /\w+[-_]\d+/;
+
+const titleChange = (v) => {
+  if (v) {
+    const code = v.match(reg);
+    view.item.Code = code ? code[0] : '';
+    makePreview();
+  }
 };
 
 const open = (item, cb) => {
