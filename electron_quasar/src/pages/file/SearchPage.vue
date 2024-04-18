@@ -693,7 +693,7 @@ const openPlay = (item) => {
   if ($q.platform.is.electron) {
     window.electron.createWindow({ router: url });
   } else {
-    window.open(url, '', 'width=1080,height=1000,titleBarStyle=');
+    window.open(url, '', 'width=1280,height=800,titleBarStyle=');
   }
 };
 
@@ -715,7 +715,11 @@ const searchCode = (item) => {
       titleBarStyle: '',
     });
   } else {
-    window.open(url, '', 'width=1080,height=800,titleBarStyle=');
+    if (systemProperty.goSearchNewWidow) {
+      window.open(url, '', 'width=1080,height=800,titleBarStyle=');
+    } else {
+      window.open(url);
+    }
   }
 };
 

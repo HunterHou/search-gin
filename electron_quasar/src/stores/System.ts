@@ -24,6 +24,7 @@ export const useSystemProperty = defineStore({
     isFullscreen: false,
     isDark: false,
     goActressNewWidow: false,
+    goSearchNewWidow: false,
     shutdownLeftSecond: null,
     shutdownTimer: null,
     Logo: {
