@@ -12,7 +12,7 @@
             justify-content: flex-start;
           "
         >
-          <div class="q-gutter-y-md" style="width: 100%; padding: 10px;max-height: 600px;">
+          <div class="q-gutter-y-md" style="width: 100%; padding: 10px;">
             <q-btn-toggle
               v-model="view.item.MovieType"
               :options="MovieTypeOptions"
@@ -33,8 +33,7 @@
             />
             <q-input
               color="red-12"
-              label="名称"
-              type="textarea"
+              label="名称" 
               v-model="view.item.Title"
               :dense="false"
               @change="titleChange"
