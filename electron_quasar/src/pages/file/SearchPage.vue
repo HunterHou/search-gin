@@ -20,7 +20,8 @@
       >
         <template v-slot:loading>
           <q-spinner-facebook size="xs"></q-spinner-facebook
-        ></template>
+        >{{ `S:${view.indexDone}` }}
+      </template>
       </q-btn>
       <q-btn
         :loading="view.renameCount > 0"
@@ -566,6 +567,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   DeleteFile,
+  HeartBeatQuery,
   DownImageList,
   FileRename,
   OpenFileFolder,
@@ -601,6 +603,7 @@ const listEditRef = ref(null);
 
 const view = reactive({
   renameCount: 0,
+  indexDone:0,
   currentData: {},
   settingInfo: {},
   queryParam: {
@@ -879,6 +882,13 @@ const moveThis = async (item) => {
 const refreshIndexLoading = ref(false);
 const refreshIndex = async () => {
   refreshIndexLoading.value = true;
+  const timeInt = setInterval(async() => {
+    const res = await HeartBeatQuery()
+    view.indexDone = res
+    if(res<=0){
+      clearInterval(timeInt)
+    }
+  }, 10);
   const { Code, Message } = await RefreshAPI('/api/refreshIndex');
   console.log(Code, Message);
   if (Code == '200') {

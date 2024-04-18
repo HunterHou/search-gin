@@ -46,20 +46,20 @@ func main() {
 	serviceRequest := &http.Server{
 		Addr:         cons.PortNo,
 		Handler:      app,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
 	}
 	imageRequest := &http.Server{
 		Addr:         cons.PortNo2,
 		Handler:      app,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
 	}
 	fileRequest := &http.Server{
 		Addr:         cons.PortNo3,
 		Handler:      app,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
 	}
 
 	//默认启动页面

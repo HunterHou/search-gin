@@ -60,7 +60,7 @@ export const ResetMovieType = async (data: string, movieType: string) => {
   return res && res.data;
 };
 
-export const DownImageList = async (data: string): Promise<unknown> => {
+export const DownImageList = async (data: string) =>{
   const res = await commonAxios().get(`/api/imageList/${data}`);
   return res && res.data;
 };
