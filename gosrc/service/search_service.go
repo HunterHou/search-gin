@@ -332,7 +332,7 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	toFile.Jpg = jpgPath
 	toFile.Nfo = nfoPath
 	toFile.Png = pngPath
-	fs.MakeNfo(toFile)
+	go fs.MakeNfo(toFile)
 	result.Success()
 	result.Message = "【" + dirname + "】" + result.Message
 	return result
