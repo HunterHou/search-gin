@@ -12,7 +12,7 @@
             justify-content: flex-start;
           "
         >
-          <div class="q-gutter-y-md" style="width: 100%; padding: 10px;">
+          <div class="q-gutter-y-md" style="width: 100%; padding: 10px">
             <q-btn-toggle
               v-model="view.item.MovieType"
               :options="MovieTypeOptions"
@@ -33,7 +33,7 @@
             />
             <q-input
               color="red-12"
-              label="名称" 
+              label="名称"
               autogrow
               v-model="view.item.Title"
               :dense="false"
@@ -120,8 +120,10 @@ const reg = /\w+[-_]\d+/;
 const titleChange = (v) => {
   if (v) {
     const code = v.match(reg);
-    view.item.Code = code ? code[0] : '';
-    makePreview();
+    if (code && code[0] && code[0].length > 0) {
+      view.item.Code = code[0];
+      makePreview();
+    }
   }
 };
 
