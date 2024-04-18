@@ -1,6 +1,8 @@
 package datamodels
 
-import "searchGin/utils"
+import (
+	"searchGin/utils"
+)
 
 type Actress struct {
 	Name    string
