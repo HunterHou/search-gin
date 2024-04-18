@@ -34,6 +34,7 @@
             <q-input
               color="red-12"
               label="名称" 
+              autogrow
               v-model="view.item.Title"
               :dense="false"
               @change="titleChange"
