@@ -245,9 +245,13 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 	os.MkdirAll(dirpath, os.ModePerm)
 	filename := dirname + "." + utils.GetSuffux(srcFile.Path)
 	finalPath := dirpath + utils.PathSeparator + filename
+	if finalPath != srcFile.Path {
+		os.Rename(srcFile.Path, finalPath)
+	}
 	jpgPath := utils.GetPng(finalPath, "jpg")
 	pngPath := utils.GetPng(finalPath, "png")
 	nfoPath := utils.GetPng(finalPath, "nfo")
+
 	jpgOut, createErr := os.Create(jpgPath)
 	if createErr != nil {
 		//TODO 创建失败  标题 特殊字符处理 改为 演员+番号
@@ -325,8 +329,6 @@ func (fs SearchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Movi
 		pngOut.Write(body)
 		pngOut.Close()
 	}
-
-	os.Rename(srcFile.Path, finalPath)
 	toFile.Jpg = jpgPath
 	toFile.Nfo = nfoPath
 	toFile.Png = pngPath
