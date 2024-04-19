@@ -3,6 +3,8 @@ package datamodels
 import (
 	"fmt"
 	"searchGin/utils"
+	"sort"
+	"strings"
 	"time"
 )
 
@@ -115,33 +117,103 @@ func (f *Movie) SetImageBase64() {
 
 }
 
-//func (f Movie) PngBase64() string {
-//	path := f.Png
-//	if !utils.ExistsFiles(path) {
-//		path = f.Jpg
-//	}
-//	if !utils.ExistsFiles(path) {
-//		path = f.Path
-//	}
-//	res := "data:image/png;base64," + utils.ImageToString(path)
-//	return res
-//
-//}
+func SortMoviesUtils(sortModels []Movie, sF string, sT string, lastSortField string, lastSortType string) {
+	if sF == lastSortField && sT == lastSortType {
+		return
+	}
+	sort.Slice(sortModels, func(i, j int) bool {
+		if sF == "Code" && sT == "desc" {
+			return sortModels[i].Code > sortModels[j].Code
+		} else if sF == "Code" && sT == "asc" {
+			return sortModels[i].Code < sortModels[j].Code
+		} else if sF == "Size" && sT == "desc" {
+			return sortModels[i].Size > sortModels[j].Size
+		} else if sF == "Size" && sT == "asc" {
+			return sortModels[i].Size < sortModels[j].Size
+		} else if sF == "MTime" && sT == "desc" {
+			return sortModels[i].MTime > sortModels[j].MTime
+		} else if sF == "MTime" && sT == "asc" {
+			return sortModels[i].MTime < sortModels[j].MTime
+		} else {
+			return sortModels[i].MTime > sortModels[j].MTime
+		}
+	})
+}
 
-//func (f *Movie) SetPngBase64() {
-//	path := f.Png
-//	if !utils.ExistsFiles(path) {
-//		path = f.Jpg
-//	}
-//	if !utils.ExistsFiles(path) {
-//		path = f.Path
-//	}
-//	res := "data:image/png;base64," + utils.ImageToString(path)
-//	f.PngBase = res
-//
-//}
+func GetPageOfFiles(files []Movie, pageNo int, pageSize int) ([]Movie, int64) {
+	if len(files) == 0 {
+		return files, 0
+	}
+	if pageNo <= 0 {
+		pageNo = 1
+	}
+	length := len(files)
+	start := (pageNo - 1) * pageSize
 
-//func (f Movie) GetPng() string {
-//	path := f.Path
-//	return utils.GetPng(path, "png")
-//}
+	end := length
+	if length-start >= pageSize {
+		end = start + pageSize
+	}
+	if len(files) <= pageSize {
+		return files, 0
+	}
+
+	var data []Movie
+	var volume int64
+	for i := start; i < end; i++ {
+		curFile := files[i]
+		volume += curFile.Size
+		data = append(data, curFile)
+	}
+	return data, volume
+}
+
+func SearchByKeyWord(files map[string]Movie, keyWord string, movieType string) SearchResultWrapper {
+
+	resultWrapper := NewSearchWrapper()
+	if (keyWord == "" || keyWord == "undefined") && (movieType == "" || movieType == "undefined") {
+		for _, file := range files {
+			resultWrapper.AddWrapperItem(file)
+		}
+		return resultWrapper
+	}
+	for _, file := range files {
+		if movieType != "" {
+			if file.MovieType != movieType {
+				continue
+			}
+		}
+		isAdd := false
+		if len(keyWord) > 0 {
+			arr := strings.Split(keyWord, " ")
+			for i := 0; i < len(arr); i++ {
+				words := arr[i]
+				if len(words) == 0 || words == " " {
+					break
+				}
+				if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(words)) {
+					isAdd = true
+					break
+				} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(words)) {
+					isAdd = true
+					break
+				} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(words)) {
+					isAdd = true
+					break
+				} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(words)) {
+					isAdd = true
+					break
+				}
+			}
+		} else {
+			isAdd = true
+		}
+
+		if isAdd {
+			resultWrapper.AddWrapperItem(file)
+		}
+
+	}
+
+	return resultWrapper
+}

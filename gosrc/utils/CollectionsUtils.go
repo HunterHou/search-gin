@@ -37,7 +37,7 @@ func HasItem(lib []string, item string) bool {
 	return false
 }
 
-func ExtendsItems(lib []string, items []string) []string {
+func ExtendsItems[T any](lib []T, items []T) []T {
 	if len(items) == 0 || items == nil {
 		return lib
 	}
@@ -45,7 +45,6 @@ func ExtendsItems(lib []string, items []string) []string {
 		lib = append(lib, items[i])
 	}
 	return lib
-
 }
 
 func IndexOf(lib []string, item string) int {
