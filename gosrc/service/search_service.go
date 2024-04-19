@@ -1005,35 +1005,7 @@ func (fs SearchService) GetActressPage(files []datamodels.Actress, pageNo int, p
 }
 
 func (fs SearchService) GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.Movie, int64) {
-	return GetPage(files, pageNo, pageSize)
-}
-
-func GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.Movie, int64) {
-	if len(files) == 0 {
-		return files, 0
-	}
-	if pageNo <= 0 {
-		pageNo = 1
-	}
-	length := len(files)
-	start := (pageNo - 1) * pageSize
-
-	end := length
-	if length-start >= pageSize {
-		end = start + pageSize
-	}
-	if len(files) <= pageSize {
-		return files, 0
-	}
-
-	var data []datamodels.Movie
-	var volume int64
-	for i := start; i < end; i++ {
-		curFile := files[i]
-		volume += curFile.Size
-		data = append(data, curFile)
-	}
-	return data, volume
+	return datasource.GetPageOfFiles(files, pageNo, pageSize)
 }
 
 func (fs SearchService) DataSize(data []datamodels.Movie) int64 {
