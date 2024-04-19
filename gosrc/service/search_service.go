@@ -835,9 +835,9 @@ func (fs SearchService) ScanTarget(BaseDir string) {
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.VideoTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
-	files, _ := service.WalkInnter(BaseDir, cons.QueryTypes, 0, true, BaseDir)
+	files, _ := service.WalkInnter(BaseDir, QueryTypes, 0, true, BaseDir)
 	SearchEngin.PutBucketWithSize(BaseDir, files)
-	SearchEngin.BuildActress()
+	go SearchEngin.BuildActress()
 }
 
 func (fs SearchService) Delete(id string) {
