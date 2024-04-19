@@ -356,7 +356,7 @@
                     size="10px"
                     color="red"
                     icon="ti-slice"
-                    @click="fileEditRef.open(item, refreshIndex)"
+                    @click="fileEditRef.open(item, fetchSearch)"
                     v-if="showButton('编辑')"
                     title="编辑"
                   />

@@ -57,7 +57,7 @@ func (fs SearchService) SetMovieType(movie datamodels.Movie, movieType string) u
 		path = strings.ReplaceAll(movie.Nfo, originVideoType, movieType)
 		os.Rename(movie.Nfo, path)
 		// 执行当前目录搜索
-		fs.ScanTarget(movie.BaseDir, movie.BaseDir)
+		fs.ScanTarget(movie.BaseDir)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 	newMovieType := "{{" + movieType + "}}"
@@ -127,7 +127,7 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 			utils.InfoFormat("%v", err)
 		}
 		// 执行当前目录搜索
-		fs.ScanTarget(movie.BaseDir, movie.BaseDir)
+		fs.ScanTarget(movie.BaseDir)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 
@@ -170,7 +170,7 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 
 	}
 	// 执行当前目录搜索
-	fs.ScanTarget(movie.DirPath, movie.BaseDir)
+	fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
 func (fs SearchService) ClearTag(id string, tag string) utils.Result {
@@ -202,7 +202,7 @@ func (fs SearchService) ClearTag(id string, tag string) utils.Result {
 	path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
 	os.Rename(movie.Nfo, path)
 	// 执行当前目录搜索
-	fs.ScanTarget(movie.BaseDir, movie.BaseDir)
+	fs.ScanTarget(movie.BaseDir)
 	return utils.NewSuccessByMsg("执行成功")
 }
 
@@ -782,9 +782,7 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 	if utils.ExistsFiles(oldPath) {
 		os.Rename(oldPath, newPath)
 	}
-	if !movie.NoRefresh {
-		fs.ScanTarget(movieLib.BaseDir, movieLib.BaseDir)
-	}
+	fs.ScanTarget(movieLib.BaseDir)
 	return res
 }
 
@@ -828,7 +826,7 @@ func (fs SearchService) ScanAll() {
 }
 
 // ScanTarget 扫描指定文佳佳
-func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
+func (fs SearchService) ScanTarget(BaseDir string) {
 	//统计初始化
 	service := CreateFileService()
 	//初始化查询条件
@@ -837,16 +835,16 @@ func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.VideoTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
-	files, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, true, BaseDir)
-	SearchEngin.PutBucketWithSize(dirPath, files)
-	go SearchEngin.BuildActress()
+	files, _ := service.WalkInnter(BaseDir, cons.QueryTypes, 0, true, BaseDir)
+	SearchEngin.PutBucketWithSize(BaseDir, files)
+	SearchEngin.BuildActress()
 }
 
 func (fs SearchService) Delete(id string) {
 	file := fs.FindOne(id)
 	service := CreateFileService()
 	service.DeleteOne(file.DirPath, file.Title)
-	fs.ScanTarget(file.BaseDir, file.BaseDir)
+	fs.ScanTarget(file.BaseDir)
 }
 
 func (fs SearchService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
