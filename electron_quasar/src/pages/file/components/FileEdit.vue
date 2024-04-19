@@ -127,6 +127,7 @@ const titleChange = (v) => {
     if (arr && arr.length > 2){
         view.item.Actress = arr[arr.length-1];
     }
+    view.item.Title = view.item.Title.replace(view.item.Code, '');
   }
 };
 
