@@ -1,7 +1,6 @@
 package datasource
 
 import (
-	"fmt"
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/utils"
@@ -16,18 +15,22 @@ type RepeatModel struct {
 }
 
 type SearchEnginCore struct {
-	LastSortField string
-	LastSortType  string
-	SearchIndex   map[string]BucketFile
-	CodeRepeat    []datamodels.Movie
-	ActressLib    map[string]datamodels.Actress
-	TotalSize     int64
-	TotalCount    int
+	LastSortField  string
+	LastSortType   string
+	SearchIndex    map[string]BucketFile
+	CodeRepeat     []datamodels.Movie
+	ActressLib     map[string]datamodels.Actress
+	TotalSize      int64
+	TotalCount     int
+	KeywordHistory map[string]datamodels.PageResultWrapper
 }
 
 // BucketSearchEngin 搜索引擎
 var BucketSearchEngin = SearchEnginCore{
-	SearchIndex: map[string]BucketFile{},
+	SearchIndex:    map[string]BucketFile{},
+	CodeRepeat:     []datamodels.Movie{},
+	ActressLib:     map[string]datamodels.Actress{},
+	KeywordHistory: map[string]datamodels.PageResultWrapper{},
 }
 
 func (se *SearchEnginCore) Init(baseDirs []string) {
@@ -56,48 +59,70 @@ func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datam
 }
 
 func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
-	resultWrapper := datamodels.NewPageWrapper()
-	resultWrapper.ResultCount = searchParam.PageSize
-	for _, index := range se.SearchIndex {
-		if index.IsEmpty() {
-			continue
+	resultWrapper, ok := se.KeywordHistory[searchParam.UniWords()]
+	if ok {
+		if len(se.KeywordHistory) > 40 {
+
 		}
-		indexWrapper := index.Page(searchParam)
-		if !indexWrapper.IsNotEmpty() {
-			continue
+	} else {
+		resultWrapper := datamodels.NewPageWrapper()
+		resultWrapper.ResultCount = searchParam.PageSize
+		for _, index := range se.SearchIndex {
+			if index.IsEmpty() {
+				continue
+			}
+			indexWrapper := index.SearchBucket(searchParam)
+			if !indexWrapper.IsNotEmpty() {
+				continue
+			}
+			resultWrapper.FileList = utils.ExtendsItems(resultWrapper.FileList, indexWrapper.FileList)
+			resultWrapper.SearchCount = resultWrapper.SearchCount + len(indexWrapper.FileList)
+			resultWrapper.SearchSize = resultWrapper.SearchSize + indexWrapper.Size
 		}
-		resultWrapper.FileList = utils.ExtendsItems(resultWrapper.FileList, indexWrapper.FileList)
-		resultWrapper.SearchCount = resultWrapper.SearchCount + indexWrapper.SearchCount
-		resultWrapper.SearchSize = resultWrapper.SearchSize + indexWrapper.SearchSize
+		datamodels.SortMoviesUtils(resultWrapper.FileList, searchParam.SortField, searchParam.SortType, se.LastSortField, se.LastSortType)
+		se.LastSortField = searchParam.SortField
+		se.LastSortType = searchParam.SortType
+		se.KeywordHistory[searchParam.UniWords()] = resultWrapper
 	}
-	datamodels.SortMoviesUtils(resultWrapper.FileList, searchParam.SortField, searchParam.SortType, se.LastSortField, se.LastSortType)
-	se.LastSortField = searchParam.SortField
-	se.LastSortType = searchParam.SortType
 	resultWrapper.FileList, resultWrapper.ResultSize = datamodels.GetPageOfFiles(resultWrapper.FileList, searchParam.Page, searchParam.PageSize)
 	return resultWrapper
 }
 
-// ArrayToMap 总文件 转不同数据模型
-func (fileService *SearchEnginCore) ArrayToMap(files []datamodels.Movie) {
-	fileMap := make(map[string]datamodels.Movie)
-	fileMapCount := make(map[string]int)
-	var size int64
-	for i := 0; i < len(files); i++ {
-		curFile := files[i]
-
-		size = size + curFile.Size
-		_, ok := fileMap[curFile.Id]
-		if ok {
-			//重名处理
-			count := fileMapCount[curFile.Id]
-			count++
-			curFile.SetId(utils.PKId(curFile.Path + fmt.Sprintf("repeat(%d)", count)))
-			fileMap[curFile.Id] = curFile
-		} else {
-			fileMap[curFile.Id] = curFile
-			fileMapCount[curFile.Id] = 1
+func (se *SearchEnginCore) FindById(id string) datamodels.Movie {
+	var model = datamodels.Movie{}
+	for _, si := range se.SearchIndex {
+		model = si.Get(id)
+		if !model.IsNull() {
+			break
 		}
 	}
+	return model
+}
+
+func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
+	act, ok := se.ActressLib[id]
+	if ok {
+		return act
+	}
+	return datamodels.Actress{}
+}
+
+func (se *SearchEnginCore) Reset() {
+	for _, si := range se.SearchIndex {
+		si.Clear()
+	}
+}
+
+func (se *SearchEnginCore) putFile(baseDir string, movie datamodels.Movie) {
+	bucket, ok := se.SearchIndex[baseDir]
+	if !ok {
+		bucket = NewInstance(baseDir)
+	}
+	bucket.Put(movie)
+}
+
+func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
+	se.SearchIndex[baseDir] = bucket
 }
 
 func (se *SearchEnginCore) BuildActress() {
@@ -158,49 +183,4 @@ func (se *SearchEnginCore) BuildActress() {
 	se.CodeRepeat = fileRepeats
 	se.TotalCount = totalCount
 	se.TotalSize = totalSize
-}
-
-func (se *SearchEnginCore) FindById(id string) datamodels.Movie {
-	var model = datamodels.Movie{}
-	for _, si := range se.SearchIndex {
-		model = si.Get(id)
-		if !model.IsNull() {
-			break
-		}
-	}
-	return model
-}
-
-func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
-	act, ok := se.ActressLib[id]
-	if ok {
-		return act
-	}
-	return datamodels.Actress{}
-}
-
-func (se *SearchEnginCore) Reset() {
-	for _, si := range se.SearchIndex {
-		si.Clear()
-	}
-}
-
-func (se *SearchEnginCore) putFile(baseDir string, movie datamodels.Movie) {
-	bucket, ok := se.SearchIndex[baseDir]
-	if !ok {
-		bucket = NewInstance(baseDir)
-	}
-	bucket.Put(movie)
-}
-
-func (se *SearchEnginCore) PutBucketWithSize(baseDir string, files []datamodels.Movie) {
-	bucket := NewInstance(baseDir)
-	for _, file := range files {
-		bucket.Put(file)
-	}
-	se.SearchIndex[baseDir] = bucket
-}
-
-func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
-	se.SearchIndex[baseDir] = bucket
 }

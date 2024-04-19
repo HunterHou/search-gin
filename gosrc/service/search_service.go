@@ -28,8 +28,8 @@ func CreateSearchService() SearchService {
 func (fs SearchService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
 	result := utils.NewPage()
 	searchResult := SearchEngin.Page(searchParam)
-	result.TotalCnt = searchResult.LibCount
-	result.TotalSize = utils.GetSizeStr(searchResult.LibSize)
+	result.TotalCnt = searchResult.SearchCount
+	result.TotalSize = utils.GetSizeStr(searchResult.SearchSize)
 	result.PageSize = searchParam.PageSize
 	result.ResultSize = utils.GetSizeStr(searchResult.SearchSize)
 	result.SetResultCnt(searchResult.SearchCount, searchParam.Page)
@@ -820,7 +820,7 @@ func (fs SearchService) ScanAll() {
 }
 
 // ScanTarget 扫描指定文佳佳
-func (fs SearchService) ScanTarget(BaseDir string) {
+func (fs SearchService) ScanTarget(baseDir string) {
 	//统计初始化
 	service := CreateFileService()
 	//初始化查询条件
@@ -829,8 +829,8 @@ func (fs SearchService) ScanTarget(BaseDir string) {
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.VideoTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
-	files, _ := service.WalkInnter(BaseDir, QueryTypes, 0, true, BaseDir)
-	SearchEngin.PutBucketWithSize(BaseDir, files)
+	files, _ := service.WalkInnter(baseDir, QueryTypes, 0, true, baseDir)
+	SearchEngin.SetBucket(baseDir, datasource.NewInstanceWithFiles(baseDir, files))
 	go SearchEngin.BuildActress()
 }
 
