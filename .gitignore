@@ -26,3 +26,4 @@ viteApp/appVite.exe
 node_modules
 **/.DS_Store/**
 ./**/.DS_Store
+electron_quasar/src-electron/icons/qapp/appQuaser.exe
