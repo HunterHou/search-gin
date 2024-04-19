@@ -124,6 +124,10 @@ const titleChange = (v) => {
       view.item.Code = code[0];
       makePreview();
     }
+    const arr = v.split(' ');
+    if (arr && arr.length > 2){
+        view.item.Actress = arr[arr.length-1];
+    }
   }
 };
 
