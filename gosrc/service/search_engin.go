@@ -1,6 +1,7 @@
 package service
 
 import (
+	"searchGin/datamodels"
 	"searchGin/datasource"
 )
 
@@ -8,12 +9,23 @@ type SearchEnginCore struct {
 	SearchIndex map[string]datasource.BucketFile
 }
 
-var SearchIndexEngin = SearchEnginCore{
+var BucketSearchEngin = SearchEnginCore{
 	SearchIndex: map[string]datasource.BucketFile{},
 }
 
 func (se SearchEnginCore) Init(baseDirs []string) {
 	for _, dir := range baseDirs {
-		se.SearchIndex[dir] = datasource.NewInstance(dir)
+		_, ok := se.SearchIndex[dir]
+		if !ok {
+			se.SearchIndex[dir] = datasource.NewInstance(dir)
+		}
 	}
+}
+
+func (se SearchEnginCore) put(baseDir string, movie datamodels.Movie) {
+	bucket, ok := se.SearchIndex[baseDir]
+	if !ok {
+		bucket = datasource.NewInstance(baseDir)
+	}
+	bucket.Put(movie)
 }
