@@ -132,9 +132,9 @@ const loadTypeSize = async () => {
   const res = await TypeSizeMap();
   if (res) {
     tableData.value = res;
-    loadTagSize();
-    loadScanTime();
   }
+  loadTagSize();
+  loadScanTime();
 };
 
 const loadTagSize = async () => {

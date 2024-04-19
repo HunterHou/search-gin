@@ -84,9 +84,9 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 	return result
 }
 
-func (f Movie) SetId(id string) Movie {
+func (f *Movie) SetId(id string) Movie {
 	f.Id = id
-	return f
+	return *f
 }
 
 func (f Movie) GetFileInfo() string {
@@ -102,19 +102,6 @@ func (f Movie) IsNull() bool {
 		return true
 	}
 	return false
-}
-
-func (f *Movie) SetImageBase64() {
-	path := f.Jpg
-	if !utils.ExistsFiles(path) {
-		path = f.Png
-	}
-	if !utils.ExistsFiles(path) {
-		path = f.Path
-	}
-	res := "data:image/jpg;base64," + utils.ImageToString(path)
-	f.ImageBase = res
-
 }
 
 func SortMoviesUtils(sortModels []Movie, sF string, sT string, lastSortField string, lastSortType string) {

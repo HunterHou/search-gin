@@ -11,8 +11,7 @@ type Actress struct {
 	Cnt     int
 	Size    int64
 	SizeStr string
-	// JpgUrl  string
-	Images []string
+	Images  []string
 }
 
 func NewActress(name string, url string, size int64) Actress {
@@ -22,8 +21,7 @@ func NewActress(name string, url string, size int64) Actress {
 		Cnt:     1,
 		Size:    size,
 		SizeStr: utils.GetSizeStr(size),
-		// JpgUrl:  "/api/actressImgae/" + name,
-		Images: []string{url},
+		Images:  []string{url},
 	}
 }
 func (act *Actress) PlusCnt() {

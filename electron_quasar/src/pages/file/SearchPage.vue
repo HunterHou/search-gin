@@ -260,16 +260,17 @@
                 </q-chip>
               </div>
               <div>
-                <q-btn style="max-width: 80px" :label="item.MovieType=='无'?`选类型 `:item.MovieType" square
+                <q-btn style="max-width: 80px" :label="item.MovieType==='无'?`选类型 `:item.MovieType" square
                        text-color="white" class="root-chip"
                        @mouseover="item.btnMovieType=true">
                   <q-popup-proxy v-model="item.btnMovieType"
+
                                  @mouseover="item.btnMovieType=true"
                                  @mouseleave="item.btnMovieType=false">
-                    <q-list style="display: flex;flex-direction: column;">
+                    <q-list style="display: flex;flex-direction: column;margin: 2px;">
                       <q-btn v-for="mt in MovieTypeOptions"
                              :key="mt.value"
-                             v-close-popup color="orange"
+                             v-close-popup
                              @click="setMovieType(item.Id, mt.value);item.btnMovieType=false">
                         {{ mt.label }}
                       </q-btn>
@@ -878,7 +879,7 @@ const fetchSearch = async (newBlank) => {
 const moveThis = async (item) => {
   const res = await FileRename({...item, NoRefresh: true, MoveOut: true});
   console.log(res);
-  if (res.Code == 200) {
+  if (res.Code === 200) {
     $q.notify({type: 'negative', message: res.Message});
   } else {
     $q.notify({type: 'negative', message: res.Message});
@@ -892,7 +893,7 @@ const refreshDone = () => {
     if (res <= 0) {
       clearInterval(timeInt);
     }
-  }, 10);
+  }, 300);
 }
 
 const refreshIndexLoading = ref(false);
@@ -966,7 +967,7 @@ onMounted(async () => {
     view.queryParam.Keyword = Keyword;
     view.queryParam.showStyle = showStyle;
   } else {
-    if (from == 'index') {
+    if (from === 'index') {
       const piniaParam = systemProperty.FileSearchParam;
       if (piniaParam) {
         console.log('piniaParam', piniaParam);
@@ -1054,13 +1055,13 @@ onMounted(async () => {
 }
 
 .root-chip {
-  margin-left: 0px;
+  margin-left: 0;
   padding: 0 4px;
   background-color: rgba(236, 15, 15, 0.8);
 }
 
 .chip-tag {
-  margin-left: 0px;
+  margin-left: 0;
   padding: 0 4px;
   background-color: rgba(188, 24, 24, 0.6);
 }

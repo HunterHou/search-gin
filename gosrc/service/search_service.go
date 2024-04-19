@@ -19,7 +19,7 @@ import (
 type SearchService struct {
 }
 
-var searchEngin = datasource.BucketSearchEngin
+var SearchEngin = datasource.BucketSearchEngin
 
 func CreateSearchService() SearchService {
 	return SearchService{}
@@ -27,7 +27,7 @@ func CreateSearchService() SearchService {
 
 func (fs SearchService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
 	result := utils.NewPage()
-	searchResult := searchEngin.Page(searchParam)
+	searchResult := SearchEngin.Page(searchParam)
 	result.TotalCnt = searchResult.LibCount
 	result.TotalSize = utils.GetSizeStr(searchResult.LibSize)
 	result.PageSize = searchParam.PageSize
@@ -664,7 +664,7 @@ func (fs SearchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result
 }
 
 func (fs SearchService) FindOne(Id string) datamodels.Movie {
-	return searchEngin.FindById(Id)
+	return SearchEngin.FindById(Id)
 }
 
 func cleanPath(name string) string {
@@ -838,7 +838,8 @@ func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
 	files, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, true, BaseDir)
-	searchEngin.PutBucketWithSize(dirPath, files)
+	SearchEngin.PutBucketWithSize(dirPath, files)
+	go SearchEngin.BuildActress()
 }
 
 func (fs SearchService) Delete(id string) {

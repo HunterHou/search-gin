@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"searchGin/cons"
 	"searchGin/datamodels"
-	"searchGin/datasource"
 	"searchGin/service"
 	"searchGin/utils"
 
@@ -35,13 +34,17 @@ func PostActress(c *gin.Context) {
 	param := datamodels.SearchParam{}
 	err := c.Bind(&param)
 	if err != nil {
-		return
+		utils.InfoNormal(param, err)
 	}
-	pageActressResultWrapper := datasource.BucketSearchEngin.PageActress(param)
+	if service.SearchEngin.IsEmpty() {
+		fileService := service.CreateSearchService()
+		fileService.ScanAll()
+	}
+	pageActressResultWrapper := service.SearchEngin.PageActress(param)
 	result := utils.NewPage()
 	result.CurCnt = pageActressResultWrapper.ResultCount
-	result.TotalCnt = pageActressResultWrapper.LibCount
-	result.ResultCnt = pageActressResultWrapper.ResultCount
+	result.TotalCnt = pageActressResultWrapper.SearchCount
+	result.ResultCnt = pageActressResultWrapper.SearchCount
 	result.Data = pageActressResultWrapper.FileList
 	c.JSON(http.StatusOK, result)
 }

@@ -209,6 +209,7 @@ func (fileService FileService) Walks(baseDir []string, types []string) []datamod
 		}
 
 	}
+	go SearchEngin.BuildActress()
 	return result
 
 }
@@ -226,7 +227,7 @@ func (fileService FileService) goWalk(baseDir string, types []string, wg *sync.W
 		Size: int64(len(files)),
 	}
 	scanTime <- thisTime
-	searchEngin.PutBucketWithSize(baseDir, files)
+	SearchEngin.PutBucketWithSize(baseDir, files)
 	cons.IndexDone = cons.IndexDone - 1
 
 }

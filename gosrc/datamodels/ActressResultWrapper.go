@@ -24,11 +24,11 @@ func NewActressPageWrapper() PageActressResultWrapper {
 	}
 }
 
-func (fsw PageActressResultWrapper) IsNotEmpty() bool {
+func (fsw *PageActressResultWrapper) IsNotEmpty() bool {
 	return len(fsw.FileList) > 0
 }
 
-func (fsw PageActressResultWrapper) AddItem(act Actress) {
+func (fsw *PageActressResultWrapper) AddItem(act Actress) {
 	fsw.FileList = append(fsw.FileList, act)
 	fsw.LibCount = fsw.LibCount + 1
 	fsw.SearchCount = fsw.SearchCount + 1

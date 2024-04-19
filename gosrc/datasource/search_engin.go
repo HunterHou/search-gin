@@ -1,8 +1,12 @@
 package datasource
 
 import (
+	"fmt"
+	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/utils"
+	"sort"
+	"strings"
 )
 
 type RepeatModel struct {
@@ -41,6 +45,9 @@ func (se *SearchEnginCore) IsEmpty() bool {
 
 func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datamodels.PageActressResultWrapper {
 	resultWrapper := datamodels.SearchActressByKeyWord(se.ActressLib, searchParam.Keyword)
+	sort.Slice(resultWrapper.FileList, func(i, j int) bool {
+		return resultWrapper.FileList[i].Size > resultWrapper.FileList[j].Size
+	})
 	list, size := datamodels.GetActressPageOfFiles(resultWrapper.FileList, searchParam.Page, searchParam.PageSize)
 	resultWrapper.FileList = list
 	resultWrapper.Size = size
@@ -70,6 +77,29 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 	return resultWrapper
 }
 
+// ArrayToMap 总文件 转不同数据模型
+func (fileService *SearchEnginCore) ArrayToMap(files []datamodels.Movie) {
+	fileMap := make(map[string]datamodels.Movie)
+	fileMapCount := make(map[string]int)
+	var size int64
+	for i := 0; i < len(files); i++ {
+		curFile := files[i]
+
+		size = size + curFile.Size
+		_, ok := fileMap[curFile.Id]
+		if ok {
+			//重名处理
+			count := fileMapCount[curFile.Id]
+			count++
+			curFile.SetId(utils.PKId(curFile.Path + fmt.Sprintf("repeat(%d)", count)))
+			fileMap[curFile.Id] = curFile
+		} else {
+			fileMap[curFile.Id] = curFile
+			fileMapCount[curFile.Id] = 1
+		}
+	}
+}
+
 func (se *SearchEnginCore) BuildActress() {
 	actressLib := map[string]datamodels.Actress{}
 	var fileRepeats []datamodels.Movie
@@ -81,6 +111,13 @@ func (se *SearchEnginCore) BuildActress() {
 			totalSize += index.TotalSize
 			totalCount += index.TotalCount
 			for _, movie := range index.FileLib {
+				cons.TypeSizePlus(movie.MovieType, movie.Size)
+				if len(movie.Tags) > 0 {
+					for i := 0; i < len(movie.Tags); i++ {
+						cons.TagSizePlus(movie.Tags[i], movie.Size)
+					}
+
+				}
 				if len(movie.Actress) > 0 {
 					curActress, ok := actressLib[movie.Actress]
 					if ok {
@@ -88,17 +125,21 @@ func (se *SearchEnginCore) BuildActress() {
 						curActress.PlusSize(movie.Size)
 						curActress.AddImage(movie.Png)
 						curActress.AddImage(movie.Jpg)
+						actressLib[movie.Actress] = curActress
 					} else {
 						actressLib[movie.Actress] = datamodels.NewActress(movie.Actress, movie.Jpg, movie.Size)
 					}
 
 				}
-				repeatFile, ok := codeRepeats[movie.Code]
+				pkCode := movie.Code
+				strings.ReplaceAll(pkCode, "-", "")
+				strings.ReplaceAll(pkCode, "_", "")
+				repeatFile, ok := codeRepeats[pkCode]
 				if ok {
 					repeatFile.Count = repeatFile.Count + 1
 					repeatFile.Files = append(repeatFile.Files, movie)
 				} else {
-					codeRepeats[movie.Code] = RepeatModel{
+					codeRepeats[pkCode] = RepeatModel{
 						Code:  movie.Code,
 						Files: []datamodels.Movie{movie},
 						Count: 1,
@@ -109,7 +150,7 @@ func (se *SearchEnginCore) BuildActress() {
 		}
 	}
 	for _, model := range codeRepeats {
-		if model.Count > 0 {
+		if model.Count > 1 {
 			fileRepeats = utils.ExtendsItems(fileRepeats, model.Files)
 		}
 	}
@@ -158,7 +199,6 @@ func (se *SearchEnginCore) PutBucketWithSize(baseDir string, files []datamodels.
 		bucket.Put(file)
 	}
 	se.SearchIndex[baseDir] = bucket
-	go se.BuildActress()
 }
 
 func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {

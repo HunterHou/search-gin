@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"searchGin/cons"
 	"searchGin/datamodels"
-	"searchGin/datasource"
 	"searchGin/service"
 	"searchGin/utils"
 
@@ -202,7 +201,7 @@ func GetJpg(c *gin.Context) {
 // GetActressImage 获取脸谱的图片流
 func GetActressImage(c *gin.Context) {
 	path := c.Param("path")
-	actress := datasource.BucketSearchEngin.FindActressByName(path)
+	actress := service.SearchEngin.FindActressByName(path)
 	if actress.IsNotEmpty() {
 		for _, v := range actress.Images {
 			if utils.ExistsFiles(v) {
