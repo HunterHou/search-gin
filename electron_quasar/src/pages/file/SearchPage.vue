@@ -902,7 +902,7 @@ const refreshIndex = async () => {
   refreshDone()
   const {Code, Message} = await RefreshAPI('/api/refreshIndex');
   console.log(Code, Message);
-  if (Code === '200') {
+  if (Code === 200) {
     $q.notify({type: 'negative', message: Message});
     await fetchSearch();
   }
@@ -912,7 +912,7 @@ const refreshIndex = async () => {
 const setMovieType = async (Id, Type) => {
   console.log(Id, Type)
   const {Code, Message} = await ResetMovieType(Id, Type);
-  if (Code === '200') {
+  if (Code === 200) {
     $q.notify({type: 'negative', message: Message});
   } else {
     $q.notify({type: 'warning', message: Message});
