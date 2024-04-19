@@ -17,7 +17,7 @@
               v-model="view.item.MovieType"
               :options="MovieTypeOptions"
               toggle-color="primary"
-            />
+              />
             <q-input
               label="编码"
               autogrow
@@ -56,7 +56,6 @@
           <div
             style="
               width: 200px;
-              border: 1;
               border-radius: 5px;
               margin: 10px 20px;
             "
@@ -69,7 +68,7 @@
       <q-card-actions align="center">
         <q-btn color="primary" label="移动" @click="editMoveout" />
         <q-btn color="primary" label="命名" @click="editItemSubmit(false)" />
-        <q-btn color="primary" label="预览" @click="view.preview == true" />
+        <q-btn color="primary" label="预览" @click="view.preview === true" />
         <q-btn color="primary" label="关闭" @click="onDialogCancel" />
       </q-card-actions>
     </q-card>
@@ -153,13 +152,13 @@ const editItemSubmit = async (MoveOut) => {
     code = '-' + code;
   }
   let name = '';
-  if (Actress.length != 0) {
+  if (Actress.length !== 0) {
     name += '[' + Actress.trim() + ']';
   }
-  if (code.length != 0) {
+  if (code.length !== 0) {
     name += ' [' + code.trim() + ']';
   }
-  if (MovieType && MovieType != '无') {
+  if (MovieType && MovieType !== '无') {
     if (name.indexOf('{{') < 0) {
       name += `{{${MovieType}}}`;
     } else {
@@ -190,7 +189,7 @@ const editItemSubmit = async (MoveOut) => {
   emits('plus-one');
   onDialogOK();
   const res = await FileRename(param);
-  if (res.Code == 200) {
+  if (res.Code === 200) {
     if (view.callback) {
       emits('sub-one');
       view.callback();

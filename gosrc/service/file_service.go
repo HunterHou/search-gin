@@ -106,7 +106,7 @@ func (fileService *FileService) writeNoPic(c *gin.Context) {
 	c.Data(http.StatusOK, contentType, noPic)
 }
 
-// 删除指定文件夹下的 指定文件名的文件
+// DeleteOne 删除指定文件夹下的 指定文件名的文件
 func (fileService *FileService) DeleteOne(dirName string, fileName string) {
 	if len(fileName) == 0 {
 		return
