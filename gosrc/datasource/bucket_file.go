@@ -1,8 +1,7 @@
-package service
+package datasource
 
 import (
 	"searchGin/datamodels"
-	"searchGin/datasource"
 )
 
 type BucketFile struct {
@@ -41,7 +40,7 @@ func (fs BucketFile) Page(searchParam datamodels.SearchParam) datamodels.PageRes
 	searchWrapper := fs.Filter(searchParam)
 	resultWrapper.SearchCount = len(searchWrapper.FileList)
 	resultWrapper.SearchSize = searchWrapper.Size
-	list, size := datasource.GetPageOfFiles(searchWrapper.FileList, searchParam.Page, searchParam.PageSize)
+	list, size := GetPageOfFiles(searchWrapper.FileList, searchParam.Page, searchParam.PageSize)
 	resultWrapper.FileList = list
 	resultWrapper.Size = size
 	return resultWrapper
@@ -55,7 +54,7 @@ func (fs BucketFile) Filter(searchParam datamodels.SearchParam) datamodels.Searc
 		}
 		return wrapper
 	}
-	resultWrapper := datasource.SearchByKeyWord(fs.FileLib, searchParam.Keyword, searchParam.MovieType)
+	resultWrapper := SearchByKeyWord(fs.FileLib, searchParam.Keyword, searchParam.MovieType)
 	resultWrapper.SortMovies(searchParam.SortField, searchParam.SortType)
 	fs.KeywordHistory[searchParam.UniWords()] = resultWrapper
 
