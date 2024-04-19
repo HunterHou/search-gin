@@ -24,26 +24,30 @@ func NewInstance(name string) BucketFile {
 	}
 }
 
-func (fs BucketFile) IsNotEmpty() bool {
+func (fs *BucketFile) IsNotEmpty() bool {
 	return len(fs.FileLib) > 0
 }
 
-func (fs BucketFile) Clear() {
+func (fs *BucketFile) IsEmpty() bool {
+	return !fs.IsNotEmpty()
+}
+
+func (fs *BucketFile) Clear() {
 	fs.FileLib = map[string]datamodels.Movie{}
 	fs.KeywordHistory = map[string]datamodels.SearchResultWrapper{}
 }
 
-func (fs BucketFile) ClearHistory() {
+func (fs *BucketFile) ClearHistory() {
 	fs.KeywordHistory = map[string]datamodels.SearchResultWrapper{}
 }
 
-func (fs BucketFile) Put(model datamodels.Movie) {
+func (fs *BucketFile) Put(model datamodels.Movie) {
 	fs.FileLib[model.Id] = model
 	fs.TotalSize = fs.TotalSize + model.Size
 	fs.TotalCount = fs.TotalCount + 1
 }
 
-func (fs BucketFile) Get(id string) datamodels.Movie {
+func (fs *BucketFile) Get(id string) datamodels.Movie {
 	model, ok := fs.FileLib[id]
 	if ok {
 		return model
@@ -51,9 +55,12 @@ func (fs BucketFile) Get(id string) datamodels.Movie {
 	return datamodels.Movie{}
 }
 
-func (fs BucketFile) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
+func (fs *BucketFile) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
 	resultWrapper := datamodels.NewPageWrapper()
 	searchWrapper := fs.Filter(searchParam)
+	if searchWrapper.IsEmpty() {
+		return resultWrapper
+	}
 	resultWrapper.SearchCount = len(searchWrapper.FileList)
 	resultWrapper.SearchSize = searchWrapper.Size
 	list, size := datamodels.GetPageOfFiles(searchWrapper.FileList, searchParam.Page, searchParam.PageSize)
@@ -62,7 +69,7 @@ func (fs BucketFile) Page(searchParam datamodels.SearchParam) datamodels.PageRes
 	return resultWrapper
 }
 
-func (fs BucketFile) Filter(searchParam datamodels.SearchParam) datamodels.SearchResultWrapper {
+func (fs *BucketFile) Filter(searchParam datamodels.SearchParam) datamodels.SearchResultWrapper {
 	wrapper, ok := fs.KeywordHistory[searchParam.UniWords()]
 	if ok {
 		if len(fs.KeywordHistory) > 40 {
@@ -71,9 +78,14 @@ func (fs BucketFile) Filter(searchParam datamodels.SearchParam) datamodels.Searc
 		return wrapper
 	}
 	resultWrapper := datamodels.SearchByKeyWord(fs.FileLib, searchParam.Keyword, searchParam.MovieType)
+	if resultWrapper.IsEmpty() {
+		return resultWrapper
+	}
 	datamodels.SortMoviesUtils(resultWrapper.FileList, searchParam.SortField, searchParam.SortType, fs.LastSortField, fs.LastSortType)
 	fs.LastSortField = searchParam.SortField
 	fs.LastSortType = searchParam.SortType
-	fs.KeywordHistory[searchParam.UniWords()] = resultWrapper
+	if resultWrapper.IsNotEmpty() {
+		fs.KeywordHistory[searchParam.UniWords()] = resultWrapper
+	}
 	return resultWrapper
 }

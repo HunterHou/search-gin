@@ -26,7 +26,7 @@ var BucketSearchEngin = SearchEnginCore{
 	SearchIndex: map[string]BucketFile{},
 }
 
-func (se SearchEnginCore) Init(baseDirs []string) {
+func (se *SearchEnginCore) Init(baseDirs []string) {
 	for _, dir := range baseDirs {
 		_, ok := se.SearchIndex[dir]
 		if !ok {
@@ -35,11 +35,11 @@ func (se SearchEnginCore) Init(baseDirs []string) {
 	}
 }
 
-func (se SearchEnginCore) IsEmpty() bool {
+func (se *SearchEnginCore) IsEmpty() bool {
 	return se.TotalCount == 0
 }
 
-func (se SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datamodels.PageActressResultWrapper {
+func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datamodels.PageActressResultWrapper {
 	resultWrapper := datamodels.SearchActressByKeyWord(se.ActressLib, searchParam.Keyword)
 	list, size := datamodels.GetActressPageOfFiles(resultWrapper.FileList, searchParam.Page, searchParam.PageSize)
 	resultWrapper.FileList = list
@@ -48,11 +48,17 @@ func (se SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datamo
 	return resultWrapper
 }
 
-func (se SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
+func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
 	resultWrapper := datamodels.NewPageWrapper()
 	resultWrapper.ResultCount = searchParam.PageSize
 	for _, index := range se.SearchIndex {
+		if index.IsEmpty() {
+			continue
+		}
 		indexWrapper := index.Page(searchParam)
+		if !indexWrapper.IsNotEmpty() {
+			continue
+		}
 		resultWrapper.FileList = utils.ExtendsItems(resultWrapper.FileList, indexWrapper.FileList)
 		resultWrapper.SearchCount = resultWrapper.SearchCount + indexWrapper.SearchCount
 		resultWrapper.SearchSize = resultWrapper.SearchSize + indexWrapper.SearchSize
@@ -64,7 +70,7 @@ func (se SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.Pa
 	return resultWrapper
 }
 
-func (se SearchEnginCore) BuildActress() {
+func (se *SearchEnginCore) BuildActress() {
 	actressLib := map[string]datamodels.Actress{}
 	var fileRepeats []datamodels.Movie
 	codeRepeats := map[string]RepeatModel{}
@@ -113,7 +119,7 @@ func (se SearchEnginCore) BuildActress() {
 	se.TotalSize = totalSize
 }
 
-func (se SearchEnginCore) FindById(id string) datamodels.Movie {
+func (se *SearchEnginCore) FindById(id string) datamodels.Movie {
 	var model = datamodels.Movie{}
 	for _, si := range se.SearchIndex {
 		model = si.Get(id)
@@ -124,7 +130,7 @@ func (se SearchEnginCore) FindById(id string) datamodels.Movie {
 	return model
 }
 
-func (se SearchEnginCore) FindActressByName(id string) datamodels.Actress {
+func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 	act, ok := se.ActressLib[id]
 	if ok {
 		return act
@@ -132,13 +138,13 @@ func (se SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 	return datamodels.Actress{}
 }
 
-func (se SearchEnginCore) Reset() {
+func (se *SearchEnginCore) Reset() {
 	for _, si := range se.SearchIndex {
 		si.Clear()
 	}
 }
 
-func (se SearchEnginCore) putFile(baseDir string, movie datamodels.Movie) {
+func (se *SearchEnginCore) putFile(baseDir string, movie datamodels.Movie) {
 	bucket, ok := se.SearchIndex[baseDir]
 	if !ok {
 		bucket = NewInstance(baseDir)
@@ -146,14 +152,15 @@ func (se SearchEnginCore) putFile(baseDir string, movie datamodels.Movie) {
 	bucket.Put(movie)
 }
 
-func (se SearchEnginCore) PutBucketWithSize(baseDir string, files []datamodels.Movie, totalSize int64) {
+func (se *SearchEnginCore) PutBucketWithSize(baseDir string, files []datamodels.Movie) {
 	bucket := NewInstance(baseDir)
 	for _, file := range files {
 		bucket.Put(file)
 	}
 	se.SearchIndex[baseDir] = bucket
+	go se.BuildActress()
 }
 
-func (se SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
+func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
 	se.SearchIndex[baseDir] = bucket
 }

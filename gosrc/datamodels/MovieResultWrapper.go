@@ -12,11 +12,14 @@ func NewSearchWrapper() SearchResultWrapper {
 	}
 }
 
-func (fsw SearchResultWrapper) IsNotEmpty() bool {
+func (fsw *SearchResultWrapper) IsNotEmpty() bool {
 	return len(fsw.FileList) > 0
 }
+func (fsw *SearchResultWrapper) IsEmpty() bool {
+	return !fsw.IsNotEmpty()
+}
 
-func (fsw SearchResultWrapper) AddWrapperItem(model Movie) {
+func (fsw *SearchResultWrapper) AddWrapperItem(model Movie) {
 	fsw.FileList = append(fsw.FileList, model)
 	fsw.Size += model.Size
 }

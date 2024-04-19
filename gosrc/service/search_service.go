@@ -32,7 +32,7 @@ func (fs SearchService) SearchDataSource(searchParam datamodels.SearchParam) uti
 	result.TotalSize = utils.GetSizeStr(searchResult.LibSize)
 	result.PageSize = searchParam.PageSize
 	result.ResultSize = utils.GetSizeStr(searchResult.SearchSize)
-	result.SetResultCnt(result.TotalCnt, searchParam.Page)
+	result.SetResultCnt(searchResult.SearchCount, searchParam.Page)
 	result.CurSize = utils.GetSizeStr(searchResult.ResultSize)
 	result.CurCnt = searchResult.ResultCount
 	result.Data = searchResult.FileList
@@ -837,9 +837,8 @@ func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.VideoTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
-	totalSize := int64(0)
-	files, _ := service.WalkInnter(dirPath, cons.QueryTypes, totalSize, true, BaseDir)
-	searchEngin.PutBucketWithSize(dirPath, files, totalSize)
+	files, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, true, BaseDir)
+	searchEngin.PutBucketWithSize(dirPath, files)
 }
 
 func (fs SearchService) Delete(id string) {
