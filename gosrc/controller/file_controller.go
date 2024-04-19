@@ -46,7 +46,7 @@ func GetInfo(c *gin.Context) {
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
 	c.ShouldBindJSON(&currentFile)
-	utils.Info("PostRename :searchCnt[%v] \n\n", currentFile)
+	utils.InfoFormat("PostRename :searchCnt[%v] \n\n", currentFile)
 	fileService := service.CreateSearchService()
 	res := fileService.Rename(currentFile)
 	c.JSON(http.StatusOK, res)
@@ -56,7 +56,7 @@ func PostRename(c *gin.Context) {
 func GetAddTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
-	utils.Info("GetAddTag [%v] [%v]  \n", idInt, tag)
+	utils.InfoFormat("GetAddTag [%v] [%v]  \n", idInt, tag)
 	fileService := service.CreateSearchService()
 	res := fileService.AddTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
@@ -102,19 +102,19 @@ func PostSync(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
 	err := c.ShouldBindJSON(&currentFile)
 	if err != nil {
-		utils.Info("PostSync err [%v] ", err)
+		utils.InfoFormat("PostSync err [%v] ", err)
 	}
 
 	searchService := service.CreateSearchService()
 	curFile := searchService.FindOne(currentFile.Id)
-	utils.Info("PostSync curFile [%v] \n ", curFile)
+	utils.InfoFormat("PostSync curFile [%v] \n ", curFile)
 
 	result, newFile := searchService.RequestBusToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return
 	}
-	utils.Info("PostSync newFile [%v] \n", newFile)
+	utils.InfoFormat("PostSync newFile [%v] \n", newFile)
 	result = searchService.MoveCut(curFile, newFile)
 	c.JSON(http.StatusOK, result)
 }
@@ -122,7 +122,7 @@ func PostSync(c *gin.Context) {
 // GetImageList 下拉相关图片
 func GetImageList(c *gin.Context) {
 	id := c.Param("id")
-	utils.Info("id:" + id)
+	utils.InfoFormat("id:%v" + id)
 	serviceFile := service.CreateSearchService()
 	curFile := serviceFile.FindOne(id)
 	result, newFile := serviceFile.RequestBusToFile(curFile)
@@ -221,7 +221,7 @@ func GetTransferToMp4(c *gin.Context) {
 	id := c.Param("id")
 	to := c.Param("to")
 	fileService := service.CreateSearchService()
-	utils.Info("GetTransferToMp4 newFile [%v][%v] ", id, to)
+	utils.InfoFormat("GetTransferToMp4 newFile [%v][%v] ", id, to)
 
 	model := fileService.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {
@@ -256,7 +256,7 @@ func GetCutMovie(c *gin.Context) {
 	start := c.Param("start")
 	end := c.Param("end")
 	fileService := service.CreateSearchService()
-	utils.Info("GetTransferToMp4 newFile [%v][%v][%v] ", id, start, end)
+	utils.InfoFormat("GetTransferToMp4 newFile [%v][%v][%v] ", id, start, end)
 
 	model := fileService.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {

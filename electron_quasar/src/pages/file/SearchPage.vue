@@ -20,7 +20,8 @@
       >
         <template v-slot:loading>
           <q-spinner-facebook size="xs"></q-spinner-facebook
-          >{{ `S:${view.indexDone}` }}
+          >
+          {{ `S:${view.indexDone}` }}
         </template>
       </q-btn>
       <q-btn
@@ -242,7 +243,7 @@
               <div>
                 <q-chip square text-color="white" class="root-chip">
                   <q-popup-proxy context-menu>
-                    <TagPop :item="item" @done-next="refreshIndex" />
+                    <TagPop :item="item" @done-next="refreshIndex"/>
                   </q-popup-proxy>
                   <span>种草</span>
                 </q-chip>
@@ -254,29 +255,28 @@
                   class="chip-tag"
                 >
                   <span @click="searchKeyword(tag)">{{
-                    tag?.substring(0, 4)
-                  }}</span>
+                      tag?.substring(0, 4)
+                    }}</span>
                 </q-chip>
               </div>
-              <q-btn-dropdown
-                class="movie-type-dropdown"
-                :label="item.MovieType"
-              >
-                <q-list style="background-color: rgba(0, 0, 0, 0.7)">
-                  <q-item
-                    v-for="mt in MovieTypeOptions"
-                    :key="mt.value"
-                    v-close-popup
-                    class="movieTypeSelectItem"
-                  >
-                    <q-item-section>
-                      <q-item-label @click="setMovieType(item.Id, mt.value)"
-                        >{{ mt.label }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
+              <div>
+                <q-btn style="max-width: 80px" :label="item.MovieType=='无'?`选类型 `:item.MovieType" square
+                       text-color="white" class="root-chip"
+                       @mouseover="item.btnMovieType=true">
+                  <q-popup-proxy v-model="item.btnMovieType"
+                                 @mouseover="item.btnMovieType=true"
+                                 @mouseleave="item.btnMovieType=false">
+                    <q-list style="display: flex;flex-direction: column;">
+                      <q-btn v-for="mt in MovieTypeOptions"
+                             :key="mt.value"
+                             v-close-popup color="orange"
+                             @click="setMovieType(item.Id, mt.value);item.btnMovieType=false">
+                        {{ mt.label }}
+                      </q-btn>
+                    </q-list>
+                  </q-popup-proxy>
+                </q-btn>
+              </div>
             </div>
             <q-img
               fit="fill"
@@ -429,7 +429,7 @@
                   class="mr10 cursor-pointer"
                   target="_blank"
                   @click="goActress(item.Actress)"
-                  >{{ item.Actress?.substring(0, 6) }}</a
+                >{{ item.Actress?.substring(0, 6) }}</a
                 >
                 <a
                   style="
@@ -438,7 +438,7 @@
                   "
                   class="mr10 cursor-pointer"
                   @click="copyText(item.Code)"
-                  >{{ formatCode(item.Code) }}</a
+                >{{ formatCode(item.Code) }}</a
                 >
                 <a
                   style="
@@ -447,7 +447,7 @@
                   "
                   class="mr10 cursor-pointer"
                   @click="copyText(item.Title)"
-                  >{{ item.SizeStr }}</a
+                >{{ item.SizeStr }}</a
                 >
                 <span>{{ formatTitle(item.Title) }}</span>
               </div>
@@ -459,7 +459,7 @@
           :scroll-offset="150"
           :offset="[18, 100]"
         >
-          <q-btn fab icon="keyboard_arrow_up" color="accent" />
+          <q-btn fab icon="keyboard_arrow_up" color="accent"/>
         </q-page-scroller>
 
         <q-page-sticky
@@ -515,16 +515,16 @@
       >
         <q-tooltip class="bg-white text-primary">缩放</q-tooltip>
       </q-btn>
-      <q-space />
+      <q-space/>
       <span
         style="color: aliceblue; width: 80%; height: 1.5rem; overflow-y: hidden"
         v-touch-pan.prevent.mouse="moveFab"
         :disable="draggingFab"
-        ><q-btn flat icon="ti-move" color="white">
+      ><q-btn flat icon="ti-move" color="white">
           <q-tooltip class="bg-white text-primary">拖动</q-tooltip> </q-btn
-        >{{ view.currentData.Name }}</span
+      >{{ view.currentData.Name }}</span
       >
-      <q-space />
+      <q-space/>
       <q-btn
         dense
         flat
@@ -555,16 +555,16 @@
     @plus-one="view.renameCount = view.renameCount + 1"
     @sub-one="view.renameCount = view.renameCount - 1"
   />
-  <FileInfo ref="fileInfoRef" />
-  <ListEdit ref="listEditRef" />
+  <FileInfo ref="fileInfoRef"/>
+  <ListEdit ref="listEditRef"/>
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar';
+import {useQuasar} from 'quasar';
 
-import { isMobile } from 'boot/platform';
-import { computed, onMounted, reactive, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import {isMobile} from 'boot/platform';
+import {computed, onMounted, reactive, ref} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
 import {
   DeleteFile,
   HeartBeatQuery,
@@ -577,7 +577,7 @@ import {
   SyncFileInfo,
   SearchAPI,
 } from '../../components/api/searchAPI';
-import { GetSettingInfo } from '../../components/api/settingAPI';
+import {GetSettingInfo} from '../../components/api/settingAPI';
 import {
   formatCode,
   formatTitle,
@@ -587,14 +587,14 @@ import {
   DescEnum,
   getLabelByValue,
 } from '../../components/utils';
-import { getPng, getFileStream } from '../../components/utils/images';
-import { useSystemProperty } from '../../stores/System';
+import {getPng, getFileStream} from '../../components/utils/images';
+import {useSystemProperty} from '../../stores/System';
 import FileEdit from './components/FileEdit.vue';
 import FileInfo from './components/FileInfo.vue';
 import ListEdit from './components/ListEdit.vue';
 import TagPop from './components/TagPop.vue';
 
-import { onKeyStroke, useClipboard } from '@vueuse/core';
+import {onKeyStroke, useClipboard} from '@vueuse/core';
 
 const $q = useQuasar();
 const fileEditRef = ref(null);
@@ -621,7 +621,7 @@ const view = reactive({
 });
 
 const source = ref('Hello');
-const { copy } = useClipboard({ source });
+const {copy} = useClipboard({source});
 
 const systemProperty = useSystemProperty();
 const suggestions = computed(() => {
@@ -667,15 +667,15 @@ const zoomFab = (ev) => {
 
 const playBySystem = (item) => {
   if ($q.platform.is.electron) {
-    const { Path } = item;
-    window.electron.openBySystem({ Path });
+    const {Path} = item;
+    window.electron.openBySystem({Path});
   } else {
     commonExec(PlayMovie(item.Id));
   }
 };
 
 const listEditCallback = (data) => {
-  const { settingInfo } = data;
+  const {settingInfo} = data;
   if (settingInfo) {
     view.settingInfo = settingInfo;
   }
@@ -691,7 +691,7 @@ const showButton = (name) => {
 const openPlay = (item) => {
   const url = `#/playing/${item.Id}`;
   if ($q.platform.is.electron) {
-    window.electron.createWindow({ router: url });
+    window.electron.createWindow({router: url});
   } else {
     window.open(url, '', 'width=1280,height=800,titleBarStyle=');
   }
@@ -762,10 +762,10 @@ const fetchGetSettingInfo = async () => {
 };
 
 const commonExec = async (exec, refresh) => {
-  const { Code, Message } = (await exec) || {};
+  const {Code, Message} = (await exec) || {};
   console.log(Code, Message);
   if (Code != 200) {
-    $q.notify({ message: `${Message}` });
+    $q.notify({message: `${Message}`});
   } else {
     if (refresh) {
       refreshIndex();
@@ -783,7 +783,7 @@ onKeyStroke(['Enter'], () => {
 
 const copyText = async (str) => {
   await copy(str);
-  $q.notify({ message: `${str}` });
+  $q.notify({message: `${str}`});
 };
 
 const goActress = (Actress) => {
@@ -791,7 +791,7 @@ const goActress = (Actress) => {
     view.queryParam.Keyword = Actress;
     fetchSearch();
   } else {
-    const { Page, PageSize, MovieType, SortField, SortType } = view.queryParam;
+    const {Page, PageSize, MovieType, SortField, SortType} = view.queryParam;
     const routeData = resolve({
       path: '/search',
       query: {
@@ -825,7 +825,7 @@ const openListEditRef = () => {
 };
 
 const openFileInfoRef = (item) => {
-  fileInfoRef.value.open({ item, cb: refreshIndex });
+  fileInfoRef.value.open({item, cb: refreshIndex});
 };
 
 const openRightDrawer = (item) => {
@@ -864,27 +864,28 @@ const nextPage = (n) => {
 
 const fetchSearch = async (newBlank) => {
   saveParam(newBlank);
-  const { Keyword } = view.queryParam;
+  const {Keyword} = view.queryParam;
   const data = await SearchAPI(view.queryParam);
   console.log(data);
-  view.resultData = { ...data };
-  const { ResultSize, ResultCnt } = data;
+  view.resultData = {...data};
+  const {ResultSize, ResultCnt, IndexProgress} = data;
+  if (IndexProgress > 0) {
+    refreshDone()
+  }
   document.title = `搜索 ${Keyword || ''} : ${ResultSize} {${ResultCnt}}`;
 };
 
 const moveThis = async (item) => {
-  const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
+  const res = await FileRename({...item, NoRefresh: true, MoveOut: true});
   console.log(res);
   if (res.Code == 200) {
-    $q.notify({ type: 'negative', message: res.Message });
+    $q.notify({type: 'negative', message: res.Message});
   } else {
-    $q.notify({ type: 'negative', message: res.Message });
+    $q.notify({type: 'negative', message: res.Message});
   }
 };
 
-const refreshIndexLoading = ref(false);
-const refreshIndex = async () => {
-  refreshIndexLoading.value = true;
+const refreshDone = () => {
   const timeInt = setInterval(async () => {
     const res = await HeartBeatQuery();
     view.indexDone = res;
@@ -892,21 +893,28 @@ const refreshIndex = async () => {
       clearInterval(timeInt);
     }
   }, 10);
-  const { Code, Message } = await RefreshAPI('/api/refreshIndex');
+}
+
+const refreshIndexLoading = ref(false);
+const refreshIndex = async () => {
+  refreshIndexLoading.value = true;
+  refreshDone()
+  const {Code, Message} = await RefreshAPI('/api/refreshIndex');
   console.log(Code, Message);
-  if (Code == '200') {
-    $q.notify({ type: 'negative', message: Message });
+  if (Code === '200') {
+    $q.notify({type: 'negative', message: Message});
     await fetchSearch();
   }
   refreshIndexLoading.value = false;
 };
 
 const setMovieType = async (Id, Type) => {
-  const { Code, Message } = await ResetMovieType(Id, Type);
+  console.log(Id, Type)
+  const {Code, Message} = await ResetMovieType(Id, Type);
   if (Code === '200') {
-    $q.notify({ type: 'negative', message: Message });
+    $q.notify({type: 'negative', message: Message});
   } else {
-    $q.notify({ type: 'warning', message: Message });
+    $q.notify({type: 'warning', message: Message});
   }
 };
 
@@ -914,7 +922,7 @@ const saveParam = () => {
   systemProperty.syncSearchParam(view.queryParam);
   localStorage.setItem('queryParam', JSON.stringify(view.queryParam));
 
-  const { Page, PageSize, MovieType, SortField, SortType, Keyword } =
+  const {Page, PageSize, MovieType, SortField, SortType, Keyword} =
     view.queryParam;
 
   push({
@@ -931,7 +939,7 @@ const saveParam = () => {
 };
 
 const thisRoute = useRoute();
-const { push, resolve } = useRouter();
+const {push, resolve} = useRouter();
 
 onMounted(async () => {
   document.title = '搜索';

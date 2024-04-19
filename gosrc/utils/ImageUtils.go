@@ -42,7 +42,7 @@ func ImageToPng(src string) error {
 	}(fin2)
 	fout, createErr := os.Create(des)
 	if createErr != nil {
-		Info("err:", createErr)
+		InfoFormat("err:%v", createErr)
 		return createErr
 	}
 	defer func(fout *os.File) {
@@ -54,7 +54,7 @@ func ImageToPng(src string) error {
 	config, _, _ := image.DecodeConfig(fin2)
 	srcImage, fm, err := image.Decode(fin)
 	if err != nil {
-		Info("err:", err)
+		InfoFormat("err:%v", err)
 		return err
 	}
 	height := config.Height

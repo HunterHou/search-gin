@@ -4,7 +4,6 @@ import (
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"sort"
-	"strings"
 )
 
 var DefSortField = "MTime"

@@ -14,7 +14,7 @@ func GetOpenFolder(c *gin.Context) {
 	id := c.Param("id")
 	SearchService := service.CreateSearchService()
 	file := SearchService.FindOne(id)
-	utils.Info("open folder:[%v]", file.DirPath)
+	utils.InfoFormat("open folder:[%v]", file.DirPath)
 	utils.ExecCmdExplorer(file.DirPath)
 	res := utils.NewSuccessByMsg("打开成功")
 	c.JSON(http.StatusOK, res)

@@ -21,10 +21,10 @@ func ExecCmd(path string, cmdType string) int {
 		}
 		cmdErr := cmd.Start()
 		if cmdErr != nil {
-			Info("%v", cmdErr)
+			InfoFormat("%v", cmdErr)
 			return 0
 		}
-		Info("ExecCmdSuccess:" + cmdType + ":" + path)
+		InfoFormat("ExecCmdSuccess:%v" + cmdType + ":" + path)
 		return 1
 	}
 	return 0

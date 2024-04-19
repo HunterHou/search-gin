@@ -294,7 +294,7 @@ func (b *Buffer) Append(i interface{}) *Buffer {
 func (b *Buffer) append(s string) *Buffer {
 	defer func() {
 		if err := recover(); err != nil {
-			Info("*****内存不够了！******")
+			InfoFormat("*****内存不够了！******")
 		}
 	}()
 	b.WriteString(s)
