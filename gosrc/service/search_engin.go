@@ -24,6 +24,12 @@ func (se SearchEnginCore) Init(baseDirs []string) {
 	}
 }
 
+func (se SearchEnginCore) FindById(id string) {
+	for _, si := range se.SearchIndex {
+		si.Clear()
+	}
+}
+
 func (se SearchEnginCore) Reset() {
 	for _, si := range se.SearchIndex {
 		si.Clear()
