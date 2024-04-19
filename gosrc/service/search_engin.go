@@ -22,10 +22,20 @@ func (se SearchEnginCore) Init(baseDirs []string) {
 	}
 }
 
+func (se SearchEnginCore) Reset() {
+	for _, si := range se.SearchIndex {
+		si.Clear()
+	}
+}
+
 func (se SearchEnginCore) put(baseDir string, movie datamodels.Movie) {
 	bucket, ok := se.SearchIndex[baseDir]
 	if !ok {
 		bucket = datasource.NewInstance(baseDir)
 	}
 	bucket.Put(movie)
+}
+
+func (se SearchEnginCore) Set(baseDir string, bucket datasource.BucketFile) {
+	se.SearchIndex[baseDir] = bucket
 }
