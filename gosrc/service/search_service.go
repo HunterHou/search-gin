@@ -56,8 +56,6 @@ func (fs SearchService) SetMovieType(movie datamodels.Movie, movieType string) u
 		os.Rename(movie.Png, path)
 		path = strings.ReplaceAll(movie.Nfo, originVideoType, movieType)
 		os.Rename(movie.Nfo, path)
-		// 执行当前目录搜索
-		fs.ScanTarget(movie.BaseDir)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 	newMovieType := "{{" + movieType + "}}"
@@ -126,8 +124,6 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 		if err != nil {
 			utils.InfoFormat("%v", err)
 		}
-		// 执行当前目录搜索
-		fs.ScanTarget(movie.BaseDir)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 
@@ -169,8 +165,6 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 		os.Rename(movie.Nfo, newName)
 
 	}
-	// 执行当前目录搜索
-	fs.ScanTarget(movie.DirPath)
 	return utils.NewSuccessByMsg("执行成功")
 }
 func (fs SearchService) ClearTag(id string, tag string) utils.Result {
