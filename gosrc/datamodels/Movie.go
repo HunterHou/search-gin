@@ -105,9 +105,9 @@ func (f Movie) IsNull() bool {
 }
 
 func SortMoviesUtils(sortModels []Movie, sF string, sT string, lastSortField string, lastSortType string) {
-	if sF == lastSortField && sT == lastSortType {
-		return
-	}
+	//if sF == lastSortField && sT == lastSortType {
+	//	return
+	//}
 	sort.Slice(sortModels, func(i, j int) bool {
 		if sF == "Code" && sT == "desc" {
 			return sortModels[i].Code > sortModels[j].Code
