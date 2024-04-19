@@ -80,7 +80,7 @@ func (fileService *FileService) HeartBeat() {
 	//time.After(1 * time.Second)
 	// 启动扫描系统
 	var SearchService = CreateSearchService()
-	SearchService.ScanAll()
+	go SearchService.ScanAll()
 	// 启动转换执行任务
 	fileService.TaskExecuting()
 	time.AfterFunc(180*time.Second, fileService.HeartBeat)

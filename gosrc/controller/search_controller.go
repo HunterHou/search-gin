@@ -43,10 +43,10 @@ func PostActess(c *gin.Context) {
 	SearchService := service.CreateSearchService()
 	if len(datasource.FileList) == 0 {
 		SearchService.ScanAll()
-		SearchService.SortAct(datasource.ActressList, param.SortType)
 	}
 	SearchService.SortAct(datasource.ActressList, param.SortType)
 	totalCnt := len(datasource.ActressList)
+	// TODO 关键词缓存
 	list, searchCnt := SearchService.SearchActressByKeyWord(datasource.ActressList, param.Keyword)
 	list = SearchService.GetActressPage(list, param.Page, param.PageSize)
 	result := utils.NewPage()
