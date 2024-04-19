@@ -7,6 +7,8 @@ import (
 
 type SearchEnginCore struct {
 	SearchIndex map[string]datasource.BucketFile
+	TotalSize   int64
+	TotalCount  int
 }
 
 var BucketSearchEngin = SearchEnginCore{
