@@ -3,8 +3,6 @@ package controller
 import (
 	"net/http"
 	"searchGin/cons"
-	"searchGin/datasource"
-	"searchGin/service"
 	"searchGin/utils"
 	"sort"
 
@@ -17,19 +15,11 @@ func Index(c *gin.Context) {
 }
 
 func GetTypeSize(c *gin.Context) {
-	SearchService := service.CreateSearchService()
-	if len(datasource.FileList) == 0 {
-		SearchService.ScanAll()
-		SearchService.SortAct(datasource.ActressList, "desc")
-	}
 	var res []cons.MenuSize
 	cons.TypeMenu.Range(func(_, value interface{}) bool {
 		res = append(res, value.(cons.MenuSize))
 		return true
 	})
-	// for _, v := range cons.TypeMenu {
-	// 	res = append(res, v)
-	// }
 	for i := 0; i < len(res); i++ {
 		res[i].SizeStr = utils.GetSizeStr(res[i].Size)
 	}
@@ -52,10 +42,6 @@ func GetTypeSize(c *gin.Context) {
 
 func GetTagSize(c *gin.Context) {
 	var res []cons.MenuSize
-	// for _, v := range cons.TagMenu {
-	// 	res = append(res, v)
-	// }
-
 	cons.TagMenu.Range(func(_, value interface{}) bool {
 		res = append(res, value.(cons.MenuSize))
 		return true

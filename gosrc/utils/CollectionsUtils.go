@@ -4,22 +4,6 @@ import (
 	"strings"
 )
 
-func XItem(lib []string, items []string) []string {
-	var res []string
-	if len(lib) == 0 {
-		return items
-	}
-	if len(items) == 0 {
-		return lib
-	}
-	for _, v := range lib {
-		if HasItem(items, v) {
-			res = append(res, v)
-		}
-	}
-	return res
-}
-
 // HasItem 判断集合是否包含
 func HasItem(lib []string, item string) bool {
 	if lib == nil {
@@ -29,7 +13,6 @@ func HasItem(lib []string, item string) bool {
 		return false
 	}
 	for i := 0; i < len(lib); i++ {
-
 		if strings.Compare(item, lib[i]) == 0 {
 			return true
 		}
@@ -38,12 +21,7 @@ func HasItem(lib []string, item string) bool {
 }
 
 func ExtendsItems[T any](lib []T, items []T) []T {
-	if len(items) == 0 || items == nil {
-		return lib
-	}
-	for i := 0; i < len(items); i++ {
-		lib = append(lib, items[i])
-	}
+	lib = append(lib, items...)
 	return lib
 }
 
@@ -61,12 +39,4 @@ func IndexOf(lib []string, item string) int {
 		}
 	}
 	return -1
-}
-
-func RemoveItem(lib []string, item string) []string {
-	index := IndexOf(lib, item)
-	if index != -1 {
-		return ExtendsItems(lib[0:index], lib[(index+1):])
-	}
-	return lib
 }

@@ -17,9 +17,6 @@ var PortNo2 = ":10082"
 var PortNo3 = ":10083"
 var QueryTypes []string
 
-var CurSortField = ""
-var CurSortType = ""
-
 type MenuSize struct {
 	Name    string
 	Cnt     int64

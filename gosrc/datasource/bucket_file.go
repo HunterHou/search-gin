@@ -24,8 +24,8 @@ func NewInstance(name string) BucketFile {
 	}
 }
 
-func (fs BucketFile) IsNotEmplty() bool {
-	return len(FileLib) > 0
+func (fs BucketFile) IsNotEmpty() bool {
+	return len(fs.FileLib) > 0
 }
 
 func (fs BucketFile) Clear() {

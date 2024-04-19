@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 	"runtime"
 	"searchGin/cons"
 	"searchGin/datamodels"
-	"searchGin/datasource"
 	"searchGin/utils"
 	"strings"
 	"sync"
@@ -76,7 +74,7 @@ func (fileService FileService) GetFile(c *gin.Context) {
 }
 
 // HeartBeat 心跳与定时
-func (fileService *FileService) HeartBeat() {
+func (fileService FileService) HeartBeat() {
 	//time.After(1 * time.Second)
 	// 启动扫描系统
 	var SearchService = CreateSearchService()
@@ -130,7 +128,7 @@ func (fileService *FileService) DeleteOne(dirName string, fileName string) {
 }
 
 // DownDeleteDir 删除递归文件夹
-func (fileService *FileService) DownDeleteDir(dirname string) {
+func (fileService FileService) DownDeleteDir(dirname string) {
 	files2, _ := os.ReadDir(dirname)
 	if len(files2) > 0 {
 		for _, ff := range files2 {
@@ -150,7 +148,7 @@ func (fileService *FileService) DownDeleteDir(dirname string) {
 }
 
 // UpDirClear 递归向上处理空文件夹
-func (fileService *FileService) UpDirClear(dirname string) {
+func (fileService FileService) UpDirClear(dirname string) {
 	files2, _ := os.ReadDir(dirname)
 	if len(files2) == 0 {
 		err := os.Remove(dirname)
@@ -169,124 +167,16 @@ func (fileService *FileService) UpDirClear(dirname string) {
 func GetIpAddr() string {
 	conn, err := net.Dial("udp", "8.8.8.8:53")
 	if err != nil {
-		utils.InfoFormat("GetIpAddr:%v \n\n", err)
+		utils.InfoFormat("GetIpAddrError:%v \n\n", err)
 		return "127.0.0.1"
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	// 192.168.1.20:61085
 	ip := strings.Split(localAddr.String(), ":")[0]
 	return ip
 }
 
-// 根据datasource map 更新datasource
-func (fileService *FileService) fileMapUpdateFileListFromDatasource(dirPath string, targetFiles []datamodels.Movie) {
-	// 声明新文件列表
-	var newList []datamodels.Movie
-	// 删除数据源map中指定文件夹的文件
-	for _, v := range datasource.FileLib {
-		if v.DirPath == dirPath {
-			delete(datasource.FileLib, v.Id)
-			datasource.FileSize -= v.Size
-		} else {
-			newList = append(newList, v)
-		}
-	}
-	//添加新文件到 数据源map
-	for _, value := range targetFiles {
-		if val, ok := datasource.FileLib[value.Id]; !ok {
-			datasource.FileLib[value.Id] = val
-		}
-		newList = append(newList, value)
-		datasource.FileSize += value.Size
-	}
-	//排序
-	datasource.SortMovieForce()
-	datasource.FileList = newList
-
-}
-
-// 制作DataSource数据
-func (fileService *FileService) makeDatasourceMap(files []datamodels.Movie) {
-	fileMap, actressMap, _, fileSize := fileService.ArrayToMap(files)
-	var newActress []datamodels.Actress
-	for _, item := range actressMap {
-		if item.Cnt > 1 {
-			newActress = append(newActress, item)
-		}
-
-	}
-	datasource.FileLib = fileMap
-	datasource.FileList = files
-	datasource.ActressLib = actressMap
-	datasource.ActressList = newActress
-	datasource.FileSize = fileSize
-}
-
-// ArrayToMap 总文件 转不同数据模型
-func (fileService *FileService) ArrayToMap(files []datamodels.Movie) (map[string]datamodels.Movie, map[string]datamodels.Actress, map[string]datamodels.Supplier, int64) {
-	fileMap := make(map[string]datamodels.Movie)
-	fileMapCount := make(map[string]int)
-	actressMap := make(map[string]datamodels.Actress)
-	supplierMap := make(map[string]datamodels.Supplier)
-	var size int64
-	for i := 0; i < len(files); i++ {
-		curFile := files[i]
-		cons.TypeSizePlus(curFile.MovieType, curFile.Size)
-		if len(curFile.Tags) > 0 {
-			for i := 0; i < len(curFile.Tags); i++ {
-				cons.TagSizePlus(curFile.Tags[i], curFile.Size)
-			}
-
-		}
-		size = size + curFile.Size
-		_, ok := fileMap[curFile.Id]
-		if ok {
-			//重名处理
-			count := fileMapCount[curFile.Id]
-			count++
-			curFile.SetId(utils.PKId(curFile.Path + fmt.Sprintf("repeat(%d)", count)))
-			fileMap[curFile.Id] = curFile
-		} else {
-			fileMap[curFile.Id] = curFile
-			fileMapCount[curFile.Id] = 1
-		}
-
-		curActress, ok := actressMap[curFile.Actress]
-		if ok {
-			curActress.PlusCnt()
-			curActress.PlusSize(curFile.Size)
-			curActress.AddImage(curFile.Png)
-			curActress.AddImage(curFile.Jpg)
-			actressMap[curFile.Actress] = curActress
-		} else {
-			actressMap[curFile.Actress] = datamodels.NewActress(curFile.Actress, curFile.Png, curFile.Size)
-		}
-		curSupplier, okS := supplierMap[curFile.Supplier]
-		if okS {
-			curSupplier.Plus()
-			supplierMap[curFile.Supplier] = curSupplier
-		} else {
-			supplierMap[curFile.Supplier] = datamodels.NewSupplier(curFile.Supplier)
-		}
-
-	}
-	return fileMap, actressMap, supplierMap, size
-}
-
-// ExpandsMovie 合并文件数组
-func ExpandsMovie(originArr []datamodels.Movie, insertArr []datamodels.Movie) []datamodels.Movie {
-	if len(insertArr) == 0 {
-		return originArr
-	}
-
-	for i := 0; i < len(insertArr); i++ {
-		originArr = append(originArr, insertArr[i])
-	}
-	return originArr
-}
-
 // Walks 并发扫描多文件夹 并返回所有文件
-func (fileService *FileService) Walks(baseDir []string, types []string) []datamodels.Movie {
+func (fileService FileService) Walks(baseDir []string, types []string) []datamodels.Movie {
 
 	var wg sync.WaitGroup
 	var dataMovie = make(chan []datamodels.Movie, 20000)
@@ -306,7 +196,7 @@ func (fileService *FileService) Walks(baseDir []string, types []string) []datamo
 		if !ok {
 			break
 		}
-		result = ExpandsMovie(result, data)
+		result = utils.ExtendsItems(result, data)
 	}
 	cons.InitFolderTime()
 	for {
@@ -324,7 +214,7 @@ func (fileService *FileService) Walks(baseDir []string, types []string) []datamo
 }
 
 // 协程方法 扫描单个文件夹并送入管道
-func (fileService *FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
+func (fileService FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
 	files, _ := fileService.WalkInnter(baseDir, types, 0, true, baseDir)
@@ -341,7 +231,7 @@ func (fileService *FileService) goWalk(baseDir string, types []string, wg *sync.
 }
 
 // Walk 遍历目录 获取文件库
-func (fileService *FileService) Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
+func (fileService FileService) Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
 	var result []datamodels.Movie
 	files, _ := os.ReadDir(baseDir)
 	if len(files) > 0 {
@@ -349,7 +239,7 @@ func (fileService *FileService) Walk(baseDir string, types []string, deep bool) 
 			pathAbs := filepath.Join(baseDir, path.Name())
 			if path.IsDir() && deep {
 				childResult := fileService.Walk(pathAbs, types, deep)
-				result = ExpandsMovie(result, childResult)
+				result = utils.ExtendsItems(result, childResult)
 			} else {
 				info, _ := path.Info()
 				name := path.Name()
@@ -389,7 +279,7 @@ func (fileService *FileService) WalkInnter(currentDir string, types []string, to
 			pathAbs := filepath.Join(currentDir, path.Name())
 			if path.IsDir() && queryChild {
 				childResult, innerSize := fileService.WalkInnter(pathAbs, types, currentSize, queryChild, basePath)
-				result = ExpandsMovie(result, childResult)
+				result = utils.ExtendsItems(result, childResult)
 				currentSize += innerSize
 			} else {
 				name := path.Name()

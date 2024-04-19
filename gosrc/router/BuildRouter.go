@@ -34,7 +34,7 @@ func BuildRouter() *gin.Engine {
 	router.GET("/", controller.Index)
 	router.POST("/api/movieList", controller.PostSearch)
 	router.GET("/api/transferTasks", controller.GetTransferTask)
-	router.POST("/api/actressList", controller.PostActess)
+	router.POST("/api/actressList", controller.PostActress)
 	router.GET("/api/actressImgae/:path", controller.GetActressImage)
 
 	router.GET("/api/play/:id", controller.GetPlay)

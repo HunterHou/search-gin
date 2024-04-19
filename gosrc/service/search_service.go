@@ -19,39 +19,23 @@ import (
 type SearchService struct {
 }
 
+var searchEngin = datasource.BucketSearchEngin
+
 func CreateSearchService() SearchService {
 	return SearchService{}
 }
 
-func (fs SearchService) SortMovieForce() {
-	datasource.SortMovieForce()
-}
-
 func (fs SearchService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
-
 	result := utils.NewPage()
-	if len(datasource.FileList) == 0 {
-		fs.ScanAll()
-		datasource.SortDataSourceMovies(searchParam.SortField, searchParam.SortType, true)
-	}
-	datasource.SortDataSourceMovies(searchParam.SortField, searchParam.SortType, true)
-	dataSource := datasource.FileList
-
-	if searchParam.OnlyRepeat {
-		dataSource = fs.OnlyRepeat(dataSource)
-	}
-
-	searchList, searchSize := fs.SearchByKeyWord(dataSource, datasource.FileSize, searchParam.Keyword, searchParam.MovieType)
-	result.TotalCnt = len(searchList)
+	searchResult := searchEngin.Page(searchParam)
+	result.TotalCnt = searchResult.LibCount
+	result.TotalSize = utils.GetSizeStr(searchResult.LibSize)
 	result.PageSize = searchParam.PageSize
-	result.TotalSize = utils.GetSizeStr(datasource.FileSize)
-	result.ResultSize = utils.GetSizeStr(searchSize)
+	result.ResultSize = utils.GetSizeStr(searchResult.SearchSize)
 	result.SetResultCnt(result.TotalCnt, searchParam.Page)
-	pageList, pageSize := fs.GetPage(searchList, searchParam.Page, searchParam.PageSize)
-
-	result.CurSize = utils.GetSizeStr(pageSize)
-	result.CurCnt = len(searchList)
-	result.Data = pageList
+	result.CurSize = utils.GetSizeStr(searchResult.ResultSize)
+	result.CurCnt = searchResult.ResultCount
+	result.Data = searchResult.FileList
 	return result
 
 }
@@ -73,7 +57,7 @@ func (fs SearchService) SetMovieType(movie datamodels.Movie, movieType string) u
 		path = strings.ReplaceAll(movie.Nfo, originVideoType, movieType)
 		os.Rename(movie.Nfo, path)
 		// 执行当前目录搜索
-		fs.ScanTarget(movie.DirPath, movie.BaseDir)
+		fs.ScanTarget(movie.BaseDir, movie.BaseDir)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 	newMovieType := "{{" + movieType + "}}"
@@ -143,7 +127,7 @@ func (fs SearchService) AddTag(id string, tag string) utils.Result {
 			utils.InfoFormat("%v", err)
 		}
 		// 执行当前目录搜索
-		fs.ScanTarget(movie.DirPath, movie.BaseDir)
+		fs.ScanTarget(movie.BaseDir, movie.BaseDir)
 		return utils.NewSuccessByMsg("执行成功")
 	}
 
@@ -218,7 +202,7 @@ func (fs SearchService) ClearTag(id string, tag string) utils.Result {
 	path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
 	os.Rename(movie.Nfo, path)
 	// 执行当前目录搜索
-	fs.ScanTarget(movie.DirPath, movie.BaseDir)
+	fs.ScanTarget(movie.BaseDir, movie.BaseDir)
 	return utils.NewSuccessByMsg("执行成功")
 }
 
@@ -680,11 +664,7 @@ func (fs SearchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result
 }
 
 func (fs SearchService) FindOne(Id string) datamodels.Movie {
-	if len(datasource.FileLib) == 0 {
-		fs.ScanAll()
-	}
-	curFile := datasource.FileLib[Id]
-	return curFile
+	return searchEngin.FindById(Id)
 }
 
 func cleanPath(name string) string {
@@ -803,7 +783,7 @@ func (fs SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 		os.Rename(oldPath, newPath)
 	}
 	if !movie.NoRefresh {
-		fs.ScanTarget(movieLib.DirPath, movieLib.BaseDir)
+		fs.ScanTarget(movieLib.BaseDir, movieLib.BaseDir)
 	}
 	return res
 }
@@ -814,21 +794,6 @@ func choose2To1(tr bool, str1 string, str2 string) string {
 	} else {
 		return str2
 	}
-}
-
-func (fs SearchService) FindNext(Id string, sourceLib []datamodels.Movie, offset int) datamodels.Movie {
-
-	length := len(sourceLib)
-	for i := 0; i < length; i++ { //looping from 0 to the length of the array
-		if sourceLib[i].Id == Id {
-			if i+offset < 0 || i+offset > length {
-				return sourceLib[i]
-			}
-			return sourceLib[i+offset]
-		}
-	}
-	curFile := datasource.FileLib[Id]
-	return curFile
 }
 
 func (fs SearchService) SortAct(lib []datamodels.Actress, sortType string) {
@@ -854,46 +819,34 @@ func (fs SearchService) ScanAll() {
 	var dirList []string
 	setting := cons.OSSetting
 	dirList = append(dirList, setting.Dirs...)
-	cons.QueryTypes = []string{}
-	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.VideoTypes)
-	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.DocsTypes)
-	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.ImageTypes)
-	fs.ScanDisk(dirList, cons.QueryTypes)
+	queryTypes := []string{}
+	queryTypes = utils.ExtendsItems(queryTypes, setting.VideoTypes)
+	queryTypes = utils.ExtendsItems(queryTypes, setting.DocsTypes)
+	queryTypes = utils.ExtendsItems(queryTypes, setting.ImageTypes)
+	fileService := CreateFileService()
+	fileService.Walks(dirList, queryTypes)
 }
 
 // ScanTarget 扫描指定文佳佳
 func (fs SearchService) ScanTarget(dirPath string, BaseDir string) {
 	//统计初始化
 	service := CreateFileService()
-	cons.TypeMenu = sync.Map{}
-	cons.TagMenu = sync.Map{}
-	cons.SmallDir = []cons.MenuSize{}
 	//初始化查询条件
 	setting := cons.OSSetting
-	cons.QueryTypes = []string{}
-	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.VideoTypes)
-	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.DocsTypes)
-	cons.QueryTypes = utils.ExtendsItems(cons.QueryTypes, setting.ImageTypes)
-	targetFiles, _ := service.WalkInnter(dirPath, cons.QueryTypes, 0, false, BaseDir)
-	service.fileMapUpdateFileListFromDatasource(dirPath, targetFiles)
-
+	var QueryTypes []string
+	QueryTypes = utils.ExtendsItems(QueryTypes, setting.VideoTypes)
+	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
+	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
+	totalSize := int64(0)
+	files, _ := service.WalkInnter(dirPath, cons.QueryTypes, totalSize, true, BaseDir)
+	searchEngin.PutBucketWithSize(dirPath, files, totalSize)
 }
 
 func (fs SearchService) Delete(id string) {
 	file := fs.FindOne(id)
 	service := CreateFileService()
 	service.DeleteOne(file.DirPath, file.Title)
-	fs.ScanTarget(file.DirPath, file.BaseDir)
-}
-
-func (fs SearchService) ScanDisk(baseDir []string, types []string) {
-	// utils.PKIdRest()
-	fileService := CreateFileService()
-	datasource.FileLib = make(map[string]datamodels.Movie)
-	files := fileService.Walks(baseDir, types)
-	fileService.makeDatasourceMap(files)
-	// 添加索引
-
+	fs.ScanTarget(file.BaseDir, file.BaseDir)
 }
 
 func (fs SearchService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
@@ -982,30 +935,6 @@ func (fs SearchService) SearchActressByKeyWord(files []datamodels.Actress, keyWo
 	}
 
 	return result, cnt
-}
-
-func (fs SearchService) GetActressPage(files []datamodels.Actress, pageNo int, pageSize int) []datamodels.Actress {
-
-	if len(files) == 0 {
-		return files
-	}
-	size := len(files)
-	start := (pageNo - 1) * pageSize
-
-	end := size
-	if size-start > pageSize {
-		end = start + pageSize
-	}
-	if len(files) <= pageSize {
-		return files
-	}
-
-	data := files[start:end]
-	return data
-}
-
-func (fs SearchService) GetPage(files []datamodels.Movie, pageNo int, pageSize int) ([]datamodels.Movie, int64) {
-	return datamodels.GetPageOfFiles(files, pageNo, pageSize)
 }
 
 func (fs SearchService) DataSize(data []datamodels.Movie) int64 {

@@ -147,7 +147,6 @@ func GetImageList(c *gin.Context) {
 func GetRefreshIndex(c *gin.Context) {
 	fileService := service.CreateSearchService()
 	fileService.ScanAll()
-	go fileService.SortMovieForce()
 	res := utils.NewSuccessByMsg("扫描结束！")
 	c.JSON(http.StatusOK, res)
 }
@@ -203,9 +202,8 @@ func GetJpg(c *gin.Context) {
 // GetActressImage 获取脸谱的图片流
 func GetActressImage(c *gin.Context) {
 	path := c.Param("path")
-	list := datasource.ActressLib
-	actress, ok := list[path]
-	if ok {
+	actress := datasource.BucketSearchEngin.FindActressByName(path)
+	if actress.IsNotEmpty() {
 		for _, v := range actress.Images {
 			if utils.ExistsFiles(v) {
 				c.File(v)

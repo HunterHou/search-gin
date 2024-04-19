@@ -2,6 +2,7 @@ package datamodels
 
 import (
 	"searchGin/utils"
+	"strings"
 )
 
 type Actress struct {
@@ -29,6 +30,14 @@ func (act *Actress) PlusCnt() {
 	act.Cnt = act.Cnt + 1
 }
 
+func (act *Actress) IsEmpty() bool {
+	return act.Name == ""
+}
+
+func (act *Actress) IsNotEmpty() bool {
+	return !act.IsEmpty()
+}
+
 func (act *Actress) PlusSize(size int64) {
 	act.Size = act.Size + size
 	act.SizeStr = utils.GetSizeStr(act.Size)
@@ -39,10 +48,49 @@ func (act *Actress) AddImage(image string) {
 	}
 }
 
-// func (act Actress) PngBase64() string {
-// 	path := act.Url
-// 	if !utils.ExistsFiles(path) {
-// 		path = act.Url
-// 	}
-// 	return utils.ImageToString(path)
-// }
+func GetActressPageOfFiles(files []Actress, pageNo int, pageSize int) ([]Actress, int64) {
+	if len(files) == 0 {
+		return files, 0
+	}
+	if pageNo <= 0 {
+		pageNo = 1
+	}
+	length := len(files)
+	start := (pageNo - 1) * pageSize
+
+	end := length
+	if length-start >= pageSize {
+		end = start + pageSize
+	}
+	if len(files) <= pageSize {
+		return files, 0
+	}
+
+	var data []Actress
+	var volume int64
+	for i := start; i < end; i++ {
+		curFile := files[i]
+		volume += curFile.Size
+		data = append(data, curFile)
+	}
+	return data, volume
+}
+
+func SearchActressByKeyWord(files map[string]Actress, keyWord string) PageActressResultWrapper {
+	resultWrapper := NewActressPageWrapper()
+	for _, file := range files {
+		isAdd := false
+		if len(keyWord) > 0 {
+			if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(keyWord)) {
+				isAdd = true
+			}
+		} else {
+			isAdd = true
+		}
+
+		if isAdd {
+			resultWrapper.AddItem(file)
+		}
+	}
+	return resultWrapper
+}

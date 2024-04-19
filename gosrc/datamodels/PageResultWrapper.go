@@ -3,12 +3,12 @@ package datamodels
 type PageResultWrapper struct {
 	FileList    []Movie
 	Size        int64
-	SearchCount int
-	ResultCount int
 	LibCount    int
+	LibSize     int64
+	SearchCount int
 	SearchSize  int64
 	ResultSize  int64
-	LibSize     int64
+	ResultCount int
 }
 
 func NewPageWrapper() PageResultWrapper {
