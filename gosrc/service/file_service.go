@@ -81,7 +81,6 @@ func (fileService FileService) HeartBeat() {
 	go SearchService.ScanAll()
 	// 启动转换执行任务
 	fileService.TaskExecuting()
-	time.AfterFunc(180*time.Second, fileService.HeartBeat)
 }
 
 // 无图流设置
