@@ -61,11 +61,11 @@ func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datam
 func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
 	resultWrapper, ok := se.KeywordHistory[searchParam.UniWords()]
 	if ok {
-		if len(se.KeywordHistory) > 40 {
-
+		if len(se.KeywordHistory) > 10 {
+			se.KeywordHistory = map[string]datamodels.PageResultWrapper{}
 		}
 	} else {
-		resultWrapper := datamodels.NewPageWrapper()
+		resultWrapper = datamodels.NewPageWrapper()
 		resultWrapper.ResultCount = searchParam.PageSize
 		for _, index := range se.SearchIndex {
 			if index.IsEmpty() {

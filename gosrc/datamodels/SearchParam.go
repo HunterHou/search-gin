@@ -33,7 +33,7 @@ func NewSearchParam(keyword string, page int, pageSize int, sortField string, so
 
 func (p *SearchParam) UniWords() string {
 	p.Keyword = strings.TrimSpace(p.Keyword)
-	return p.Keyword + "::" + p.MovieType
+	return p.Keyword + "::" + p.MovieType + "::" + p.SortField + "::" + p.SortType
 }
 
 func (p *SearchParam) GetKeywords() string {
