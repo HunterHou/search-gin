@@ -6,6 +6,7 @@ import (
 	"searchGin/utils"
 	"sort"
 	"strings"
+	"sync"
 )
 
 type RepeatModel struct {
@@ -25,12 +26,25 @@ type SearchEnginCore struct {
 	KeywordHistory map[string]datamodels.PageResultWrapper
 }
 
+var mutex sync.RWMutex
+
 // BucketSearchEngin 搜索引擎
-var BucketSearchEngin = SearchEnginCore{
-	SearchIndex:    map[string]BucketFile{},
-	CodeRepeat:     []datamodels.Movie{},
-	ActressLib:     map[string]datamodels.Actress{},
-	KeywordHistory: map[string]datamodels.PageResultWrapper{},
+var BucketSearchEngin = SearchEnginCore{}
+
+func InitSearchEngine(BucketSearchEngin SearchEnginCore) {
+	BucketSearchEngin = SearchEnginCore{
+		SearchIndex:    map[string]BucketFile{},
+		CodeRepeat:     []datamodels.Movie{},
+		ActressLib:     map[string]datamodels.Actress{},
+		KeywordHistory: map[string]datamodels.PageResultWrapper{},
+	}
+}
+func init() {
+	InitSearchEngine(BucketSearchEngin)
+}
+
+func (se *SearchEnginCore) Reset() {
+	InitSearchEngine(BucketSearchEngin)
 }
 
 func (se *SearchEnginCore) Init(baseDirs []string) {
@@ -57,12 +71,15 @@ func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datam
 	resultWrapper.ResultCount = len(list)
 	return resultWrapper
 }
+func (se *SearchEnginCore) clearHistory() {
+	se.KeywordHistory = map[string]datamodels.PageResultWrapper{}
+}
 
 func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
 	resultWrapper, ok := se.KeywordHistory[searchParam.UniWords()]
 	if ok {
 		if len(se.KeywordHistory) > 10 {
-			se.KeywordHistory = map[string]datamodels.PageResultWrapper{}
+			se.clearHistory()
 		}
 	} else {
 		resultWrapper = datamodels.NewPageWrapper()
@@ -107,22 +124,14 @@ func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 	return datamodels.Actress{}
 }
 
-func (se *SearchEnginCore) Reset() {
-	for _, si := range se.SearchIndex {
-		si.Clear()
-	}
-}
-
-func (se *SearchEnginCore) putFile(baseDir string, movie datamodels.Movie) {
-	bucket, ok := se.SearchIndex[baseDir]
-	if !ok {
-		bucket = NewInstance(baseDir)
-	}
-	bucket.Put(movie)
-}
-
 func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
+	mutex.Lock()
+	if se.SearchIndex == nil {
+		se.SearchIndex = map[string]BucketFile{}
+	}
+	se.clearHistory()
 	se.SearchIndex[baseDir] = bucket
+	defer mutex.Unlock()
 }
 
 func (se *SearchEnginCore) BuildActress() {

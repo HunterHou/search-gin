@@ -184,6 +184,7 @@ func (fileService FileService) Walks(baseDir []string, types []string) []datamod
 	var result []datamodels.Movie
 	dirSize := len(baseDir)
 	cons.IndexDone = dirSize
+	SearchEngin.Reset()
 	wg.Add(dirSize)
 	for i := 0; i < len(baseDir); i++ {
 		go fileService.goWalk(baseDir[i], types, &wg, dataMovie, scanTime)
