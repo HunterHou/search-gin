@@ -76,6 +76,14 @@ func (se *SearchEnginCore) clearHistory() {
 }
 
 func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
+	if searchParam.OnlyRepeat {
+		resultWrapper := datamodels.NewPageWrapper()
+		resultWrapper.FileList = se.CodeRepeat
+		resultWrapper.ResultCount = len(se.CodeRepeat)
+		resultWrapper.LibCount = len(se.CodeRepeat)
+		resultWrapper.SearchCount = len(se.CodeRepeat)
+		return resultWrapper
+	}
 	resultWrapper, ok := se.KeywordHistory[searchParam.UniWords()]
 	if ok {
 		if len(se.KeywordHistory) > 10 {
