@@ -30,7 +30,8 @@ export default boot(({ app }) => {
 });
 
 const commonAxios = () => {
-  const rest = isElectron ? api : axios;
+  const rest = isElectron?.value ? api : axios;
+  console.log('isElectron', isElectron?.value);
   return rest;
 };
 

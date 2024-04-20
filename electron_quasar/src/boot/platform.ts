@@ -3,6 +3,7 @@ import { computed } from 'vue';
 
 export const isElectron = computed(() => {
   const $q = useQuasar();
+
   return $q.platform.is.electron;
 });
 
