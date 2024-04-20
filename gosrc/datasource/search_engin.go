@@ -180,6 +180,7 @@ func (se *SearchEnginCore) BuildActress() {
 				if ok {
 					repeatFile.Count = repeatFile.Count + 1
 					repeatFile.Files = append(repeatFile.Files, movie)
+					codeRepeats[pkCode] = repeatFile
 				} else {
 					codeRepeats[pkCode] = RepeatModel{
 						Code:  movie.Code,
