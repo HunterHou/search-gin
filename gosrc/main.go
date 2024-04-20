@@ -64,7 +64,10 @@ func main() {
 
 	//默认启动页面
 	fileService := service.CreateFileService()
+	// 启动扫描系统
 	go fileService.HeartBeat()
+	// 启动转换执行任务
+	go fileService.TaskExecuting()
 
 	g.Go(func() error {
 		return serviceRequest.ListenAndServe()

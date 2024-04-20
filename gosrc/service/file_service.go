@@ -76,13 +76,9 @@ func (fileService FileService) GetFile(c *gin.Context) {
 
 // HeartBeat 心跳与定时
 func (fileService FileService) HeartBeat() {
-	//time.After(1 * time.Second)
-	// 启动扫描系统
 	var SearchService = CreateSearchService()
 	go SearchService.ScanAll()
-	// 启动转换执行任务
-	fileService.TaskExecuting()
-	time.After(180 * time.Second)
+	time.AfterFunc(180*time.Second, fileService.HeartBeat)
 }
 
 // 无图流设置
@@ -317,7 +313,6 @@ func (fileService *FileService) WalkInnter(currentDir string, types []string, to
 }
 
 func (fileService *FileService) TaskExecuting() {
-	//time.After(1 * time.Second)
 	var todos []datamodels.TransferTaskModel
 	var todosCuts []datamodels.TransferTaskModel
 	var executing []datamodels.TransferTaskModel
