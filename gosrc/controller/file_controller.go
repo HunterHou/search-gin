@@ -7,6 +7,8 @@ import (
 	"searchGin/datamodels"
 	"searchGin/service"
 	"searchGin/utils"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -210,6 +212,32 @@ func GetActressImage(c *gin.Context) {
 			}
 		}
 	}
+
+}
+
+func PostMerge(c *gin.Context) {
+	searchParam := datamodels.MergeParam{}
+	err := c.Bind(&searchParam)
+	if err != nil {
+		c.JSON(http.StatusOK, err)
+	}
+	utils.InfoFormat("PostMerge： [%v]", searchParam)
+	searchService := service.CreateSearchService()
+
+	var paths = []string{}
+	for _, file := range searchParam.Files {
+		curFile := searchService.FindOne(file)
+		paths = append(paths, curFile.Path)
+	}
+	if searchParam.Dest == "" {
+		suffix := utils.GetSuffux(paths[0])
+		searchParam.Dest = strings.ReplaceAll(paths[0], "."+suffix, time.Now().String()+"."+suffix)
+	}
+
+	task := datamodels.NewMergeTask(paths, searchParam.Dest, searchParam.DeleteSource)
+	task.SetStatus("等待")
+	cons.TransferTask[task.CreateTime] = task
+	c.JSON(http.StatusOK, utils.NewSuccessByMsg("任务创建成功"))
 
 }
 

@@ -14,17 +14,19 @@ type TransferTaskModel struct {
 	FinishTime time.Time
 	Status     string
 	Log        string
+
+	Files        []string
+	Dest         string
+	DeleteSource bool
 }
 
-func NewTaskWithTime(path string, name string, from string, to string, now time.Time) TransferTaskModel {
+func NewMergeTask(files []string, dest string, DeleteSource bool) TransferTaskModel {
 	res := TransferTaskModel{
-		Path:       path,
-		Type:       "转码",
-		Name:       name,
-		From:       from,
-		To:         to,
-		CreateTime: now,
-		FinishTime: now,
+		Files:        files,
+		Type:         "合并",
+		Dest:         dest,
+		DeleteSource: DeleteSource,
+		CreateTime:   time.Now(),
 	}
 	return res
 }

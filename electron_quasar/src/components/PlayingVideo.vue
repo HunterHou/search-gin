@@ -1,11 +1,4 @@
 <template>
-  <q-btn-toggle
-    v-model="view.showMode"
-    :options="[
-      { label: '上下', value: 'drawer' },
-      { label: '左右', value: 'page' },
-    ]"
-  />
   <q-layout
     view="lHh Lpr lFf"
     container
@@ -20,7 +13,7 @@
         v-if="view.showMode === 'drawer'"
       >
         {{ view.playing.Title }}
-        <q-space />
+        <q-space/>
         <q-btn dense flat icon="close" @click="closeThis">
           <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
         </q-btn>
@@ -112,6 +105,13 @@
           "
         >
           <q-btn-toggle
+            v-model="view.showMode"
+            :options="[
+                  { label: '上下', value: 'drawer' },
+                  { label: '左右', value: 'page' },
+                ]"
+          />
+          <q-btn-toggle
             v-model="view.queryParam.SortType"
             @update:model-value="fetchSearch()"
             toggle-color="primary"
@@ -158,7 +158,7 @@
                   view.queryParam.Keyword = tag;
                   fetchSearch();
                 "
-                >{{ tag }}</span
+              >{{ tag }}</span
               >
             </q-chip>
           </span>
@@ -225,7 +225,7 @@
                           view.queryParam.Keyword = tag;
                           fetchSearch();
                         "
-                        >{{ tag }}</span
+                      >{{ tag }}</span
                       >
                     </q-chip>
                   </div>
@@ -268,7 +268,7 @@
           :scroll-offset="150"
           :offset="[18, 18]"
         >
-          <q-btn fab icon="keyboard_arrow_up" color="accent" />
+          <q-btn fab icon="keyboard_arrow_up" color="accent"/>
         </q-page-scroller>
       </q-page>
     </q-page-container>
@@ -301,7 +301,7 @@
                 font-size: medium;
                 overflow: hidden;
               "
-              >{{ view.playing.Title }}</span
+            >{{ view.playing.Title }}</span
             >
             <q-btn dense flat icon="close" @click="closeThis">
               <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
@@ -325,7 +325,7 @@
       :breakpoint="500"
       class="bg-grey-3"
     >
-      <q-slider size="sm" v-model="drawerRightWidth" :min="380" :max="740" />
+      <q-slider size="sm" v-model="drawerRightWidth" :min="380" :max="740"/>
       <q-scroll-area class="fit">
         <div style="overflow: auto; background-color: rgba(0, 0, 0, 0.4)">
           <div class="row justify-center">
@@ -384,7 +384,7 @@
                           view.queryParam.Keyword = tag;
                           fetchSearch();
                         "
-                        >{{ tag }}</span
+                      >{{ tag }}</span
                       >
                     </q-chip>
                   </div>
@@ -513,6 +513,13 @@
             </div>
             <div>
               <q-btn-toggle
+                v-model="view.showMode"
+                :options="[
+                  { label: '上下', value: 'drawer' },
+                  { label: '左右', value: 'page' },
+                ]"
+              />
+              <q-btn-toggle
                 v-model="view.queryParam.SortType"
                 @update:model-value="fetchSearch()"
                 toggle-color="primary"
@@ -555,7 +562,7 @@
                       view.queryParam.Keyword = tag;
                       fetchSearch();
                     "
-                    >{{ tag }}</span
+                  >{{ tag }}</span
                   >
                 </q-chip>
               </span>
@@ -565,7 +572,7 @@
       </q-page>
 
       <q-page-scroller position="bottom">
-        <q-btn fab icon="keyboard_arrow_up" color="red" />
+        <q-btn fab icon="keyboard_arrow_up" color="red"/>
       </q-page-scroller>
     </q-page-container>
   </q-layout>
@@ -573,21 +580,21 @@
 <script setup>
 import vue3VideoPlay from 'vue3-video-play';
 import 'vue3-video-play/dist/style.css'; // 引入css
-import { useQuasar } from 'quasar';
-import { computed, reactive, ref, watch, defineEmits } from 'vue';
-import { useSystemProperty } from '../stores/System';
-import { getFileStream } from './utils/images';
-import { getPng } from './utils/images';
-import { SearchAPI, DeleteFile, RefreshAPI } from './api/searchAPI';
-import { GetSettingInfo } from './api/settingAPI';
-import { useRouter } from 'vue-router';
-import { onKeyStroke } from '@vueuse/core';
+import {useQuasar} from 'quasar';
+import {computed, reactive, ref, watch, defineEmits} from 'vue';
+import {useSystemProperty} from '../stores/System';
+import {getFileStream} from './utils/images';
+import {getPng} from './utils/images';
+import {SearchAPI, DeleteFile, RefreshAPI} from './api/searchAPI';
+import {GetSettingInfo} from './api/settingAPI';
+import {useRouter} from 'vue-router';
+import {onKeyStroke} from '@vueuse/core';
 
 const $q = useQuasar();
 
 const systemProperty = useSystemProperty();
 const vue3VideoPlayRef = ref(null);
-const { replace } = useRouter();
+const {replace} = useRouter();
 
 const isMobile = computed(() => {
   return $q.platform.is.mobile;
@@ -598,7 +605,7 @@ const drawerRightWidth = ref(380);
 const view = reactive({
   playList: [],
   showMode: 'drawer',
-  queryParam: { SortType: 'desc' },
+  queryParam: {SortType: 'desc'},
   showMore: false,
   settingInfo: {},
   currentTime: 1,
@@ -619,6 +626,10 @@ onKeyStroke(['ArrowLeft'], () => {
 onKeyStroke(['ArrowRight'], () => {
   videoForward(60);
 });
+
+window.addEventListener("beforeunload", () => {
+  stop();
+})
 
 const emits = defineEmits(['close']);
 
@@ -686,12 +697,13 @@ const volumeupdate = (e) => {
 };
 const videoForward = (fastForwardTime) => {
   if (vue3VideoPlayRef.value) {
+    console.log(vue3VideoPlayRef.value)
     optionsPC.currentTime = view.currentTime + fastForwardTime;
     const temp = optionsPC.src;
     optionsPC.src = '';
     setTimeout(() => {
       optionsPC.src = temp;
-    }, 1);
+    }, 0);
   }
 };
 

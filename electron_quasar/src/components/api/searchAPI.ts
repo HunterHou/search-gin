@@ -35,6 +35,11 @@ export const DeleteFile = async (data: string) => {
   return res && res.data;
 };
 
+export const FilesMerge = async (data: object) => {
+  const res = await commonAxios().post('/api/mergeFiles', data);
+  return res && res.data;
+};
+
 export const SyncFileInfo = async (data: object) => {
   const res = await commonAxios().post('/api/sync', data);
   return res && res.data;

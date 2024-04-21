@@ -8,11 +8,12 @@
         style="background-color: rgba(0, 0, 0, 0.2)"
         align="justify"
         narrow-indicator
+        @change="tabChange"
       >
-        <q-tab name="filelist" label="批量操作" />
-        <q-tab name="setting" label="设置" />
-        <q-tab name="tasking" label="任务执行" />
-        <q-tab name="history" label="最近浏览" />
+        <q-tab name="filelist" label="批量操作"/>
+        <q-tab name="setting" label="设置"/>
+        <q-tab name="tasking" label="任务执行"/>
+        <q-tab name="history" label="最近浏览"/>
       </q-tabs>
       <q-tab-panels v-model="tab" animated style="height: 100%; overflow: auto">
         <q-tab-panel name="filelist">
@@ -30,14 +31,15 @@
               size="sm"
               color="primary"
               @click="nextPage(-1)"
-              >上
+            >上
             </q-btn>
             <q-btn
               class="q-ml-sm"
               size="sm"
               color="primary"
               @click="nextPage(1)"
-              >下</q-btn
+            >下
+            </q-btn
             >
           </div>
           <div class="q-mr-sm row justify-left">
@@ -49,7 +51,7 @@
               glossy
               text-color="black"
               @click="selectAll"
-              >{{ view.selectAll ? '不选' : '全选' }}
+            >{{ view.selectAll ? '不选' : '全选' }}
             </q-btn>
             <q-input
               label="..."
@@ -65,7 +67,8 @@
               color="blue-6"
               icon="refresh"
               @click="refreshIndex"
-              >刷新</q-btn
+            >刷新
+            </q-btn
             >
             <q-btn-dropdown
               class="q-mr-sm"
@@ -83,7 +86,7 @@
                   class="movieTypeSelectItem"
                 >
                   <q-item-section @click="setTypeBySelector(mt.value)">
-                    <q-item-label>{{ mt.label }} </q-item-label>
+                    <q-item-label>{{ mt.label }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -118,7 +121,18 @@
               color="red"
               icon="delete"
               @click="deleteBySelector"
-              >删除</q-btn
+            >删除
+            </q-btn
+            >
+            <q-btn
+              outline
+              class="q-mr-sm"
+              size="sm"
+              color="red"
+              icon="cpoy"
+              @click="mergeFiles"
+            >合并
+            </q-btn
             >
             <q-btn
               outline
@@ -127,7 +141,8 @@
               color="red"
               icon="cpoy"
               @click="copyAllCodes"
-              >复制番号</q-btn
+            >复制番号
+            </q-btn
             >
           </div>
           <div class="q-gutter-sm q-mt-sm">
@@ -146,7 +161,7 @@
                   <span
                     v-if="view.cutListIds.indexOf(item.Id) >= 0"
                     style="color: red"
-                    >剪切中：：</span
+                  >剪切中：：</span
                   >
                   {{ item.Title }}【{{ item.SizeStr }}】
                 </q-item-label>
@@ -176,7 +191,7 @@
                             @click="
                               commonExec(ResetMovieType(item.Id, mt.value))
                             "
-                            >{{ mt.label }}
+                          >{{ mt.label }}
                           </q-item-label>
                         </q-item-section>
                       </q-item>
@@ -219,7 +234,8 @@
                     class="q-mr-sm"
                     color="green"
                     @click="toMp4(item)"
-                    >toMp4</q-btn
+                  >toMp4
+                  </q-btn
                   >
                   <q-btn
                     outline
@@ -305,7 +321,7 @@
         <q-tab-panel name="setting">
           <q-field color="purple-12" label="Buttons（最佳5）" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <q-checkbox
@@ -321,7 +337,7 @@
           </q-field>
           <q-field color="purple-12" label="主题切换" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <q-radio
@@ -342,7 +358,7 @@
           </q-field>
           <q-field color="purple-12" label="图鉴点击" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <q-radio
@@ -363,7 +379,7 @@
           </q-field>
           <q-field color="purple-12" label="Search点击" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <q-radio
@@ -385,6 +401,7 @@
         </q-tab-panel>
 
         <q-tab-panel name="tasking">
+          <q-toggle v-model="view.autoRefresh"></q-toggle>
           <q-list bordered separator>
             <q-expansion-item v-for="v in view.tasking" :key="v">
               <template v-slot:header>
@@ -408,7 +425,7 @@
                     <q-btn
                       class="q-mr-sm"
                       :color="v.Status == '成功' ? 'green' : 'red'"
-                      >{{ v.Type }}
+                    >{{ v.Type }}
                       {{ v.Status == '执行失败' ? '失败' : v.Status }}
                     </q-btn>
                   </div>
@@ -444,13 +461,13 @@
               "
             >
               <span ripple flat
-                >搜索记录
+              >搜索记录
                 <q-btn
                   ripple
                   flat
                   color="red"
                   @click="systemProperty.HistoryMap = []"
-                  >清空</q-btn
+                >清空</q-btn
                 ></span
               >
               <q-btn
@@ -470,7 +487,7 @@
                   <span>{{ his.MovieType }}</span>
                   <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
                   <span
-                    >{{ getLabelByValue(his.SortField, FieldEnum) }} /{{
+                  >{{ getLabelByValue(his.SortField, FieldEnum) }} /{{
                       getLabelByValue(his.SortType, DescEnum)
                     }}
                   </span>
@@ -486,13 +503,13 @@
               "
             >
               <span ripple flat
-                >浏览记录
+              >浏览记录
                 <q-btn
                   ripple
                   flat
                   color="red"
                   @click="systemProperty.History = []"
-                  >清空</q-btn
+                >清空</q-btn
                 ></span
               >
               <q-btn
@@ -512,11 +529,11 @@
                   <span>{{ his.MovieType }}</span>
                   <span>{{ `第${his.Page}页，分${his.PageSize}页` }}</span>
                   <span>{{
-                    ` ${getLabelByValue(
-                      his.SortField,
-                      FieldEnum
-                    )}/${getLabelByValue(his.SortType, DescEnum)}`
-                  }}</span>
+                      ` ${getLabelByValue(
+                        his.SortField,
+                        FieldEnum
+                      )}/${getLabelByValue(his.SortType, DescEnum)}`
+                    }}</span>
                   <span style="color: orange">
                     {{ his.Keyword ? `搜：${his.Keyword} ` : ' ' }}</span
                   >
@@ -534,9 +551,9 @@
 </template>
 
 <script setup>
-import { useQuasar, date } from 'quasar';
-import { useDialogPluginComponent } from 'quasar';
-import { reactive, ref, watch, computed } from 'vue';
+import {useQuasar, date} from 'quasar';
+import {useDialogPluginComponent} from 'quasar';
+import {reactive, ref, watch, computed} from 'vue';
 
 import {
   DescEnum,
@@ -544,14 +561,15 @@ import {
   getLabelByValue,
   MovieTypeOptions,
 } from '../../../components/utils';
-import { buttonEnum } from '../../../components/model/Setting';
-import { MovieTypeSelects } from '../../../components/utils';
+import {buttonEnum} from '../../../components/model/Setting';
+import {MovieTypeSelects} from '../../../components/utils';
 import {
   ResetMovieType,
   SearchAPI,
   RefreshAPI,
   FileRename,
   DeleteFile,
+  FilesMerge,
   SyncFileInfo,
   CutFile,
   TransferTasksInfo,
@@ -559,31 +577,60 @@ import {
   CloseTag,
   AddTag,
 } from '../../../components/api/searchAPI';
-import { PostSettingInfo } from 'src/components/api/settingAPI';
-import { useSystemProperty } from 'stores/System';
-import { useRouter } from 'vue-router';
-import { useClipboard } from '@vueuse/core';
+import {PostSettingInfo} from 'src/components/api/settingAPI';
+import {useSystemProperty} from 'stores/System';
+import {useRouter} from 'vue-router';
+import {useClipboard} from '@vueuse/core';
 
-const { resolve } = useRouter();
+const {resolve} = useRouter();
 
 const $q = useQuasar();
 
-const goHistory = (item) => {
-  const url = resolve({ path: '/search', query: { ...item } }).href;
-  window.location.href = url;
-  window.location.reload();
-};
+const tab = ref('filelist');
+const view = reactive({
+  autoRefresh: true,
+  selectAll: false,
+  settingInfo: {},
+  resultData: {},
+  queryParam: {},
+  selector: [],
+  callback: null,
+  cutListIds: [],
+  tasking: {},
+});
 
-const showTimeUse = (end, start) => {
-  return `${
-    ((new Date(end).getFullYear() > 1000
-      ? new Date(end)
-      : new Date()
-    ).getTime() -
-      new Date(start).getTime()) /
-    1000
-  }`;
-};
+
+let timeFunc;
+watch(
+  () => tab.value,
+  (v) => {
+    if (v === 'tasking' && view.autoRefresh) {
+      timeFunc = setInterval(fetchTasking, 2000);
+    } else {
+      clearInterval(timeFunc);
+    }
+  }
+);
+
+watch(
+  () => view.autoRefresh,
+  (v) => {
+    if (v && tab.value === 'tasking') {
+      timeFunc = setInterval(fetchTasking, 2000);
+    } else {
+      clearInterval(timeFunc);
+    }
+  }
+);
+
+const cutParam = reactive({
+  sH: '00',
+  sM: '00',
+  sS: '00',
+  eH: '99',
+  eM: '00',
+  eS: '00',
+});
 
 const systemProperty = useSystemProperty();
 const browserHistory = computed(() => {
@@ -598,20 +645,29 @@ const isMobile = computed(() => {
   return $q.platform.is.mobile;
 });
 
-const tab = ref('filelist');
-let timeFunc;
-watch(
-  () => tab.value,
-  (v) => {
-    console.log(v);
-    if (v === 'tasking') {
-      fetchTasking();
-      timeFunc = setInterval(fetchTasking, 2000);
-    } else {
-      clearInterval(timeFunc);
-    }
-  }
-);
+
+
+const tabChange = (v) => {
+  console.log(v)
+}
+
+const goHistory = (item) => {
+  const url = resolve({path: '/search', query: {...item}}).href;
+  window.location.href = url;
+  window.location.reload();
+};
+
+const showTimeUse = (end, start) => {
+  return `${
+    ((new Date(end).getFullYear() > 1000
+          ? new Date(end)
+          : new Date()
+      ).getTime() -
+      new Date(start).getTime()) /
+    1000
+  }`;
+};
+
 
 const fetchTasking = async () => {
   const res = await TransferTasksInfo();
@@ -623,24 +679,6 @@ const fetchTasking = async () => {
   });
   view.tasking = listTasks;
 };
-const view = reactive({
-  selectAll: false,
-  settingInfo: {},
-  resultData: {},
-  queryParam: {},
-  selector: [],
-  callback: null,
-  cutListIds: [],
-  tasking: {},
-});
-const cutParam = reactive({
-  sH: '00',
-  sM: '00',
-  sS: '00',
-  eH: '99',
-  eM: '00',
-  eS: '00',
-});
 
 const toMp4 = (item) => {
   if (view.cutListIds.indexOf(item.Id) < 0) {
@@ -692,8 +730,16 @@ const deleteBySelector = () => {
   }
 };
 
+
+const mergeFiles = () => {
+  if (view.selector && view.selector.length > 0) {
+    commonExec(FilesMerge({files: view.selector, DeleteFlag: false}));
+  }
+};
+
+
 const source = ref('Hello');
-const { copy } = useClipboard({ source });
+const {copy} = useClipboard({source});
 
 const copyAllCodes = async () => {
   if (view.resultData.Data && view.resultData.Data.length > 0) {
@@ -701,7 +747,7 @@ const copyAllCodes = async () => {
       return item.Code;
     }).join(' ');
     await copy(str);
-    $q.notify({ message: `${str}` });
+    $q.notify({message: `${str}`});
   }
 };
 
@@ -729,17 +775,17 @@ const fetchSearch = async () => {
 };
 
 const commonExec = async (exec) => {
-  const { Code, Message } = await exec;
+  const {Code, Message} = await exec;
   console.log(Code, Message);
   if (Code != 200) {
-    $q.notify({ message: `${Message}` });
+    $q.notify({message: `${Message}`});
   } else {
-    $q.notify({ message: `${Message}` });
+    $q.notify({message: `${Message}`});
   }
 };
 
 const open = (data) => {
-  const { queryParam, settingInfo, cb, tabName } = data;
+  const {queryParam, settingInfo, cb, tabName} = data;
   if (tabName) {
     tab.value = tabName;
   }
@@ -761,7 +807,7 @@ const open = (data) => {
 
 const dialogHide = async () => {
   if (view.callback) {
-    view.callback({ settingInfo: view.settingInfo });
+    view.callback({settingInfo: view.settingInfo});
   }
   onDialogCancel();
   onDialogOK();
@@ -795,7 +841,7 @@ const confirmDelete = (item) => {
 };
 
 const moveThis = async (item) => {
-  const res = await FileRename({ ...item, NoRefresh: true, MoveOut: true });
+  const res = await FileRename({...item, NoRefresh: true, MoveOut: true});
   console.log(res);
   if (res.Code == 200) {
     for (let i = 0; i < view.resultData.Data.length; i++) {
@@ -803,13 +849,13 @@ const moveThis = async (item) => {
         view.resultData.Data.splice(i, 1);
       }
     }
-    $q.notify({ type: 'negative', message: res.Message });
+    $q.notify({type: 'negative', message: res.Message});
   } else {
-    $q.notify({ type: 'negative', message: res.Message });
+    $q.notify({type: 'negative', message: res.Message});
   }
 };
 
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+const {dialogRef, onDialogHide, onDialogOK, onDialogCancel} =
   useDialogPluginComponent();
 // dialogRef      - 用在 QDialog 上的 Vue ref 模板引用
 // onDialogHide   - 处理 QDialog 上 @hide 事件的函数
@@ -829,7 +875,7 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 const updateButtons = () => {
   if (view.callback) {
     PostSettingInfo(view.settingInfo);
-    view.callback({ settingInfo: view.settingInfo });
+    view.callback({settingInfo: view.settingInfo});
   }
 };
 

@@ -315,23 +315,28 @@ func (fileService *FileService) WalkInnter(currentDir string, types []string, to
 func (fileService *FileService) TaskExecuting() {
 	var todos []datamodels.TransferTaskModel
 	var todosCuts []datamodels.TransferTaskModel
+	var todosMerges []datamodels.TransferTaskModel
 	var executing []datamodels.TransferTaskModel
 	var executingCuts []datamodels.TransferTaskModel
+	var executingMerges []datamodels.TransferTaskModel
 	for _, model := range cons.TransferTask {
 		if strings.EqualFold(model.Status, "等待") {
 			if strings.EqualFold(model.Type, "分切") {
 				todosCuts = append(executing, model)
-			} else {
+			} else if strings.EqualFold(model.Type, "合并") {
+				todosMerges = append(executing, model)
+			} else if strings.EqualFold(model.Type, "转码") {
 				todos = append(executing, model)
 			}
 		}
 		if strings.EqualFold(model.Status, "执行中") {
 			if strings.EqualFold(model.Type, "分切") {
 				executingCuts = append(executing, model)
-			} else {
+			} else if strings.EqualFold(model.Type, "合并") {
+				executingMerges = append(executing, model)
+			} else if strings.EqualFold(model.Type, "转码") {
 				executing = append(executing, model)
 			}
-
 		}
 
 	}
@@ -340,6 +345,9 @@ func (fileService *FileService) TaskExecuting() {
 	}
 	if len(executingCuts) == 0 && len(todosCuts) > 0 {
 		go fileService.CutFormatter(todosCuts[0])
+	}
+	if len(executingMerges) == 0 && len(todosMerges) > 0 {
+		go fileService.MergeFiles(todosMerges[0])
 	}
 	time.AfterFunc(2*time.Second, fileService.TaskExecuting)
 }
@@ -359,6 +367,21 @@ func (fileService *FileService) TransferFormatter(model datamodels.TransferTaskM
 	}
 	return res
 }
+
+func (fileService *FileService) MergeFiles(model datamodels.TransferTaskModel) utils.Result {
+	thisNow := model.CreateTime
+	args := []string{"-i", "concat:" + strings.Join(model.Files, "|"), "-vcodec", "copy", model.Dest}
+	res := fileService.ffmepgExec(args, thisNow)
+	if res.IsSuccess() && model.DeleteSource {
+		err := os.Remove(model.Path)
+		if err != nil {
+			return utils.Result{}
+		}
+	}
+	return res
+}
+
+// ./ffmpeg.exe -i  concat:"E:\\emby\\emby-rename\\[bbs.yzkof.com]JUC-911.1080P A[约战竞技场].mp4|E:\\emby\\emby-rename\\[bbs.yzkof.com]JUC-911.1080P B[约战竞技场].mp4|E:\\emby\\emby-rename\\[bbs.yzkof.com]JUC-911.1080P C[约战竞技场].mp4" -vcodec copy as.mp4
 
 func (fileService *FileService) CutFormatter(model datamodels.TransferTaskModel) utils.Result {
 	from := model.Path

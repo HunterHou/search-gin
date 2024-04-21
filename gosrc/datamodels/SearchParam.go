@@ -6,6 +6,13 @@ import (
 )
 
 // SearchParam 查询参数
+type MergeParam struct {
+	Files        []string
+	Dest         string
+	DeleteSource bool
+}
+
+// SearchParam 查询参数
 type SearchParam struct {
 	Keyword    string
 	OnlyRepeat bool
