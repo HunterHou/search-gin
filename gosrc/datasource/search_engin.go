@@ -27,26 +27,24 @@ type SearchEnginCore struct {
 	Keywords       []string
 }
 
-var mutex sync.RWMutex
-
 // BucketSearchEngin 搜索引擎
-var BucketSearchEngin = SearchEnginCore{}
-
-func InitSearchEngine(BucketSearchEngin SearchEnginCore) {
-	BucketSearchEngin = SearchEnginCore{
-		SearchIndex:    sync.Map{}, // map[string]BucketFile{},
-		CodeRepeat:     []datamodels.Movie{},
-		ActressLib:     map[string]datamodels.Actress{},
-		KeywordHistory: map[string]datamodels.PageResultWrapper{},
-		Keywords:       []string{},
-	}
-}
-func init() {
-	InitSearchEngine(BucketSearchEngin)
+var BucketSearchEngin = &SearchEnginCore{
+	SearchIndex:    sync.Map{}, // map[string]BucketFile{},
+	CodeRepeat:     []datamodels.Movie{},
+	ActressLib:     map[string]datamodels.Actress{},
+	KeywordHistory: map[string]datamodels.PageResultWrapper{},
+	Keywords:       []string{},
 }
 
 func (se *SearchEnginCore) Reset() {
-	InitSearchEngine(BucketSearchEngin)
+	se.SearchIndex.Range(func(key, value interface{}) bool {
+		se.SearchIndex.Delete(key)
+		return true
+	})
+	clear(se.CodeRepeat)
+	clear(se.ActressLib)
+	clear(se.KeywordHistory)
+	clear(se.Keywords)
 }
 
 func (se *SearchEnginCore) Init(baseDirs []string) {

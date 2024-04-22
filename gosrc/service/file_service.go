@@ -31,7 +31,7 @@ func CreateFileService() FileService {
 var noPic []byte
 var contentType string
 
-func (fileService FileService) GetPng(c *gin.Context) {
+func (fileService *FileService) GetPng(c *gin.Context) {
 	//path := c.Param("path")
 	id := c.Param("path")
 	file := fileService.SearchService.FindOne(id)
@@ -173,7 +173,7 @@ func GetIpAddr() string {
 }
 
 // Walks 并发扫描多文件夹 并返回所有文件
-func (fileService FileService) Walks(baseDir []string, types []string) []datamodels.Movie {
+func (fileService *FileService) Walks(baseDir []string, types []string) []datamodels.Movie {
 
 	var wg sync.WaitGroup
 	var dataMovie = make(chan []datamodels.Movie, 20000)
@@ -213,7 +213,7 @@ func (fileService FileService) Walks(baseDir []string, types []string) []datamod
 }
 
 // 协程方法 扫描单个文件夹并送入管道
-func (fileService FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
+func (fileService *FileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
 	files, _ := fileService.WalkInnter(baseDir, types, 0, true, baseDir)
@@ -231,7 +231,7 @@ func (fileService FileService) goWalk(baseDir string, types []string, wg *sync.W
 }
 
 // Walk 遍历目录 获取文件库
-func (fileService FileService) Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
+func (fileService *FileService) Walk(baseDir string, types []string, deep bool) []datamodels.Movie {
 	var result []datamodels.Movie
 	files, _ := os.ReadDir(baseDir)
 	if len(files) > 0 {
