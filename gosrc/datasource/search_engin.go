@@ -73,13 +73,13 @@ func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datam
 	resultWrapper.ResultCount = len(list)
 	return resultWrapper
 }
-func (se *SearchEnginCore) clearHistory(words []string) {
-	if len(words) > 0 {
-		for _, word := range words {
+func (se *SearchEnginCore) clearHistory(uniqueWords []string) {
+	if len(uniqueWords) > 0 {
+		for _, word := range uniqueWords {
 			delete(se.KeywordHistory, word)
 		}
 	} else {
-		se.KeywordHistory = map[string]datamodels.PageResultWrapper{}
+		clear(se.KeywordHistory)
 	}
 
 }
@@ -116,16 +116,18 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 			resultWrapper.SearchSize = resultWrapper.SearchSize + indexWrapper.Size
 			return true
 		})
-		//for _, index := range se.SearchIndex.Range() {
-		//
-		//}
 		datamodels.SortMoviesUtils(resultWrapper.FileList, searchParam.SortField, searchParam.SortType, se.LastSortField, se.LastSortType)
 		se.LastSortField = searchParam.SortField
 		se.LastSortType = searchParam.SortType
-		se.KeywordHistory[searchParam.UniWords()] = resultWrapper
+		se.addHistory(searchParam.UniWords(), resultWrapper)
 	}
 	resultWrapper.FileList, resultWrapper.ResultSize = datamodels.GetPageOfFiles(resultWrapper.FileList, searchParam.Page, searchParam.PageSize)
 	return resultWrapper
+}
+
+func (se *SearchEnginCore) addHistory(uniqueWords string, resultWrapper datamodels.PageResultWrapper) {
+	se.Keywords = se.Keywords[5:]
+	se.KeywordHistory[uniqueWords] = resultWrapper
 }
 
 func (se *SearchEnginCore) FindById(id string) datamodels.Movie {
