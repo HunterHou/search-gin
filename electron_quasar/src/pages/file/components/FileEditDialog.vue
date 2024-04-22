@@ -188,7 +188,6 @@ const editItemSubmit = async (MoveOut) => {
     NoRefresh: true,
   };
   emits('plus-one');
-  onDialogOK();
   const res = await FileRename(param);
   if (res.Code === 200) {
     if (view.callback) {
