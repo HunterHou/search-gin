@@ -96,6 +96,7 @@ func (f Movie) GetFileInfo() string {
 	return info
 }
 
+// IsNull
 func (f Movie) IsNull() bool {
 	//
 	if f.Id == "" || f.Path == "" {

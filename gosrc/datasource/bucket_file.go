@@ -37,7 +37,7 @@ func (fs *BucketFile) IsEmpty() bool {
 }
 
 func (fs *BucketFile) Clear() {
-	fs.FileLib = map[string]datamodels.Movie{}
+	clear(fs.FileLib)
 }
 
 func (fs *BucketFile) Put(model datamodels.Movie) {
