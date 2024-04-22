@@ -160,6 +160,7 @@ func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
 }
 
 func (se *SearchEnginCore) BuildActress() {
+	se.clearHistory([]string{})
 	actressLib := map[string]datamodels.Actress{}
 	var fileRepeats []datamodels.Movie
 	codeRepeats := map[string]RepeatModel{}
