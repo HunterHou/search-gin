@@ -24,6 +24,7 @@ type SearchEnginCore struct {
 	TotalSize      int64
 	TotalCount     int
 	KeywordHistory map[string]datamodels.PageResultWrapper
+	Keywords       []string
 }
 
 var mutex sync.RWMutex
@@ -37,6 +38,7 @@ func InitSearchEngine(BucketSearchEngin SearchEnginCore) {
 		CodeRepeat:     []datamodels.Movie{},
 		ActressLib:     map[string]datamodels.Actress{},
 		KeywordHistory: map[string]datamodels.PageResultWrapper{},
+		Keywords:       []string{},
 	}
 }
 func init() {
@@ -71,8 +73,15 @@ func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datam
 	resultWrapper.ResultCount = len(list)
 	return resultWrapper
 }
-func (se *SearchEnginCore) clearHistory() {
-	se.KeywordHistory = map[string]datamodels.PageResultWrapper{}
+func (se *SearchEnginCore) clearHistory(words []string) {
+	if len(words) > 0 {
+		for _, word := range words {
+			delete(se.KeywordHistory, word)
+		}
+	} else {
+		se.KeywordHistory = map[string]datamodels.PageResultWrapper{}
+	}
+
 }
 
 func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
@@ -86,9 +95,10 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 	}
 	resultWrapper, ok := se.KeywordHistory[searchParam.UniWords()]
 	if ok {
-		//if len(se.KeywordHistory) > 10 {
-		//	se.clearHistory()
-		//}
+		if len(se.Keywords) > 20 {
+			se.clearHistory(se.Keywords[0:5])
+			se.Keywords = se.Keywords[5:]
+		}
 	} else {
 		resultWrapper = datamodels.NewPageWrapper()
 		resultWrapper.ResultCount = searchParam.PageSize
@@ -144,7 +154,7 @@ func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 
 func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
 	mutex.Lock()
-	go se.clearHistory()
+	go se.clearHistory([]string{})
 	se.SearchIndex.LoadOrStore(baseDir, bucket)
 	defer mutex.Unlock()
 }
