@@ -18,7 +18,7 @@ type RepeatModel struct {
 type SearchEnginCore struct {
 	LastSortField  string
 	LastSortType   string
-	SearchIndex    map[string]BucketFile
+	SearchIndex    sync.Map // map[string]BucketFile
 	CodeRepeat     []datamodels.Movie
 	ActressLib     map[string]datamodels.Actress
 	TotalSize      int64
@@ -33,7 +33,7 @@ var BucketSearchEngin = SearchEnginCore{}
 
 func InitSearchEngine(BucketSearchEngin SearchEnginCore) {
 	BucketSearchEngin = SearchEnginCore{
-		SearchIndex:    map[string]BucketFile{},
+		SearchIndex:    sync.Map{}, // map[string]BucketFile{},
 		CodeRepeat:     []datamodels.Movie{},
 		ActressLib:     map[string]datamodels.Actress{},
 		KeywordHistory: map[string]datamodels.PageResultWrapper{},
@@ -49,9 +49,9 @@ func (se *SearchEnginCore) Reset() {
 
 func (se *SearchEnginCore) Init(baseDirs []string) {
 	for _, dir := range baseDirs {
-		_, ok := se.SearchIndex[dir]
+		_, ok := se.SearchIndex.Load(dir)
 		if !ok {
-			se.SearchIndex[dir] = NewInstance(dir)
+			se.SearchIndex.Store(dir, NewInstance(dir))
 		}
 	}
 }
@@ -86,24 +86,29 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 	}
 	resultWrapper, ok := se.KeywordHistory[searchParam.UniWords()]
 	if ok {
-		if len(se.KeywordHistory) > 10 {
-			se.clearHistory()
-		}
+		//if len(se.KeywordHistory) > 10 {
+		//	se.clearHistory()
+		//}
 	} else {
 		resultWrapper = datamodels.NewPageWrapper()
 		resultWrapper.ResultCount = searchParam.PageSize
-		for _, index := range se.SearchIndex {
+		se.SearchIndex.Range(func(key, value interface{}) bool {
+			index := value.(BucketFile)
 			if index.IsEmpty() {
-				continue
+				return true
 			}
 			indexWrapper := index.SearchBucket(searchParam)
 			if !indexWrapper.IsNotEmpty() {
-				continue
+				return true
 			}
 			resultWrapper.FileList = utils.ExtendsItems(resultWrapper.FileList, indexWrapper.FileList)
 			resultWrapper.SearchCount = resultWrapper.SearchCount + len(indexWrapper.FileList)
 			resultWrapper.SearchSize = resultWrapper.SearchSize + indexWrapper.Size
-		}
+			return true
+		})
+		//for _, index := range se.SearchIndex.Range() {
+		//
+		//}
 		datamodels.SortMoviesUtils(resultWrapper.FileList, searchParam.SortField, searchParam.SortType, se.LastSortField, se.LastSortType)
 		se.LastSortField = searchParam.SortField
 		se.LastSortType = searchParam.SortType
@@ -115,12 +120,17 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 
 func (se *SearchEnginCore) FindById(id string) datamodels.Movie {
 	var model = datamodels.Movie{}
-	for _, si := range se.SearchIndex {
-		model = si.Get(id)
-		if !model.IsNull() {
-			break
+	se.SearchIndex.Range(func(key, value interface{}) bool {
+		index := value.(BucketFile)
+		if index.IsEmpty() {
+			return true
 		}
-	}
+		model = index.Get(id)
+		if !model.IsNull() {
+			return false
+		}
+		return true
+	})
 	return model
 }
 
@@ -134,11 +144,8 @@ func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 
 func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
 	mutex.Lock()
-	if se.SearchIndex == nil {
-		se.SearchIndex = map[string]BucketFile{}
-	}
 	go se.clearHistory()
-	se.SearchIndex[baseDir] = bucket
+	se.SearchIndex.LoadOrStore(baseDir, bucket)
 	defer mutex.Unlock()
 }
 
@@ -148,7 +155,8 @@ func (se *SearchEnginCore) BuildActress() {
 	codeRepeats := map[string]RepeatModel{}
 	totalSize := int64(0)
 	totalCount := 0
-	for _, index := range se.SearchIndex {
+	se.SearchIndex.Range(func(key, value interface{}) bool {
+		index := value.(BucketFile)
 		if index.IsNotEmpty() {
 			totalSize += index.TotalSize
 			totalCount += index.TotalCount
@@ -191,7 +199,8 @@ func (se *SearchEnginCore) BuildActress() {
 
 			}
 		}
-	}
+		return true
+	})
 	for _, model := range codeRepeats {
 		if model.Count > 1 {
 			fileRepeats = utils.ExtendsItems(fileRepeats, model.Files)
