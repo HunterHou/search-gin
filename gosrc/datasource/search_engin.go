@@ -155,10 +155,10 @@ func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 }
 
 func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
-	mutex.Lock()
+	// mutex.Lock()
 	go se.clearHistory([]string{})
 	se.SearchIndex.LoadOrStore(baseDir, bucket)
-	defer mutex.Unlock()
+	// defer mutex.Unlock()
 }
 
 func (se *SearchEnginCore) BuildActress() {
