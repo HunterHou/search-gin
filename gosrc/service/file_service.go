@@ -381,8 +381,6 @@ func (fileService *FileService) MergeFiles(model datamodels.TransferTaskModel) u
 	return res
 }
 
-// ./ffmpeg.exe -i  concat:"E:\\emby\\emby-rename\\[bbs.yzkof.com]JUC-911.1080P A[约战竞技场].mp4|E:\\emby\\emby-rename\\[bbs.yzkof.com]JUC-911.1080P B[约战竞技场].mp4|E:\\emby\\emby-rename\\[bbs.yzkof.com]JUC-911.1080P C[约战竞技场].mp4" -vcodec copy as.mp4
-
 func (fileService *FileService) CutFormatter(model datamodels.TransferTaskModel) utils.Result {
 	from := model.Path
 	suffix := utils.GetSuffux(model.Path)

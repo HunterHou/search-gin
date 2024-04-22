@@ -124,7 +124,7 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 }
 
 func (se *SearchEnginCore) addHistory(uniqueWords string, resultWrapper datamodels.PageResultWrapper) {
-	se.Keywords = se.Keywords[5:]
+	se.Keywords = append(se.Keywords, uniqueWords)
 	se.KeywordHistory[uniqueWords] = resultWrapper
 }
 

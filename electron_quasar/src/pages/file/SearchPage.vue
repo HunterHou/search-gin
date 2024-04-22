@@ -426,12 +426,12 @@
 
               <div :style="{ height: '4rem', overflow: 'hidden' }">
                 <a
-                  style="color: #9e089e; background-color: rgba(0, 0, 0, 0.1)"
-                  class="mr10 cursor-pointer"
-                  target="_blank"
-                  @click="goActress(item.Actress)"
-                >{{ item.Actress?.substring(0, 6) }}</a
-                >
+                style="color: #9e089e; background-color: rgba(0, 0, 0, 0.1)"
+                class="mr10 cursor-pointer"
+                target="_blank"
+                @click="goActress(item.Actress)"
+              >{{ item.Actress?.substring(0, 6) }}</a
+              >
                 <a
                   style="
                     color: rgb(239, 30, 30);
@@ -557,7 +557,7 @@
     @sub-one="view.renameCount = view.renameCount - 1"
   />
   <FileInfo ref="fileInfoRef"/>
-  <ListEdit ref="listEditRef"/>
+  <ListEdit ref="listEditRef" @close="fetchSearch"/>
 </template>
 
 <script setup>
@@ -590,9 +590,9 @@ import {
 } from '../../components/utils';
 import {getPng, getFileStream} from '../../components/utils/images';
 import {useSystemProperty} from '../../stores/System';
-import FileEdit from './components/FileEdit.vue';
-import FileInfo from './components/FileInfo.vue';
-import ListEdit from './components/ListEdit.vue';
+import FileEdit from './components/FileEditDialog.vue';
+import FileInfo from './components/FileInfoDialog.vue';
+import ListEdit from './components/ListEditDialog.vue';
 import TagPop from './components/TagPop.vue';
 
 import {onKeyStroke, useClipboard} from '@vueuse/core';

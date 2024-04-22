@@ -156,113 +156,137 @@
                 background-color: rgba(0, 0, 0, 0.1);
               "
             >
-              <div style="display: flex; flex-direction: column">
-                <q-item-label>
-                  <span
-                    v-if="view.cutListIds.indexOf(item.Id) >= 0"
-                    style="color: red"
-                  >剪切中：：</span
-                  >
-                  {{ item.Title }}【{{ item.SizeStr }}】
-                </q-item-label>
-                <div style="display: flex; flex-direction: row" v-ripple>
-                  <q-checkbox
-                    size="sm"
-                    v-model="view.selector"
-                    :val="item.Id"
-                    color="red"
-                  />
-                  <q-btn-dropdown
-                    class="q-mr-sm"
-                    size="sm"
-                    :label="item.MovieType"
-                    type="primary"
-                    color="blue-6"
-                  >
-                    <q-list>
-                      <q-item
-                        v-for="mt in MovieTypeOptions"
-                        :key="mt.value"
-                        v-close-popup
-                        class="movieTypeSelectItem"
-                      >
-                        <q-item-section>
-                          <q-item-label
-                            @click="
+              <div style="display: flex;flex-direction: row;justify-content: space-between">
+                <div style="display: flex; flex-direction: column">
+                  <q-item-label>
+
+                    <span
+                      v-if="view.cutListIds.indexOf(item.Id) >= 0"
+                      style="color: red"
+                    >剪切中：：</span
+                    >
+                    {{ item.Title }}【{{ item.SizeStr }}】
+                    <a
+                      style="color: #9e089e; background-color: rgba(0, 0, 0, 0.1)"
+                      class="mr10 cursor-pointer"
+                      target="_blank"
+                      @click="searchCode(item)"
+                    >{{ item.Code?.substring(0, 10) }}</a
+                    >
+                  </q-item-label>
+                  <div style="display: flex; flex-direction: row" v-ripple>
+                    <q-checkbox
+                      size="sm"
+                      v-model="view.selector"
+                      :val="item.Id"
+                      color="red"
+                    />
+
+                    <q-btn-dropdown
+                      class="q-mr-sm"
+                      size="sm"
+                      :label="item.MovieType"
+                      type="primary"
+                      color="blue-6"
+                    >
+                      <q-list>
+                        <q-item
+                          v-for="mt in MovieTypeOptions"
+                          :key="mt.value"
+                          v-close-popup
+                          class="movieTypeSelectItem"
+                        >
+                          <q-item-section>
+                            <q-item-label
+                              @click="
                               commonExec(ResetMovieType(item.Id, mt.value))
                             "
-                          >{{ mt.label }}
-                          </q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
-                  <q-btn
-                    outline
-                    size="sm"
-                    class="q-mr-sm"
-                    color="amber"
-                    glossy
-                    text-color="black"
-                    icon="delete"
-                    @click="confirmDelete(item)"
-                  />
-                  <q-btn
-                    outline
-                    size="sm"
-                    class="q-mr-sm"
-                    @click="moveThis(item)"
-                    icon="near_me"
-                  />
-                  <q-btn
-                    outline
-                    class="q-mr-sm"
-                    size="sm"
-                    icon="open_in_new"
-                    @click="commonExec(OpenFileFolder(item.Id))"
-                  />
-                  <q-btn
-                    outline
-                    size="sm"
-                    class="q-mr-sm"
-                    icon="ti-pencil-alt2"
-                    @click="item.showCut = true"
-                  ></q-btn>
-                  <q-btn
-                    outline
-                    size="sm"
-                    class="q-mr-sm"
-                    color="green"
-                    @click="toMp4(item)"
-                  >toMp4
-                  </q-btn
-                  >
-                  <q-btn
-                    outline
-                    class="q-mr-sm"
-                    size="sm"
-                    color="brown-5"
-                    icon="wifi_protected_setup"
-                    v-if="!item.MovieType || item.MovieType == '无'"
-                    @click="commonExec(SyncFileInfo(item.Id))"
-                  />
+                            >{{ mt.label }}
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown>
+
+                    <q-btn
+                      outline
+                      size="sm"
+                      class="q-mr-sm"
+                      color="amber"
+                      glossy
+                      text-color="black"
+                      icon="delete"
+                      @click="confirmDelete(item)"
+                    />
+                    <q-btn
+                      outline
+                      size="sm"
+                      class="q-mr-sm"
+                      @click="moveThis(item)"
+                      icon="near_me"
+                    />
+                    <q-btn
+                      outline
+                      class="q-mr-sm"
+                      size="sm"
+                      icon="open_in_new"
+                      @click="commonExec(OpenFileFolder(item.Id))"
+                    />
+                    <q-btn
+                      outline
+                      size="sm"
+                      class="q-mr-sm"
+                      icon="ti-cut"
+                      @click="item.showCut = true"
+                    ></q-btn>
+                    <q-btn
+                      outline
+                      size="sm"
+                      class="q-mr-sm"
+                      icon="ti-pencil-alt2"
+                      @click="view.editItem = item;item.itemRename = true;view.editItem.Jpg=null;view.editItem.Png=null"
+                    ></q-btn>
+                    <q-btn
+                      outline
+                      size="sm"
+                      class="q-mr-sm"
+                      color="green"
+                      @click="toMp4(item)"
+                    >toMp4
+                    </q-btn
+                    >
+                    <q-btn
+                      outline
+                      class="q-mr-sm"
+                      size="sm"
+                      color="brown-5"
+                      icon="wifi_protected_setup"
+                      v-if="!item.MovieType || item.MovieType == '无'"
+                      @click="commonExec(SyncFileInfo(item.Id))"
+                    />
+                  </div>
+                  <div style="color: red" v-if="item.Tags">
+                    点击删除：
+                    <q-btn
+                      color="red"
+                      flat
+                      size="sm"
+                      v-for="ta in item.Tags"
+                      :key="ta"
+                      @click="commonExec(CloseTag(item.Id, ta), true)"
+                    >
+                      {{ `${ta}` }}
+                    </q-btn>
+                  </div>
                 </div>
-                <div style="color: red" v-if="item.Tags">
-                  点击删除：
-                  <q-btn
-                    color="red"
-                    flat
-                    size="sm"
-                    v-for="ta in item.Tags"
-                    :key="ta"
-                    @click="commonExec(CloseTag(item.Id, ta), true)"
-                  >
-                    {{ `${ta}` }}
-                  </q-btn>
+                <div style="display: flex;flex-direction: row;justify-content: space-between">
+                  <q-img fit="fill" height="80px" width="100px" :src="getPng(item.Id)"/>
+                  <q-img fit="fill" height="80px" width="100px" :src="getJpg(item.Id)"/>
                 </div>
-                <div
-                  v-if="item.showCut"
-                  style="
+              </div>
+              <div
+                v-if="item.showCut"
+                style="
                     display: flex;
                     flex-direction: row;
                     align-items: center;
@@ -270,51 +294,81 @@
                     border-radius: 12px;
                     padding: 4px;
                   "
-                >
-                  开始：
-                  <q-input
-                    style="width: 40px"
-                    v-model:model-value="cutParam.sH"
-                  ></q-input>
-                  <q-input
-                    style="width: 40px"
-                    v-model:model-value="cutParam.sM"
-                  ></q-input>
-                  <q-input
-                    style="width: 40px"
-                    v-model:model-value="cutParam.sS"
-                  ></q-input>
-                  结束：
-                  <q-input
-                    style="width: 40px"
-                    v-model:model-value="cutParam.eH"
-                  ></q-input>
-                  <q-input
-                    style="width: 40px"
-                    v-model:model-value="cutParam.eM"
-                  ></q-input>
-                  <q-input
-                    style="width: 40px"
-                    v-model:model-value="cutParam.eS"
-                  ></q-input>
-                  <q-btn
-                    size="sm"
-                    color="black"
-                    type="primary"
-                    @click="
+              >
+                开始：
+                <q-input
+                  style="width: 40px"
+                  v-model:model-value="cutParam.sH"
+                ></q-input>
+                <q-input
+                  style="width: 40px"
+                  v-model:model-value="cutParam.sM"
+                ></q-input>
+                <q-input
+                  style="width: 40px"
+                  v-model:model-value="cutParam.sS"
+                ></q-input>
+                结束：
+                <q-input
+                  style="width: 40px"
+                  v-model:model-value="cutParam.eH"
+                ></q-input>
+                <q-input
+                  style="width: 40px"
+                  v-model:model-value="cutParam.eM"
+                ></q-input>
+                <q-input
+                  style="width: 40px"
+                  v-model:model-value="cutParam.eS"
+                ></q-input>
+                <q-btn
+                  size="sm"
+                  color="black"
+                  type="primary"
+                  @click="
                       cutThis(item);
                       item.showCut = false;
                     "
-                    label="确认"
-                  />
+                  label="确认"
+                />
+                <q-btn
+                  size="sm"
+                  color="blue"
+                  @click="item.showCut = false"
+                  label="取消"
+                />
+              </div>
+              <div
+                v-if="item.itemRename"
+                style="
+                    background-color: antiquewhite;
+                    border-radius: 12px;
+                    padding: 4px;
+                  "
+              >
+                <div style="display: flex;flex-direction: row;justify-content: flex-start">
+                  <q-img fit="fill" height="180px" width="180px" :src="view.editItem.Jpg"/>
+                  <div class="row q-gutter-md">
+                    <q-input outlined label="Code" v-model="view.editItem.Code"/>
+                    <q-input outlined label="Actress" v-model="view.editItem.Actress"/>
+                    <q-input outlined autogrow style="width: 100%" label="Title" v-model="view.editItem.Title"
+                             @change="(v)=>{titleChange(v,view.editItem)}"/>
+                    <q-input outlined style="width: 100%" label="Jpg" v-model="view.editItem.Jpg"/>
+                    <q-input outlined style="width: 100%" label="Png" v-model="view.editItem.Png"/>
+                  </div>
+                </div>
+                <div style="display: flex;flex-direction: row;justify-content: flex-end">
+                  <q-btn size="sm" color="primary" label="移动" @click="editMoveout(view.editItem)"/>
+                  <q-btn size="sm" color="primary" label="命名" @click="editItemSubmit(false,view.editItem)"/>
                   <q-btn
                     size="sm"
                     color="blue"
-                    @click="item.showCut = false"
+                    @click="view.editItem.itemRename = false"
                     label="取消"
                   />
                 </div>
               </div>
+
             </div>
           </div>
         </q-tab-panel>
@@ -581,6 +635,7 @@ import {PostSettingInfo} from 'src/components/api/settingAPI';
 import {useSystemProperty} from 'stores/System';
 import {useRouter} from 'vue-router';
 import {useClipboard} from '@vueuse/core';
+import {getJpg, getPng} from "components/utils/images";
 
 const {resolve} = useRouter();
 
@@ -597,6 +652,7 @@ const view = reactive({
   callback: null,
   cutListIds: [],
   tasking: {},
+  editItem: {},
 });
 
 
@@ -646,10 +702,94 @@ const isMobile = computed(() => {
 });
 
 
-
 const tabChange = (v) => {
   console.log(v)
 }
+
+const searchCode = (item) => {
+  let {code} = item
+  if (code.indexOf("-C") > 1) {
+    code = code.substring(0, code.indexOf("-C"));
+  }
+  const url = `${view.settingInfo.BaseUrl}${code}`;
+  window.open(url, '_blank');
+  item.itemRename = true
+};
+
+
+const reg = /\w+[-_]\d+/;
+
+const titleChange = (v, item) => {
+  if (v) {
+    item.Title = v
+    const code = v.match(reg);
+    if (code && code[0] && code[0].length > 0) {
+      item.Code = code[0];
+      const uriCode = item.Code.toLowerCase().trim().replace('-', '00');
+      item.Jpg =
+        systemProperty.SettingInfo.ImageUrl + `${uriCode}/${uriCode}pl.jpg`;
+    }
+    const arr = v.split(' ');
+    if (arr && arr.length > 2) {
+      item.Actress = arr[arr.length - 1];
+    }
+    item.Title = item.Title.replace(item.Code, '');
+  }
+};
+
+const editMoveout = async (item) => {
+  await editItemSubmit(true, item);
+};
+
+const editItemSubmit = async (MoveOut, item) => {
+  const {Id, Title, Code, Actress, FileType, MovieType, Jpg, Png} = item;
+  let code = Code.trim();
+  if (code && code.indexOf('-') < 0) {
+    code = '-' + code;
+  }
+  let name = '';
+  if (Actress.length !== 0) {
+    name += '[' + Actress.trim() + ']';
+  }
+  if (code.length !== 0) {
+    name += ' [' + code.trim() + ']';
+  }
+  if (MovieType && MovieType !== '无') {
+    if (name.indexOf('{{') < 0) {
+      name += `{{${MovieType}}}`;
+    } else {
+    }
+  }
+  const arr = Title.trim().split('.');
+  const arrLength = arr.length;
+  for (let idx = 0; idx < arrLength; idx++) {
+    const str = arr[idx];
+    const strNew = str.replace(str.charAt(0), str.charAt(0).toUpperCase());
+    name += strNew;
+  }
+
+  if (name.indexOf('.' + FileType) < 0) {
+    name += '.' + FileType;
+  }
+  const param = {
+    Id,
+    Name: name,
+    Code: code,
+    Title,
+    Actress,
+    MoveOut,
+    Jpg,
+    Png,
+    NoRefresh: true,
+  };
+  item.itemRename = false;
+  const res = await FileRename(param);
+  if (res.Code === 200) {
+    refreshIndex()
+  } else {
+    $q.notify({type: 'negative', message: res.Message});
+  }
+};
 
 const goHistory = (item) => {
   const url = resolve({path: '/search', query: {...item}}).href;
@@ -771,7 +911,7 @@ const nextPage = (n) => {
 
 const fetchSearch = async () => {
   const data = await SearchAPI(view.queryParam);
-  view.resultData = data;
+  view.resultData = {...data};
 };
 
 const commonExec = async (exec) => {
@@ -857,20 +997,6 @@ const moveThis = async (item) => {
 
 const {dialogRef, onDialogHide, onDialogOK, onDialogCancel} =
   useDialogPluginComponent();
-// dialogRef      - 用在 QDialog 上的 Vue ref 模板引用
-// onDialogHide   - 处理 QDialog 上 @hide 事件的函数
-// onDialogOK     - 对话框结果为 ok 时会调用的函数
-//                    示例: onDialogOK() - 不带参数
-//                    示例: onDialogOK({ /*.../* }) - 带参数
-// onDialogCancel - 对话框结果为 cancel 时调用的函数
-
-// 这是示例的内容，不是必需的
-// const onOKClick = () => {
-// REQUIRED！ 对话框的结果为 ok 时，必须调用 onDialogOK()  (参数是可选的)
-// onDialogOK()
-// 带参数的版本: onDialogOK({ ... })
-// ...会自动关闭对话框
-// }
 
 const updateButtons = () => {
   if (view.callback) {

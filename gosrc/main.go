@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"github.com/shirou/gopsutil/v3/disk"
 	"net/http"
 	"path/filepath"
 	"searchGin/cons"
@@ -45,19 +43,19 @@ var (
 
 func main() {
 
-	fmt.Println("start")
-	parts, err := disk.Partitions(true)
-	if err != nil {
-		fmt.Printf("get Partitions failed, err:%v\n", err)
-		return
-	}
-	for _, part := range parts {
-		fmt.Printf("part:%v\n", part.String())
-		diskInfo, _ := disk.Usage(part.Mountpoint)
-		fmt.Printf("disk info%v:used:%v free:%v\n", diskInfo.Path, diskInfo.UsedPercent, diskInfo.Free)
-	}
-	fmt.Println("over")
-	return
+	//fmt.Println("start")
+	//parts, err := disk.Partitions(true)
+	//if err != nil {
+	//	fmt.Printf("get Partitions failed, err:%v\n", err)
+	//	return
+	//}
+	//for _, part := range parts {
+	//	fmt.Printf("part:%v\n", part.String())
+	//	diskInfo, _ := disk.Usage(part.Mountpoint)
+	//	fmt.Printf("disk info%v:used:%v free:%v\n", diskInfo.Path, diskInfo.UsedPercent, diskInfo.Free)
+	//}
+	//fmt.Println("over")
+	//return
 
 	app := router.BuildRouter()
 	serviceRequest := &http.Server{

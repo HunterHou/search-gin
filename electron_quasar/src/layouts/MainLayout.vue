@@ -54,7 +54,7 @@ import Playing from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from 'stores/System';
 import { useQuasar } from 'quasar';
 import EssentialLink from 'components/EssentialLink.vue';
-import ListEdit from 'pages/file/components/ListEdit.vue';
+import ListEdit from 'pages/file/components/ListEditDialog.vue';
 import ShutdownComponent from 'components/ShutdownComponent.vue';
 import { onKeyStroke } from '@vueuse/core';
 
