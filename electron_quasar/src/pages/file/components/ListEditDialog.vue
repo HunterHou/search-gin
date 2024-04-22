@@ -707,11 +707,11 @@ const tabChange = (v) => {
 }
 
 const searchCode = (item) => {
-  let {code} = item
-  if (code.indexOf("-C") > 1) {
-    code = code.substring(0, code.indexOf("-C"));
+  let {Code} = item
+  if (Code.indexOf("-C") > 1) {
+    Code = Code.substring(0, Code.indexOf("-C"));
   }
-  const url = `${view.settingInfo.BaseUrl}${code}`;
+  const url = `${view.settingInfo.BaseUrl}${Code}`;
   window.open(url, '_blank');
   item.itemRename = true
 };
