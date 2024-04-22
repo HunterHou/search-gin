@@ -188,10 +188,12 @@ const editItemSubmit = async (MoveOut) => {
     NoRefresh: true,
   };
   emits('plus-one');
+
   const res = await FileRename(param);
   if (res.Code === 200) {
+    emits('sub-one');
+    onDialogOK();
     if (view.callback) {
-      emits('sub-one');
       view.callback();
     }
   } else {
