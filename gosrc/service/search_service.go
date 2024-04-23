@@ -747,7 +747,10 @@ func (fs *SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {
-		os.Rename(oldPath, newPath)
+		err := os.Rename(oldPath, newPath)
+		if err != nil {
+			utils.InfoNormal(err)
+		}
 	}
 
 	//gif
@@ -756,7 +759,10 @@ func (fs *SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {
-		os.Rename(oldPath, newPath)
+		err = os.Rename(oldPath, newPath)
+		if err != nil {
+			utils.InfoNormal(err)
+		}
 	}
 
 	//jpg
@@ -765,7 +771,10 @@ func (fs *SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {
-		os.Rename(oldPath, newPath)
+		err = os.Rename(oldPath, newPath)
+		if err != nil {
+			utils.InfoNormal(err)
+		}
 	}
 
 	//nfo
@@ -774,7 +783,10 @@ func (fs *SearchService) Rename(movie datamodels.MovieEdit) utils.Result {
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {
-		os.Rename(oldPath, newPath)
+		err = os.Rename(oldPath, newPath)
+		if err != nil {
+			utils.InfoNormal(err)
+		}
 	}
 	fs.ScanTarget(movieLib.BaseDir)
 	return res

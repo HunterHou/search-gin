@@ -46,7 +46,10 @@ func GetInfo(c *gin.Context) {
 // PostRename 改名
 func PostRename(c *gin.Context) {
 	currentFile := datamodels.MovieEdit{}
-	c.ShouldBindJSON(&currentFile)
+	err := c.ShouldBindJSON(&currentFile)
+	if err != nil {
+		utils.InfoNormal(err)
+	}
 	utils.InfoFormat("PostRename :searchCnt[%v] \n\n", currentFile)
 	fileService := service.CreateSearchService()
 	res := fileService.Rename(currentFile)
