@@ -94,7 +94,9 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 	resultWrapper, ok := se.KeywordHistory[searchParam.UniWords()]
 	if ok {
 		if len(se.Keywords) > 20 {
-			se.clearHistory(se.Keywords[0:5])
+			for _, s := range se.Keywords[0:5] {
+				delete(se.KeywordHistory, s)
+			}
 			se.Keywords = se.Keywords[5:]
 		}
 	} else {
@@ -153,7 +155,7 @@ func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 }
 
 func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
-	se.clearHistory([]string{baseDir})
+	se.clearHistory()
 	se.SearchIndex.LoadOrStore(baseDir, bucket)
 }
 
