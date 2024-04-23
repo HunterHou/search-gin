@@ -680,6 +680,7 @@ const listEditCallback = (data) => {
   if (settingInfo) {
     view.settingInfo = settingInfo;
   }
+  fetchSearch();
 };
 
 const showButton = (name) => {
