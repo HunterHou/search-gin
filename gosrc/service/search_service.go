@@ -843,7 +843,7 @@ func (fs *SearchService) ScanTarget(baseDir string) {
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
 	files, _ := service.WalkInnter(baseDir, QueryTypes, 0, true, baseDir)
 	SearchEngin.SetBucket(baseDir, datasource.NewInstanceWithFiles(baseDir, files))
-	go SearchEngin.BuildActress()
+	SearchEngin.BuildActress()
 }
 
 func (fs *SearchService) Delete(id string) {

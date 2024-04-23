@@ -72,13 +72,7 @@ func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datam
 	return resultWrapper
 }
 func (se *SearchEnginCore) clearHistory(uniqueWords []string) {
-	if len(uniqueWords) > 0 {
-		for _, word := range uniqueWords {
-			delete(se.KeywordHistory, word)
-		}
-	} else {
-		clear(se.KeywordHistory)
-	}
+	clear(se.KeywordHistory)
 
 }
 
@@ -116,11 +110,12 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 			resultWrapper.SearchSize = resultWrapper.SearchSize + indexWrapper.Size
 			return true
 		})
-		datamodels.SortMoviesUtils(resultWrapper.FileList, searchParam.SortField, searchParam.SortType, se.LastSortField, se.LastSortType)
-		se.LastSortField = searchParam.SortField
-		se.LastSortType = searchParam.SortType
-		se.addHistory(searchParam.UniWords(), resultWrapper)
 	}
+
+	datamodels.SortMoviesUtils(resultWrapper.FileList, searchParam.SortField, searchParam.SortType, se.LastSortField, se.LastSortType)
+	se.LastSortField = searchParam.SortField
+	se.LastSortType = searchParam.SortType
+	se.addHistory(searchParam.UniWords(), resultWrapper)
 	resultWrapper.FileList, resultWrapper.ResultSize = datamodels.GetPageOfFiles(resultWrapper.FileList, searchParam.Page, searchParam.PageSize)
 	return resultWrapper
 }
@@ -155,8 +150,8 @@ func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 }
 
 func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
-	se.clearHistory()
-	se.SearchIndex.LoadOrStore(baseDir, bucket)
+	se.clearHistory([]string{})
+	se.SearchIndex.Store(baseDir, bucket)
 }
 
 func (se *SearchEnginCore) BuildActress() {

@@ -426,12 +426,12 @@
 
               <div :style="{ height: '4rem', overflow: 'hidden' }">
                 <a
-                style="color: #9e089e; background-color: rgba(0, 0, 0, 0.1)"
-                class="mr10 cursor-pointer"
-                target="_blank"
-                @click="goActress(item.Actress)"
-              >{{ item.Actress?.substring(0, 6) }}</a
-              >
+                  style="color: #9e089e; background-color: rgba(0, 0, 0, 0.1)"
+                  class="mr10 cursor-pointer"
+                  target="_blank"
+                  @click="goActress(item.Actress)"
+                >{{ item.Actress?.substring(0, 6) }}</a
+                >
                 <a
                   style="
                     color: rgb(239, 30, 30);
