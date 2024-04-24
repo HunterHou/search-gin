@@ -6,8 +6,8 @@ import (
 	"sync"
 )
 
-var FileApp = new(FileService)
-var SearchApp = new(SearchService)
+var FileApp = new(fileService)
+var SearchApp = new(searchService)
 
 // SearchEngin BucketSearchEngin 搜索引擎
 var SearchEngin = datasource.SearchEnginCore{
