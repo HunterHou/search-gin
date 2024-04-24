@@ -10,7 +10,6 @@ import (
 	"runtime"
 	"searchGin/cons"
 	"searchGin/datamodels"
-	"searchGin/datasource"
 	"searchGin/utils"
 	"strings"
 	"sync"
@@ -218,7 +217,7 @@ func (fileService *fileService) goWalk(baseDir string, types []string, wg *sync.
 		Size: int64(len(files)),
 	}
 	scanTime <- thisTime
-	SearchEngin.SetBucket(baseDir, datasource.NewInstanceWithFiles(baseDir, files))
+	SearchEngin.SetBucket(baseDir, NewInstanceWithFiles(baseDir, files))
 	cons.IndexDone = cons.IndexDone - 1
 
 }

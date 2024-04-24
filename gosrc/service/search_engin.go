@@ -1,4 +1,4 @@
-package datasource
+package service
 
 import (
 	"searchGin/cons"

@@ -7,7 +7,6 @@ import (
 	"os"
 	"searchGin/cons"
 	"searchGin/datamodels"
-	"searchGin/datasource"
 	"searchGin/utils"
 	"sort"
 	"strings"
@@ -834,7 +833,7 @@ func (fs *searchService) ScanTarget(baseDir string) {
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
 	files, _ := FileApp.WalkInnter(baseDir, QueryTypes, 0, true, baseDir)
-	SearchEngin.SetBucket(baseDir, datasource.NewInstanceWithFiles(baseDir, files))
+	SearchEngin.SetBucket(baseDir, NewInstanceWithFiles(baseDir, files))
 	SearchEngin.BuildActress()
 }
 
