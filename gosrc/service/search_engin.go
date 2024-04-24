@@ -15,7 +15,7 @@ type RepeatModel struct {
 	Count int
 }
 
-type SearchEnginCore struct {
+type searchEnginCore struct {
 	LastSortField  string
 	LastSortType   string
 	SearchIndex    sync.Map // map[string]BucketFile
@@ -27,7 +27,7 @@ type SearchEnginCore struct {
 	Keywords       []string
 }
 
-func (se *SearchEnginCore) Reset() {
+func (se *searchEnginCore) Reset() {
 	se.SearchIndex.Range(func(key, value interface{}) bool {
 		se.SearchIndex.Delete(key)
 		return true
@@ -38,7 +38,7 @@ func (se *SearchEnginCore) Reset() {
 	clear(se.Keywords)
 }
 
-func (se *SearchEnginCore) Init(baseDirs []string) {
+func (se *searchEnginCore) Init(baseDirs []string) {
 	for _, dir := range baseDirs {
 		_, ok := se.SearchIndex.Load(dir)
 		if !ok {
@@ -47,11 +47,11 @@ func (se *SearchEnginCore) Init(baseDirs []string) {
 	}
 }
 
-func (se *SearchEnginCore) IsEmpty() bool {
+func (se *searchEnginCore) IsEmpty() bool {
 	return se.TotalCount == 0
 }
 
-func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datamodels.PageActressResultWrapper {
+func (se *searchEnginCore) PageActress(searchParam datamodels.SearchParam) datamodels.PageActressResultWrapper {
 	resultWrapper := datamodels.SearchActressByKeyWord(se.ActressLib, searchParam.Keyword)
 	sort.Slice(resultWrapper.FileList, func(i, j int) bool {
 		return resultWrapper.FileList[i].Size > resultWrapper.FileList[j].Size
@@ -62,12 +62,12 @@ func (se *SearchEnginCore) PageActress(searchParam datamodels.SearchParam) datam
 	resultWrapper.ResultCount = len(list)
 	return resultWrapper
 }
-func (se *SearchEnginCore) clearHistory(uniqueWords []string) {
+func (se *searchEnginCore) clearHistory(uniqueWords []string) {
 	clear(se.KeywordHistory)
 
 }
 
-func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
+func (se *searchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
 	if searchParam.OnlyRepeat {
 		resultWrapper := datamodels.NewPageWrapper()
 		resultWrapper.FileList = se.CodeRepeat
@@ -111,12 +111,12 @@ func (se *SearchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 	return resultWrapper
 }
 
-func (se *SearchEnginCore) addHistory(uniqueWords string, resultWrapper datamodels.PageResultWrapper) {
+func (se *searchEnginCore) addHistory(uniqueWords string, resultWrapper datamodels.PageResultWrapper) {
 	se.Keywords = append(se.Keywords, uniqueWords)
 	se.KeywordHistory[uniqueWords] = resultWrapper
 }
 
-func (se *SearchEnginCore) FindById(id string) datamodels.Movie {
+func (se *searchEnginCore) FindById(id string) datamodels.Movie {
 	var model = datamodels.Movie{}
 	se.SearchIndex.Range(func(key, value interface{}) bool {
 		index := value.(BucketFile)
@@ -132,7 +132,7 @@ func (se *SearchEnginCore) FindById(id string) datamodels.Movie {
 	return model
 }
 
-func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
+func (se *searchEnginCore) FindActressByName(id string) datamodels.Actress {
 	act, ok := se.ActressLib[id]
 	if ok {
 		return act
@@ -140,12 +140,12 @@ func (se *SearchEnginCore) FindActressByName(id string) datamodels.Actress {
 	return datamodels.Actress{}
 }
 
-func (se *SearchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
+func (se *searchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
 	se.clearHistory([]string{})
 	se.SearchIndex.Store(baseDir, bucket)
 }
 
-func (se *SearchEnginCore) BuildActress() {
+func (se *searchEnginCore) BuildActress() {
 	se.clearHistory([]string{})
 	actressLib := map[string]datamodels.Actress{}
 	var fileRepeats []datamodels.Movie
