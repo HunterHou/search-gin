@@ -8,7 +8,6 @@ import (
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/utils"
-	"sort"
 	"strings"
 	"sync"
 
@@ -793,18 +792,18 @@ func choose2To1(tr bool, str1 string, str2 string) string {
 	}
 }
 
-func (fs *searchService) SortAct(lib []datamodels.Actress, sortType string) {
-	if sortType == "desc" {
-		sort.Slice(lib, func(i, j int) bool {
-			return lib[i].Cnt > lib[j].Cnt
-		})
-	} else {
-		sort.Slice(lib, func(i, j int) bool {
-			return lib[i].Cnt < lib[j].Cnt
-		})
-	}
-
-}
+//func (fs *searchService) SortAct(lib []datamodels.Actress, sortType string) {
+//	if sortType == "desc" {
+//		sort.Slice(lib, func(i, j int) bool {
+//			return lib[i].Cnt > lib[j].Cnt
+//		})
+//	} else {
+//		sort.Slice(lib, func(i, j int) bool {
+//			return lib[i].Cnt < lib[j].Cnt
+//		})
+//	}
+//
+//}
 
 func (fs *searchService) Delete(id string) {
 	file := fs.FindOne(id)
@@ -812,98 +811,98 @@ func (fs *searchService) Delete(id string) {
 	FileApp.ScanTarget(file.BaseDir)
 }
 
-func (fs *searchService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
-	var result []datamodels.Movie
-	codeMap := make(map[string]datamodels.Movie)
-	for _, movie := range files {
-		forCode := movie.Code
-		if forCode == "" {
-			continue
-		}
-		forCode = strings.ReplaceAll(forCode, "-", "")
-		forCode = strings.ReplaceAll(forCode, "_", "")
-		ele, ok := codeMap[forCode]
-		if ok {
-			result = append(result, ele)
-			result = append(result, movie)
-			continue
-		} else {
-			codeMap[forCode] = movie
-		}
+//func (fs *searchService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
+//	var result []datamodels.Movie
+//	codeMap := make(map[string]datamodels.Movie)
+//	for _, movie := range files {
+//		forCode := movie.Code
+//		if forCode == "" {
+//			continue
+//		}
+//		forCode = strings.ReplaceAll(forCode, "-", "")
+//		forCode = strings.ReplaceAll(forCode, "_", "")
+//		ele, ok := codeMap[forCode]
+//		if ok {
+//			result = append(result, ele)
+//			result = append(result, movie)
+//			continue
+//		} else {
+//			codeMap[forCode] = movie
+//		}
+//
+//	}
+//	return result
+//}
 
-	}
-	return result
-}
+//func (fs *searchService) SearchByKeyWord(files []datamodels.Movie, totalSize int64, keyWord string, movieType string) ([]datamodels.Movie, int64) {
+//
+//	if (keyWord == "" || keyWord == "undefined") && (movieType == "" || movieType == "undefined") {
+//		return files, totalSize
+//	}
+//	var result []datamodels.Movie
+//	var size int64
+//	for _, file := range files {
+//		if movieType != "" {
+//			if file.MovieType != movieType {
+//				continue
+//			}
+//		}
+//		isAdd := false
+//		if len(keyWord) > 0 {
+//			arr := strings.Split(keyWord, " ")
+//			for i := 0; i < len(arr); i++ {
+//				words := arr[i]
+//				if len(words) == 0 || words == " " {
+//					break
+//				}
+//				if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(words)) {
+//					isAdd = true
+//					break
+//				} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(words)) {
+//					isAdd = true
+//					break
+//				} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(words)) {
+//					isAdd = true
+//					break
+//				} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(words)) {
+//					isAdd = true
+//					break
+//				}
+//			}
+//		} else {
+//			isAdd = true
+//		}
+//
+//		if isAdd {
+//			result = append(result, file)
+//			size = size + file.Size
+//		}
+//
+//	}
+//
+//	return result, size
+//}
 
-func (fs *searchService) SearchByKeyWord(files []datamodels.Movie, totalSize int64, keyWord string, movieType string) ([]datamodels.Movie, int64) {
+//func (fs *searchService) SearchActressByKeyWord(files []datamodels.Actress, keyWord string) ([]datamodels.Actress, int) {
+//
+//	if keyWord == "" || keyWord == "undefined" {
+//		return files, len(files)
+//	}
+//	var result []datamodels.Actress
+//	cnt := 0
+//	for _, file := range files {
+//		if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(keyWord)) {
+//			result = append(result, file)
+//		}
+//	}
+//
+//	return result, cnt
+//}
 
-	if (keyWord == "" || keyWord == "undefined") && (movieType == "" || movieType == "undefined") {
-		return files, totalSize
-	}
-	var result []datamodels.Movie
-	var size int64
-	for _, file := range files {
-		if movieType != "" {
-			if file.MovieType != movieType {
-				continue
-			}
-		}
-		isAdd := false
-		if len(keyWord) > 0 {
-			arr := strings.Split(keyWord, " ")
-			for i := 0; i < len(arr); i++ {
-				words := arr[i]
-				if len(words) == 0 || words == " " {
-					break
-				}
-				if strings.Contains(strings.ToUpper(file.Code), strings.ToUpper(words)) {
-					isAdd = true
-					break
-				} else if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(words)) {
-					isAdd = true
-					break
-				} else if strings.Contains(strings.ToUpper(file.Actress), strings.ToUpper(words)) {
-					isAdd = true
-					break
-				} else if strings.Contains(strings.ToUpper(file.Path), strings.ToUpper(words)) {
-					isAdd = true
-					break
-				}
-			}
-		} else {
-			isAdd = true
-		}
-
-		if isAdd {
-			result = append(result, file)
-			size = size + file.Size
-		}
-
-	}
-
-	return result, size
-}
-
-func (fs *searchService) SearchActressByKeyWord(files []datamodels.Actress, keyWord string) ([]datamodels.Actress, int) {
-
-	if keyWord == "" || keyWord == "undefined" {
-		return files, len(files)
-	}
-	var result []datamodels.Actress
-	cnt := 0
-	for _, file := range files {
-		if strings.Contains(strings.ToUpper(file.Name), strings.ToUpper(keyWord)) {
-			result = append(result, file)
-		}
-	}
-
-	return result, cnt
-}
-
-func (fs *searchService) DataSize(data []datamodels.Movie) int64 {
-	var dataSize int64
-	for _, d := range data {
-		dataSize = dataSize + d.Size
-	}
-	return dataSize
-}
+//func (fs *searchService) DataSize(data []datamodels.Movie) int64 {
+//	var dataSize int64
+//	for _, d := range data {
+//		dataSize = dataSize + d.Size
+//	}
+//	return dataSize
+//}
