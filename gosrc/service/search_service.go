@@ -571,83 +571,84 @@ func (fs *searchService) RequestBusToFile(srcFile datamodels.Movie) (utils.Resul
 	return result, newFile
 }
 
-func (fs *searchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
-
-	result := utils.Result{}
-	newFile := datamodels.Movie{}
-	newFile.Id = srcFile.Id
-	if srcFile.Code == "" || isOM(srcFile.Name) {
-		result.Fail()
-		return result, newFile
-	}
-	// 搜索列表信息
-	url := "https://g60y.com/cn/vl_searchbyid.php?keyword=" + srcFile.Code
-	resp, err := httpGet(url)
-	if err != nil {
-		utils.InfoFormat("err", err)
-		result.Fail()
-		return result, newFile
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		if strings.Contains(url, "_") {
-			url = strings.ReplaceAll(url, "_", "-")
-		} else if strings.Contains(url, "-") {
-			url = strings.ReplaceAll(url, "-", "_")
-		}
-		resp, _ = httpGet(url)
-		if resp.StatusCode != 200 {
-			utils.InfoFormat("status error:", resp.StatusCode, resp.Status)
-			result.Fail()
-			result.Message = "请求失败：" + resp.Status + " url:" + url
-			return result, newFile
-		}
-	}
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		result.Fail()
-		result.Message = "html解析失败"
-		utils.InfoFormat("err:%v", err)
-	}
-	targetUrl := ""
-	listVideo := doc.Find(" .videos .video")
-	listVideo.Each(func(i int, s *goquery.Selection) {
-		code := s.Find(".id").Text()
-		if strings.EqualFold(code, srcFile.Code) {
-			// if strings.ToUpper(code) == strings.ToUpper(srcFile.Code) {
-			newFile.Code = code
-			newFile.Title = s.Find(".title").Text()
-			newFile.Png = s.Find("img").AttrOr("src", "")
-			targetUrl = s.Find("a").AttrOr("href", "")
-		}
-	})
-	var detailDoc *goquery.Document
-	if targetUrl == "" {
-		result.Fail()
-		result.Message = "未找到"
-		utils.InfoFormat("err:", err)
-		return result, newFile
-	} else {
-		detailUrl := "https://g60y.com/cn/" + targetUrl
-		detailResp, err2 := httpGet(detailUrl)
-		if err2 != nil {
-			utils.InfoFormat("err:", err2)
-		}
-		detailDoc, err2 = goquery.NewDocumentFromReader(detailResp.Body)
-		if err2 != nil {
-			utils.InfoFormat("err:", err2)
-		}
-	}
-	imageDiv := detailDoc.Find("#video_jacket_img")
-	newFile.Jpg = imageDiv.AttrOr("src", "")
-	actressDiv := detailDoc.Find(".star a")
-	makerDiv := detailDoc.Find(".maker a")
-	newFile.Studio = makerDiv.Text()
-	newFile.Actress = actressDiv.Text()
-	result.Success()
-	result.Data = newFile
-	return result, newFile
-}
+//
+//func (fs *searchService) RequestLibToFile(srcFile datamodels.Movie) (utils.Result, datamodels.Movie) {
+//
+//	result := utils.Result{}
+//	newFile := datamodels.Movie{}
+//	newFile.Id = srcFile.Id
+//	if srcFile.Code == "" || isOM(srcFile.Name) {
+//		result.Fail()
+//		return result, newFile
+//	}
+//	// 搜索列表信息
+//	url := "https://g60y.com/cn/vl_searchbyid.php?keyword=" + srcFile.Code
+//	resp, err := httpGet(url)
+//	if err != nil {
+//		utils.InfoFormat("err", err)
+//		result.Fail()
+//		return result, newFile
+//	}
+//	defer resp.Body.Close()
+//	if resp.StatusCode != 200 {
+//		if strings.Contains(url, "_") {
+//			url = strings.ReplaceAll(url, "_", "-")
+//		} else if strings.Contains(url, "-") {
+//			url = strings.ReplaceAll(url, "-", "_")
+//		}
+//		resp, _ = httpGet(url)
+//		if resp.StatusCode != 200 {
+//			utils.InfoFormat("status error:", resp.StatusCode, resp.Status)
+//			result.Fail()
+//			result.Message = "请求失败：" + resp.Status + " url:" + url
+//			return result, newFile
+//		}
+//	}
+//	doc, err := goquery.NewDocumentFromReader(resp.Body)
+//	if err != nil {
+//		result.Fail()
+//		result.Message = "html解析失败"
+//		utils.InfoFormat("err:%v", err)
+//	}
+//	targetUrl := ""
+//	listVideo := doc.Find(" .videos .video")
+//	listVideo.Each(func(i int, s *goquery.Selection) {
+//		code := s.Find(".id").Text()
+//		if strings.EqualFold(code, srcFile.Code) {
+//			// if strings.ToUpper(code) == strings.ToUpper(srcFile.Code) {
+//			newFile.Code = code
+//			newFile.Title = s.Find(".title").Text()
+//			newFile.Png = s.Find("img").AttrOr("src", "")
+//			targetUrl = s.Find("a").AttrOr("href", "")
+//		}
+//	})
+//	var detailDoc *goquery.Document
+//	if targetUrl == "" {
+//		result.Fail()
+//		result.Message = "未找到"
+//		utils.InfoFormat("err:", err)
+//		return result, newFile
+//	} else {
+//		detailUrl := "https://g60y.com/cn/" + targetUrl
+//		detailResp, err2 := httpGet(detailUrl)
+//		if err2 != nil {
+//			utils.InfoFormat("err:", err2)
+//		}
+//		detailDoc, err2 = goquery.NewDocumentFromReader(detailResp.Body)
+//		if err2 != nil {
+//			utils.InfoFormat("err:", err2)
+//		}
+//	}
+//	imageDiv := detailDoc.Find("#video_jacket_img")
+//	newFile.Jpg = imageDiv.AttrOr("src", "")
+//	actressDiv := detailDoc.Find(".star a")
+//	makerDiv := detailDoc.Find(".maker a")
+//	newFile.Studio = makerDiv.Text()
+//	newFile.Actress = actressDiv.Text()
+//	result.Success()
+//	result.Data = newFile
+//	return result, newFile
+//}
 
 func (fs *searchService) FindOne(Id string) datamodels.Movie {
 	return SearchEngin.FindById(Id)
