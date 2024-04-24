@@ -1,12 +1,10 @@
 package debugTest
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
 	"searchGin/datamodels"
-	"searchGin/service"
 	"searchGin/utils"
 	"testing"
 )
@@ -51,19 +49,19 @@ func TestReadJson(t *testing.T) {
 	fmt.Println("dic", dic)
 }
 
-func TestWriteJson(t *testing.T) {
-	DirFile := "..\\dirList.ini"
-	dict := service.ReadDictionaryFromTxt(DirFile)
-	data, _ := json.Marshal(dict.LibMap)
-	if !utils.ExistsFiles(jsonPath) {
-		os.Create(jsonPath)
-	}
-	outStream, openErr := os.OpenFile(jsonPath, os.O_TRUNC|os.O_RDWR, os.ModePerm)
-	if openErr != nil {
-		fmt.Println("openErr", openErr)
-	}
-	defer outStream.Close()
-	writer := bufio.NewWriter(outStream)
-	writer.Write(data)
-	writer.Flush()
-}
+//func TestWriteJson(t *testing.T) {
+//	DirFile := "..\\dirList.ini"
+//	dict := service.ReadDictionaryFromTxt(DirFile)
+//	data, _ := json.Marshal(dict.LibMap)
+//	if !utils.ExistsFiles(jsonPath) {
+//		os.Create(jsonPath)
+//	}
+//	outStream, openErr := os.OpenFile(jsonPath, os.O_TRUNC|os.O_RDWR, os.ModePerm)
+//	if openErr != nil {
+//		fmt.Println("openErr", openErr)
+//	}
+//	defer outStream.Close()
+//	writer := bufio.NewWriter(outStream)
+//	writer.Write(data)
+//	writer.Flush()
+//}

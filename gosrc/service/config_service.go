@@ -8,7 +8,6 @@ import (
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/utils"
-	"strings"
 )
 
 func FlushDictionary(path string) {
@@ -53,56 +52,56 @@ func WriteDictionaryToJson(path string, dict datamodels.Setting) {
 	}
 }
 
-func ReadDictionaryFromTxt(path string) datamodels.Dictionary {
-	outStream, openErr := os.Open(path)
-	if openErr != nil {
-		fmt.Println("openErr", openErr)
-	}
-	defer func(outStream *os.File) {
-		err := outStream.Close()
-		if err != nil {
-
-		}
-	}(outStream)
-
-	reader := bufio.NewReader(outStream)
-	dict := datamodels.NewDictionary()
-	for {
-		lineStr, err := reader.ReadString('\n')
-		if err != nil {
-			break
-		}
-		lineStr = strings.TrimSpace(lineStr)
-		if lineStr == "" {
-			continue
-		}
-		line := strings.Split(lineStr, "=")
-		dict.PutProperty(line[0], line[1])
-	}
-	return dict
-}
-func WriteDictionaryToText(path string, dict datamodels.Dictionary) {
-	outStream, openErr := os.OpenFile(path, os.O_TRUNC|os.O_RDWR, os.ModePerm)
-	if openErr != nil {
-		fmt.Println("openErr", openErr)
-	}
-	defer func(outStream *os.File) {
-		err := outStream.Close()
-		if err != nil {
-
-		}
-	}(outStream)
-	writer := bufio.NewWriter(outStream)
-	for key, value := range dict.LibMap {
-		for _, v := range value {
-			_, err := writer.WriteString(key + "=" + v + "\n")
-			if err != nil {
-				return
-			}
-		}
-	}
-	err := writer.Flush()
-	if err != nil {
-		return
-	}
-}
+//func ReadDictionaryFromTxt(path string) datamodels.Dictionary {
+//	outStream, openErr := os.Open(path)
+//	if openErr != nil {
+//		fmt.Println("openErr", openErr)
+//	}
+//	defer func(outStream *os.File) {
+//		err := outStream.Close()
+//		if err != nil {
+//
+//		}
+//	}(outStream)
+//
+//	reader := bufio.NewReader(outStream)
+//	dict := datamodels.NewDictionary()
+//	for {
+//		lineStr, err := reader.ReadString('\n')
+//		if err != nil {
+//			break
+//		}
+//		lineStr = strings.TrimSpace(lineStr)
+//		if lineStr == "" {
+//			continue
+//		}
+//		line := strings.Split(lineStr, "=")
+//		dict.PutProperty(line[0], line[1])
+//	}
+//	return dict
+//}
+//func WriteDictionaryToText(path string, dict datamodels.Dictionary) {
+//	outStream, openErr := os.OpenFile(path, os.O_TRUNC|os.O_RDWR, os.ModePerm)
+//	if openErr != nil {
+//		fmt.Println("openErr", openErr)
+//	}
+//	defer func(outStream *os.File) {
+//		err := outStream.Close()
+//		if err != nil {
+//
+//		}
+//	}(outStream)
+//	writer := bufio.NewWriter(outStream)
+//	for key, value := range dict.LibMap {
+//		for _, v := range value {
+//			_, err := writer.WriteString(key + "=" + v + "\n")
+//			if err != nil {
+//				return
+//			}
+//		}
+//	}
+//	err := writer.Flush()
+//	if err != nil {
+//		return
+//	}
+//}
