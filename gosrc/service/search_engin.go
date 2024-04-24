@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-type RepeatModel struct {
+type repeatModel struct {
 	Code  string
 	Files []datamodels.Movie
 	Count int
@@ -149,7 +149,7 @@ func (se *searchEnginCore) BuildActress() {
 	se.clearHistory([]string{})
 	actressLib := map[string]datamodels.Actress{}
 	var fileRepeats []datamodels.Movie
-	codeRepeats := map[string]RepeatModel{}
+	codeRepeats := map[string]repeatModel{}
 	totalSize := int64(0)
 	totalCount := 0
 	se.SearchIndex.Range(func(key, value interface{}) bool {
@@ -187,7 +187,7 @@ func (se *searchEnginCore) BuildActress() {
 					repeatFile.Files = append(repeatFile.Files, movie)
 					codeRepeats[pkCode] = repeatFile
 				} else {
-					codeRepeats[pkCode] = RepeatModel{
+					codeRepeats[pkCode] = repeatModel{
 						Code:  movie.Code,
 						Files: []datamodels.Movie{movie},
 						Count: 1,
