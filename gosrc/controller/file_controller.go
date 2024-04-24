@@ -17,8 +17,7 @@ import (
 func GetPlay(c *gin.Context) {
 	//id := c.Param("id")
 	id := c.Param("id")
-	fileService := service.CreateSearchService()
-	file := fileService.FindOne(id)
+	file := service.SearchApp.FindOne(id)
 	//c.File(file.Path)
 	utils.ExecCmdStart(file.Path)
 	res := utils.NewSuccessByMsg("播放成功")
@@ -29,17 +28,15 @@ func GetPlay(c *gin.Context) {
 func SetMovieType(c *gin.Context) {
 	id := c.Param("id")
 	movieType := c.Param("movieType")
-	fileService := service.CreateSearchService()
-	file := fileService.FindOne(id)
-	res := fileService.SetMovieType(file, movieType)
+	file := service.SearchApp.FindOne(id)
+	res := service.SearchApp.SetMovieType(file, movieType)
 	c.JSON(http.StatusOK, res)
 }
 
 // GetInfo 获取Info信息
 func GetInfo(c *gin.Context) {
 	id := c.Param("id")
-	fileService := service.CreateSearchService()
-	file := fileService.FindOne(id)
+	file := service.SearchApp.FindOne(id)
 	c.JSON(http.StatusOK, file)
 }
 
@@ -51,8 +48,7 @@ func PostRename(c *gin.Context) {
 		utils.InfoNormal(err)
 	}
 	utils.InfoFormat("PostRename :searchCnt[%v] \n\n", currentFile)
-	fileService := service.CreateSearchService()
-	res := fileService.Rename(currentFile)
+	res := service.SearchApp.Rename(currentFile)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -61,8 +57,7 @@ func GetAddTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
 	utils.InfoFormat("GetAddTag [%v] [%v]  \n", idInt, tag)
-	fileService := service.CreateSearchService()
-	res := fileService.AddTag(idInt, tag)
+	res := service.SearchApp.AddTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -70,8 +65,7 @@ func GetAddTag(c *gin.Context) {
 func GetClearTag(c *gin.Context) {
 	idInt := c.Param("id")
 	tag := c.Param("tag")
-	fileService := service.CreateSearchService()
-	res := fileService.ClearTag(idInt, tag)
+	res := service.SearchApp.ClearTag(idInt, tag)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -81,10 +75,8 @@ func GetDirInfo(c *gin.Context) {
 		cons.TempImage = make(map[string]datamodels.Movie)
 	}
 	id := c.Param("id")
-	searchService := service.CreateSearchService()
-	fileService := service.CreateFileService()
-	file := searchService.FindOne(id)
-	files := fileService.Walk(file.DirPath, cons.Images, false)
+	file := service.SearchApp.FindOne(id)
+	files := service.FileApp.Walk(file.DirPath, cons.Images, false)
 	for i := 0; i < len(files); i++ {
 		// files[i].SetImageBase64()
 		cons.TempImage[files[i].Id] = files[i]
@@ -95,8 +87,7 @@ func GetDirInfo(c *gin.Context) {
 // GetDelete 删除文件
 func GetDelete(c *gin.Context) {
 	id := c.Param("id")
-	fileService := service.CreateSearchService()
-	fileService.Delete(id)
+	service.SearchApp.Delete(id)
 	res := utils.NewSuccessByMsg("删除成功")
 	c.JSON(http.StatusOK, res)
 }
@@ -109,17 +100,16 @@ func PostSync(c *gin.Context) {
 		utils.InfoFormat("PostSync err [%v] ", err)
 	}
 
-	searchService := service.CreateSearchService()
-	curFile := searchService.FindOne(currentFile.Id)
+	curFile := service.SearchApp.FindOne(currentFile.Id)
 	utils.InfoFormat("PostSync curFile [%v] \n ", curFile)
 
-	result, newFile := searchService.RequestBusToFile(curFile)
+	result, newFile := service.SearchApp.RequestBusToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return
 	}
 	utils.InfoFormat("PostSync newFile [%v] \n", newFile)
-	result = searchService.MoveCut(curFile, newFile)
+	result = service.SearchApp.MoveCut(curFile, newFile)
 	c.JSON(http.StatusOK, result)
 }
 
@@ -127,9 +117,8 @@ func PostSync(c *gin.Context) {
 func GetImageList(c *gin.Context) {
 	id := c.Param("id")
 	utils.InfoFormat("id:%v" + id)
-	serviceFile := service.CreateSearchService()
-	curFile := serviceFile.FindOne(id)
-	result, newFile := serviceFile.RequestBusToFile(curFile)
+	curFile := service.SearchApp.FindOne(id)
+	result, newFile := service.SearchApp.RequestBusToFile(curFile)
 	if result.Code != 200 {
 		c.JSON(http.StatusOK, result)
 		return
@@ -143,14 +132,13 @@ func GetImageList(c *gin.Context) {
 	curFile.Jpg = newFile.Jpg
 	curFile.ImageList = newFile.ImageList
 	curFile.Actress = newFile.Actress
-	result = serviceFile.DownImage(curFile)
+	result = service.SearchApp.DownImage(curFile)
 	c.JSON(http.StatusOK, result)
 }
 
 // GetRefreshIndex 刷新索引
 func GetRefreshIndex(c *gin.Context) {
-	fileService := service.CreateSearchService()
-	fileService.ScanAll()
+	service.SearchApp.ScanAll()
 	res := utils.NewSuccessByMsg("扫描结束！")
 	c.JSON(http.StatusOK, res)
 }
@@ -186,20 +174,17 @@ func GetFileByPathUseEncode(c *gin.Context) {
 
 // GetFile 获取文件流
 func GetFile(c *gin.Context) {
-	fileService := service.CreateFileService()
-	fileService.GetFile(c)
+	service.FileApp.GetFile(c)
 }
 
 // GetPng 获取Png流
 func GetPng(c *gin.Context) {
-	fileService := service.CreateFileService()
-	fileService.GetPng(c)
+	service.FileApp.GetPng(c)
 }
 
 // GetJpg 获取jpg流
 func GetJpg(c *gin.Context) {
-	fs := service.CreateFileService()
-	fs.GetJpg(c)
+	service.FileApp.GetJpg(c)
 
 }
 
@@ -225,11 +210,10 @@ func PostMerge(c *gin.Context) {
 		c.JSON(http.StatusOK, err)
 	}
 	utils.InfoFormat("PostMerge： [%v]", searchParam)
-	searchService := service.CreateSearchService()
 
 	var paths = []string{}
 	for _, file := range searchParam.Files {
-		curFile := searchService.FindOne(file)
+		curFile := service.SearchApp.FindOne(file)
 		paths = append(paths, curFile.Path)
 	}
 	if searchParam.Dest == "" {
@@ -248,10 +232,9 @@ func PostMerge(c *gin.Context) {
 func GetTransferToMp4(c *gin.Context) {
 	id := c.Param("id")
 	to := c.Param("to")
-	fileService := service.CreateSearchService()
 	utils.InfoFormat("GetTransferToMp4 newFile [%v][%v] ", id, to)
 
-	model := fileService.FindOne(id)
+	model := service.SearchApp.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
 		return
@@ -283,10 +266,9 @@ func GetCutMovie(c *gin.Context) {
 	id := c.Param("id")
 	start := c.Param("start")
 	end := c.Param("end")
-	fileService := service.CreateSearchService()
 	utils.InfoFormat("GetTransferToMp4 newFile [%v][%v][%v] ", id, start, end)
 
-	model := fileService.FindOne(id)
+	model := service.SearchApp.FindOne(id)
 	if !utils.ExistsFiles(model.Path) {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
 		return

@@ -20,12 +20,6 @@ import (
 )
 
 type FileService struct {
-	SearchService SearchService
-}
-
-func CreateFileService() FileService {
-	searchService := CreateSearchService()
-	return FileService{SearchService: searchService}
 }
 
 var noPic []byte
@@ -34,7 +28,7 @@ var contentType string
 func (fileService *FileService) GetPng(c *gin.Context) {
 	//path := c.Param("path")
 	id := c.Param("path")
-	file := fileService.SearchService.FindOne(id)
+	file := SearchApp.FindOne(id)
 	if !file.IsNull() && utils.ExistsFiles(file.Png) {
 		c.File(file.Png)
 	} else if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
@@ -50,7 +44,7 @@ func (fileService *FileService) GetPng(c *gin.Context) {
 func (fileService FileService) GetJpg(c *gin.Context) {
 	//path := c.Param("path")
 	id := c.Param("path")
-	file := fileService.SearchService.FindOne(id)
+	file := SearchApp.FindOne(id)
 	if !file.IsNull() && utils.ExistsFiles(file.Jpg) {
 		c.File(file.Jpg)
 	} else if !file.IsNull() && utils.ExistsFiles(file.Png) {
@@ -63,9 +57,9 @@ func (fileService FileService) GetJpg(c *gin.Context) {
 
 }
 
-func (fileService FileService) GetFile(c *gin.Context) {
+func (FileService) GetFile(c *gin.Context) {
 	id := c.Param("id")
-	file := fileService.SearchService.FindOne(id)
+	file := SearchApp.FindOne(id)
 	if utils.ExistsFiles(file.Path) {
 		c.File(file.Path)
 	} else {
@@ -75,9 +69,8 @@ func (fileService FileService) GetFile(c *gin.Context) {
 }
 
 // HeartBeat 心跳与定时
-func (fileService FileService) HeartBeat() {
-	var SearchService = CreateSearchService()
-	go SearchService.ScanAll()
+func (fileService *FileService) HeartBeat() {
+	go SearchApp.ScanAll()
 	time.AfterFunc(180*time.Second, fileService.HeartBeat)
 }
 

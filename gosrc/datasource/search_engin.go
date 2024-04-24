@@ -27,15 +27,6 @@ type SearchEnginCore struct {
 	Keywords       []string
 }
 
-// BucketSearchEngin 搜索引擎
-var BucketSearchEngin = &SearchEnginCore{
-	SearchIndex:    sync.Map{}, // map[string]BucketFile{},
-	CodeRepeat:     []datamodels.Movie{},
-	ActressLib:     map[string]datamodels.Actress{},
-	KeywordHistory: map[string]datamodels.PageResultWrapper{},
-	Keywords:       []string{},
-}
-
 func (se *SearchEnginCore) Reset() {
 	se.SearchIndex.Range(func(key, value interface{}) bool {
 		se.SearchIndex.Delete(key)

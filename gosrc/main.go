@@ -12,8 +12,10 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// var curDir string
-// var staticDir string
+//go:generate go env -w GO111MODULE=on
+//go:generate go env -w GOPROXY=https://goproxy.cn,direct
+//go:generate go mod tidy
+//go:generate go mod download
 
 // 打包命令
 // 1 命令行UI 常规打包 go build
@@ -78,11 +80,10 @@ func main() {
 	}
 
 	//默认启动页面
-	fileService := service.CreateFileService()
 	// 启动扫描系统
-	go fileService.HeartBeat()
+	go service.FileApp.HeartBeat()
 	// 启动转换执行任务
-	go fileService.TaskExecuting()
+	go service.FileApp.TaskExecuting()
 
 	g.Go(func() error {
 		return serviceRequest.ListenAndServe()

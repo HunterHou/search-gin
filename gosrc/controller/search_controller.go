@@ -23,8 +23,7 @@ func PostMovies(c *gin.Context) {
 		return
 	}
 	utils.InfoFormat("PostMovies： [%v]", searchParam)
-	fileService := service.CreateSearchService()
-	result := fileService.SearchDataSource(searchParam)
+	result := service.SearchApp.SearchDataSource(searchParam)
 	result.SetProgress(cons.IndexDone)
 	c.JSON(http.StatusOK, result)
 }
@@ -37,8 +36,7 @@ func PostActress(c *gin.Context) {
 		utils.InfoNormal(param, err)
 	}
 	if service.SearchEngin.IsEmpty() {
-		fileService := service.CreateSearchService()
-		fileService.ScanAll()
+		service.SearchApp.ScanAll()
 	}
 	pageActressResultWrapper := service.SearchEngin.PageActress(param)
 	result := utils.NewPage()

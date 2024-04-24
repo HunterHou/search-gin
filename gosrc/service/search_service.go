@@ -19,12 +19,6 @@ import (
 type SearchService struct {
 }
 
-var SearchEngin = datasource.BucketSearchEngin
-
-func CreateSearchService() SearchService {
-	return SearchService{}
-}
-
 func (fs *SearchService) SearchDataSource(searchParam datamodels.SearchParam) utils.Page {
 	result := utils.NewPage()
 	searchResult := SearchEngin.Page(searchParam)
@@ -827,29 +821,26 @@ func (fs *SearchService) ScanAll() {
 	queryTypes = utils.ExtendsItems(queryTypes, setting.VideoTypes)
 	queryTypes = utils.ExtendsItems(queryTypes, setting.DocsTypes)
 	queryTypes = utils.ExtendsItems(queryTypes, setting.ImageTypes)
-	fileService := CreateFileService()
-	fileService.Walks(dirList, queryTypes)
+	FileApp.Walks(dirList, queryTypes)
 }
 
 // ScanTarget 扫描指定文佳佳
 func (fs *SearchService) ScanTarget(baseDir string) {
 	//统计初始化
-	service := CreateFileService()
 	//初始化查询条件
 	setting := cons.OSSetting
 	var QueryTypes []string
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.VideoTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
 	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
-	files, _ := service.WalkInnter(baseDir, QueryTypes, 0, true, baseDir)
+	files, _ := FileApp.WalkInnter(baseDir, QueryTypes, 0, true, baseDir)
 	SearchEngin.SetBucket(baseDir, datasource.NewInstanceWithFiles(baseDir, files))
 	SearchEngin.BuildActress()
 }
 
 func (fs *SearchService) Delete(id string) {
 	file := fs.FindOne(id)
-	service := CreateFileService()
-	service.DeleteOne(file.DirPath, file.Title)
+	FileApp.DeleteOne(file.DirPath, file.Title)
 	fs.ScanTarget(file.BaseDir)
 }
 
