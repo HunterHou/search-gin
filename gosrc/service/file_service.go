@@ -69,7 +69,7 @@ func (fileService) GetFile(c *gin.Context) {
 
 // HeartBeat 心跳与定时
 func (fileService *fileService) HeartBeat() {
-	go SearchApp.ScanAll()
+	go fileService.ScanAll()
 	time.AfterFunc(180*time.Second, fileService.HeartBeat)
 }
 
@@ -162,6 +162,39 @@ func GetIpAddr() string {
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 	ip := strings.Split(localAddr.String(), ":")[0]
 	return ip
+}
+
+// ScanAll 全局扫描
+func (fileService) ScanAll() {
+	//统计初始化
+	cons.TypeMenu = sync.Map{}
+	cons.TagMenu = sync.Map{}
+	cons.SmallDir = []cons.MenuSize{}
+	//初始化查询条件
+	var dirList []string
+	setting := cons.OSSetting
+	dirList = append(dirList, setting.Dirs...)
+	var queryTypes []string
+	queryTypes = utils.ExtendsItems(queryTypes, setting.VideoTypes)
+	queryTypes = utils.ExtendsItems(queryTypes, setting.DocsTypes)
+	queryTypes = utils.ExtendsItems(queryTypes, setting.ImageTypes)
+	FileApp.Walks(dirList, queryTypes)
+}
+
+// ScanTarget 扫描指定文佳佳
+func (fileService) ScanTarget(baseDir string) {
+	//统计初始化
+	//初始化查询条件
+	setting := cons.OSSetting
+	var QueryTypes []string
+	QueryTypes = utils.ExtendsItems(QueryTypes, setting.VideoTypes)
+	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
+	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
+	cons.IndexDone = cons.IndexDone + 1
+	files, _ := FileApp.WalkInnter(baseDir, QueryTypes, 0, true, baseDir)
+	SearchEngin.setBucket(baseDir, newInstanceWithFiles(baseDir, files))
+	SearchEngin.buildIndexEngin()
+	cons.IndexDone = cons.IndexDone - 1
 }
 
 // Walks 并发扫描多文件夹 并返回所有文件

@@ -189,7 +189,7 @@ func (fs *searchService) ClearTag(id string, tag string) utils.Result {
 	path = strings.ReplaceAll(movie.Nfo, originTagStr, newTagStr)
 	os.Rename(movie.Nfo, path)
 	// 执行当前目录搜索
-	fs.ScanTarget(movie.BaseDir)
+	FileApp.ScanTarget(movie.BaseDir)
 	return utils.NewSuccessByMsg("执行成功")
 }
 
@@ -781,7 +781,7 @@ func (fs *searchService) Rename(movie datamodels.MovieEdit) utils.Result {
 			utils.InfoNormal(err)
 		}
 	}
-	fs.ScanTarget(movieLib.BaseDir)
+	FileApp.ScanTarget(movieLib.BaseDir)
 	return res
 }
 
@@ -806,41 +806,10 @@ func (fs *searchService) SortAct(lib []datamodels.Actress, sortType string) {
 
 }
 
-// ScanAll 全局扫描
-func (fs *searchService) ScanAll() {
-	//统计初始化
-	cons.TypeMenu = sync.Map{}
-	cons.TagMenu = sync.Map{}
-	cons.SmallDir = []cons.MenuSize{}
-	//初始化查询条件
-	var dirList []string
-	setting := cons.OSSetting
-	dirList = append(dirList, setting.Dirs...)
-	queryTypes := []string{}
-	queryTypes = utils.ExtendsItems(queryTypes, setting.VideoTypes)
-	queryTypes = utils.ExtendsItems(queryTypes, setting.DocsTypes)
-	queryTypes = utils.ExtendsItems(queryTypes, setting.ImageTypes)
-	FileApp.Walks(dirList, queryTypes)
-}
-
-// ScanTarget 扫描指定文佳佳
-func (fs *searchService) ScanTarget(baseDir string) {
-	//统计初始化
-	//初始化查询条件
-	setting := cons.OSSetting
-	var QueryTypes []string
-	QueryTypes = utils.ExtendsItems(QueryTypes, setting.VideoTypes)
-	QueryTypes = utils.ExtendsItems(QueryTypes, setting.DocsTypes)
-	QueryTypes = utils.ExtendsItems(QueryTypes, setting.ImageTypes)
-	files, _ := FileApp.WalkInnter(baseDir, QueryTypes, 0, true, baseDir)
-	SearchEngin.setBucket(baseDir, newInstanceWithFiles(baseDir, files))
-	SearchEngin.buildIndexEngin()
-}
-
 func (fs *searchService) Delete(id string) {
 	file := fs.FindOne(id)
 	FileApp.DeleteOne(file.DirPath, file.Title)
-	fs.ScanTarget(file.BaseDir)
+	FileApp.ScanTarget(file.BaseDir)
 }
 
 func (fs *searchService) OnlyRepeat(files []datamodels.Movie) []datamodels.Movie {
