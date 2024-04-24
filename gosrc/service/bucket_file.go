@@ -4,15 +4,15 @@ import (
 	"searchGin/datamodels"
 )
 
-type BucketFile struct {
+type bucketFile struct {
 	InstanceName string
 	TotalSize    int64
 	TotalCount   int
 	FileLib      map[string]datamodels.Movie
 }
 
-func NewInstance(name string) BucketFile {
-	return BucketFile{
+func newInstance(name string) bucketFile {
+	return bucketFile{
 		InstanceName: name,
 		TotalSize:    0,
 		TotalCount:   0,
@@ -20,33 +20,33 @@ func NewInstance(name string) BucketFile {
 	}
 }
 
-func NewInstanceWithFiles(baseDir string, files []datamodels.Movie) BucketFile {
-	bucket := NewInstance(baseDir)
+func newInstanceWithFiles(baseDir string, files []datamodels.Movie) bucketFile {
+	bucket := newInstance(baseDir)
 	for _, file := range files {
-		bucket.Put(file)
+		bucket.put(file)
 	}
 	return bucket
 }
 
-func (fs *BucketFile) IsNotEmpty() bool {
+func (fs *bucketFile) isNotEmpty() bool {
 	return len(fs.FileLib) > 0
 }
 
-func (fs *BucketFile) IsEmpty() bool {
-	return !fs.IsNotEmpty()
+func (fs *bucketFile) isEmpty() bool {
+	return !fs.isNotEmpty()
 }
 
-func (fs *BucketFile) Clear() {
-	clear(fs.FileLib)
-}
+//func (fs *bucketFile) Clear() {
+//	clear(fs.FileLib)
+//}
 
-func (fs *BucketFile) Put(model datamodels.Movie) {
+func (fs *bucketFile) put(model datamodels.Movie) {
 	fs.FileLib[model.Id] = model
 	fs.TotalSize = fs.TotalSize + model.Size
 	fs.TotalCount = fs.TotalCount + 1
 }
 
-func (fs *BucketFile) Get(id string) datamodels.Movie {
+func (fs *bucketFile) get(id string) datamodels.Movie {
 	model, ok := fs.FileLib[id]
 	if ok {
 		return model
@@ -54,7 +54,7 @@ func (fs *BucketFile) Get(id string) datamodels.Movie {
 	return datamodels.Movie{}
 }
 
-func (fs *BucketFile) SearchBucket(searchParam datamodels.SearchParam) datamodels.SearchResultWrapper {
+func (fs *bucketFile) searchBucket(searchParam datamodels.SearchParam) datamodels.SearchResultWrapper {
 	resultWrapper := datamodels.SearchByKeyWord(fs.FileLib, searchParam.Keyword, searchParam.MovieType)
 	return resultWrapper
 

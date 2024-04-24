@@ -18,7 +18,7 @@ type repeatModel struct {
 type searchEnginCore struct {
 	LastSortField  string
 	LastSortType   string
-	SearchIndex    sync.Map // map[string]BucketFile
+	SearchIndex    sync.Map // map[string]bucketFile
 	CodeRepeat     []datamodels.Movie
 	ActressLib     map[string]datamodels.Actress
 	TotalSize      int64
@@ -42,7 +42,7 @@ func (se *searchEnginCore) Init(baseDirs []string) {
 	for _, dir := range baseDirs {
 		_, ok := se.SearchIndex.Load(dir)
 		if !ok {
-			se.SearchIndex.Store(dir, NewInstance(dir))
+			se.SearchIndex.Store(dir, newInstance(dir))
 		}
 	}
 }
@@ -88,11 +88,11 @@ func (se *searchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 		resultWrapper = datamodels.NewPageWrapper()
 		resultWrapper.ResultCount = searchParam.PageSize
 		se.SearchIndex.Range(func(key, value interface{}) bool {
-			index := value.(BucketFile)
-			if index.IsEmpty() {
+			index := value.(bucketFile)
+			if index.isEmpty() {
 				return true
 			}
-			indexWrapper := index.SearchBucket(searchParam)
+			indexWrapper := index.searchBucket(searchParam)
 			if !indexWrapper.IsNotEmpty() {
 				return true
 			}
@@ -119,11 +119,11 @@ func (se *searchEnginCore) addHistory(uniqueWords string, resultWrapper datamode
 func (se *searchEnginCore) FindById(id string) datamodels.Movie {
 	var model = datamodels.Movie{}
 	se.SearchIndex.Range(func(key, value interface{}) bool {
-		index := value.(BucketFile)
-		if index.IsEmpty() {
+		index := value.(bucketFile)
+		if index.isEmpty() {
 			return true
 		}
-		model = index.Get(id)
+		model = index.get(id)
 		if !model.IsNull() {
 			return false
 		}
@@ -140,12 +140,12 @@ func (se *searchEnginCore) FindActressByName(id string) datamodels.Actress {
 	return datamodels.Actress{}
 }
 
-func (se *searchEnginCore) SetBucket(baseDir string, bucket BucketFile) {
+func (se *searchEnginCore) setBucket(baseDir string, bucket bucketFile) {
 	se.clearHistory([]string{})
 	se.SearchIndex.Store(baseDir, bucket)
 }
 
-func (se *searchEnginCore) BuildActress() {
+func (se *searchEnginCore) buildIndexEngin() {
 	se.clearHistory([]string{})
 	actressLib := map[string]datamodels.Actress{}
 	var fileRepeats []datamodels.Movie
@@ -153,8 +153,8 @@ func (se *searchEnginCore) BuildActress() {
 	totalSize := int64(0)
 	totalCount := 0
 	se.SearchIndex.Range(func(key, value interface{}) bool {
-		index := value.(BucketFile)
-		if index.IsNotEmpty() {
+		index := value.(bucketFile)
+		if index.isNotEmpty() {
 			totalSize += index.TotalSize
 			totalCount += index.TotalCount
 			for _, movie := range index.FileLib {

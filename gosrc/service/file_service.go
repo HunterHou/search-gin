@@ -199,7 +199,7 @@ func (fileService *fileService) Walks(baseDir []string, types []string) []datamo
 		}
 
 	}
-	go SearchEngin.BuildActress()
+	go SearchEngin.buildIndexEngin()
 	return result
 
 }
@@ -217,7 +217,7 @@ func (fileService *fileService) goWalk(baseDir string, types []string, wg *sync.
 		Size: int64(len(files)),
 	}
 	scanTime <- thisTime
-	SearchEngin.SetBucket(baseDir, NewInstanceWithFiles(baseDir, files))
+	SearchEngin.setBucket(baseDir, newInstanceWithFiles(baseDir, files))
 	cons.IndexDone = cons.IndexDone - 1
 
 }
