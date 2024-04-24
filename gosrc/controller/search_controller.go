@@ -36,7 +36,7 @@ func PostActress(c *gin.Context) {
 		utils.InfoNormal(param, err)
 	}
 	if service.SearchEngin.IsEmpty() {
-		service.SearchApp.ScanAll()
+		service.FileApp.ScanAll()
 	}
 	pageActressResultWrapper := service.SearchEngin.PageActress(param)
 	result := utils.NewPage()

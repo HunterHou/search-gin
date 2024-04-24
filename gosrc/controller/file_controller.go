@@ -138,7 +138,7 @@ func GetImageList(c *gin.Context) {
 
 // GetRefreshIndex 刷新索引
 func GetRefreshIndex(c *gin.Context) {
-	service.SearchApp.ScanAll()
+	service.FileApp.ScanAll()
 	res := utils.NewSuccessByMsg("扫描结束！")
 	c.JSON(http.StatusOK, res)
 }
