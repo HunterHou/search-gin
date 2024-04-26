@@ -1,6 +1,7 @@
 package service
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"io/ioutil"
@@ -11,6 +12,7 @@ import (
 	"searchGin/utils"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -457,7 +459,12 @@ func (fs *searchService) MakeNfo(toFile datamodels.Movie) {
 	nfo.WriteString(nfoStr)
 }
 
-var httpClient = &http.Client{}
+var httpClient = &http.Client{Timeout: 30 * time.Second, // 设置15秒超时
+	Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true, // 如果你需要跳过证书验证，设置为true
+		},
+	}}
 
 func httpGet(url string) (*http.Response, error) {
 
@@ -471,7 +478,7 @@ func httpGet(url string) (*http.Response, error) {
 	return resp, err
 }
 
-var client = resty.New()
+var client = resty.New().SetTimeout(30 * time.Second).SetRetryWaitTime(5 * time.Second)
 
 func httpGetV2(url string) (*resty.Response, error) {
 	resp, err := client.R().
