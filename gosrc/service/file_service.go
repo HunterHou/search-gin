@@ -241,13 +241,14 @@ func (fileService *fileService) Walks(baseDir []string, types []string) []datamo
 func (fileService *fileService) goWalk(baseDir string, types []string, wg *sync.WaitGroup, datas chan []datamodels.Movie, scanTime chan cons.MenuSize) {
 	defer wg.Done()
 	start := time.Now()
-	files, _ := fileService.WalkInnter(baseDir, types, 0, true, baseDir)
+	files, size := fileService.WalkInnter(baseDir, types, 0, true, baseDir)
 	datas <- files
 	ti := time.Since(start)
 	thisTime := cons.MenuSize{
-		Name: baseDir,
-		Cnt:  ti.Milliseconds(),
-		Size: int64(len(files)),
+		Name:    baseDir,
+		Cnt:     ti.Milliseconds(),
+		Size:    int64(len(files)),
+		SizeStr: utils.GetSizeStr(size),
 	}
 	scanTime <- thisTime
 	SearchEngin.setBucket(baseDir, newInstanceWithFiles(baseDir, files))

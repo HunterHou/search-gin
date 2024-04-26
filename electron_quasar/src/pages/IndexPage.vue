@@ -4,8 +4,8 @@
       <div class="text-h5 q-pa-md">文件扫描分析</div>
       <template v-slot:action>
         <q-btn style="background: #ff0080; color: white" label="扫描" icon="search" :loading="indexLoading" size="small"
-          @click="refreshIndex()" />
-        <q-btn color="green" class="q-ml-md" label="刷新" icon="refresh" @click="f5" />
+               @click="refreshIndex()"/>
+        <q-btn color="green" class="q-ml-md" label="刷新" icon="refresh" @click="f5"/>
       </template>
     </q-banner>
     <q-splitter v-model="splitterModel">
@@ -39,8 +39,9 @@
                     <div class="text-h6">{{ sc.Name }}</div>
                     <div class="text-subtitle2">时间：{{ sc.Cnt }}</div>
                     <div class="text-subtitle2">文件数：{{ sc.Size }}</div>
+                    <div class="text-subtitle2">大小：{{ sc.SizeStr }}</div>
                   </q-card-section>
-                  <q-separator />
+                  <q-separator/>
                   <q-card-actions vertical>
                     <q-btn flat color="blue" @click="gotoMenu({ ...sc, IsDir: true })">传送</q-btn>
                   </q-card-actions>
@@ -59,7 +60,7 @@
                     <div class="text-subtitle2">文件数：{{ sc.Cnt }}</div>
                     <div class="text-subtitle2">文件大小：{{ sc.SizeStr }}</div>
                   </q-card-section>
-                  <q-separator />
+                  <q-separator/>
                   <q-card-actions vertical>
                     <div style="
                         display: flex;
@@ -82,9 +83,10 @@
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar';
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import {useQuasar} from 'quasar';
+import {ref, onMounted} from 'vue';
+import {useRouter} from 'vue-router';
+
 const splitterModel = ref(50);
 const insideModel = ref(50);
 
@@ -93,11 +95,11 @@ import {
   OpenFolerByPath,
   DeleteFolerByPath,
 } from '../components/api/searchAPI';
-import { TypeSizeMap, TagSizeMap, ScanTime } from '../components/api/homeAPI';
-import { onKeyStroke } from '@vueuse/core';
-import { useSystemProperty } from '../stores/System';
+import {TypeSizeMap, TagSizeMap, ScanTime} from '../components/api/homeAPI';
+import {onKeyStroke} from '@vueuse/core';
+import {useSystemProperty} from '../stores/System';
 
-const { push } = useRouter();
+const {push} = useRouter();
 const systemProperty = useSystemProperty();
 document.title = '分析';
 
@@ -119,7 +121,7 @@ const folderGotoMenu = (Name) => {
 };
 
 const gotoMenu = (data) => {
-  const { IsDir, Name } = data;
+  const {IsDir, Name} = data;
   const movieType = !IsDir && Name !== '全部' ? Name : '';
   systemProperty.setPage(1);
   if (IsDir) {
@@ -140,7 +142,7 @@ const loadTypeSize = async () => {
 const loadTagSize = async () => {
   const res = await TagSizeMap();
   if (res) {
-    tagData.value = res;
+    tagData.value = res.length > 100 ? res.splice(0, 100) : res;
   }
 };
 const loadScanTime = async () => {
@@ -152,31 +154,31 @@ onMounted(() => {
 });
 
 const openThis = async (data) => {
-  const { Name } = data;
-  const res = await OpenFolerByPath({ dirpath: Name });
+  const {Name} = data;
+  const res = await OpenFolerByPath({dirpath: Name});
   if (res.Code == 200) {
-    $q.notify({ type: 'positive', message: '执行成功' });
+    $q.notify({type: 'positive', message: '执行成功'});
   } else {
-    $q.notify({ type: 'warning', message: '执行失败' });
+    $q.notify({type: 'warning', message: '执行失败'});
   }
 };
 const deleteThis = async (data) => {
-  const { Name } = data;
-  const res = await DeleteFolerByPath({ dirpath: Name });
+  const {Name} = data;
+  const res = await DeleteFolerByPath({dirpath: Name});
   if (res.Code == 200) {
-    $q.notify({ type: 'positive', message: '执行成功' });
+    $q.notify({type: 'positive', message: '执行成功'});
     refreshIndex();
   } else {
-    $q.notify({ type: 'warning', message: '执行失败' });
+    $q.notify({type: 'warning', message: '执行失败'});
   }
 };
 const refreshIndex = async () => {
-  const { data } = await RefreshAPI();
+  const {data} = await RefreshAPI();
   console.log(data);
   if (data.Code == 200) {
     f5();
   } else {
-    $q.notify({ type: 'warning', message: data.Message });
+    $q.notify({type: 'warning', message: data.Message});
   }
 };
 

@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/go-resty/resty/v2"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -319,21 +320,21 @@ func (fs *searchService) DownJpgMakePng(finalPath string, url string, makePng bo
 	if !strings.Contains(url, "https") {
 		url = cons.OSSetting.BaseUrl + url
 	}
-	resp, downErr := httpGet(url)
+	resp, downErr := httpGetV2(url)
 	if downErr != nil {
 		result.Fail()
 		utils.InfoFormat("downErr:%v  \n\n", downErr)
 		result.Message = "文件下载失败：" + url
 		return result
 	}
-	body, readErr := ioutil.ReadAll(resp.Body)
-	if readErr != nil {
-		result.Fail()
-		utils.InfoFormat("readErr:%v  \n\n", readErr)
-		result.Message = "请求读取response失败"
-		return result
-	}
-	jpgOut.Write(body)
+	//body, readErr := ioutil.ReadAll(resp.Body())
+	//if readErr != nil {
+	//	result.Fail()
+	//	utils.InfoFormat("readErr:%v  \n\n", readErr)
+	//	result.Message = "请求读取response失败"
+	//	return result
+	//}
+	jpgOut.Write(resp.Body())
 	jpgOut.Close()
 	if makePng {
 		pngErr := utils.ImageToPng(jpgPath)
@@ -464,8 +465,26 @@ func httpGet(url string) (*http.Response, error) {
 	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36")
 	client := httpClient
 	resp, err := client.Do(request)
+	if err != nil {
+		fmt.Println(err)
+	}
 	return resp, err
+}
 
+var client = resty.New()
+
+func httpGetV2(url string) (*resty.Response, error) {
+	resp, err := client.R().
+		EnableTrace().
+		Get(url)
+	//request, err := http.NewRequest("GET", url, nil)
+	//request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36")
+	//client := httpClient
+	//resp, err := client.Do(request)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return resp, err
 }
 
 func isOM(name string) bool {

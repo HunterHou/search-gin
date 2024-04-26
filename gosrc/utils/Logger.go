@@ -13,8 +13,7 @@ var LogWriter = io.MultiWriter(fLog, os.Stdout)
 
 func InfoFormat(format string, v ...any) {
 	go func() {
-		output, _ := json.Marshal(&v)
-		_, err := fmt.Fprintln(gin.DefaultWriter, format+string(output))
+		_, err := fmt.Fprintln(gin.DefaultWriter, format, v)
 		if err != nil {
 			return
 		}
