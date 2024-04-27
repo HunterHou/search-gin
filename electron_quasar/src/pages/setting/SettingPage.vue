@@ -137,6 +137,7 @@
               />
             </template>
           </q-field>
+          <q-input type="textarea" autogrow v-model="view.settingInfo.ImageHost" label="ImageHost" />
         </q-tab-panel>
 
         <q-tab-panel name="system">
