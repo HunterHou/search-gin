@@ -118,6 +118,12 @@ const reg = /\w+[-_]\d+/;
 
 const titleChange = (v) => {
   if (v) {
+    console.log(v.length);
+    v = v.replace(/[\r\n\t]+/g, "");
+    v = v.replace(/&nbsp;/g, "");
+    console.log(v.length);
+    v= v.trimEnd()
+    console.log(v.length);
     const code = v.match(reg);
     if (code && code[0] && code[0].length > 0) {
       view.item.Code = code[0];

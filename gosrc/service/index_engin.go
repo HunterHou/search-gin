@@ -62,7 +62,7 @@ func (se *searchEnginCore) PageActress(searchParam datamodels.SearchParam) datam
 	resultWrapper.ResultCount = len(list)
 	return resultWrapper
 }
-func (se *searchEnginCore) clearHistory(uniqueWords []string) {
+func (se *searchEnginCore) clearHistory() {
 	clear(se.KeywordHistory)
 
 }
@@ -141,12 +141,12 @@ func (se *searchEnginCore) FindActressByName(id string) datamodels.Actress {
 }
 
 func (se *searchEnginCore) setBucket(baseDir string, bucket bucketFile) {
-	se.clearHistory([]string{})
+	se.clearHistory()
 	se.SearchIndex.Store(baseDir, bucket)
 }
 
 func (se *searchEnginCore) buildIndexEngin() {
-	se.clearHistory([]string{})
+	se.clearHistory()
 	actressLib := map[string]datamodels.Actress{}
 	var fileRepeats []datamodels.Movie
 	codeRepeats := map[string]repeatModel{}
