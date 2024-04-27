@@ -14,6 +14,7 @@
       >
         <q-tab name="search" label="搜索设置" />
         <q-tab name="base" label="基础设置" />
+        <q-tab name="note" label="记事本" />
         <q-tab name="system" label="系统设置" />
       </q-tabs>
     </q-page-sticky>
@@ -137,6 +138,8 @@
               />
             </template>
           </q-field>
+        </q-tab-panel>
+        <q-tab-panel name="note">
           <q-input type="textarea" autogrow v-model="view.settingInfo.Remark" label="Remark" />
         </q-tab-panel>
 
