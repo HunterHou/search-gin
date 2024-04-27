@@ -12,10 +12,10 @@
         indicator-color="primary"
         align="justify"
       >
-        <q-tab name="search" label="搜索设置" />
-        <q-tab name="base" label="基础设置" />
-        <q-tab name="note" label="记事本" />
-        <q-tab name="system" label="系统设置" />
+        <q-tab name="search" label="搜索设置"/>
+        <q-tab name="base" label="基础设置"/>
+        <q-tab name="note" label="网络设置"/>
+        <q-tab name="system" label="系统设置"/>
       </q-tabs>
     </q-page-sticky>
     <div style="margin: 40px 10px 40px 10px">
@@ -29,12 +29,12 @@
       >
         <a :href="view.ipAddr">访问： {{ view.ipAddr }}</a>
       </div>
-      <q-separator />
+      <q-separator/>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="search">
           <q-field color="purple-12" label="Buttons" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <MutiSelector
@@ -47,7 +47,7 @@
 
           <q-field color="purple-12" label="Dirs" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <MutiSelector
@@ -59,7 +59,7 @@
           </q-field>
           <q-field color="purple-12" label="MovieTypes" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <MutiInput
@@ -70,7 +70,7 @@
           </q-field>
           <q-field color="purple-12" label="VideoTypes" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <MutiSelector
@@ -82,7 +82,7 @@
           </q-field>
           <q-field color="purple-12" label="Tags" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <MutiSelector
@@ -99,15 +99,11 @@
             v-model="view.settingInfo.ControllerHost"
             label="ControllerHost"
           />
-          <q-input v-model="view.settingInfo.ImageHost" label="ImageHost" />
-          <q-input v-model="view.settingInfo.StreamHost" label="StreamHost" />
-          <q-input v-model="view.settingInfo.BaseUrl" label="BaseUrl" />
-          <q-input v-model="view.settingInfo.ImageUrl" label="ImageUrl" />
-          <q-input v-model="view.settingInfo.OMUrl" label="OMUrl" />
-
+          <q-input v-model="view.settingInfo.ImageHost" label="ImageHost"/>
+          <q-input v-model="view.settingInfo.StreamHost" label="StreamHost"/>
           <q-field color="purple-12" label="DirsLib" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <MutiInput
@@ -118,7 +114,7 @@
           </q-field>
           <q-field color="purple-12" label="TagsLib" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <MutiInput
@@ -129,7 +125,7 @@
           </q-field>
           <q-field color="purple-12" label="Types" stack-label>
             <template v-slot:prepend>
-              <q-icon name="event" />
+              <q-icon name="event"/>
             </template>
             <template v-slot:control>
               <MutiInput
@@ -140,11 +136,13 @@
           </q-field>
         </q-tab-panel>
         <q-tab-panel name="note">
-          <q-input type="textarea" autogrow v-model="view.settingInfo.Remark" label="Remark" />
+          <q-input v-model="view.settingInfo.BaseUrl" label="BaseUrl"/>
+          <q-input v-model="view.settingInfo.ImageUrl" label="ImageUrl"/>
+          <q-input v-model="view.settingInfo.OMUrl" label="OMUrl"/>
+          <q-input type="textarea" autogrow v-model="view.settingInfo.Remark" label="Remark"/>
         </q-tab-panel>
 
         <q-tab-panel name="system">
-          <!-- <q-editor v-model="view.settingInfo.SystemHtml" min-height="5rem" /> -->
           <q-editor
             v-model="view.settingInfo.SystemHtml"
             :dense="$q.screen.lt.md"
@@ -242,9 +240,9 @@
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar';
+import {useQuasar} from 'quasar';
 
-import { onMounted, reactive, ref } from 'vue';
+import {onMounted, reactive, ref} from 'vue';
 import {
   GetSettingInfo,
   PostSettingInfo,
@@ -252,7 +250,7 @@ import {
 } from '../../components/api/settingAPI';
 import MutiSelector from '../../components/MutiSelector.vue';
 import MutiInput from '../../components/MutiInput.vue';
-import { buttonEnum } from '../../components/model/Setting';
+import {buttonEnum} from '../../components/model/Setting';
 
 const $q = useQuasar();
 const tab = ref('search');
@@ -262,24 +260,24 @@ const view = reactive({
 });
 
 const submitForm = async () => {
-  const { Code, Message } = await PostSettingInfo(view.settingInfo);
+  const {Code, Message} = await PostSettingInfo(view.settingInfo);
   console.log(Code, Message);
   if (Code != 200) {
-    $q.notify({ message: `${Message}` });
+    $q.notify({message: `${Message}`});
     // window.location.reload()
   } else {
-    $q.notify({ message: `${Message}` });
+    $q.notify({message: `${Message}`});
   }
 };
 
 const fetchSearch = async () => {
-  const { data } = await GetSettingInfo();
+  const {data} = await GetSettingInfo();
   console.log(data);
   view.settingInfo = data;
 };
 
 const queryIpAddr = async () => {
-  const { Code, Data } = await GetIpAddr();
+  const {Code, Data} = await GetIpAddr();
   if (Code == '200') {
     view.ipAddr = `http://${Data}:10081`;
   }
