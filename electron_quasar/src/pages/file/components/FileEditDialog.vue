@@ -17,7 +17,7 @@
               v-model="view.item.MovieType"
               :options="MovieTypeOptions"
               toggle-color="primary"
-              />
+            />
             <q-input
               label="编码"
               autogrow
@@ -66,28 +66,28 @@
         </div>
       </q-form>
       <q-card-actions align="center">
-        <q-btn color="primary" label="移动" @click="editMoveout" />
-        <q-btn color="primary" label="命名" @click="editItemSubmit(false)" />
-        <q-btn color="primary" label="预览" @click="view.preview === true" />
-        <q-btn color="primary" label="关闭" @click="onDialogCancel" />
+        <q-btn color="primary" label="移动" @click="editMoveout"/>
+        <q-btn color="primary" label="命名" @click="editItemSubmit(false)"/>
+        <q-btn color="primary" label="预览" @click="view.preview === true"/>
+        <q-btn color="primary" label="关闭" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar';
-import { useDialogPluginComponent } from 'quasar';
-import { reactive } from 'vue';
+import {useQuasar} from 'quasar';
+import {useDialogPluginComponent} from 'quasar';
+import {reactive} from 'vue';
 
 import {
   formatTitle,
   formatCode,
   MovieTypeOptions,
 } from '../../../components/utils';
-import { FileRename } from '../../../components/api/searchAPI';
-import { FileModel } from 'src/components/model/File';
-import { useSystemProperty } from 'stores/System';
+import {FileRename} from '../../../components/api/searchAPI';
+import {FileModel} from 'src/components/model/File';
+import {useSystemProperty} from 'stores/System';
 
 const systemProperty = useSystemProperty();
 
@@ -122,16 +122,19 @@ const titleChange = (v) => {
     v = v.replace(/[\r\n\t]+/g, "");
     v = v.replace(/&nbsp;/g, "");
     console.log(v.length);
-    v= v.trimEnd()
+    v = v.trimEnd()
     console.log(v.length);
     const code = v.match(reg);
     if (code && code[0] && code[0].length > 0) {
       view.item.Code = code[0];
-      makePreview();
+      if (!view.item.MovieType || view.item.MovieType == '无') {
+        makePreview();
+      }
+
     }
     const arr = v.split(' ');
-    if (arr && arr.length > 2){
-        view.item.Actress = arr[arr.length-1];
+    if (arr && arr.length > 2) {
+      view.item.Actress = arr[arr.length - 1];
     }
     view.item.Title = view.item.Title.replace(view.item.Code, '');
   }
@@ -153,7 +156,7 @@ const editMoveout = async () => {
 };
 
 const editItemSubmit = async (MoveOut) => {
-  const { Id, Title, Code, Actress, FileType, MovieType, Jpg, Png } = view.item;
+  const {Id, Title, Code, Actress, FileType, MovieType, Jpg, Png} = view.item;
   let code = Code.trim();
   if (code && code.indexOf('-') < 0) {
     code = '-' + code;
@@ -203,11 +206,11 @@ const editItemSubmit = async (MoveOut) => {
     }
   } else {
     emits('sub-one');
-    $q.notify({ type: 'negative', message: res.Message });
+    $q.notify({type: 'negative', message: res.Message});
   }
 };
 
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+const {dialogRef, onDialogHide, onDialogOK, onDialogCancel} =
   useDialogPluginComponent();
 // dialogRef      - 用在 QDialog 上的 Vue ref 模板引用
 // onDialogHide   - 处理 QDialog 上 @hide 事件的函数
