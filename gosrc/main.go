@@ -66,7 +66,7 @@ func main() {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
-	app.GET("close", func(c *gin.Context) {
+	app.GET("api/close", func(c *gin.Context) {
 		if err := serviceRequest.Shutdown(context.Background()); err != nil {
 			log.Fatal("Server Shutdown:", err)
 		} else {
