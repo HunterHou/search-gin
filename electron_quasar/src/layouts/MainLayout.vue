@@ -37,9 +37,9 @@
         </q-list>
       </q-scroll-area>
     </q-drawer>
-    <q-drawer side="right" :width="withDrawer" v-model="systemProperty.drawerRight" bordered class="bg-grey-3">
-      <Playing ref="vue3VideoPlayRef" mode="drawer" />
-    </q-drawer>
+<!--    <q-drawer side="right" :width="withDrawer" v-model="systemProperty.drawerRight" bordered class="bg-grey-3">-->
+<!--      <PlayingVideo ref="vue3VideoPlayRef" mode="list" />-->
+<!--    </q-drawer>-->
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -50,7 +50,7 @@
 
 <script setup>
 import { computed, reactive, ref, watch } from 'vue';
-import Playing from 'src/components/PlayingVideo.vue';
+// import PlayingVideo from 'src/components/PlayingVideo.vue';
 import { useSystemProperty } from 'stores/System';
 import { useQuasar } from 'quasar';
 import EssentialLink from 'components/EssentialLink.vue';
@@ -85,9 +85,9 @@ const isDesktop = computed(() => {
   return $q.platform.is.electron;
 });
 
-const withDrawer = computed(() => {
-  return $q.platform.is.mobile ? $q.screen.width : $q.screen.width / 2;
-});
+// const withDrawer = computed(() => {
+//   return $q.platform.is.mobile ? $q.screen.width : $q.screen.width / 2;
+// });
 
 const playing = computed(() => {
   return systemProperty.Playing || {};

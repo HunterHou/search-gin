@@ -55,9 +55,11 @@ func EasyFile(dir string, path string, name string, fileType string, size int64,
 	// 使用工厂模式 返回一个 Movie 实例
 	fileKey, _ := utils.DirpathForId(path)
 	movieType := utils.GetMovieType(name)
+	Actress := utils.GetActress(name)
+	code := utils.GetCode(name)
 	result := Movie{
 		Id:        fileKey,
-		Code:      "",
+		Code:      code,
 		Title:     utils.GetTitle(name),
 		Name:      name,
 		Path:      path,
@@ -67,7 +69,7 @@ func EasyFile(dir string, path string, name string, fileType string, size int64,
 		Srt:       utils.ConcatSuffix(path, "srt"),
 		Gif:       utils.ConcatSuffix(path, "gif"),
 		Tags:      utils.GetTags(path, ""),
-		Actress:   "",
+		Actress:   Actress,
 		FileType:  fileType,
 		DirPath:   dir,
 		Size:      size,

@@ -2,7 +2,6 @@ package service
 
 import (
 	"searchGin/datamodels"
-	"searchGin/utils"
 	"sync"
 )
 
@@ -38,13 +37,13 @@ func (fs *bucketFile) isEmpty() bool {
 	return !fs.isNotEmpty()
 }
 
-func (fs *bucketFile) FetchInfo() {
-	for s, movie := range fs.FileLib {
-		movie.Actress = utils.GetActress(movie.Name)
-		movie.Code = utils.GetCode(movie.Name)
-		fs.FileLib[s] = movie
-	}
-}
+//func (fs *bucketFile) FetchInfo() {
+//	for s, movie := range fs.FileLib {
+//		movie.Actress = utils.GetActress(movie.Name)
+//		movie.Code = utils.GetCode(movie.Name)
+//		fs.FileLib[s] = movie
+//	}
+//}
 
 func (fs *bucketFile) put(model datamodels.Movie) {
 	fs.FileLib[model.Id] = model

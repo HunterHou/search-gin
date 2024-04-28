@@ -1,39 +1,39 @@
 <template>
   <q-dialog ref="dialogRef" @escape-key="onDialogClose" @before-hide="onDialogClose" @hide="onDialogClose"
-    v-model:model-value="showDialog" :maximized="isMobile" full-width style="max-width: 1200px;">
+            v-model:model-value="showDialog" :maximized="isMobile" full-width style="max-width: 1200px;">
     <q-card style="max-width: 1200px!important;height: 96vh!important;">
       <q-toolbar class="bg-black text-white shadow-2 rounded-borders flex-center "
-        style="position: fixed;z-index: 5;max-width: 1200px;">
+                 style="position: fixed;z-index: 5;max-width: 1200px;">
         <q-toolbar-title shrink>
           <div style="max-width: 50vw;height: 1.5rem;overflow: hidden;">
             {{ view.item.Name }}
           </div>
         </q-toolbar-title>
-        <q-space />
+        <q-space/>
         <q-tabs v-model="showDetail" shrink>
           <q-tab v-for="item in ClickButtons" :key="item.value" :name="item.value" :label="item.label"
-            @click="tabClick(item.value)" />
+                 @click="tabClick(item.value)"/>
         </q-tabs>
-        <q-space />
+        <q-space/>
         <q-btn dense flat icon="close" @click="onDialogClose">
           <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
         </q-btn>
       </q-toolbar>
       <div style="margin-top:50px">
-        <div v-if="showDetail == 'web'" style="overflow: auto;">
+        <div v-if="showDetail === 'web'" style="overflow: auto;">
           <iframe :frameborder="0" :allowfullscreen="true" width="100%" height="900px"
-            :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
+                  :src="`${view.settingInfo.BaseUrl}${view.item.Code}`"></iframe>
         </div>
-        <div v-if="showDetail == 'movie'">
-          <Playing ref="vue3VideoPlayRef" :mode="isMobile ? 'drawer' : 'window'" @close="onDialogClose" />
+        <div v-if="showDetail === 'movie'">
+          <Playing ref="vue3VideoPlayRef" mode="list" @close="onDialogClose"/>
         </div>
-        <div v-if="showDetail == 'detail'">
+        <div v-if="showDetail === 'detail'">
           <q-img fit="fit" easier draggable :src="getJpg(view.item.Id)" style="max-height: 60vh;">
           </q-img>
           <q-field label="Code" stack-label>
             <template v-slot:control>
               <div class="self-center full-width no-outline cursor-pointer" style="color: blue" tabindex="0"
-                @click="searchCode(view.item)">
+                   @click="searchCode(view.item)">
                 {{ view.item.Code }}
               </div>
             </template>
@@ -69,23 +69,23 @@
         </div>
         <div v-if="showDetail == 'image'">
           <q-img fit="fit" v-for="item in view.prewiewImages" :key="item.Id" :src="getTempImage(item.Id)"
-            style="width: 100%;height: auto;"></q-img>
+                 style="width: 100%;height: auto;"></q-img>
         </div>
       </div>
     </q-card>
   </q-dialog>
 </template>
 <script setup>
-import { useQuasar } from 'quasar'
-import { useDialogPluginComponent } from 'quasar';
-import { onMounted, reactive, ref, computed } from 'vue';
+import {useQuasar} from 'quasar'
+import {useDialogPluginComponent} from 'quasar';
+import {onMounted, reactive, ref, computed} from 'vue';
 
-import { formatTitle } from '../../../components/utils';
-import { GetSettingInfo } from '../../../components/api/settingAPI';
+import {formatTitle} from '../../../components/utils';
+import {GetSettingInfo} from '../../../components/api/settingAPI';
 import {
   QueryDirImageBase64
 } from '../../../components/api/searchAPI';
-import { getJpg, getTempImage } from 'src/components/utils/images';
+import {getJpg, getTempImage} from 'src/components/utils/images';
 import Playing from 'src/components/PlayingVideo.vue';
 
 const $q = useQuasar()
@@ -95,10 +95,10 @@ const isMobile = computed(() => {
 });
 
 const ClickButtons = [
-  { label: '播放', value: 'movie' },
-  { label: '详情', value: 'detail' },
-  { label: '图层', value: 'image' },
-  { label: 'JavBus', value: 'web' }
+  {label: '播放', value: 'movie'},
+  {label: '详情', value: 'detail'},
+  {label: '图层', value: 'image'},
+  {label: 'JavBus', value: 'web'}
 ]
 
 const vue3VideoPlayRef = ref(null)
@@ -132,9 +132,9 @@ defineEmits([
 ]);
 
 const open = (data) => {
-  const { item, cb, playing } = data
+  const {item, cb, playing} = data
   view.prewiewImages = [];
-  view.item = { ...item };
+  view.item = {...item};
   view.callback = cb;
   dialogRef.value.show();
   if (playing) {
@@ -163,14 +163,14 @@ const searchCode = (item) => {
   const url = `${view.settingInfo.BaseUrl}/${itemCode}`
   console.log(url)
   if ($q.platform.is.electron) {
-    window.electron.createWindow({ router: url, width: 1280, height: 1000, titleBarStyle: '', })
+    window.electron.createWindow({router: url, width: 1280, height: 1000, titleBarStyle: '',})
   } else {
     window.open(url)
   }
 };
 
 // onDialogOK, onDialogCancel
-const { dialogRef, onDialogHide } = useDialogPluginComponent();
+const {dialogRef, onDialogHide} = useDialogPluginComponent();
 
 const onDialogClose = () => {
   if (vue3VideoPlayRef.value) {

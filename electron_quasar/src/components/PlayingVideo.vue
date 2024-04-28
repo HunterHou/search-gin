@@ -4,21 +4,9 @@
     container
     style="height: 120vh"
     class="shadow-2 rounded-borders"
-    v-if="view.showMode !== 'page' || isMobile"
+    v-if="view.showMode === 'list' "
   >
     <q-header style="width: 100%">
-      <q-bar
-        class="row justify-between bg-black"
-        style="overflow: hidden"
-        v-if="view.showMode === 'drawer'"
-      >
-        {{ view.playing.Title }}
-        <q-space/>
-        <q-btn dense flat icon="close" @click="closeThis">
-          <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
-        </q-btn>
-      </q-bar>
-
       <q-card>
         <vue3VideoPlay
           v-show="view.playing?.Id"
@@ -41,20 +29,14 @@
             flat
             style="color: #59d89d"
             :label="view.playing.Actress?.substring(0, 8)"
-            @click="
-              view.queryParam.Keyword = view.playing.Actress;
-              fetchSearch();
-            "
+            @click="fetchSearch(view.playing.Actress)"
           />
           <q-btn
             size="sm"
             flat
             style="color: goldenrod"
             :label="view.playing.Code?.substring(0, 8)"
-            @click="
-              view.queryParam.Keyword = view.playing.Code;
-              fetchSearch();
-            "
+            @click="fetchSearch(view.playing.Code)"
           />
           <q-input
             v-model="view.queryParam.Keyword"
@@ -72,10 +54,7 @@
                         v-ripple
                         v-for="word in suggestions"
                         :key="word"
-                        @click="
-                          view.queryParam.Keyword = word;
-                          fetchSearch();
-                        "
+                        @click="fetchSearch(word)"
                       >
                         <q-item-section>
                           <q-item-label>{{ word }}</q-item-label>
@@ -104,13 +83,6 @@
             justify-content: flex-start;
           "
         >
-          <q-btn-toggle
-            v-model="view.showMode"
-            :options="[
-                  { label: '上下', value: 'drawer' },
-                  { label: '左右', value: 'page' },
-                ]"
-          />
           <q-btn-toggle
             v-model="view.queryParam.SortType"
             @update:model-value="fetchSearch()"
@@ -154,10 +126,7 @@
               style="margin-left: 0px; padding: 0 4px"
             >
               <span
-                @click="
-                  view.queryParam.Keyword = tag;
-                  fetchSearch();
-                "
+                @click="fetchSearch(tag)"
               >{{ tag }}</span
               >
             </q-chip>
@@ -221,10 +190,7 @@
                       style="margin-left: 0px; padding: 0 4px"
                     >
                       <span
-                        @click="
-                          view.queryParam.Keyword = tag;
-                          fetchSearch();
-                        "
+                        @click="fetchSearch(tag)"
                       >{{ tag }}</span
                       >
                     </q-chip>
@@ -276,200 +242,73 @@
 
   <q-layout
     view="hhh Lpr Lfr"
-    style="width: 100%"
     class="shadow-2 rounded-borders"
-    v-if="view.showMode === 'page' && !isMobile"
+    v-if="view.showMode === 'menu'"
   >
-    <q-header reveal class="bg-black">
+    <q-header class="bg-black" style="height: 5vh">
       <q-toolbar>
         <q-toolbar-title>
-          <div
-            class="row justify-between"
-            style="
-              background-color: rgba(0, 0, 0, 0.8);
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-            "
-          >
+          <div style="overflow: hidden;display: flex;flex-direction: row">
             <span
               class="q-mr-sm"
               style="
-                -webkit-app-region: drag;
                 color: rgb(213, 90, 90);
                 font-weight: 550;
                 font-size: medium;
                 overflow: hidden;
               "
-            >{{ view.playing.Title }}</span
-            >
-            <q-btn dense flat icon="close" @click="closeThis">
-              <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
-            </q-btn>
+            >{{ view.playing.Title }}</span>
+            <q-btn
+              flat
+              style="color: #59d89d"
+              :label="view.playing.Actress?.substring(0, 8)"
+              @click="fetchSearch(view.playing.Actress)"
+            />
+            <q-btn
+              flat
+              style="color: goldenrod"
+              :label="view.playing.Code?.substring(0, 8)"
+              @click="fetchSearch(view.playing.Code)"
+            />
+
           </div>
         </q-toolbar-title>
+        <q-btn dense flat icon="close" @click="closeThis">
+          <q-tooltip class="bg-white text-primary">关闭</q-tooltip>
+        </q-btn>
         <q-btn
           flat
-          @click="drawerRightW = !drawerRightW"
+          @click="listRightW = !listRightW"
           round
           dense
           icon="menu"
         />
       </q-toolbar>
     </q-header>
-    <q-drawer
-      side="right"
-      v-model="drawerRightW"
-      bordered
-      :width="drawerRightWidth"
-      :breakpoint="500"
-      class="bg-grey-3"
-    >
-      <q-slider size="sm" v-model="drawerRightWidth" :min="380" :max="740"/>
-      <q-scroll-area class="fit">
-        <div style="overflow: auto; background-color: rgba(0, 0, 0, 0.4)">
-          <div class="row justify-center">
-            <q-card
-              class="q-ma-sm example-item"
-              v-for="item in [...view.playList]"
-              :key="item.Id"
-            >
-              <q-img
-                fit="cover"
-                easier
-                draggable
-                :src="getPng(item.Id)"
-                class="item-img"
-                @click="open(item)"
-              >
-                <div
-                  style="
-                    padding: 0;
-                    margin: 0;
-                    background-color: rgba(0, 0, 0, 0);
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-                    width: 100%;
-                  "
-                >
-                  <div
-                    @click.stop="() => {}"
-                    style="
-                      display: flex;
-                      flex-direction: column;
-                      justify-content: flex-start;
-                      width: fit-content;
-                    "
-                  >
-                    <q-btn
-                      square
-                      color="red"
-                      size="sm"
-                      text-color="white"
-                      style="margin-left: 0px; padding: 0 4px"
-                    >
-                      <span @click="deleteThis(item.Id)">删除</span>
-                    </q-btn>
-                    <q-chip
-                      square
-                      color="red"
-                      text-color="white"
-                      v-for="tag in item.Tags"
-                      :key="tag"
-                      style="margin-left: 0px; padding: 0 4px"
-                    >
-                      <span
-                        @click="
-                          view.queryParam.Keyword = tag;
-                          fetchSearch();
-                        "
-                      >{{ tag }}</span
-                      >
-                    </q-chip>
-                  </div>
-                  <q-chip
-                    @click.stop="() => {}"
-                    square
-                    color="green"
-                    text-color="white"
-                    style="
-                      width: fit-content;
-                      margin-right: 0px;
-                      padding: 0 6px;
-                    "
-                  >
-                    <span> {{ item.MovieType }}</span>
-                  </q-chip>
-                </div>
-              </q-img>
-              <q-card-section style="overflow: auto; padding: 4px">
-                <div class="text-subtitle2" style="overflow: auto; padding: 0">
-                  <q-chip
-                    @click.stop="() => {}"
-                    square
-                    color="green"
-                    text-color="orange"
-                    style="padding: 0px 4px"
-                  >
-                    {{ item.SizeStr }}
-                  </q-chip>
-                  <span style="color: #0e4a2e">
-                    {{ item.Title?.substring(0, 20) }}
-                  </span>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-        </div>
-      </q-scroll-area>
-    </q-drawer>
 
     <q-page-container style="width: fit-content">
-      <q-page>
-        <q-card
-          class="q-dialog-plugin"
-          style="
-            width: 100%;
-            max-height: 95vh;
-            background-color: rgba(0, 0, 0, 0.1);
-          "
-        >
-          <vue3VideoPlay
-            v-show="view.playing?.Id"
-            ref="vue3VideoPlayRef"
-            id="vue3VideoPlayRef"
-            style="
+      <vue3VideoPlay
+        v-show="view.playing?.Id"
+        ref="vue3VideoPlayRef"
+        id="vue3VideoPlayRef"
+        style="
               object-fit: contain;
               width: 100%;
-              height: auto;
-              max-height: 99vh;
+              height: 94vh;
             "
-            v-bind="optionsPC"
-            @ended="playNext(1)"
-            @timeupdate="timeupdate"
-            @volumeupdate="volumeupdate"
-          />
-          <q-card-actions align="left">
-            <div>
-              <q-btn
-                flat
-                style="color: #59d89d"
-                :label="view.playing.Actress?.substring(0, 8)"
-                @click="
-                  view.queryParam.Keyword = view.playing.Actress;
-                  fetchSearch();
-                "
-              />
-              <q-btn
-                flat
-                style="color: goldenrod"
-                :label="view.playing.Code?.substring(0, 8)"
-                @click="
-                  view.queryParam.Keyword = view.playing.Code;
-                  fetchSearch();
-                "
-              />
+        v-bind="optionsPC"
+        @ended="playNext(1)"
+        @timeupdate="timeupdate"
+        @volumeupdate="volumeupdate"
+      />
+    </q-page-container>
+    <q-drawer side="right" v-model="listRightW" :width="380">
+      <q-layout view="lHh Lpr lFf"
+                container
+                >
+        <q-header>
+          <div style="height: 10%;">
+            <div class="row justify-between">
               <q-input
                 v-model="view.queryParam.Keyword"
                 :dense="true"
@@ -510,15 +349,6 @@
                   </q-icon>
                 </template>
               </q-input>
-            </div>
-            <div>
-              <q-btn-toggle
-                v-model="view.showMode"
-                :options="[
-                  { label: '上下', value: 'drawer' },
-                  { label: '左右', value: 'page' },
-                ]"
-              />
               <q-btn-toggle
                 v-model="view.queryParam.SortType"
                 @update:model-value="fetchSearch()"
@@ -528,6 +358,8 @@
                   { label: '倒', value: 'desc' },
                 ]"
               />
+            </div>
+            <div>
               <q-btn
                 v-if="!view.playlist"
                 color="primary"
@@ -540,49 +372,112 @@
                 label="下一个"
                 @click="playNext(1)"
               />
-              <q-btn
-                color="orange"
-                label="更多"
-                @click="
-                  view.showMore = !view.showMore;
-                  fetchGetSettingInfo();
-                "
-              />
-              <span v-if="view.showMore">
-                <q-chip
-                  square
-                  color="red"
-                  text-color="white"
-                  v-for="tag in view.settingInfo.Tags"
-                  :key="tag"
-                  style="margin-left: 0px; padding: 0 4px"
-                >
-                  <span
-                    @click="
-                      view.queryParam.Keyword = tag;
-                      fetchSearch();
-                    "
-                  >{{ tag }}</span
-                  >
-                </q-chip>
-              </span>
             </div>
-          </q-card-actions>
-        </q-card>
-      </q-page>
-
-      <q-page-scroller position="bottom">
-        <q-btn fab icon="keyboard_arrow_up" color="red"/>
-      </q-page-scroller>
-    </q-page-container>
+          </div>
+        </q-header>
+        <q-page-container>
+          <div style="overflow: auto; background-color: rgba(0, 0, 0, 0.4)">
+            <div class="row justify-center">
+              <q-card
+                class="q-ma-sm example-item"
+                v-for="item in [...view.playList]"
+                :key="item.Id"
+              >
+                <q-img
+                  fit="cover"
+                  easier
+                  draggable
+                  :src="getPng(item.Id)"
+                  class="item-img"
+                  @click="open(item)"
+                >
+                  <div
+                    style="
+                    padding: 0;
+                    margin: 0;
+                    background-color: rgba(0, 0, 0, 0);
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    width: 100%;
+                  "
+                  >
+                    <div
+                      @click.stop="() => {}"
+                      style="
+                      display: flex;
+                      flex-direction: column;
+                      justify-content: flex-start;
+                      width: fit-content;
+                    "
+                    >
+                      <q-btn
+                        square
+                        color="red"
+                        size="sm"
+                        text-color="white"
+                        style="margin-left: 0px; padding: 0 4px"
+                      >
+                        <span @click="deleteThis(item.Id)">删除</span>
+                      </q-btn>
+                      <q-chip
+                        square
+                        color="red"
+                        text-color="white"
+                        v-for="tag in item.Tags"
+                        :key="tag"
+                        style="margin-left: 0px; padding: 0 4px"
+                      >
+                      <span
+                        @click="fetchSearch(tag);"
+                      >{{ tag }}</span
+                      >
+                      </q-chip>
+                    </div>
+                    <q-chip
+                      @click.stop="() => {}"
+                      square
+                      color="green"
+                      text-color="white"
+                      style="
+                      width: fit-content;
+                      margin-right: 0px;
+                      padding: 0 6px;
+                    "
+                    >
+                      <span> {{ item.MovieType }}</span>
+                    </q-chip>
+                  </div>
+                </q-img>
+                <q-card-section style="overflow: auto; padding: 4px">
+                  <div class="text-subtitle2" style="overflow: auto; padding: 0">
+                    <q-chip
+                      @click.stop="() => {}"
+                      square
+                      color="green"
+                      text-color="orange"
+                      style="padding: 0px 4px"
+                    >
+                      {{ item.SizeStr }}
+                    </q-chip>
+                    <span style="color: #0e4a2e">
+                    {{ item.Title?.substring(0, 20) }}
+                  </span>
+                  </div>
+                </q-card-section>
+              </q-card>
+            </div>
+          </div>
+        </q-page-container>
+      </q-layout>
+    </q-drawer>
   </q-layout>
 </template>
 <script setup>
 import vue3VideoPlay from 'vue3-video-play';
 import 'vue3-video-play/dist/style.css'; // 引入css
-import {useQuasar} from 'quasar';
 import {computed, reactive, ref, watch, defineEmits} from 'vue';
-import {useSystemProperty} from '../stores/System';
+import {useSystemProperty} from 'stores/System';
 import {getFileStream} from './utils/images';
 import {getPng} from './utils/images';
 import {SearchAPI, DeleteFile, RefreshAPI} from './api/searchAPI';
@@ -590,21 +485,15 @@ import {GetSettingInfo} from './api/settingAPI';
 import {useRouter} from 'vue-router';
 import {onKeyStroke} from '@vueuse/core';
 
-const $q = useQuasar();
-
 const systemProperty = useSystemProperty();
 const vue3VideoPlayRef = ref(null);
 const {replace} = useRouter();
 
-const isMobile = computed(() => {
-  return $q.platform.is.mobile;
-});
 
-const drawerRightW = ref(true);
-const drawerRightWidth = ref(380);
+const listRightW = ref(true);
 const view = reactive({
   playList: [],
-  showMode: 'drawer',
+  showMode: 'list',
   queryParam: {SortType: 'desc'},
   showMore: false,
   settingInfo: {},
@@ -615,7 +504,7 @@ const view = reactive({
 const props = defineProps({
   mode: {
     type: String,
-    default: 'drawer',
+    default: 'list',
   },
 });
 
@@ -643,11 +532,11 @@ const suggestions = computed(() => {
   return systemProperty.getSuggestions;
 });
 
-const drawerRight = computed(() => {
-  return systemProperty.drawerRight;
+const listRight = computed(() => {
+  return systemProperty.listRight;
 });
 
-watch(drawerRight, (v) => {
+watch(listRight, (v) => {
   if (v) {
     fetchSearch();
   }
@@ -657,13 +546,13 @@ const open = (v) => {
   view.playing = v;
   optionsPC.currentTime = 1;
   optionsPC.src = getFileStream(v.Id);
-  optionsPC.webFullScreen = true;
+  // optionsPC.webFullScreen = true;
   const top = document.querySelector('.topRef');
   if (top) {
     top.scrollTo(0, 0);
   }
   view.showMode = props.mode;
-  if (view.showMode == 'page') {
+  if (view.showMode === 'menu') {
     replace(`/playing/${v.Id}`);
   }
   setTimeout(() => {
@@ -684,7 +573,7 @@ const stop = () => {
   optionsPC.src = null;
 };
 const hideThis = () => {
-  systemProperty.drawerRight = false;
+  systemProperty.listRight = false;
 };
 
 const timeupdate = (e) => {
@@ -709,7 +598,7 @@ const videoForward = (fastForwardTime) => {
 
 const closeThis = () => {
   stop();
-  if (view.showMode == 'drawer') {
+  if (view.showMode === 'list') {
     hideThis();
   } else {
     window.close();
@@ -717,7 +606,10 @@ const closeThis = () => {
   emits('close');
 };
 
-const fetchSearch = async () => {
+const fetchSearch = async (keywords) => {
+  if (keywords) {
+    view.queryParam.Keyword = keywords
+  }
   const data = await SearchAPI({
     ...systemProperty.FileSearchParam,
     ...view.queryParam,
@@ -737,7 +629,7 @@ const playNext = (step) => {
   }
   for (let i = 0; i < view.playList.length; i++) {
     if (view.playList[i].Id === view.playing.Id) {
-      if (i == view.playList.length - 1) {
+      if (i === view.playList.length - 1) {
         open(view.playList[0]);
         return;
       } else {

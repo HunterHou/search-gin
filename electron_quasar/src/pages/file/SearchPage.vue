@@ -324,16 +324,6 @@
                     :size="isMobile ? 'sm' : 'sm'"
                     ripple
                     color="orange"
-                    icon="ti-arrow-right"
-                    @click="openRightDrawer(item)"
-                    title="小播放"
-                  />
-                  <q-btn
-                    round
-                    class="q-mr-sm"
-                    :size="isMobile ? 'sm' : 'sm'"
-                    ripple
-                    color="orange"
                     icon="ti-blackboard"
                     @click="fileInfoRef.open({ item, playing: true })"
                     title="小播放"
@@ -684,7 +674,7 @@ const listEditCallback = (data) => {
 };
 
 const showButton = (name) => {
-  if (!listButtons.value || listButtons.value.length == 0) {
+  if (!listButtons.value || listButtons.value.length === 0) {
     return true;
   }
   return listButtons.value.indexOf(name) >= 0;
@@ -695,7 +685,8 @@ const openPlay = (item) => {
   if ($q.platform.is.electron) {
     window.electron.createWindow({router: url});
   } else {
-    window.open(url, '', 'width=1280,height=800,titleBarStyle=');
+    // window.open(url);
+    window.open(url, '', 'width=1480,height=800,titleBarStyle=');
   }
 };
 
@@ -704,7 +695,7 @@ const searchCode = (item) => {
   if (itemCode.indexOf('-C') > 0) {
     itemCode = itemCode.substring(0, itemCode.indexOf('-C'));
   }
-  if (itemCode.indexOf('-') == 0) {
+  if (itemCode.indexOf('-') === 0) {
     itemCode = itemCode.substring(1);
   }
   const url = `${view.settingInfo.BaseUrl}${itemCode}`;
@@ -828,12 +819,6 @@ const openListEditRef = () => {
 
 const openFileInfoRef = (item) => {
   fileInfoRef.value.open({item, cb: refreshIndex});
-};
-
-const openRightDrawer = (item) => {
-  view.currentData = item;
-  systemProperty.Playing = item;
-  systemProperty.drawerRight = true;
 };
 
 const searchKeyword = async (keyword) => {

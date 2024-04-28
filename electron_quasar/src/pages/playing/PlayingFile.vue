@@ -20,5 +20,5 @@ onMounted(()=>{
 })
 </script>
 <template>
-  <PlayingVideo ref="vue3VideoPlayRef" mode="page"/>
+  <PlayingVideo ref="vue3VideoPlayRef" mode="menu"/>
 </template>
