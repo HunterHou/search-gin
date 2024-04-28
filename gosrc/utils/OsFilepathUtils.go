@@ -117,8 +117,8 @@ func GetTitle(filename string) string {
 	if filename == "" {
 		return result
 	}
-	last_suffix := path.Ext(filename)
-	filename = strings.TrimSuffix(filename, last_suffix)
+	lastSuffix := path.Ext(filename)
+	filename = strings.TrimSuffix(filename, lastSuffix)
 	return filename
 
 }
