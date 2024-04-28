@@ -98,3 +98,8 @@ export const DeleteFolerByPath = async (data: unknown) => {
   const res = await commonAxios().post('/api/DeleteFolerByPath', data);
   return res && res.data;
 };
+
+export const CutImage = async (id: string,type: string,start: string, downFlag: string) => {
+  const res = await commonAxios().get(`/api/cutImage/${id}/${type}/${downFlag}/${start}`);
+  return res && res.data;
+};

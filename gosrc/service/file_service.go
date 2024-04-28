@@ -433,6 +433,25 @@ func (fileService *fileService) CutFormatter(model datamodels.TransferTaskModel)
 
 }
 
+func (fileService *fileService) CutImage(path string, typeImage string, download string, start string) utils.Result {
+	dest := utils.ConcatSuffix(path, typeImage)
+	args := []string{"-y", "-ss", start, "-i", path, dest, "-f", "image2", "-vframes", "1", "-an", "-vcodec", "mjpeg"}
+	cmd := exec.Command("./ffmpeg.exe ", args...)
+	out, cmdErr := cmd.CombinedOutput()
+	res := utils.NewSuccess()
+	if cmdErr != nil {
+		utils.InfoFormat("out:%v", string(out))
+		utils.InfoFormat("cmdErr:%v", cmdErr)
+		res = utils.NewFailByMsg("转换失败")
+		if utils.ExistsFiles(dest) {
+			res.Data = utils.ImageToString(utils.ConcatSuffix(path, typeImage))
+		}
+		return res
+	}
+	res.Data = utils.ImageToString(utils.ConcatSuffix(path, typeImage))
+	return res
+}
+
 func (fileService *fileService) ffmepgExec(args []string, thisNow time.Time) utils.Result {
 	task := cons.TransferTask[thisNow]
 	task.SetStatus("执行中")

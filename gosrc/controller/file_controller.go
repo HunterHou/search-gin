@@ -286,3 +286,18 @@ func GetTransferTask(c *gin.Context) {
 	result.Data = cons.TransferTask
 	c.JSON(http.StatusOK, result)
 }
+
+func GetCutImage(c *gin.Context) {
+	idInt := c.Param("id")
+	typeImage := c.Param("typeImage")
+	downFlag := c.Param("downFlag")
+	start := c.Param("start")
+	model := service.SearchApp.FindOne(idInt)
+	if model.IsNull() {
+		r := utils.Fail()
+		r.Message = "文件不存在"
+		c.JSON(http.StatusOK, r)
+	}
+	res := service.FileApp.CutImage(model.Path, typeImage, downFlag, start)
+	c.JSON(http.StatusOK, res)
+}

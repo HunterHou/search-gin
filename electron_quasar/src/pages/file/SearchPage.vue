@@ -396,21 +396,22 @@
                     class="q-mr-sm"
                     size="sm"
                     color="black"
-                    @click="moveThis(item)"
-                    icon="ti-location-arrow"
-                    v-if="showButton('移动')"
-                    title="移动"
+                    @click="()=>{fileCutImageRef.open(item)}"
+                    icon="ti-cut"
+                    title="截图"
                   />
                   <q-btn
                     round
                     class="q-mr-sm"
                     size="sm"
                     color="black"
-                    @click="SyncFileInfo(item)"
-                    icon="ti-exchange-vertical"
-                    v-if="showButton('刮图')"
+                    @click="moveThis(item)"
+                    icon="ti-location-arrow"
+                    v-if="showButton('移动')"
                     title="移动"
                   />
+
+
                 </div>
               </div>
 
@@ -488,7 +489,7 @@
   </q-layout>
 
   <q-page-sticky
-    v-if="view.videoUrl"
+    v-show="view.videoUrl"
     style="z-index: 9; max-width: 100vw"
     position="bottom-right"
     :offset="videoOffset"
@@ -533,7 +534,7 @@
     <video
       autoplay
       controls
-      id="vue3VideoPlayRef"
+      id="vue3VideoPlayPicInPic"
       :src="view.videoUrl"
       width="200"
       style="position: fixed; height: auto; z-index: 9"
@@ -548,6 +549,7 @@
   />
   <FileInfo ref="fileInfoRef"/>
   <ListEdit ref="listEditRef" @close="fetchSearch"/>
+  <FileCutImage ref="fileCutImageRef" @close="()=>{window.location.reload()}"/>
 </template>
 
 <script setup>
@@ -583,6 +585,7 @@ import {useSystemProperty} from '../../stores/System';
 import FileEdit from './components/FileEditDialog.vue';
 import FileInfo from './components/FileInfoDialog.vue';
 import ListEdit from './components/ListEditDialog.vue';
+import FileCutImage from './components/FileCutImage.vue';
 import TagPop from './components/TagPop.vue';
 
 import {onKeyStroke, useClipboard} from '@vueuse/core';
@@ -591,6 +594,7 @@ const $q = useQuasar();
 const fileEditRef = ref(null);
 const fileInfoRef = ref(null);
 const listEditRef = ref(null);
+const fileCutImageRef = ref(null);
 
 const view = reactive({
   renameCount: 0,
@@ -802,7 +806,8 @@ const goActress = (Actress) => {
 
 const picInPic = (item) => {
   view.currentData = item;
-  const video = document.getElementById('vue3VideoPlayRef');
+  const video = document.getElementById('vue3VideoPlayPicInPic');
+  console.log(video)
   if (video) {
     view.videoUrl = getFileStream(item.Id);
     video.focus();
