@@ -197,6 +197,17 @@ func (se *searchEnginCore) setBucket(baseDir string, bucket bucketFile) {
 	se.SearchIndex.Store(baseDir, bucket)
 }
 
+func (se *searchEnginCore) FetchInfo() {
+	se.SearchIndex.Range(func(key, value interface{}) bool {
+		index := value.(bucketFile)
+		go func() {
+			index.FetchInfo()
+			se.SearchIndex.Store(key, index)
+		}()
+		return true
+	})
+}
+
 func (se *searchEnginCore) buildIndexEngin() {
 	se.clearHistory()
 	actressLib := map[string]datamodels.Actress{}
@@ -259,4 +270,5 @@ func (se *searchEnginCore) buildIndexEngin() {
 	se.CodeRepeat = fileRepeats
 	se.TotalCount = totalCount
 	se.TotalSize = totalSize
+	se.FetchInfo()
 }
