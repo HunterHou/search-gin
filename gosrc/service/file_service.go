@@ -270,9 +270,8 @@ func (fileService *fileService) Walk(baseDir string, types []string, deep bool) 
 				info, _ := path.Info()
 				name := path.Name()
 				suffix := utils.GetSuffix(name)
-				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.EasyFile(baseDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, "")
+					file := datamodels.EasyFile(baseDir, pathAbs, name, suffix, info.Size(), info.ModTime(), "")
 					result = append(result, file)
 				}
 
@@ -313,9 +312,8 @@ func (fileService *fileService) WalkInnter(currentDir string, types []string, to
 				currentSize += info.Size()
 				_ = path.Type().String()
 				suffix := utils.GetSuffix(name)
-				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.EasyFile(currentDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, basePath)
+					file := datamodels.EasyFile(currentDir, pathAbs, name, suffix, info.Size(), info.ModTime(), basePath)
 					result = append(result, file)
 				}
 

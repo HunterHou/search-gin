@@ -51,9 +51,10 @@ type MovieEdit struct {
 	NoRefresh bool
 }
 
-func EasyFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string, baseDir string) Movie {
+func EasyFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, baseDir string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
 	fileKey, _ := utils.DirpathForId(path)
+	movieType := utils.GetMovieType(name)
 	result := Movie{
 		Id:        fileKey,
 		Code:      "",
