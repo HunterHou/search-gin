@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
+	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
-	"path/filepath"
 	"searchGin/cons"
 	"searchGin/router"
 	"searchGin/service"
@@ -24,27 +26,12 @@ import (
 // 3 命令行UI 常规打包 go build linux
 // 3 无窗口  go build -o viteApp/appVite.exe -ldflags  "-H=windowsgui" -tags=prod
 
-func init() {
-	curDir, _ := filepath.Abs(".")
-	osSetting := cons.OSSetting
-	settingPath := curDir + utils.PathSeparator + cons.OSSetting.SelfPath
-	dict := service.ReadDictionaryFromJson(settingPath)
-	dict.SelfPath = osSetting.SelfPath
-	ip := service.GetIpAddr()
-	dict.ControllerHost = "http://" + ip + cons.PortNo
-	dict.ImageHost = "http://" + ip + cons.PortNo2
-	dict.StreamHost = "http://" + ip + cons.PortNo3
-	cons.OSSetting = dict
-
-	// staticDir = curDir + "/static"
-}
-
 var (
 	g errgroup.Group
 )
 
 func main() {
-
+	service.InitSetting()
 	//fmt.Println("start")
 	//parts, err := disk.Partitions(true)
 	//if err != nil {
@@ -60,6 +47,7 @@ func main() {
 	//return
 
 	app := router.BuildRouter()
+
 	serviceRequest := &http.Server{
 		Addr:         cons.PortNo,
 		Handler:      app,
@@ -78,13 +66,33 @@ func main() {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
-
-	//默认启动页面
+	app.GET("close", func(c *gin.Context) {
+		if err := serviceRequest.Shutdown(context.Background()); err != nil {
+			log.Fatal("Server Shutdown:", err)
+		} else {
+			log.Println("Server exiting")
+		}
+		if err := imageRequest.Shutdown(context.Background()); err != nil {
+			log.Fatal("Server Shutdown:", err)
+		} else {
+			log.Println("Server exiting")
+		}
+		if err := fileRequest.Shutdown(context.Background()); err != nil {
+			log.Fatal("Server Shutdown:", err)
+		} else {
+			log.Println("Server exiting")
+		}
+		c.String(200, "ok")
+	})
 	// 启动扫描系统
 	go service.FileApp.HeartBeat()
 	// 启动转换执行任务
 	go service.FileApp.TaskExecuting()
+	//默认启动页面
+	go utils.ExecCmdStart("http://127.0.0.1" + cons.PortNo + "/")
 
+	//启动服务
+	// app.Run(cons.PortNo)
 	g.Go(func() error {
 		return serviceRequest.ListenAndServe()
 	})
@@ -95,12 +103,9 @@ func main() {
 		return fileRequest.ListenAndServe()
 	})
 	if err := g.Wait(); err != nil {
-		utils.InfoFormat("%v", err)
+		utils.InfoFormat("启动失败：%v", err)
+	} else {
+		utils.InfoFormat("服务启动成功")
 	}
-	url := "http://127.0.0.1" + cons.PortNo + "/"
-	go utils.ExecCmdStart(url)
-
-	//启动服务
-	// app.Run(cons.PortNo)
 
 }

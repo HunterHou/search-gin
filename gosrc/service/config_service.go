@@ -5,10 +5,24 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"searchGin/cons"
 	"searchGin/datamodels"
 	"searchGin/utils"
 )
+
+func InitSetting() {
+	curDir, _ := filepath.Abs(".")
+	osSetting := cons.OSSetting
+	settingPath := curDir + utils.PathSeparator + cons.OSSetting.SelfPath
+	dict := ReadDictionaryFromJson(settingPath)
+	dict.SelfPath = osSetting.SelfPath
+	ip := GetIpAddr()
+	dict.ControllerHost = "http://" + ip + cons.PortNo
+	dict.ImageHost = "http://" + ip + cons.PortNo2
+	dict.StreamHost = "http://" + ip + cons.PortNo3
+	cons.OSSetting = dict
+}
 
 func FlushDictionary(path string) {
 	WriteDictionaryToJson(path, cons.OSSetting)
