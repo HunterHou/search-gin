@@ -25,7 +25,7 @@ func ImageToString(path string) string {
 }
 
 func ImageToPng(src string) error {
-	des := GetPng(src, "png")
+	des := ConcatSuffix(src, "png")
 	fin, _ := os.Open(src)
 	fin2, _ := os.Open(src)
 	defer func(fin *os.File) {

@@ -45,6 +45,9 @@ func (fs *bucketFile) put(model datamodels.Movie) {
 	fs.TotalSize = fs.TotalSize + model.Size
 	fs.TotalCount = fs.TotalCount + 1
 }
+func (fs *bucketFile) set(data map[string]datamodels.Movie) {
+	fs.FileLib = data
+}
 
 func (fs *bucketFile) get(id string) datamodels.Movie {
 	model, ok := fs.FileLib[id]

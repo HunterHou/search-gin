@@ -221,9 +221,9 @@ func (fs *searchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Mov
 	if finalPath != srcFile.Path {
 		os.Rename(srcFile.Path, finalPath)
 	}
-	jpgPath := utils.GetPng(finalPath, "jpg")
-	pngPath := utils.GetPng(finalPath, "png")
-	nfoPath := utils.GetPng(finalPath, "nfo")
+	jpgPath := utils.ConcatSuffix(finalPath, "jpg")
+	pngPath := utils.ConcatSuffix(finalPath, "png")
+	nfoPath := utils.ConcatSuffix(finalPath, "nfo")
 
 	jpgOut, createErr := os.Create(jpgPath)
 	if createErr != nil {
@@ -233,7 +233,7 @@ func (fs *searchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Mov
 		os.MkdirAll(dirpath, os.ModePerm)
 		filename = dirname + "." + utils.GetSuffux(srcFile.Path)
 		finalPath = dirpath + utils.PathSeparator + filename
-		jpgPath = utils.GetPng(finalPath, "jpg")
+		jpgPath = utils.ConcatSuffix(finalPath, "jpg")
 		jpgOut, createErr = os.Create(jpgPath)
 		if createErr != nil {
 			result.Fail()
@@ -314,7 +314,7 @@ func (fs *searchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Mov
 
 func (fs *searchService) DownJpgMakePng(finalPath string, url string, makePng bool) utils.Result {
 	result := utils.Result{}
-	jpgPath := utils.GetPng(finalPath, "jpg")
+	jpgPath := utils.ConcatSuffix(finalPath, "jpg")
 	jpgOut, createErr := os.Create(jpgPath)
 	if createErr != nil {
 		utils.InfoFormat("createErr:%v  \n\n\n", createErr)
@@ -350,7 +350,7 @@ func (fs *searchService) DownJpgMakePng(finalPath string, url string, makePng bo
 
 func (fs *searchService) DownJpgAsPng(finalPath string, url string) utils.Result {
 	result := utils.Result{}
-	pngPath := utils.GetPng(finalPath, "png")
+	pngPath := utils.ConcatSuffix(finalPath, "png")
 	pngOut, createErr := os.Create(pngPath)
 	if createErr != nil {
 		utils.InfoFormat("createErr:%v  \n\n", createErr)

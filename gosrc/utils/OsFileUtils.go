@@ -63,7 +63,7 @@ func DirpathForId(path string) (string, string) {
 	return res, newpath
 }
 
-func GetPng(path string, suffix string) string {
+func ConcatSuffix(path string, suffix string) string {
 	path = strings.ReplaceAll(path, GetSuffux(path), suffix)
 	return path
 }

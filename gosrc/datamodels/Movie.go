@@ -51,6 +51,35 @@ type MovieEdit struct {
 	NoRefresh bool
 }
 
+func EasyFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string, baseDir string) Movie {
+	// 使用工厂模式 返回一个 Movie 实例
+	fileKey, _ := utils.DirpathForId(path)
+	result := Movie{
+		Id:        fileKey,
+		Code:      "",
+		Title:     utils.GetTitle(name),
+		Name:      name,
+		Path:      path,
+		Png:       utils.ConcatSuffix(path, "png"),
+		Nfo:       utils.ConcatSuffix(path, "nfo"),
+		Jpg:       utils.ConcatSuffix(path, "jpg"),
+		Srt:       utils.ConcatSuffix(path, "srt"),
+		Gif:       utils.ConcatSuffix(path, "gif"),
+		Tags:      utils.GetTags(path, ""),
+		Actress:   "",
+		FileType:  fileType,
+		DirPath:   dir,
+		Size:      size,
+		Flag:      1,
+		SizeStr:   utils.GetSizeStr(size),
+		CTime:     "",
+		MTime:     modTime.Format("2006-01-02 15:04:05"),
+		MovieType: movieType,
+		BaseDir:   baseDir,
+	}
+	return result
+}
+
 func NewFile(dir string, path string, name string, fileType string, size int64, modTime time.Time, movieType string, baseDir string) Movie {
 	// 使用工厂模式 返回一个 Movie 实例
 	id, _ := utils.DirpathForId(path)
@@ -64,11 +93,11 @@ func NewFile(dir string, path string, name string, fileType string, size int64, 
 		Title:     utils.GetTitle(name),
 		Name:      name,
 		Path:      path,
-		Png:       utils.GetPng(path, "png"),
-		Nfo:       utils.GetPng(path, "nfo"),
-		Jpg:       utils.GetPng(path, "jpg"),
-		Srt:       utils.GetPng(path, "srt"),
-		Gif:       utils.GetPng(path, "gif"),
+		Png:       utils.ConcatSuffix(path, "png"),
+		Nfo:       utils.ConcatSuffix(path, "nfo"),
+		Jpg:       utils.ConcatSuffix(path, "jpg"),
+		Srt:       utils.ConcatSuffix(path, "srt"),
+		Gif:       utils.ConcatSuffix(path, "gif"),
 		Tags:      utils.GetTags(path, ""),
 		Actress:   Actress,
 		FileType:  fileType,
