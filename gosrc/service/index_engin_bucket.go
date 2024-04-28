@@ -2,6 +2,7 @@ package service
 
 import (
 	"searchGin/datamodels"
+	"sync"
 )
 
 type bucketFile struct {
@@ -60,5 +61,12 @@ func (fs *bucketFile) get(id string) datamodels.Movie {
 func (fs *bucketFile) searchBucket(searchParam datamodels.SearchParam) datamodels.SearchResultWrapper {
 	resultWrapper := datamodels.SearchByKeyWord(fs.FileLib, searchParam.Keyword, searchParam.MovieType)
 	return resultWrapper
+}
 
+var wg sync.WaitGroup
+
+func (fs *bucketFile) searchBucketAsync(searchParam datamodels.SearchParam, wg sync.WaitGroup, result chan datamodels.SearchResultWrapper) {
+	defer wg.Done()
+	resultWrapper := datamodels.SearchByKeyWord(fs.FileLib, searchParam.Keyword, searchParam.MovieType)
+	result <- resultWrapper
 }

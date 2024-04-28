@@ -111,6 +111,58 @@ func (se *searchEnginCore) Page(searchParam datamodels.SearchParam) datamodels.P
 	return resultWrapper
 }
 
+func (se *searchEnginCore) PageAsync(searchParam datamodels.SearchParam) datamodels.PageResultWrapper {
+	if searchParam.OnlyRepeat {
+		resultWrapper := datamodels.NewPageWrapper()
+		resultWrapper.FileList = se.CodeRepeat
+		resultWrapper.ResultCount = len(se.CodeRepeat)
+		resultWrapper.LibCount = len(se.CodeRepeat)
+		resultWrapper.SearchCount = len(se.CodeRepeat)
+		return resultWrapper
+	}
+	resultWrapper, ok := se.KeywordHistory[searchParam.UniWords()]
+	if ok {
+		if len(se.Keywords) > 20 {
+			for _, s := range se.Keywords[0:5] {
+				delete(se.KeywordHistory, s)
+			}
+			se.Keywords = se.Keywords[5:]
+		}
+	} else {
+		var wg sync.WaitGroup
+		var asyncResults = make(chan datamodels.SearchResultWrapper, 100)
+		resultWrapper = datamodels.NewPageWrapper()
+		resultWrapper.ResultCount = searchParam.PageSize
+		se.SearchIndex.Range(func(key, value interface{}) bool {
+			index := value.(bucketFile)
+			if index.isEmpty() {
+				return true
+			}
+			wg.Add(1)
+			go index.searchBucketAsync(searchParam, wg, asyncResults)
+			return true
+		})
+		wg.Wait()
+		close(asyncResults)
+		for {
+			data, ok := <-asyncResults
+			if !ok {
+				break
+			}
+			resultWrapper.FileList = utils.ExtendsItems(resultWrapper.FileList, data.FileList)
+			resultWrapper.SearchCount = resultWrapper.SearchCount + len(data.FileList)
+			resultWrapper.SearchSize = resultWrapper.SearchSize + data.Size
+		}
+	}
+
+	datamodels.SortMoviesUtils(resultWrapper.FileList, searchParam.SortField, searchParam.SortType, se.LastSortField, se.LastSortType)
+	se.LastSortField = searchParam.SortField
+	se.LastSortType = searchParam.SortType
+	se.addHistory(searchParam.UniWords(), resultWrapper)
+	resultWrapper.FileList, resultWrapper.ResultSize = datamodels.GetPageOfFiles(resultWrapper.FileList, searchParam.Page, searchParam.PageSize)
+	return resultWrapper
+}
+
 func (se *searchEnginCore) addHistory(uniqueWords string, resultWrapper datamodels.PageResultWrapper) {
 	se.Keywords = append(se.Keywords, uniqueWords)
 	se.KeywordHistory[uniqueWords] = resultWrapper
