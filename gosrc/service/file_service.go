@@ -179,6 +179,7 @@ func (fileService) ScanAll() {
 	queryTypes = utils.ExtendsItems(queryTypes, setting.DocsTypes)
 	queryTypes = utils.ExtendsItems(queryTypes, setting.ImageTypes)
 	FileApp.Walks(dirList, queryTypes)
+	go SearchEngin.buildIndexEngin()
 }
 
 // ScanTarget 扫描指定文佳佳
@@ -232,7 +233,6 @@ func (fileService *fileService) Walks(baseDir []string, types []string) []datamo
 		}
 
 	}
-	go SearchEngin.buildIndexEngin()
 	return result
 
 }
@@ -272,7 +272,7 @@ func (fileService *fileService) Walk(baseDir string, types []string, deep bool) 
 				suffix := utils.GetSuffix(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, "")
+					file := datamodels.EasyFile(baseDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, "")
 					result = append(result, file)
 				}
 
@@ -311,10 +311,11 @@ func (fileService *fileService) WalkInnter(currentDir string, types []string, to
 				name := path.Name()
 				info, _ := path.Info()
 				currentSize += info.Size()
+				_ = path.Type().String()
 				suffix := utils.GetSuffix(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
-					file := datamodels.NewFile(currentDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, basePath)
+					file := datamodels.EasyFile(currentDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, basePath)
 					result = append(result, file)
 				}
 
