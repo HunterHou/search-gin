@@ -269,7 +269,7 @@ func (fileService *fileService) Walk(baseDir string, types []string, deep bool) 
 			} else {
 				info, _ := path.Info()
 				name := path.Name()
-				suffix := utils.GetSuffux(name)
+				suffix := utils.GetSuffix(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
 					file := datamodels.NewFile(baseDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, "")
@@ -311,7 +311,7 @@ func (fileService *fileService) WalkInnter(currentDir string, types []string, to
 				name := path.Name()
 				info, _ := path.Info()
 				currentSize += info.Size()
-				suffix := utils.GetSuffux(name)
+				suffix := utils.GetSuffix(name)
 				movieType := utils.GetMovieType(name)
 				if utils.HasItem(types, suffix) {
 					file := datamodels.NewFile(currentDir, pathAbs, name, suffix, info.Size(), info.ModTime(), movieType, basePath)
@@ -380,7 +380,7 @@ func (fileService *fileService) TaskExecuting() {
 
 func (fileService *fileService) TransferFormatter(model datamodels.TransferTaskModel) utils.Result {
 	from := model.Path
-	suffix := utils.GetSuffux(model.Path)
+	suffix := utils.GetSuffix(model.Path)
 	dest := strings.ReplaceAll(model.Path, "."+suffix, "."+model.To)
 	thisNow := model.CreateTime
 	args := []string{"-i", from, "-vcodec", "copy", dest}
@@ -409,7 +409,7 @@ func (fileService *fileService) MergeFiles(model datamodels.TransferTaskModel) u
 
 func (fileService *fileService) CutFormatter(model datamodels.TransferTaskModel) utils.Result {
 	from := model.Path
-	suffix := utils.GetSuffux(model.Path)
+	suffix := utils.GetSuffix(model.Path)
 	toSuffix := "mkv"
 	if suffix == "mkv" {
 		toSuffix = "mp4"

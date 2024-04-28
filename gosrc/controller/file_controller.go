@@ -217,7 +217,7 @@ func PostMerge(c *gin.Context) {
 		paths = append(paths, curFile.Path)
 	}
 	if searchParam.Dest == "" {
-		suffix := utils.GetSuffux(paths[0])
+		suffix := utils.GetSuffix(paths[0])
 		searchParam.Dest = strings.ReplaceAll(paths[0], "."+suffix, time.Now().String()+"."+suffix)
 	}
 
@@ -239,7 +239,7 @@ func GetTransferToMp4(c *gin.Context) {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
 		return
 	}
-	from := utils.GetSuffux(model.Path)
+	from := utils.GetSuffix(model.Path)
 	if to == "" {
 		to = "mp4"
 	}
@@ -273,7 +273,7 @@ func GetCutMovie(c *gin.Context) {
 		c.JSON(http.StatusOK, utils.NewFailByMsg("文件不存在"))
 		return
 	}
-	from := utils.GetSuffux(model.Path)
+	from := utils.GetSuffix(model.Path)
 	task := datamodels.NewCutTask(model.Path, model.Name, start, end, from)
 	task.SetStatus("等待")
 	cons.TransferTask[task.CreateTime] = task

@@ -55,13 +55,13 @@ func (fs *searchService) SetMovieType(movie datamodels.Movie, movieType string) 
 	}
 	newMovieType := "{{" + movieType + "}}"
 	fmt.Println(movieType)
-	suffix := "." + utils.GetSuffux(movie.Path)
+	suffix := "." + utils.GetSuffix(movie.Path)
 	newSuffix := newMovieType + suffix
 	newName := strings.ReplaceAll(movie.Path, suffix, newSuffix)
 	os.Rename(movie.Path, newName)
 	//png
 	if utils.ExistsFiles(movie.Png) {
-		suffix = "." + utils.GetSuffux(movie.Png)
+		suffix = "." + utils.GetSuffix(movie.Png)
 		newSuffix = newMovieType + suffix
 		newName = strings.ReplaceAll(movie.Png, suffix, newSuffix)
 		os.Rename(movie.Png, newName)
@@ -69,7 +69,7 @@ func (fs *searchService) SetMovieType(movie datamodels.Movie, movieType string) 
 
 	//jpg
 	if utils.ExistsFiles(movie.Jpg) {
-		suffix = "." + utils.GetSuffux(movie.Jpg)
+		suffix = "." + utils.GetSuffix(movie.Jpg)
 		newSuffix = newMovieType + suffix
 		newName = strings.ReplaceAll(movie.Jpg, suffix, newSuffix)
 		os.Rename(movie.Jpg, newName)
@@ -77,7 +77,7 @@ func (fs *searchService) SetMovieType(movie datamodels.Movie, movieType string) 
 
 	//nfo
 	if utils.ExistsFiles(movie.Nfo) {
-		suffix = "." + utils.GetSuffux(movie.Nfo)
+		suffix = "." + utils.GetSuffix(movie.Nfo)
 		newSuffix = newMovieType + suffix
 		newName = strings.ReplaceAll(movie.Nfo, suffix, newSuffix)
 		os.Rename(movie.Nfo, newName)
@@ -124,7 +124,7 @@ func (fs *searchService) AddTag(id string, tag string) utils.Result {
 
 	newMovieType := "《" + tag + "》"
 	utils.InfoFormat("%v", tag)
-	suffix := "." + utils.GetSuffux(movie.Path)
+	suffix := "." + utils.GetSuffix(movie.Path)
 	newSuffix := newMovieType + suffix
 	newName := strings.ReplaceAll(movie.Path, suffix, newSuffix)
 	if strings.Contains(newName, "《") && strings.Contains(newName, "》") {
@@ -138,7 +138,7 @@ func (fs *searchService) AddTag(id string, tag string) utils.Result {
 	}
 	//png
 	if utils.ExistsFiles(movie.Png) {
-		suffix = "." + utils.GetSuffux(movie.Png)
+		suffix = "." + utils.GetSuffix(movie.Png)
 		newSuffix = newMovieType + suffix
 		newName = strings.ReplaceAll(movie.Png, suffix, newSuffix)
 		os.Rename(movie.Png, newName)
@@ -146,7 +146,7 @@ func (fs *searchService) AddTag(id string, tag string) utils.Result {
 
 	//jpg
 	if utils.ExistsFiles(movie.Jpg) {
-		suffix = "." + utils.GetSuffux(movie.Jpg)
+		suffix = "." + utils.GetSuffix(movie.Jpg)
 		newSuffix = newMovieType + suffix
 		newName = strings.ReplaceAll(movie.Jpg, suffix, newSuffix)
 		os.Rename(movie.Jpg, newName)
@@ -154,7 +154,7 @@ func (fs *searchService) AddTag(id string, tag string) utils.Result {
 
 	//nfo
 	if utils.ExistsFiles(movie.Nfo) {
-		suffix = "." + utils.GetSuffux(movie.Nfo)
+		suffix = "." + utils.GetSuffix(movie.Nfo)
 		newSuffix = newMovieType + suffix
 		newName = strings.ReplaceAll(movie.Nfo, suffix, newSuffix)
 		os.Rename(movie.Nfo, newName)
@@ -216,7 +216,7 @@ func (fs *searchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Mov
 	dirname := "[" + toFile.Actress + "][" + toFile.Code + "]" + title
 	dirpath := path + utils.PathSeparator + dirname
 	os.MkdirAll(dirpath, os.ModePerm)
-	filename := dirname + "." + utils.GetSuffux(srcFile.Path)
+	filename := dirname + "." + utils.GetSuffix(srcFile.Path)
 	finalPath := dirpath + utils.PathSeparator + filename
 	if finalPath != srcFile.Path {
 		os.Rename(srcFile.Path, finalPath)
@@ -231,7 +231,7 @@ func (fs *searchService) MoveCut(srcFile datamodels.Movie, toFile datamodels.Mov
 		dirname = "[" + toFile.Actress + "][" + toFile.Code + "]"
 		dirpath = path + utils.PathSeparator + dirname
 		os.MkdirAll(dirpath, os.ModePerm)
-		filename = dirname + "." + utils.GetSuffux(srcFile.Path)
+		filename = dirname + "." + utils.GetSuffix(srcFile.Path)
 		finalPath = dirpath + utils.PathSeparator + filename
 		jpgPath = utils.ConcatSuffix(finalPath, "jpg")
 		jpgOut, createErr = os.Create(jpgPath)
@@ -762,7 +762,7 @@ func (fs *searchService) Rename(movie datamodels.MovieEdit) utils.Result {
 	}
 	//png
 	targetSuffix := ".png"
-	suffix := "." + utils.GetSuffux(oldPath)
+	suffix := "." + utils.GetSuffix(oldPath)
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {
@@ -774,7 +774,7 @@ func (fs *searchService) Rename(movie datamodels.MovieEdit) utils.Result {
 
 	//gif
 	targetSuffix = ".gif"
-	suffix = "." + utils.GetSuffux(oldPath)
+	suffix = "." + utils.GetSuffix(oldPath)
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {
@@ -786,7 +786,7 @@ func (fs *searchService) Rename(movie datamodels.MovieEdit) utils.Result {
 
 	//jpg
 	targetSuffix = ".jpg"
-	suffix = "." + utils.GetSuffux(oldPath)
+	suffix = "." + utils.GetSuffix(oldPath)
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {
@@ -798,7 +798,7 @@ func (fs *searchService) Rename(movie datamodels.MovieEdit) utils.Result {
 
 	//nfo
 	targetSuffix = ".nfo"
-	suffix = "." + utils.GetSuffux(oldPath)
+	suffix = "." + utils.GetSuffix(oldPath)
 	oldPath = strings.ReplaceAll(oldPath, suffix, targetSuffix)
 	newPath = strings.ReplaceAll(newPath, suffix, targetSuffix)
 	if utils.ExistsFiles(oldPath) {

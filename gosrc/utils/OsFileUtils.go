@@ -64,7 +64,7 @@ func DirpathForId(path string) (string, string) {
 }
 
 func ConcatSuffix(path string, suffix string) string {
-	path = strings.ReplaceAll(path, GetSuffux(path), suffix)
+	path = strings.ReplaceAll(path, GetSuffix(path), suffix)
 	return path
 }
 
@@ -76,13 +76,13 @@ func ExistsFiles(path string) bool {
 	return true
 }
 
-func GetSuffux(fielname string) string {
+func GetSuffix(filename string) string {
 
 	var suffix string
-	if fielname == "" {
+	if filename == "" {
 		return suffix
 	}
-	suffix = filepath.Ext(fielname)
+	suffix = filepath.Ext(filename)
 	suffix = strings.ToLower(suffix)
 	if strings.Contains(suffix, ".") {
 		suffix = strings.TrimPrefix(suffix, ".")
