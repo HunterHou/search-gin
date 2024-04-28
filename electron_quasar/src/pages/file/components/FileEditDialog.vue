@@ -127,7 +127,7 @@ const titleChange = (v) => {
     const code = v.match(reg);
     if (code && code[0] && code[0].length > 0) {
       view.item.Code = code[0];
-      if (!view.item.MovieType || view.item.MovieType == '无') {
+      if (!view.item.MovieType || view.item.MovieType === '无') {
         makePreview();
       }
 
